@@ -286,7 +286,28 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 @keyframes fade { from { opacity: 0; } }
 @keyframes up { from { transform: translate(-50%, 100%); } }
 
-.toast { position: fixed; z-index: 50; left: 50%; transform: translateX(-50%); bottom: calc(104px + env(safe-area-inset-bottom, 0px)); background: #fff; color: var(--on-light); font-weight: 600; font-size: 15px; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); animation: fade .2s; white-space: nowrap; }
+.toast { position: fixed; z-index: 50; left: 50%; transform: translateX(-50%); bottom: calc(104px + env(safe-area-inset-bottom, 0px)); background: #fff; color: var(--on-light); font-weight: 600; font-size: 15px; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); animation: fade .2s; width: max-content; max-width: calc(100% - 32px); text-align: center; }
+
+/* Teacher mode */
+.admin-bar { display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 10px 14px; border-radius: 14px; background: rgba(255, 165, 58, .12); border: 1px solid rgba(255, 165, 58, .3); color: #FFC27A; font-size: 14px; font-weight: 600; }
+.editor { margin-top: 18px; padding: 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid rgba(255, 165, 58, .35); display: grid; gap: 10px; }
+.ed-h { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.ed-h b { font-size: 17px; }
+.tag { font-size: 12px; font-weight: 700; color: #FFC27A; background: rgba(255, 165, 58, .14); padding: 3px 9px; border-radius: 8px; }
+.field { display: grid; gap: 6px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--muted); }
+.field input { width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: inherit; font-size: 16px; }
+.field input[type="url"], .field input[type="email"], .field input[type="password"] { direction: ltr; text-align: left; }
+.field input:focus { outline: none; border-color: var(--accent); }
+.ed-file { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); }
+.ed-file .t { flex: 1 1 140px; min-width: 0; font-size: 14px; color: var(--muted); }
+.ed-file .t b { display: block; color: var(--fg); font-size: 15px; }
+.ed-file .btn { min-height: 40px; padding: 8px 14px; font-size: 14px; }
+.ed-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.err { color: #FF7A7A; font-size: 14px; min-height: 1em; }
+.btn.danger { color: #FF7A7A; }
+.btn.busy { opacity: .6; pointer-events: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
@@ -303,7 +324,16 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 <div id="app"></div>
 <nav class="tabbar" id="tabbar" aria-label="الأقسام"></nav>
 <div id="layer"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
+/* =====================================================================
+   ربط لوحة المعلم بـ Supabase
+   الصق القيمتين من: Supabase → Project Settings → API
+   (المفتاح anon public آمن للنشر، فالحماية تتم بصلاحيات قاعدة البيانات)
+   ===================================================================== */
+const SUPABASE_URL = '';
+const SUPABASE_ANON_KEY = '';
+
 /* =====================================================================
    المحتوى — عدّل هنا فقط لإضافة الفيديوهات والمذكرات
    - video: ضع رابط يوتيوب للدرس، مثال: "https://youtu.be/abc123XYZ"
@@ -521,6 +551,94 @@ const S = {
   stack: [],
 };
 if (!GRADES[S.grade]) S.grade = 'g10';
+
+/* ---------------- Teacher mode (Supabase) ---------------- */
+let db = null;
+try { if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
+let ADMIN = null;
+let REMOTE = store.get('remote', {});
+// Rows keyed "g10.1.2" fill a lesson; rows keyed "g10.1" fill a unit's PDF.
+function applyRemote() {
+  for (const [key, row] of Object.entries(REMOTE)) {
+    const [g, u, i] = key.split('.');
+    const unit = GRADES[g] && GRADES[g].units[+u]; if (!unit) continue;
+    if (i === undefined) { unit.pdf = row.pdf || ''; continue; }
+    const l = unit.lessons[+i]; if (!l) continue;
+    l.video = row.video || ''; l.pdf = row.pdf || ''; l.min = row.minutes || '';
+  }
+}
+applyRemote();
+async function loadRemote() {
+  if (!db) return;
+  const { data, error } = await db.from('content').select('key,video,pdf,minutes');
+  if (error || !data) return;
+  REMOTE = {}; data.forEach(r => { REMOTE[r.key] = r; });
+  store.set('remote', REMOTE); applyRemote();
+  if (!document.querySelector('.editor input:focus')) render(false);
+}
+const dbError = error => /row-level security|permission|42501|JWT/i.test((error && (error.message || error.code)) || '')
+  ? 'حسابك لا يملك صلاحية التعديل. سجّل الدخول بحساب المعلم.'
+  : 'تعذّر الحفظ. تأكد من اتصالك بالإنترنت وحاول مرة أخرى.';
+async function saveRow(key, patch) {
+  const row = Object.assign({ key, video: '', pdf: '', minutes: '' }, REMOTE[key], patch, { key, updated_at: new Date().toISOString() });
+  const { error } = await db.from('content').upsert(row);
+  if (error) { toast(dbError(error)); return false; }
+  REMOTE[key] = row; store.set('remote', REMOTE); applyRemote(); render(false);
+  return true;
+}
+async function uploadPdf(key, file, btn) {
+  if (!file) return;
+  if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) return toast('اختر ملفاً بصيغة PDF');
+  if (file.size > 50 * 1024 * 1024) return toast('حجم الملف أكبر من 50 ميغابايت');
+  if (btn) { btn.classList.add('busy'); btn.lastChild.textContent = 'جارٍ الرفع…'; }
+  const path = `${key.replace(/\./g, '/')}/${Date.now()}.pdf`;
+  const { error } = await db.storage.from('notes').upload(path, file, { contentType: 'application/pdf', upsert: false });
+  if (error) { toast(dbError(error)); render(false); return; }
+  const url = db.storage.from('notes').getPublicUrl(path).data.publicUrl;
+  if (await saveRow(key, { pdf: url })) toast('تم رفع المذكرة');
+}
+const fileName = url => { try { return decodeURIComponent(url.split('/').pop()); } catch (e) { return 'ملف PDF'; } };
+function pdfEditor(key, current, label) {
+  return `<div class="ed-file">
+      ${icon('notes')}
+      <span class="t"><b>${label}</b>${current ? 'ملف مرفوع' : 'لا يوجد ملف بعد'}</span>
+      ${current ? `<button class="btn danger" data-act="del-pdf" data-key="${key}">حذف</button>` : ''}
+      <label class="btn" for="up-${key}">${icon('down', 'style="transform:rotate(180deg)"')}<span>${current ? 'استبدال' : 'رفع PDF'}</span></label>
+      <input class="vh" type="file" id="up-${key}" accept="application/pdf,.pdf" data-upload="${key}">
+    </div>`;
+}
+function lessonEditor(key, l) {
+  return `<section class="editor" aria-label="تعديل الدرس">
+    <div class="ed-h"><b>تعديل الدرس</b><span class="tag">وضع المعلم</span></div>
+    <div class="field"><label for="ed-video">رابط فيديو يوتيوب</label><input id="ed-video" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/..." value="${esc(l.video || '')}"></div>
+    <div class="field"><label for="ed-min">مدة الفيديو بالدقائق (اختياري)</label><input id="ed-min" inputmode="numeric" maxlength="4" placeholder="12" value="${esc(l.min || '')}"></div>
+    <div class="ed-row">
+      <button class="btn primary" data-act="save-video" data-key="${key}">حفظ الفيديو</button>
+      <button class="btn danger" data-act="clear-video" data-key="${key}" ${l.video ? '' : 'aria-disabled="true"'}>إزالة الفيديو</button>
+    </div>
+    ${pdfEditor(key, l.pdf, 'مذكرة هذا الدرس')}
+  </section>`;
+}
+function loginSheet() {
+  if (!db) return sheet(`<h2>لوحة المعلم</h2><p>لوحة المعلم غير مفعّلة بعد. تحتاج ربط التطبيق بحساب Supabase أولاً.</p><button class="btn" data-act="close">حسناً</button>`);
+  sheet(`<h2>دخول المعلم</h2><p>للمعلم فقط. الطلاب لا يحتاجون إلى تسجيل الدخول.</p>
+    <form id="login" class="opts" novalidate>
+      <div class="field"><label for="lg-email">البريد الإلكتروني</label><input id="lg-email" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="lg-pass">كلمة المرور</label><input id="lg-pass" type="password" autocomplete="current-password" required></div>
+      <p class="err" id="lg-err" role="alert"></p>
+      <button class="btn primary" type="submit" style="margin-top:0">دخول</button>
+    </form>`);
+  document.getElementById('login').onsubmit = async e => {
+    e.preventDefault();
+    const b = e.target.querySelector('button'), err = document.getElementById('lg-err');
+    const email = document.getElementById('lg-email').value.trim(), password = document.getElementById('lg-pass').value;
+    if (!email || !password) { err.textContent = 'اكتب البريد وكلمة المرور.'; return; }
+    b.classList.add('busy'); b.textContent = 'جارٍ الدخول…';
+    const { data, error } = await db.auth.signInWithPassword({ email, password });
+    if (error) { b.classList.remove('busy'); b.textContent = 'دخول'; err.textContent = /invalid/i.test(error.message) ? 'البريد أو كلمة المرور غير صحيحة.' : 'تعذّر الدخول. تحقق من الإنترنت وحاول مرة أخرى.'; return; }
+    ADMIN = data.user; closeSheet(); render(false); toast('مرحباً بك في وضع المعلم');
+  };
+}
 const G = () => GRADES[S.grade];
 const lid = (g, u, i) => `${g}.${u}.${i}`;
 const ytId = url => { const m = String(url || '').match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/); return m ? m[1] : ''; };
@@ -556,6 +674,7 @@ function vHome() {
       </span>
     </header>
     <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
+    ${ADMIN ? `<div class="admin-bar">${icon('user')}وضع المعلم: افتح أي درس لإضافة الفيديو والمذكرة</div>` : ''}
     <div class="promos" aria-label="العروض">
       <button class="promo" data-act="plan" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
         <h2>باقة ${esc(g.short)}</h2>
@@ -623,9 +742,10 @@ function vUnit(u) {
       return `<button class="row" data-go="lesson:${u}:${i}">
         <span class="n ${done ? 'done' : ''}">${done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : ar(i + 1)}</span>
         <span class="t"><b>${esc(l.t)}</b><small>${has ? (l.min ? `${ar(l.min)} دقيقة` : 'فيديو شرح') : 'الفيديو قيد التجهيز'}</small></span>
-        <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : '<span class="soon">قريباً</span>'}</span>
+        <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${ADMIN ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
       </button>`;
     }).join('')}</div>
+    ${ADMIN ? `<section class="editor"><div class="ed-h"><b>مذكرة الوحدة</b><span class="tag">وضع المعلم</span></div>${pdfEditor(`${S.grade}.${u}`, unit.pdf, 'ملخص الوحدة كاملة')}</section>` : ''}
     <h2 class="sec">مع هذه الوحدة</h2>
     <div class="list">
       ${unit.pdf ? `<a class="row" href="${esc(unit.pdf)}" target="_blank" rel="noopener">` : '<div class="row">'}
@@ -658,6 +778,7 @@ function vLesson(u, i) {
       ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
       ${sim ? `<button class="btn" data-go="sim:${unit.sim}">${icon('lab')}جرّبها</button>` : (id ? `<a class="btn" href="https://youtu.be/${id}" target="_blank" rel="noopener">${icon('ext')}يوتيوب</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}يوتيوب</span>`)}
     </div>
+    ${ADMIN ? lessonEditor(key, l) : ''}
     ${nx ? `<div class="next"><div class="label">الدرس التالي</div><div class="list"><button class="row" data-go="lesson:${nx.u}:${nx.i}" data-replace="1">
       <span class="n">${ar(nx.i + 1)}</span>
       <span class="t"><b>${esc(G().units[nx.u].lessons[nx.i].t)}</b><small>${esc(G().units[nx.u].title)}</small></span>
@@ -712,6 +833,9 @@ function vProfile() {
     <h2 class="sec">الإعدادات</h2>
     <div class="list">
       <button class="row" data-act="grade"><span class="t"><b>المرحلة الدراسية</b><small>${esc(g.name)}</small></span><span class="end">${icon('chev')}</span></button>
+      ${ADMIN
+        ? `<button class="row" data-act="logout"><span class="t"><b>تسجيل خروج المعلم</b><small>${esc(ADMIN.email || '')}</small></span></button>`
+        : `<button class="row" data-act="login"><span class="t"><b>دخول المعلم</b><small>لإضافة الفيديوهات والمذكرات</small></span><span class="end">${icon('chev')}</span></button>`}
       <button class="row" data-act="reset"><span class="t"><b style="color:#FF6B6B">مسح تقدّمي</b><small>يحذف علامات الدروس المكتملة من هذا الجهاز</small></span></button>
     </div>
     ${standalone ? '' : `<div class="install"><b>ثبّت التطبيق على جوالك</b><p>في سفاري اضغط زر المشاركة ${icon('share', 'style="width:16px;height:16px;vertical-align:-3px"')} ثم اختر «إضافة إلى الشاشة الرئيسية». سيفتح بعدها بملء الشاشة مثل أي تطبيق.</p></div>`}
@@ -922,6 +1046,7 @@ function go(spec, replace) {
 }
 
 function toast(msg) {
+  document.querySelectorAll('.toast').forEach(x => x.remove());
   const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.setAttribute('role', 'status');
   document.body.appendChild(t); setTimeout(() => t.remove(), 1800);
 }
@@ -971,16 +1096,39 @@ document.addEventListener('click', e => {
     store.set('watched', S.watched); render(false);
     if (S.watched[k]) toast('أحسنت! تم حفظ تقدّمك');
   }
+  else if (act === 'login') loginSheet();
+  else if (act === 'logout') { db && db.auth.signOut(); ADMIN = null; render(false); toast('تم تسجيل الخروج'); }
+  else if (act === 'save-video') {
+    const v = document.getElementById('ed-video').value.trim(), m = document.getElementById('ed-min').value.trim().replace(/[^0-9]/g, '');
+    if (v && !ytId(v)) return toast('الرابط غير صحيح. انسخ رابط الفيديو من يوتيوب كما هو.');
+    el.classList.add('busy'); el.textContent = 'جارٍ الحفظ…';
+    saveRow(el.dataset.key, { video: v, minutes: m }).then(ok => { if (ok) toast('تم حفظ الفيديو'); else { el.classList.remove('busy'); el.textContent = 'حفظ الفيديو'; } });
+  }
+  else if (act === 'clear-video') { saveRow(el.dataset.key, { video: '', minutes: '' }).then(ok => ok && toast('تمت إزالة الفيديو')); }
+  else if (act === 'del-pdf') {
+    if (el.dataset.confirm) saveRow(el.dataset.key, { pdf: '' }).then(ok => ok && toast('تم حذف المذكرة'));
+    else { el.dataset.confirm = '1'; el.textContent = 'تأكيد الحذف'; }
+  }
   else if (act === 'reset') {
     if (el.dataset.confirm) { S.watched = {}; store.set('watched', {}); S.last = null; store.set('last', null); render(false); toast('تم مسح التقدّم'); }
     else { el.dataset.confirm = '1'; el.querySelector('small').textContent = 'اضغط مرة أخرى للتأكيد'; }
   }
+});
+document.addEventListener('change', e => {
+  const inp = e.target.closest('[data-upload]');
+  if (inp && db) uploadPdf(inp.dataset.upload, inp.files[0], inp.previousElementSibling);
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
 const start = (location.hash || '').slice(1);
 if (['home', 'lab', 'notes', 'profile'].includes(start)) S.tab = start;
 render();
+if (db) {
+  db.auth.getSession().then(({ data }) => { ADMIN = (data.session && data.session.user) || null; if (ADMIN) render(false); });
+  db.auth.onAuthStateChange((_, session) => { ADMIN = (session && session.user) || null; });
+  loadRemote();
+}
+if (start === 'admin') { S.tab = 'profile'; render(); loginSheet(); }
 
 if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:') {
   try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
