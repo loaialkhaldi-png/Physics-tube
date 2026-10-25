@@ -123,6 +123,9 @@ p { margin: 0; }
   background: var(--tile); border: 1px solid rgba(255, 255, 255, .05); transition: transform .2s;
 }
 .unit .glyph { position: absolute; inset: 14% 0 auto; margin: auto; width: 54%; }
+.unit .eyebrow { position: relative; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .7); }
+.unit-name { padding-block: 4px 10px; font-size: 15px; color: var(--fg); }
+.units + .unit-name { padding-top: 22px; }
 .unit h3 { position: relative; font-size: 18px; font-weight: 700; line-height: 1.3; }
 .unit .chip { position: absolute; top: 12px; left: 12px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 9px; background: rgba(255, 255, 255, .92); color: var(--on-light); font-variant-numeric: tabular-nums; }
 .unit .bar { position: absolute; inset: auto 0 0; height: 3px; background: rgba(255, 255, 255, .12); }
@@ -149,7 +152,7 @@ p { margin: 0; }
   position: relative; border-radius: var(--r-lg); overflow: hidden; padding: 24px 22px 22px; min-height: 250px;
   display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; background: var(--tile);
 }
-.hero .glyph { position: absolute; top: 22px; left: 22px; width: 120px; }
+.hero .glyph { position: absolute; top: 20px; left: 20px; width: 92px; }
 .hero small { color: rgba(255, 255, 255, .75); font-size: 14px; font-weight: 600; }
 .hero h1 { font-size: 30px; font-weight: 800; line-height: 1.2; position: relative; }
 .prog { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -161,7 +164,7 @@ p { margin: 0; }
 .row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; width: 100%; text-align: right; transition: transform .2s, background .2s; }
 .row + .row { border-top: 1px solid var(--line); }
 .row:hover { background: rgba(255, 255, 255, .025); }
-.row .n { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; flex: none; }
+.row .n { min-width: 36px; padding-inline: 4px; width: auto; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; flex: none; }
 .row .n.done { background: rgba(50, 209, 122, .16); color: var(--good); }
 .row .t { flex: 1; min-width: 0; }
 .row .t b { display: block; font-weight: 600; font-size: 16px; }
@@ -341,31 +344,32 @@ const SUPABASE_ANON_KEY = 'sb_publishable_iZNxrR8oYkxjXTPBZOVHcw_qhr2DPZO';
    - video: ضع رابط يوتيوب للدرس، مثال: "https://youtu.be/abc123XYZ"
    - pdf:   ضع رابط ملف المذكرة (رابط مباشر أو رابط Google Drive)
    - min:   مدة الفيديو بالدقائق (اختياري)
-   - term:  الفصل الدراسي للوحدة (1 = الفصل الأول، 2 = الفصل الثاني)
+   - term:  الفصل الدراسي (1 = الأول، 2 = الثاني)
+   - unit:  اسم الوحدة في الكتاب، ch: رقم الفصل داخلها، id: معرّف ثابت لا يتغير
    أي درس بدون رابط يظهر للطالب بعلامة «قريباً».
    ===================================================================== */
 const GRADES = {
   g10: {
     name: 'الصف العاشر', short: 'العاشر', theme: 1,
     units: [
-      { term: 1, title: 'القياس والكميات الفيزيائية', glyph: 'ruler', theme: 0, pdf: '', lessons: [
-        { t: 'الكميات الأساسية والمشتقة', video: '', min: '' },
-        { t: 'النظام الدولي للوحدات', video: '', min: '' },
-        { t: 'الكميات القياسية والمتجهة', video: '', min: '' },
+      // الفصل الدراسي الأول — الوحدة الأولى: الحركة
+      { id: 'g10-m1', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 1, title: 'علم الفيزياء', glyph: 'ruler', theme: 0, pdf: '', lessons: [
+        { t: 'علم الفيزياء', video: '', min: '' },
+        { t: 'الكميات الفيزيائية', video: '', min: '' },
       ]},
-      { term: 1, title: 'الحركة في خط مستقيم', glyph: 'motion', theme: 1, pdf: '', sim: 'projectile', lessons: [
-        { t: 'المسافة والإزاحة', video: '', min: '' },
-        { t: 'السرعة والسرعة المتجهة', video: '', min: '' },
-        { t: 'العجلة', video: '', min: '' },
-        { t: 'معادلات الحركة بعجلة منتظمة', video: '', min: '' },
+      { id: 'g10-m2', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 2, title: 'الحركة في بُعد واحد', glyph: 'motion', theme: 1, pdf: '', lessons: [
+        { t: 'الكميات الفيزيائية العددية والمتجهة', video: '', min: '' },
+        { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', video: '', min: '' },
         { t: 'السقوط الحر', video: '', min: '' },
       ]},
-      { term: 1, title: 'قوانين نيوتن', glyph: 'force', theme: 2, pdf: '', lessons: [
-        { t: 'القانون الأول والقصور الذاتي', video: '', min: '' },
-        { t: 'القانون الثاني', video: '', min: '' },
-        { t: 'القانون الثالث', video: '', min: '' },
-        { t: 'قوة الاحتكاك', video: '', min: '' },
+      { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sim: 'projectile', lessons: [
+        { t: 'خصائص المتجهات', video: '', min: '' },
+        { t: 'جمع المتجهات وتحليلها', video: '', min: '' },
+        { t: 'ضرب المتجهات', video: '', min: '' },
+        { t: 'حركة المقذوفات', video: '', min: '' },
+        { t: 'أسئلة مراجعة الوحدة', extra: true, video: '', min: '' },
       ]},
+      // الفصل الدراسي الثاني — مؤقت حتى يصل فهرس الجزء الثاني
       { term: 2, title: 'الشغل والطاقة', glyph: 'bolt', theme: 5, pdf: '', lessons: [
         { t: 'الشغل', video: '', min: '' },
         { t: 'طاقة الحركة', video: '', min: '' },
@@ -469,6 +473,8 @@ const GRADES = {
   },
 };
 const GRADE_ORDER = ['g10', 'g11', 'g12'];
+const UNIT_BY_ID = {};
+GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; UNIT_BY_ID[u.id] = u; }));
 
 const SIMS = {
   projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 1, tag: 'العاشر · الحادي عشر' },
@@ -562,11 +568,11 @@ let db = null;
 try { if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
 let ADMIN = null;
 let REMOTE = store.get('remote', {});
-// Rows keyed "g10.1.2" fill a lesson; rows keyed "g10.1" fill a unit's PDF.
+// Rows keyed "<unit id>.<lesson index>" fill a lesson; rows keyed "<unit id>" fill a unit's PDF.
 function applyRemote() {
   for (const [key, row] of Object.entries(REMOTE)) {
-    const [g, u, i] = key.split('.');
-    const unit = GRADES[g] && GRADES[g].units[+u]; if (!unit) continue;
+    const [id, i] = key.split('.');
+    const unit = UNIT_BY_ID[id]; if (!unit) continue;
     if (i === undefined) { unit.pdf = row.pdf || ''; continue; }
     const l = unit.lessons[+i]; if (!l) continue;
     l.video = row.video || ''; l.pdf = row.pdf || ''; l.min = row.minutes || '';
@@ -645,7 +651,11 @@ function loginSheet() {
   };
 }
 const G = () => GRADES[S.grade];
-const lid = (g, u, i) => `${g}.${u}.${i}`;
+const lid = (g, u, i) => `${GRADES[g].units[u].id}.${i}`;
+const ORD = ['', 'الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن'];
+// Book-style lesson number, e.g. "1-2" = lesson 1 of chapter 2.
+const lessonNo = (unit, i) => unit.lessons[i].extra ? '' : (unit.ch ? `${i + 1}-${unit.ch}` : `${i + 1}`);
+const unitLabel = (g, i) => { const u = GRADES[g].units[i]; return u.ch ? `الفصل ${ORD[u.ch]}` : `الوحدة ${unitNo(g, i)}`; };
 const ytId = url => { const m = String(url || '').match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/); return m ? m[1] : ''; };
 const CAN_EMBED = !/claude|anthropic/i.test(location.hostname);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -656,7 +666,7 @@ function unitStats(g, u) {
   const done = L.filter((_, i) => S.watched[lid(g, u, i)]).length;
   return { done, total: L.length, pct: L.length ? Math.round(done / L.length * 100) : 0 };
 }
-const TERMS = { 1: 'الفصل الأول', 2: 'الفصل الثاني' };
+const TERMS = { 1: 'الفصل الدراسي الأول', 2: 'الفصل الدراسي الثاني' };
 const termUnits = (g, term) => GRADES[g].units.map((u, i) => ({ u, i })).filter(x => x.u.term === term);
 const unitNo = (g, i) => { const u = GRADES[g].units[i]; return termUnits(g, u.term).findIndex(x => x.i === i) + 1; };
 const termSeg = () => `<div class="seg term-seg" role="group" aria-label="الفصل الدراسي">${[1, 2].map(t => `<button data-term="${t}" aria-pressed="${S.term === t}">${TERMS[t]}</button>`).join('')}</div>`;
@@ -667,6 +677,8 @@ function vHome() {
   const g = G();
   const lessons = g.units.reduce((n, u) => n + u.lessons.length, 0);
   const tu = termUnits(S.grade, S.term);
+  const groups = [];
+  tu.forEach(x => { const n = x.u.unit || ''; const last = groups[groups.length - 1]; if (last && last[0] === n) last[1].push(x); else groups.push([n, [x]]); });
   let cont = '';
   if (S.last && GRADES[S.last.g] && S.last.g === S.grade) {
     const u = GRADES[S.last.g].units[S.last.u], l = u && u.lessons[S.last.i];
@@ -691,7 +703,7 @@ function vHome() {
         <p>كل دروس الفيزياء لصفك في مكان واحد</p>
         <span class="badge">مجانية حالياً</span>
         <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
-        <span class="foot">${ar(g.units.length)} وحدات · ${ar(lessons)} درساً</span>
+        <span class="foot">${ar(lessons)} درساً في الفصلين</span>
       </button>
       <button class="promo" data-tab="notes" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[5].a} 0%, transparent 70%), linear-gradient(170deg, #160A02, ${THEMES[5].b})">
         <h2>المذكرات</h2>
@@ -709,17 +721,19 @@ function vHome() {
       </button>
     </div>
     ${cont}
-    <h2 class="sec">الوحدات <small>${ar(tu.length)} وحدات · ${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
+    <h2 class="sec">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
     ${termSeg()}
-    <div class="units">${tu.map(({ u, i }) => {
+    ${groups.map(([name, items]) => `${name ? `<div class="label unit-name">${esc(name)}</div>` : ''}
+    <div class="units">${items.map(({ u, i }) => {
       const s = unitStats(S.grade, i);
       return `<button class="unit" data-go="unit:${i}" style="${tileStyle(u.theme)}">
         <span class="chip">${lessonWord(u.lessons.length)}</span>
         ${glyph(u.glyph, u.theme)}
+        <small class="eyebrow">${unitLabel(S.grade, i)}</small>
         <h3>${esc(u.title)}</h3>
         ${s.done ? `<span class="bar"><i style="width:${s.pct}%"></i></span>` : ''}
       </button>`;
-    }).join('')}</div>
+    }).join('')}</div>`).join('')}
   </div>`;
 }
 function glyphInner(name, theme) {
@@ -743,7 +757,7 @@ function vUnit(u) {
     ${navBar()}
     <section class="hero" style="${tileStyle(unit.theme)}">
       ${glyph(unit.glyph, unit.theme)}
-      <small>${esc(G().name)} · ${TERMS[unit.term]} · الوحدة ${ar(unitNo(S.grade, u))}</small>
+      <small>${esc(G().name)} · ${unit.unit ? esc(unit.unit) + ' · ' : TERMS[unit.term] + ' · '}${unitLabel(S.grade, u)}</small>
       <h1>${esc(unit.title)}</h1>
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
@@ -751,12 +765,12 @@ function vUnit(u) {
     <div class="list">${unit.lessons.map((l, i) => {
       const done = S.watched[lid(S.grade, u, i)], has = ytId(l.video);
       return `<button class="row" data-go="lesson:${u}:${i}">
-        <span class="n ${done ? 'done' : ''}">${done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : ar(i + 1)}</span>
+        <span class="n ${done ? 'done' : ''}">${done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : (lessonNo(unit, i) ? `<bdi dir="ltr">${lessonNo(unit, i)}</bdi>` : icon('checkc', 'style="width:18px;height:18px"'))}</span>
         <span class="t"><b>${esc(l.t)}</b><small>${has ? (l.min ? `${ar(l.min)} دقيقة` : 'فيديو شرح') : 'الفيديو قيد التجهيز'}</small></span>
         <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${ADMIN ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
       </button>`;
     }).join('')}</div>
-    ${ADMIN ? `<section class="editor"><div class="ed-h"><b>مذكرة الوحدة</b><span class="tag">وضع المعلم</span></div>${pdfEditor(`${S.grade}.${u}`, unit.pdf, 'ملخص الوحدة كاملة')}</section>` : ''}
+    ${ADMIN ? `<section class="editor"><div class="ed-h"><b>مذكرة الوحدة</b><span class="tag">وضع المعلم</span></div>${pdfEditor(unit.id, unit.pdf, 'ملخص الوحدة كاملة')}</section>` : ''}
     <h2 class="sec">مع هذه الوحدة</h2>
     <div class="list">
       ${unit.pdf ? `<a class="row" href="${esc(unit.pdf)}" target="_blank" rel="noopener">` : '<div class="row">'}
@@ -783,7 +797,7 @@ function vLesson(u, i) {
   return `<div class="view push">
     ${navBar()}
     <div class="player">${player}</div>
-    <div class="lesson-h"><small>${esc(unit.title)} · الدرس ${ar(i + 1)} من ${ar(unit.lessons.length)}</small><h1>${esc(l.t)}</h1></div>
+    <div class="lesson-h"><small>${esc(unit.title)}${lessonNo(unit, i) ? ` · الدرس <bdi dir="ltr">[${lessonNo(unit, i)}]</bdi>` : ''}</small><h1>${esc(l.t)}</h1></div>
     <div class="actions">
       <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
       ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
@@ -791,7 +805,7 @@ function vLesson(u, i) {
     </div>
     ${ADMIN ? lessonEditor(key, l) : ''}
     ${nx ? `<div class="next"><div class="label">الدرس التالي</div><div class="list"><button class="row" data-go="lesson:${nx.u}:${nx.i}" data-replace="1">
-      <span class="n">${ar(nx.i + 1)}</span>
+      <span class="n">${lessonNo(G().units[nx.u], nx.i) ? `<bdi dir="ltr">${lessonNo(G().units[nx.u], nx.i)}</bdi>` : icon('checkc', 'style="width:18px;height:18px"')}</span>
       <span class="t"><b>${esc(G().units[nx.u].lessons[nx.i].t)}</b><small>${esc(G().units[nx.u].title)}</small></span>
       <span class="end">${icon('chev')}</span></button></div></div>` : ''}
   </div>`;
@@ -812,7 +826,7 @@ function vNotes() {
     <div class="page-h"><h1>المذكرات</h1><p>ملخصات ${esc(g.name)}. غيّر الصف من الرئيسية لرؤية مذكرات صف آخر.</p></div>
     ${[1, 2].map(t => `<div class="unitgroup"><div class="label">${TERMS[t]}</div><div class="list">${termUnits(S.grade, t).map(({ u, i }) => {
       const inner = `<span class="n" style="${tileStyle(u.theme)};background:var(--tile)">${glyph(u.glyph, u.theme)}</span>
-        <span class="t"><b>${esc(u.title)}</b><small>الوحدة ${ar(unitNo(S.grade, i))} · PDF</small></span>
+        <span class="t"><b>${esc(u.title)}</b><small>${u.unit ? esc(u.unit.split(':')[0]) + ' · ' : ''}${unitLabel(S.grade, i)} · PDF</small></span>
         <span class="end">${u.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>`;
       return u.pdf ? `<a class="row" href="${esc(u.pdf)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="row">${inner}</div>`;
     }).join('')}</div></div>`).join('')}
