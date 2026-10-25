@@ -433,20 +433,38 @@ const GRADES = {
   g12: {
     name: 'الثاني عشر علمي', short: 'الثاني عشر', theme: 7,
     units: [
-      { term: 1, title: 'الكهرباء الساكنة', glyph: 'charges', theme: 2, pdf: '', lessons: [
+      // الفصل الدراسي الأول
+      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sim: 'pendulum', lessons: [
+        { t: 'الشغل', video: '', min: '' },
+        { t: 'الشغل والطاقة', video: '', min: '' },
+        { t: 'حفظ (بقاء) الطاقة', video: '', min: '' },
+        { t: 'حركة البندول', video: '', min: '' },
+        { t: 'عدم حفظ الطاقة', video: '', min: '' },
+      ]},
+      { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'orbit', theme: 2, pdf: '', lessons: [
+        { t: 'عزم القوة', video: '', min: '' },
+        { t: 'القصور الذاتي الدوراني', video: '', min: '' },
+      ]},
+      { id: 'g12-momentum', term: 1, title: 'كمية الحركة الخطية', glyph: 'collide', theme: 3, pdf: '', lessons: [
+        { t: 'كمية الحركة والدفع', video: '', min: '' },
+        { t: 'حفظ كمية الحركة', video: '', min: '' },
+        { t: 'التصادمات', video: '', min: '' },
+      ]},
+      // الفصل الدراسي الثاني — مؤقت حتى يصل الفهرس
+      { term: 2, title: 'الكهرباء الساكنة', glyph: 'charges', theme: 2, pdf: '', lessons: [
         { t: 'الشحنة وقانون كولوم', video: '', min: '' },
         { t: 'المجال الكهربائي', video: '', min: '' },
         { t: 'الجهد الكهربائي', video: '', min: '' },
         { t: 'المكثفات', video: '', min: '' },
       ]},
-      { term: 1, title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', sim: 'ohm', lessons: [
+      { term: 2, title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', sim: 'ohm', lessons: [
         { t: 'شدة التيار', video: '', min: '' },
         { t: 'قانون أوم والمقاومة', video: '', min: '' },
         { t: 'توصيل المقاومات', video: '', min: '' },
         { t: 'القدرة الكهربائية', video: '', min: '' },
         { t: 'قانونا كيرشوف', video: '', min: '' },
       ]},
-      { term: 1, title: 'المغناطيسية', glyph: 'magnet', theme: 3, pdf: '', lessons: [
+      { term: 2, title: 'المغناطيسية', glyph: 'magnet', theme: 3, pdf: '', lessons: [
         { t: 'المجال المغناطيسي', video: '', min: '' },
         { t: 'القوة على شحنة متحركة', video: '', min: '' },
         { t: 'القوة على سلك يحمل تياراً', video: '', min: '' },
@@ -478,7 +496,7 @@ GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g
 
 const SIMS = {
   projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 1, tag: 'العاشر · الحادي عشر' },
-  pendulum:   { title: 'البندول البسيط', sub: 'قِس الزمن الدوري على الأرض والقمر', glyph: 'pendulum', theme: 0, tag: 'الحادي عشر' },
+  pendulum:   { title: 'البندول البسيط', sub: 'قِس الزمن الدوري على الأرض والقمر', glyph: 'pendulum', theme: 0, tag: 'الحادي عشر · الثاني عشر' },
   wave:       { title: 'الموجات المستعرضة', sub: 'السعة والتردد والطول الموجي', glyph: 'wave', theme: 6, tag: 'الحادي عشر' },
   ohm:        { title: 'قانون أوم', sub: 'الجهد والمقاومة وشدة التيار', glyph: 'battery', theme: 5, tag: 'الثاني عشر' },
 };
