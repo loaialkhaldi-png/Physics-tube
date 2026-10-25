@@ -394,23 +394,23 @@ const GRADES = {
   g11: {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
-      { term: 1, title: 'المتجهات والحركة في بعدين', glyph: 'vectors', theme: 1, pdf: '', sim: 'projectile', lessons: [
-        { t: 'جمع المتجهات وتحليلها', video: '', min: '' },
-        { t: 'حركة المقذوفات', video: '', min: '' },
-        { t: 'المدى وأقصى ارتفاع', video: '', min: '' },
+      // الفصل الدراسي الأول
+      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sim: 'projectile', lessons: [
+        { t: 'الكميات العددية والكميات المتجهة', video: '', min: '' },
+        { t: 'ضرب المتجهات', video: '', min: '' },
+        { t: 'تحليل المتجهات', video: '', min: '' },
+        { t: 'حركة القذيفة', video: '', min: '' },
       ]},
-      { term: 1, title: 'الحركة الدائرية والجاذبية', glyph: 'orbit', theme: 2, pdf: '', lessons: [
-        { t: 'الحركة الدائرية المنتظمة', video: '', min: '' },
-        { t: 'القوة المركزية', video: '', min: '' },
-        { t: 'قانون الجذب العام', video: '', min: '' },
-        { t: 'حركة الأقمار الصناعية', video: '', min: '' },
+      { id: 'g11-circular', term: 1, title: 'الحركة الدائرية', glyph: 'orbit', theme: 2, pdf: '', lessons: [
+        { t: 'وصف الحركة الدائرية', video: '', min: '' },
+        { t: 'القوة الجاذبة المركزية', video: '', min: '' },
       ]},
-      { term: 1, title: 'الزخم والتصادمات', glyph: 'collide', theme: 3, pdf: '', lessons: [
-        { t: 'الزخم الخطي', video: '', min: '' },
-        { t: 'الدفع', video: '', min: '' },
-        { t: 'قانون حفظ الزخم', video: '', min: '' },
-        { t: 'التصادمات المرنة وغير المرنة', video: '', min: '' },
+      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', lessons: [
+        { t: 'مركز الثقل', video: '', min: '' },
+        { t: 'مركز الكتلة', video: '', min: '' },
+        { t: 'تحديد موضع مركز الثقل (الكتلة)', video: '', min: '' },
       ]},
+      // الفصل الدراسي الثاني — مؤقت حتى يصل الفهرس
       { term: 2, title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', sim: 'pendulum', lessons: [
         { t: 'الحركة التوافقية البسيطة', video: '', min: '' },
         { t: 'البندول البسيط', video: '', min: '' },
