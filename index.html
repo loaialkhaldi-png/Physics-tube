@@ -1,1036 +1,990 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>index</title>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Physics Tube</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Changa:wght@500;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<meta name="description" content="دروس الفيزياء للمرحلة الثانوية: فيديوهات شرح، مختبر تفاعلي، ومذكرات PDF.">
+<meta name="theme-color" content="#0A0B0F">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Physics Tube">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: lab-notebook graph paper; wide home (headline + live simulator, grades, lab sheet), narrow pages for lessons, quiz and progress; fixed bottom tabs */
+/* Layout: one dark phone-width column; wordmark header, grade switcher, swipeable promo cards, 2-up unit tiles, floating glass tab bar */
 :root {
-  direction: rtl;
-  --bg: #EDF4F1;
-  --grid: #D3E3DE;
-  --grid2: #BAD1CA;
-  --surface: #FFFFFF;
-  --fg: #101B33;
-  --muted: #52617A;
-  --line: #C6D6D0;
-  --accent: #2347E8;
-  --on-accent: #FFFFFF;
-  --tint: #E1E8FF;
-  --vec: #E8530F;
-  --mark: rgba(232, 83, 15, .26);
-  --good: #17794A;
-  --good-bg: #E1F3EA;
-  --bad: #B8372B;
-  --bad-bg: #FBE6E3;
-  --player: #0F1B3D;
-  --font-display: 'Changa', 'Noto Kufi Arabic', 'Segoe UI', Tahoma, sans-serif;
-  --font-body: 'IBM Plex Sans Arabic', 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0B1124; --grid: #162042; --grid2: #212E5C; --surface: #131B36; --fg: #E8EDFB; --muted: #9AA8C9; --line: #263260;
-    --accent: #7F9BFF; --on-accent: #0A1030; --tint: #1B2652; --vec: #FF8D5A; --mark: rgba(255, 141, 90, .3);
-    --good: #4CC184; --good-bg: #12301F; --bad: #F07A6D; --bad-bg: #3A1815; --player: #070C1C;
-    color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --bg: #0B1124; --grid: #162042; --grid2: #212E5C; --surface: #131B36; --fg: #E8EDFB; --muted: #9AA8C9; --line: #263260;
-  --accent: #7F9BFF; --on-accent: #0A1030; --tint: #1B2652; --vec: #FF8D5A; --mark: rgba(255, 141, 90, .3);
-  --good: #4CC184; --good-bg: #12301F; --bad: #F07A6D; --bad-bg: #3A1815; --player: #070C1C;
+  --bg: #0A0B0F;
+  --surface: #15171D;
+  --surface-2: #1F222A;
+  --line: rgba(255, 255, 255, .08);
+  --fg: #F5F5F7;
+  --muted: #8C8F9A;
+  --accent: #2F8CFF;
+  --good: #32D17A;
+  --on-light: #0A0B0F;
+  --glass: rgba(26, 28, 34, .78);
+  --font: -apple-system, BlinkMacSystemFont, "SF Arabic", "SF Pro Text", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif;
+  --font-mark: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+  --r-lg: 28px;
+  --r-md: 22px;
   color-scheme: dark;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  background: var(--bg);
 }
-
-* { box-sizing: border-box; }
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { background: var(--bg); }
 body {
   margin: 0;
-  background-color: var(--bg);
-  background-image:
-    linear-gradient(var(--grid2) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid2) 1px, transparent 1px),
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
   color: var(--fg);
-  font-family: var(--font-body);
-  font-size: 17px;
-  line-height: 1.7;
-  padding-block: 0 104px;
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+body::before {
+  content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px);
+  z-index: 30; background: var(--bg);
+}
+button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 10px; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+p { margin: 0; }
+
+#app {
+  direction: rtl;
+  max-width: 520px;
+  margin: 0 auto;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 8px 130px;
+  min-height: 100%;
 }
-button, input, select { font: inherit; color: inherit; }
-h1, h2, h3, h4, p { margin: 0; }
-h1, h2, h3, h4 { text-wrap: balance; font-family: var(--font-display); font-weight: 800; line-height: 1.25; }
-:focus-visible { outline: 3px solid var(--vec); outline-offset: 2px; }
-.wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 28px; padding-bottom: 8px; }
-.wrap.narrow { max-width: 720px; gap: 20px; }
-.f { direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
-.mono { font-family: var(--font-mono); direction: ltr; unicode-bidi: isolate; font-variant-numeric: tabular-nums; }
-.num { font-variant-numeric: tabular-nums; }
-.eyebrow { font-family: var(--font-mono); font-size: 13px; letter-spacing: .04em; color: var(--accent); font-weight: 500; }
-.sec-h { font-size: clamp(26px, 5vw, 36px); }
-.sec-p { color: var(--muted); max-width: 60ch; }
-.head { display: flex; flex-direction: column; gap: 6px; }
-.note { font-size: 14px; color: var(--muted); }
-.page-h { font-size: clamp(30px, 6vw, 42px); }
+.view { animation: rise .38s cubic-bezier(.2, .8, .2, 1); }
+.view.push { animation: slide .42s cubic-bezier(.2, .8, .2, 1); }
+@keyframes rise { from { opacity: .4; transform: translateY(8px); } }
+@keyframes slide { from { opacity: .3; transform: translateX(-28px); } }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 10px 22px; border-radius: 12px; border: 2px solid var(--fg); background: var(--accent); color: var(--on-accent); font-weight: 600; text-decoration: none; cursor: pointer; box-shadow: 4px 4px 0 var(--fg); transition: transform .12s, box-shadow .12s; }
-.btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--fg); }
-.btn.alt { background: var(--surface); color: var(--fg); }
-.btn.ghost { background: var(--tint); color: var(--accent); }
-.btn.inv { background: var(--surface); color: var(--fg); }
-.btn.bad { color: var(--bad); }
-.btn.block { width: 100%; }
-.btn:disabled { opacity: .55; cursor: default; }
+/* Header */
+.top { direction: ltr; display: flex; align-items: center; justify-content: space-between; padding-block: 14px 6px; }
+.mark { font-family: var(--font-mark); font-weight: 600; font-size: 18px; letter-spacing: .3em; color: var(--fg); white-space: nowrap; }
+.mark b { font-weight: 800; }
+.pill {
+  display: flex; align-items: center; gap: 6px; padding: 5px; border-radius: 999px;
+  background: var(--surface); border: 1px solid var(--line);
+}
+.pill .stat { display: flex; align-items: center; gap: 6px; padding: 7px 12px; border-radius: 999px; background: #1A2232; font-weight: 600; font-variant-numeric: tabular-nums; font-size: 15px; }
+.pill .stat svg { color: var(--accent); }
+.pill .me { width: 40px; height: 40px; display: grid; place-items: center; border-radius: 50%; }
+.ico { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
 
-header.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 16px 4px; max-width: 1080px; margin: 0 auto; }
-.brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--fg); background: none; border: 0; padding: 0; cursor: pointer; }
-.brand svg { width: 34px; height: 34px; flex: none; }
-.pill { font-family: var(--font-mono); font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--tint); color: var(--accent); font-weight: 500; white-space: nowrap; }
+.grade-row { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-block: 22px 18px; }
+.grade-row h1 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; }
+.link { color: var(--accent); font-weight: 700; font-size: 17px; white-space: nowrap; }
 
-.hero { display: grid; gap: 30px; grid-template-columns: minmax(0, 1fr); align-items: center; padding-top: 8px; }
-.hero h1 { font-size: clamp(40px, 9.5vw, 72px); line-height: 1.15; margin-top: 4px; }
-.hero mark { background: linear-gradient(transparent 60%, var(--mark) 60%); color: inherit; padding-inline: 4px; }
-.hero .lead { font-size: 19px; color: var(--muted); max-width: 46ch; margin-top: 16px; }
-.cta { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 24px; }
-@media (min-width: 880px) { .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 44px; } }
+/* Promo cards */
+.promos {
+  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
+  margin-inline: calc(-1 * max(16px, env(safe-area-inset-right, 0px))) calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
+  padding-inline: max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-left, 0px));
+  scroll-padding-inline: max(16px, env(safe-area-inset-right, 0px));
+}
+.promos::-webkit-scrollbar { display: none; }
+.promo {
+  flex: 0 0 84%; scroll-snap-align: start; position: relative; overflow: hidden; text-align: right;
+  border-radius: var(--r-lg); padding: 26px 22px 22px; min-height: 360px;
+  display: flex; flex-direction: column; gap: 10px;
+  background: var(--pbg); border: 1px solid rgba(255, 255, 255, .06);
+  transition: transform .2s;
+}
+.promo:active, .unit:active, .row:active { transform: scale(.98); }
+.promo h2 { font-size: 34px; font-weight: 800; line-height: 1.15; letter-spacing: -.015em; }
+.promo p { font-size: 17px; color: rgba(255, 255, 255, .82); max-width: 30ch; }
+.badge { align-self: flex-start; background: #fff; color: var(--on-light); font-weight: 700; font-size: 15px; padding: 6px 13px; border-radius: 12px; }
+.promo .art { position: absolute; left: 8px; bottom: 54px; width: 54%; max-width: 210px; pointer-events: none; }
+.promo .foot { margin-top: auto; font-size: 17px; font-weight: 500; position: relative; }
 
-.sim { background: var(--surface); border: 2px solid var(--fg); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: 6px 6px 0 var(--fg); min-width: 0; }
-.shead { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
-.shead h2 { font-size: 19px; }
-.tag { font-family: var(--font-mono); font-size: 12px; padding: 2px 10px; border-radius: 999px; background: var(--tint); color: var(--accent); font-weight: 500; white-space: nowrap; }
-.sim canvas { width: 100%; max-width: 100%; display: block; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); }
-.ctl { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 460px) { .ctl { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.ctl label { display: flex; flex-direction: column; gap: 4px; font-size: 14px; font-weight: 500; min-width: 0; }
-.ctl .crow { display: flex; justify-content: space-between; gap: 8px; }
-.ctl input[type=range] { width: 100%; accent-color: var(--accent); height: 28px; margin: 0; }
-.ctl select { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); padding: 6px 10px; }
-.read { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; }
-.read div { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; min-width: 0; }
-.read span { display: block; font-size: 12px; color: var(--muted); }
-.read b { font-family: var(--font-mono); font-weight: 500; font-size: 16px; direction: ltr; unicode-bidi: isolate; display: block; text-align: right; font-variant-numeric: tabular-nums; }
-.sim .hint { font-size: 14px; color: var(--muted); }
+/* Section heading */
+.sec { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; padding-block: 34px 14px; font-size: 22px; font-weight: 800; }
+.sec small { font-size: 14px; font-weight: 500; color: var(--muted); }
 
-.card { background: var(--surface); border: 2px solid var(--fg); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.grades { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 760px) { .grades { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.tile { text-align: right; cursor: pointer; color: inherit; align-items: stretch; }
-.tile .gn { font-family: var(--font-display); font-weight: 800; font-size: 64px; line-height: 1; color: var(--accent); direction: ltr; text-align: right; }
-.tile h3 { font-size: 21px; }
-.tile .meta { color: var(--muted); font-size: 14px; }
-.bar { width: 100%; height: 8px; background: var(--bg); border: 1.5px solid var(--fg); border-radius: 99px; overflow: hidden; }
-.bar > i { display: block; height: 100%; background: var(--accent); transition: width .3s; }
+/* Unit tiles */
+.units { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.unit {
+  position: relative; aspect-ratio: 1 / 1.04; max-width: 100%; border-radius: var(--r-md); overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end; padding: 14px 16px; text-align: right;
+  background: var(--tile); border: 1px solid rgba(255, 255, 255, .05); transition: transform .2s;
+}
+.unit .glyph { position: absolute; inset: 14% 0 auto; margin: auto; width: 54%; }
+.unit h3 { position: relative; font-size: 18px; font-weight: 700; line-height: 1.3; }
+.unit .chip { position: absolute; top: 12px; left: 12px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 9px; background: rgba(255, 255, 255, .92); color: var(--on-light); font-variant-numeric: tabular-nums; }
+.unit .bar { position: absolute; inset: auto 0 0; height: 3px; background: rgba(255, 255, 255, .12); }
+.unit .bar i { display: block; height: 100%; background: #fff; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { border: 2px solid var(--fg); background: var(--surface); border-radius: 999px; padding: 4px 16px; min-height: 42px; cursor: pointer; font-weight: 600; }
-.chip[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
-.search { width: 100%; min-height: 48px; border: 2px solid var(--fg); border-radius: 12px; background: var(--surface); padding: 8px 14px; }
-.chap { font-family: var(--font-display); font-weight: 700; font-size: 17px; color: var(--accent); margin-top: 8px; }
-.rows { display: flex; flex-direction: column; gap: 10px; }
-.row { display: flex; align-items: center; gap: 12px; width: 100%; text-align: right; cursor: pointer; background: var(--surface); border: 2px solid var(--fg); border-radius: 14px; padding: 12px 14px; }
-.row .txt { flex: 1; min-width: 0; }
-.row .t { font-weight: 600; }
-.row .m { font-size: 13px; color: var(--muted); }
-.dot { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--fg); display: grid; place-items: center; flex: none; color: var(--on-accent); background: var(--bg); }
-.dot.on { background: var(--good); border-color: var(--good); }
-.chev { color: var(--muted); flex: none; }
-.vtag { font-size: 12px; font-weight: 600; padding: 0 8px; border-radius: 999px; background: var(--mark); color: var(--fg); }
+.glyph { display: block; overflow: visible; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .55)) drop-shadow(0 0 16px var(--glow, transparent)); }
+.glyph .gb { fill: none; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+.glyph .gg { fill: none; stroke: rgba(255, 255, 255, .6); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; transform: translate(-1px, -1.5px); }
+.glyph .gg .f { fill: rgba(255, 255, 255, .22); }
 
-.backbar { display: flex; align-items: center; gap: 8px; padding-top: 8px; }
-.back { border: 2px solid var(--fg); background: var(--surface); border-radius: 10px; min-height: 42px; padding: 4px 14px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-.lesson-h { font-size: clamp(28px, 6vw, 40px); }
-.vid { width: 100%; aspect-ratio: 16 / 9; max-width: 100%; border-radius: 14px; background: var(--player); display: block; object-fit: contain; border: 2px solid var(--fg); }
-.vempty { aspect-ratio: 16 / 9; max-width: 100%; border-radius: 14px; background: var(--player); color: #D5DEF5; border: 2px solid var(--fg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center; padding: 16px; }
-.vadmin { border-style: dashed; }
-.vlab { font-weight: 500; font-size: 14px; }
-.vin, .vadmin input[type=file] { width: 100%; min-height: 44px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); padding: 8px 10px; }
-.vmsg { font-size: 14px; min-height: 1.4em; color: var(--muted); }
-.vmsg.bad { color: var(--bad); }
-.notes { margin: 0; padding-inline-start: 22px; display: flex; flex-direction: column; gap: 10px; }
-.notes li::marker { color: var(--vec); }
-.sec-t { font-family: var(--font-display); font-weight: 800; font-size: 20px; }
+/* Continue card */
+.cont { display: flex; align-items: center; gap: 14px; margin-top: 26px; padding: 14px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); text-align: right; width: 100%; }
+.cont .thumb { width: 64px; height: 64px; border-radius: 16px; display: grid; place-items: center; background: var(--tile); flex: none; }
+.cont .thumb .glyph { width: 40px; }
+.cont .txt { flex: 1; min-width: 0; }
+.cont .txt small { color: var(--muted); font-size: 13px; }
+.cont .txt b { display: block; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cont .go { width: 40px; height: 40px; border-radius: 50%; background: #fff; color: var(--on-light); display: grid; place-items: center; flex: none; }
 
-.qhead { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--muted); }
-.qtext { font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.5; }
-.opt { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; text-align: right; border: 2px solid var(--line); background: var(--surface); border-radius: 12px; padding: 13px 14px; min-height: 52px; cursor: pointer; }
-.opt .lab { font-size: 13px; font-weight: 600; white-space: nowrap; }
-.opt.right { border-color: var(--good); background: var(--good-bg); }
-.opt.right .lab { color: var(--good); }
-.opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
-.opt.wrong .lab { color: var(--bad); }
-.opt:disabled { cursor: default; }
-.explain { background: var(--tint); border-radius: 12px; padding: 14px; }
-.score, .big { font-family: var(--font-display); font-weight: 800; font-size: 56px; line-height: 1.1; color: var(--accent); }
-.prow { display: flex; flex-direction: column; gap: 6px; }
-.prow .line { display: flex; justify-content: space-between; gap: 10px; font-weight: 500; }
-.prow .line span:last-child { color: var(--muted); font-size: 14px; }
-.link { background: none; border: 0; color: var(--muted); text-decoration: underline; cursor: pointer; padding: 8px 0; align-self: flex-start; }
+/* Pushed pages */
+.nav { display: flex; align-items: center; justify-content: space-between; padding-block: 12px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+.circle { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: var(--glass); border: 1px solid var(--line); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+.hero {
+  position: relative; border-radius: var(--r-lg); overflow: hidden; padding: 24px 22px 22px; min-height: 250px;
+  display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; background: var(--tile);
+}
+.hero .glyph { position: absolute; top: 22px; left: 22px; width: 120px; }
+.hero small { color: rgba(255, 255, 255, .75); font-size: 14px; font-weight: 600; }
+.hero h1 { font-size: 30px; font-weight: 800; line-height: 1.2; position: relative; }
+.prog { display: flex; align-items: center; gap: 10px; margin-top: 10px; font-size: 13px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.prog .track { flex: 1; height: 6px; border-radius: 6px; background: rgba(255, 255, 255, .18); overflow: hidden; }
+.prog .track i { display: block; height: 100%; background: #fff; border-radius: 6px; }
+.row .n .glyph { width: 24px; }
 
-.sheet { background: var(--surface); border: 2px solid var(--fg); border-radius: 16px; overflow: hidden; }
-.sheet .cap { display: flex; justify-content: space-between; gap: 10px; padding: 12px 18px; border-bottom: 2px solid var(--fg); background: var(--tint); font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 500; }
-.sline { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 14px; padding: 16px 18px; border-bottom: 1px dashed var(--line); align-items: start; }
-.sline:last-child { border-bottom: 0; }
-.sym { width: 48px; height: 48px; border-radius: 12px; border: 2px solid var(--fg); background: var(--bg); display: grid; place-items: center; font-family: var(--font-display); font-weight: 800; font-size: 24px; color: var(--vec); direction: ltr; }
-.sline h3 { font-size: 19px; }
-.sline p { color: var(--muted); font-size: 16px; }
+.list { display: flex; flex-direction: column; background: var(--surface); border-radius: var(--r-md); border: 1px solid var(--line); overflow: hidden; }
+.row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; width: 100%; text-align: right; transition: transform .2s, background .2s; }
+.row + .row { border-top: 1px solid var(--line); }
+.row:hover { background: rgba(255, 255, 255, .025); }
+.row .n { width: 36px; height: 36px; border-radius: 12px; display: grid; place-items: center; background: var(--surface-2); font-weight: 700; font-size: 15px; font-variant-numeric: tabular-nums; flex: none; }
+.row .n.done { background: rgba(50, 209, 122, .16); color: var(--good); }
+.row .t { flex: 1; min-width: 0; }
+.row .t b { display: block; font-weight: 600; font-size: 16px; }
+.row .t small { color: var(--muted); font-size: 13px; }
+.row .end { color: var(--muted); display: flex; align-items: center; gap: 6px; font-size: 13px; flex: none; }
+.row .end.on { color: var(--accent); }
+.soon { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--surface-2); padding: 3px 9px; border-radius: 8px; }
 
-nav.tabs { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 2px solid var(--fg); padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px)); z-index: 5; }
-nav.tabs .in { display: flex; max-width: 720px; margin: 0 auto; }
-.tab { flex: 1; border: 0; background: none; color: var(--muted); display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 4px; min-height: 54px; font-size: 12px; font-weight: 500; cursor: pointer; border-radius: 10px; }
-.tab svg { width: 24px; height: 24px; }
-.tab[aria-current="page"] { color: var(--accent); font-weight: 600; }
-.vlist { display: flex; flex-direction: column; gap: 22px; }
-.vitem { display: flex; flex-direction: column; gap: 10px; }
-.vt { font-size: 19px; }
-@media (prefers-reduced-motion: reduce) { .btn, .bar > i { transition: none; } }
+/* Lesson */
+.player { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: var(--r-md); overflow: hidden; background: #000; border: 1px solid var(--line); }
+.player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.poster { position: absolute; inset: 0; display: grid; place-items: center; background: var(--tile); text-align: center; padding: 16px; }
+.poster .glyph { width: 84px; position: absolute; top: 16px; left: 16px; opacity: .9; }
+.poster .playbtn { width: 68px; height: 68px; border-radius: 50%; background: rgba(255, 255, 255, .95); color: var(--on-light); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); }
+.poster .playbtn .ico { width: 28px; height: 28px; fill: currentColor; stroke: none; transform: translateX(2px); }
+.poster .msg { display: grid; gap: 4px; justify-items: center; }
+.poster .msg b { font-size: 18px; }
+.poster .msg span { color: rgba(255, 255, 255, .75); font-size: 14px; }
+.lesson-h { padding-block: 20px 4px; display: grid; gap: 4px; }
+.lesson-h small { color: var(--muted); font-weight: 600; font-size: 14px; }
+.lesson-h h1 { font-size: 26px; font-weight: 800; line-height: 1.25; }
+.actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 52px; padding: 12px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); font-weight: 600; font-size: 15px; text-align: center; }
+.btn.primary { background: #fff; color: var(--on-light); border-color: #fff; }
+.btn.done { background: rgba(50, 209, 122, .14); color: var(--good); border-color: rgba(50, 209, 122, .3); }
+.btn.wide { grid-column: 1 / -1; }
+.btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
+.next { margin-top: 26px; }
+.label { color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .02em; padding-block: 0 10px; }
+
+/* Lab */
+.page-h { padding-block: 20px 6px; display: grid; gap: 6px; }
+.page-h h1 { font-size: 32px; font-weight: 800; }
+.page-h p { color: var(--muted); font-size: 16px; }
+.sims { display: grid; gap: 12px; margin-top: 18px; }
+.sim-card { position: relative; display: flex; align-items: flex-end; min-height: 150px; padding: 18px; border-radius: var(--r-md); overflow: hidden; background: var(--tile); text-align: right; width: 100%; transition: transform .2s; }
+.sim-card:active { transform: scale(.98); }
+.sim-card .glyph { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 92px; }
+.sim-card .t { position: relative; display: grid; gap: 3px; max-width: 62%; }
+.sim-card small { color: rgba(255, 255, 255, .75); font-size: 13px; font-weight: 600; }
+.sim-card b { font-size: 21px; }
+.sim-card span { color: rgba(255, 255, 255, .8); font-size: 14px; }
+
+.stage { border-radius: var(--r-md); overflow: hidden; background: #07080B; border: 1px solid var(--line); position: relative; }
+.stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; max-width: 100%; }
+.readout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.readout div { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; display: grid; gap: 2px; min-width: 0; }
+.readout small { color: var(--muted); font-size: 12px; font-weight: 600; }
+.readout b { font-size: 18px; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; white-space: nowrap; }
+.controls { display: grid; gap: 4px; margin-top: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px 16px; }
+.ctl { display: grid; gap: 6px; padding-block: 10px; }
+.ctl + .ctl { border-top: 1px solid var(--line); }
+.ctl label { display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; }
+.ctl label output { color: var(--accent); font-variant-numeric: tabular-nums; direction: ltr; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 28px; background: transparent; direction: ltr; }
+input[type="range"]::-webkit-slider-runnable-track { height: 6px; border-radius: 6px; background: linear-gradient(to right, var(--accent) var(--p, 50%), var(--surface-2) var(--p, 50%)); }
+input[type="range"]::-moz-range-track { height: 6px; border-radius: 6px; background: linear-gradient(to right, var(--accent) var(--p, 50%), var(--surface-2) var(--p, 50%)); }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 26px; height: 26px; margin-top: -10px; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .5); }
+input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .5); }
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border-radius: 12px; padding: 3px; }
+.seg button { padding: 7px 4px; border-radius: 9px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: #3A3D46; color: var(--fg); box-shadow: 0 1px 4px rgba(0, 0, 0, .4); }
+.law { margin-top: 12px; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-size: 15px; }
+.law code { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--fg); direction: ltr; unicode-bidi: isolate; font-size: 15px; }
+
+/* Notes */
+.unitgroup { margin-top: 18px; }
+
+/* Profile */
+.me-card { display: flex; align-items: center; gap: 16px; margin-top: 18px; padding: 18px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); }
+.avatar { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(145deg, #2F8CFF, #6A1FD1); font-size: 26px; font-weight: 800; flex: none; }
+.me-card .t { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.me-card input { width: 100%; background: transparent; border: 0; color: var(--fg); font: inherit; font-size: 20px; font-weight: 700; padding: 0; }
+.me-card input::placeholder { color: var(--muted); }
+.me-card small { color: var(--muted); font-size: 14px; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: grid; gap: 2px; }
+.stats b { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stats small { color: var(--muted); font-size: 13px; }
+.install { margin-top: 12px; padding: 16px; border-radius: var(--r-md); background: linear-gradient(135deg, #10203F, #0B1226); border: 1px solid rgba(47, 140, 255, .25); display: grid; gap: 6px; }
+.install b { font-size: 16px; }
+.install p { color: rgba(255, 255, 255, .78); font-size: 14px; }
+
+/* Tab bar */
+.tabbar {
+  position: fixed; z-index: 20; left: 50%; transform: translateX(-50%);
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  width: min(488px, calc(100% - 2 * max(16px, env(safe-area-inset-left, 0px))));
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 6px; direction: rtl;
+  border-radius: 30px; background: var(--glass); border: 1px solid var(--line);
+  -webkit-backdrop-filter: saturate(160%) blur(22px); backdrop-filter: saturate(160%) blur(22px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, .5);
+}
+.tab { display: grid; justify-items: center; gap: 2px; padding: 8px 4px 6px; border-radius: 24px; color: #A3A6B0; font-size: 11px; font-weight: 600; transition: background .25s, color .25s; }
+.tab .ico { width: 24px; height: 24px; }
+.tab[aria-current="page"] { background: #2A2D35; color: var(--accent); }
+
+/* Sheet */
+.scrim { position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, .55); animation: fade .25s; }
+.sheet {
+  position: fixed; z-index: 41; left: 50%; bottom: 0; transform: translateX(-50%);
+  width: min(520px, 100%); max-height: 86vh; overflow: auto; direction: rtl;
+  background: #17191F; border: 1px solid var(--line); border-bottom: 0; border-radius: 30px 30px 0 0;
+  padding: 10px max(20px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px));
+  animation: up .36s cubic-bezier(.2, .8, .2, 1);
+}
+.sheet .grab { width: 40px; height: 5px; border-radius: 5px; background: #3A3D46; margin: 0 auto 16px; }
+.sheet h2 { font-size: 24px; font-weight: 800; }
+.sheet > p { color: var(--muted); margin-top: 6px; }
+.opts { display: grid; gap: 10px; margin-top: 18px; }
+.opt { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: 18px; background: var(--surface-2); border: 1.5px solid transparent; text-align: right; width: 100%; }
+.opt[aria-pressed="true"] { border-color: var(--accent); background: #1A2232; }
+.opt .thumb { width: 52px; height: 52px; border-radius: 14px; display: grid; place-items: center; background: var(--tile); flex: none; }
+.opt .thumb .glyph { width: 34px; }
+.opt .t { flex: 1; display: grid; }
+.opt .t small { color: var(--muted); font-size: 13px; }
+.opt .tick { color: var(--accent); }
+.perks { display: grid; gap: 12px; margin-top: 18px; padding: 0; list-style: none; }
+.perks li { display: flex; gap: 12px; align-items: center; font-size: 16px; }
+.perks li .ico { color: var(--good); }
+.sheet .btn { margin-top: 20px; width: 100%; }
+@keyframes fade { from { opacity: 0; } }
+@keyframes up { from { transform: translate(-50%, 100%); } }
+
+.toast { position: fixed; z-index: 50; left: 50%; transform: translateX(-50%); bottom: calc(104px + env(safe-area-inset-bottom, 0px)); background: #fff; color: var(--on-light); font-weight: 600; font-size: 15px; padding: 10px 18px; border-radius: 999px; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); animation: fade .2s; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+@media (max-width: 360px) {
+  .promo h2 { font-size: 29px; }
+  .unit h3 { font-size: 16px; }
+  .mark { font-size: 16px; letter-spacing: .22em; }
+}
 </style>
-
-<div id="top"></div>
-<main class="wrap" id="view"></main>
-<nav class="tabs" aria-label="التنقل الرئيسي">
-  <div class="in">
-    <button class="tab" data-a="tab" data-v="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>الرئيسية</button>
-    <button class="tab" data-a="tab" data-v="subjects"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h12a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3z"/><path d="M8 9h7M8 13h5"/></svg>الدروس</button>
-    <button class="tab" data-a="tab" data-v="quiz"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>اختبار</button>
-    <button class="tab" data-a="tab" data-v="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg>تقدمي</button>
-  </div>
-</nav>
-
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs id="gdefs"></defs></svg>
+<div id="app"></div>
+<nav class="tabbar" id="tabbar" aria-label="الأقسام"></nav>
+<div id="layer"></div>
 <script>
-(function () {
-  document.documentElement.lang = 'ar';
-  document.documentElement.dir = 'rtl';
+/* =====================================================================
+   المحتوى — عدّل هنا فقط لإضافة الفيديوهات والمذكرات
+   - video: ضع رابط يوتيوب للدرس، مثال: "https://youtu.be/abc123XYZ"
+   - pdf:   ضع رابط ملف المذكرة (رابط مباشر أو رابط Google Drive)
+   - min:   مدة الفيديو بالدقائق (اختياري)
+   أي درس بدون رابط يظهر للطالب بعلامة «قريباً».
+   ===================================================================== */
+const GRADES = {
+  g10: {
+    name: 'الصف العاشر', short: 'العاشر', theme: 1,
+    units: [
+      { title: 'القياس والكميات الفيزيائية', glyph: 'ruler', theme: 0, pdf: '', lessons: [
+        { t: 'الكميات الأساسية والمشتقة', video: '', min: '' },
+        { t: 'النظام الدولي للوحدات', video: '', min: '' },
+        { t: 'الكميات القياسية والمتجهة', video: '', min: '' },
+      ]},
+      { title: 'الحركة في خط مستقيم', glyph: 'motion', theme: 1, pdf: '', sim: 'projectile', lessons: [
+        { t: 'المسافة والإزاحة', video: '', min: '' },
+        { t: 'السرعة والسرعة المتجهة', video: '', min: '' },
+        { t: 'العجلة', video: '', min: '' },
+        { t: 'معادلات الحركة بعجلة منتظمة', video: '', min: '' },
+        { t: 'السقوط الحر', video: '', min: '' },
+      ]},
+      { title: 'قوانين نيوتن', glyph: 'force', theme: 2, pdf: '', lessons: [
+        { t: 'القانون الأول والقصور الذاتي', video: '', min: '' },
+        { t: 'القانون الثاني', video: '', min: '' },
+        { t: 'القانون الثالث', video: '', min: '' },
+        { t: 'قوة الاحتكاك', video: '', min: '' },
+      ]},
+      { title: 'الشغل والطاقة', glyph: 'bolt', theme: 5, pdf: '', lessons: [
+        { t: 'الشغل', video: '', min: '' },
+        { t: 'طاقة الحركة', video: '', min: '' },
+        { t: 'طاقة الوضع', video: '', min: '' },
+        { t: 'حفظ الطاقة الميكانيكية', video: '', min: '' },
+        { t: 'القدرة', video: '', min: '' },
+      ]},
+      { title: 'الحرارة', glyph: 'thermo', theme: 3, pdf: '', lessons: [
+        { t: 'درجة الحرارة والطاقة الحرارية', video: '', min: '' },
+        { t: 'الحرارة النوعية', video: '', min: '' },
+        { t: 'انتقال الحرارة', video: '', min: '' },
+        { t: 'التمدد الحراري', video: '', min: '' },
+      ]},
+      { title: 'الضغط والموائع', glyph: 'drop', theme: 6, pdf: '', lessons: [
+        { t: 'الضغط', video: '', min: '' },
+        { t: 'ضغط السوائل', video: '', min: '' },
+        { t: 'قاعدة باسكال', video: '', min: '' },
+        { t: 'قاعدة أرخميدس', video: '', min: '' },
+      ]},
+    ],
+  },
+  g11: {
+    name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
+    units: [
+      { title: 'المتجهات والحركة في بعدين', glyph: 'vectors', theme: 1, pdf: '', sim: 'projectile', lessons: [
+        { t: 'جمع المتجهات وتحليلها', video: '', min: '' },
+        { t: 'حركة المقذوفات', video: '', min: '' },
+        { t: 'المدى وأقصى ارتفاع', video: '', min: '' },
+      ]},
+      { title: 'الحركة الدائرية والجاذبية', glyph: 'orbit', theme: 2, pdf: '', lessons: [
+        { t: 'الحركة الدائرية المنتظمة', video: '', min: '' },
+        { t: 'القوة المركزية', video: '', min: '' },
+        { t: 'قانون الجذب العام', video: '', min: '' },
+        { t: 'حركة الأقمار الصناعية', video: '', min: '' },
+      ]},
+      { title: 'الزخم والتصادمات', glyph: 'collide', theme: 3, pdf: '', lessons: [
+        { t: 'الزخم الخطي', video: '', min: '' },
+        { t: 'الدفع', video: '', min: '' },
+        { t: 'قانون حفظ الزخم', video: '', min: '' },
+        { t: 'التصادمات المرنة وغير المرنة', video: '', min: '' },
+      ]},
+      { title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', sim: 'pendulum', lessons: [
+        { t: 'الحركة التوافقية البسيطة', video: '', min: '' },
+        { t: 'البندول البسيط', video: '', min: '' },
+        { t: 'النابض المهتز', video: '', min: '' },
+      ]},
+      { title: 'الموجات والصوت', glyph: 'wave', theme: 6, pdf: '', sim: 'wave', lessons: [
+        { t: 'خصائص الموجات', video: '', min: '' },
+        { t: 'انعكاس الموجات وانكسارها', video: '', min: '' },
+        { t: 'الصوت', video: '', min: '' },
+        { t: 'ظاهرة دوبلر', video: '', min: '' },
+      ]},
+      { title: 'الضوء', glyph: 'prism', theme: 7, pdf: '', lessons: [
+        { t: 'طبيعة الضوء', video: '', min: '' },
+        { t: 'الانعكاس والمرايا', video: '', min: '' },
+        { t: 'الانكسار والعدسات', video: '', min: '' },
+        { t: 'تشتت الضوء', video: '', min: '' },
+      ]},
+    ],
+  },
+  g12: {
+    name: 'الثاني عشر علمي', short: 'الثاني عشر', theme: 7,
+    units: [
+      { title: 'الكهرباء الساكنة', glyph: 'charges', theme: 2, pdf: '', lessons: [
+        { t: 'الشحنة وقانون كولوم', video: '', min: '' },
+        { t: 'المجال الكهربائي', video: '', min: '' },
+        { t: 'الجهد الكهربائي', video: '', min: '' },
+        { t: 'المكثفات', video: '', min: '' },
+      ]},
+      { title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', sim: 'ohm', lessons: [
+        { t: 'شدة التيار', video: '', min: '' },
+        { t: 'قانون أوم والمقاومة', video: '', min: '' },
+        { t: 'توصيل المقاومات', video: '', min: '' },
+        { t: 'القدرة الكهربائية', video: '', min: '' },
+        { t: 'قانونا كيرشوف', video: '', min: '' },
+      ]},
+      { title: 'المغناطيسية', glyph: 'magnet', theme: 3, pdf: '', lessons: [
+        { t: 'المجال المغناطيسي', video: '', min: '' },
+        { t: 'القوة على شحنة متحركة', video: '', min: '' },
+        { t: 'القوة على سلك يحمل تياراً', video: '', min: '' },
+        { t: 'المجال حول سلك وملف', video: '', min: '' },
+      ]},
+      { title: 'الحث الكهرومغناطيسي', glyph: 'coil', theme: 1, pdf: '', lessons: [
+        { t: 'قانون فاراداي', video: '', min: '' },
+        { t: 'قانون لنز', video: '', min: '' },
+        { t: 'المولد الكهربائي', video: '', min: '' },
+        { t: 'المحول الكهربائي', video: '', min: '' },
+      ]},
+      { title: 'الفيزياء الحديثة', glyph: 'atom', theme: 6, pdf: '', lessons: [
+        { t: 'الظاهرة الكهروضوئية', video: '', min: '' },
+        { t: 'نموذج بور للذرة', video: '', min: '' },
+        { t: 'ثنائية الموجة والجسيم', video: '', min: '' },
+      ]},
+      { title: 'الفيزياء النووية', glyph: 'nucleus', theme: 4, pdf: '', lessons: [
+        { t: 'تركيب النواة', video: '', min: '' },
+        { t: 'النشاط الإشعاعي', video: '', min: '' },
+        { t: 'عمر النصف', video: '', min: '' },
+        { t: 'الانشطار والاندماج النووي', video: '', min: '' },
+      ]},
+    ],
+  },
+};
+const GRADE_ORDER = ['g10', 'g11', 'g12'];
 
-  var L = function (s) { return s.replace(/\{\{(.+?)\}\}/g, '<bdi dir="ltr" class="f">$1</bdi>'); };
-  var $ = function (id) { return document.getElementById(id); };
-  var reduce = false;
-  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
-  var G0 = 9.8;
-  var css = function (n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); };
-  var clamp = function (x, a, b) { return Math.min(b, Math.max(a, x)); };
-  function nice(x) {
-    var p = Math.pow(10, Math.floor(Math.log(x) / Math.LN10)), f = x / p;
-    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+const SIMS = {
+  projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 1, tag: 'العاشر · الحادي عشر' },
+  pendulum:   { title: 'البندول البسيط', sub: 'قِس الزمن الدوري على الأرض والقمر', glyph: 'pendulum', theme: 0, tag: 'الحادي عشر' },
+  wave:       { title: 'الموجات المستعرضة', sub: 'السعة والتردد والطول الموجي', glyph: 'wave', theme: 6, tag: 'الحادي عشر' },
+  ohm:        { title: 'قانون أوم', sub: 'الجهد والمقاومة وشدة التيار', glyph: 'battery', theme: 5, tag: 'الثاني عشر' },
+};
+
+/* ---------------- Visual system ---------------- */
+const THEMES = [
+  { a: '#0F7A66', b: '#041A17', c1: '#C8FFF2', c2: '#2BD4B0' },
+  { a: '#1546D6', b: '#050F2E', c1: '#D9E6FF', c2: '#4C86FF' },
+  { a: '#6A1FD1', b: '#10052A', c1: '#F0E3FF', c2: '#A866FF' },
+  { a: '#B0153E', b: '#22040C', c1: '#FFDCE5', c2: '#FF4D7A' },
+  { a: '#0E7A3E', b: '#03170C', c1: '#D8FFE7', c2: '#34D17A' },
+  { a: '#A2560B', b: '#1E0F03', c1: '#FFEBCF', c2: '#FFA53A' },
+  { a: '#0B6C9C', b: '#031522', c1: '#D6F5FF', c2: '#33C2FF' },
+  { a: '#8E1A9E', b: '#1A041E', c1: '#FCDDFF', c2: '#E15CF5' },
+];
+const tileBg = i => { const t = THEMES[i]; return `radial-gradient(120% 90% at 75% 115%, ${t.a} 0%, transparent 68%), radial-gradient(80% 70% at 0% 0%, rgba(0,0,0,.55), transparent 70%), linear-gradient(160deg, ${t.b}, ${t.b})`; };
+const tileStyle = i => `--tile:${tileBg(i)};--glow:${THEMES[i].c2}55`;
+
+document.getElementById('gdefs').innerHTML = THEMES.map((t, i) =>
+  `<linearGradient id="gl${i}" gradientUnits="userSpaceOnUse" x1="10" y1="0" x2="90" y2="100"><stop offset="0" stop-color="${t.c1}"/><stop offset=".55" stop-color="${t.c2}"/><stop offset="1" stop-color="${t.a}"/></linearGradient>`).join('');
+
+const GLYPHS = {
+  ruler: '<rect x="12" y="36" width="76" height="28" rx="6"/><path d="M25 36v12M37 36v8M50 36v14M63 36v8M75 36v12"/>',
+  motion: '<circle class="f" cx="68" cy="50" r="13"/><path d="M12 38h32M18 50h28M24 62h22"/>',
+  force: '<rect x="36" y="36" width="28" height="28" rx="6"/><path d="M6 50h22M21 42l8 8-8 8M94 50H72M79 42l-8 8 8 8"/>',
+  bolt: '<path d="M57 8 25 56h23l-7 36 34-50H52z"/>',
+  thermo: '<path d="M42 60V22a8 8 0 0 1 16 0v38"/><circle cx="50" cy="72" r="15"/><path d="M50 34v38M66 28h8M66 40h8M66 52h8"/>',
+  drop: '<path d="M50 12S25 44 25 61a25 25 0 0 0 50 0C75 44 50 12 50 12z"/><path d="M38 62a12 12 0 0 0 12 12"/>',
+  vectors: '<path d="M16 84 74 26M60 24l15 1 1 15M16 84h62M70 76l8 8-8 8M74 26v58" /><path d="M74 30v54" stroke-dasharray="2 9"/>',
+  orbit: '<circle cx="50" cy="50" r="31" stroke-dasharray="3 11"/><circle class="f" cx="50" cy="50" r="7"/><circle class="f" cx="81" cy="50" r="9"/><path d="M81 37V16M73 24l8-8 8 8"/>',
+  collide: '<circle class="f" cx="34" cy="56" r="17"/><circle class="f" cx="75" cy="56" r="12"/><path d="M6 28h26M25 21l7 7-7 7M56 34l4-8M66 32l8-4"/>',
+  pendulum: '<path d="M16 12h68M50 12l20 54"/><circle class="f" cx="72" cy="73" r="12"/><path d="M28 76c6 7 12 11 20 13" stroke-dasharray="2 8"/>',
+  wave: '<path d="M6 50c10-30 20-30 29 0s19 30 29 0 19-30 30 0"/>',
+  prism: '<path d="M50 16 82 76H18z"/><path d="M4 60l34-9M63 46l33-14M64 53l32 3M62 60l30 18"/>',
+  charges: '<circle cx="28" cy="50" r="19"/><circle cx="73" cy="50" r="19"/><path d="M19 50h18M28 41v18M64 50h18"/>',
+  battery: '<rect x="10" y="32" width="68" height="36" rx="8"/><path d="M78 43h9v14h-9M26 50h14M33 43v14M54 50h12"/>',
+  magnet: '<path d="M24 16v38a26 26 0 0 0 52 0V16"/><path d="M24 30h14M62 30h14"/>',
+  coil: '<ellipse cx="32" cy="46" rx="8" ry="24"/><ellipse cx="50" cy="46" rx="8" ry="24"/><ellipse cx="68" cy="46" rx="8" ry="24"/><path d="M10 84h80M78 76l10 8-10 8"/>',
+  atom: '<ellipse cx="50" cy="50" rx="40" ry="15"/><ellipse cx="50" cy="50" rx="40" ry="15" transform="rotate(60 50 50)"/><ellipse cx="50" cy="50" rx="40" ry="15" transform="rotate(-60 50 50)"/><circle class="f" cx="50" cy="50" r="7"/>',
+  nucleus: '<circle class="f" cx="40" cy="45" r="13"/><circle class="f" cx="61" cy="45" r="13"/><circle class="f" cx="50" cy="63" r="13"/><path d="M12 16l11 11M88 16 77 27M50 96V86"/>',
+  doc: '<path d="M26 10h32l18 18v62H26z"/><path d="M58 10v18h18M37 50h28M37 62h28M37 74h16"/>',
+  flask: '<path d="M38 10h24M44 10v28L21 80a6 6 0 0 0 5 9h48a6 6 0 0 0 5-9L56 38V10"/><path d="M31 64h38"/>',
+  box: '<path d="M50 10 86 29v42L50 90 14 71V29z"/><path d="M14 29l36 19 36-19M50 48v42"/>',
+};
+function glyph(name, theme, cls = '') {
+  const p = GLYPHS[name] || GLYPHS.atom;
+  return `<svg class="glyph ${cls}" viewBox="0 0 100 100" aria-hidden="true" style="--glow:${THEMES[theme].c2}66"><g class="gb" stroke="url(#gl${theme})">${p.replace(/class="f"/g, `class="f" fill="url(#gl${theme})"`)}</g><g class="gg">${p}</g></svg>`;
+}
+
+const ICONS = {
+  home: '<path d="M4 10.5 12 4l8 6.5V19a1.5 1.5 0 0 1-1.5 1.5h-3.5V15h-6v5.5H5.5A1.5 1.5 0 0 1 4 19z"/>',
+  lab: '<path d="M9 3h6M10 3v6l-5.5 9.5A1.6 1.6 0 0 0 5.9 21h12.2a1.6 1.6 0 0 0 1.4-2.5L14 9V3M7.5 15h9"/>',
+  notes: '<path d="M7 3h7l5 5v11.5A1.5 1.5 0 0 1 17.5 21h-10A1.5 1.5 0 0 1 6 19.5v-15A1.5 1.5 0 0 1 7.5 3zM14 3v5h5M9.5 13h5M9.5 16.5h5"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/>',
+  back: '<path d="M9 5l7 7-7 7"/>',
+  chev: '<path d="M15 6l-6 6 6 6"/>',
+  play: '<path d="M8 5.5v13a1 1 0 0 0 1.5.9l10.4-6.5a1 1 0 0 0 0-1.8L9.5 4.6A1 1 0 0 0 8 5.5z"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  checkc: '<circle cx="12" cy="12" r="9"/><path d="M8 12.3l2.8 2.8L16.2 9.6"/>',
+  down: '<path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/>',
+  ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>',
+  share: '<path d="M12 3v12M8 7l4-4 4 4M6 11H5.5A1.5 1.5 0 0 0 4 12.5v7A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H18"/>',
+  replay: '<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>',
+};
+const icon = (n, extra = '') => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" ${extra}>${ICONS[n]}</svg>`;
+
+/* ---------------- State ---------------- */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('pt.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('pt.' + k, JSON.stringify(v)); } catch (e) {} },
+};
+const S = {
+  grade: store.get('grade', 'g10'),
+  watched: store.get('watched', {}),
+  last: store.get('last', null),
+  name: store.get('name', ''),
+  tab: 'home',
+  stack: [],
+};
+if (!GRADES[S.grade]) S.grade = 'g10';
+const G = () => GRADES[S.grade];
+const lid = (g, u, i) => `${g}.${u}.${i}`;
+const ytId = url => { const m = String(url || '').match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/); return m ? m[1] : ''; };
+const CAN_EMBED = !/claude|anthropic/i.test(location.hostname);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const ar = n => String(n);
+const lessonWord = n => n === 1 ? 'درس واحد' : n === 2 ? 'درسان' : (n >= 3 && n <= 10 ? `${n} دروس` : `${n} درساً`);
+function unitStats(g, u) {
+  const L = GRADES[g].units[u].lessons;
+  const done = L.filter((_, i) => S.watched[lid(g, u, i)]).length;
+  return { done, total: L.length, pct: L.length ? Math.round(done / L.length * 100) : 0 };
+}
+const totalWatched = () => Object.keys(S.watched).filter(k => S.watched[k]).length;
+
+/* ---------------- Views ---------------- */
+function vHome() {
+  const g = G();
+  const lessons = g.units.reduce((n, u) => n + u.lessons.length, 0);
+  let cont = '';
+  if (S.last && GRADES[S.last.g] && S.last.g === S.grade) {
+    const u = GRADES[S.last.g].units[S.last.u], l = u && u.lessons[S.last.i];
+    if (l) cont = `<button class="cont" data-go="lesson:${S.last.u}:${S.last.i}">
+      <span class="thumb" style="${tileStyle(u.theme)}">${glyph(u.glyph, u.theme)}</span>
+      <span class="txt"><small>تابع من حيث توقفت · ${esc(u.title)}</small><b>${esc(l.t)}</b></span>
+      <span class="go">${icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px;transform:translateX(1px)"')}</span></button>`;
   }
-  function fmtNum(x) {
-    if (Math.abs(x) < 0.05) return '0.0';
-    return Math.abs(x) >= 100 ? x.toFixed(0) : x.toFixed(1);
-  }
-  function tick(x) { return Math.abs(x - Math.round(x)) < 1e-9 ? String(Math.round(x)) : x.toFixed(1); }
-  function arrow(ctx, x0, y0, x1, y1, color, lw) {
-    var a = Math.atan2(y1 - y0, x1 - x0), hd = 8 + lw;
-    ctx.setLineDash([]); ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw; ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(x1, y1);
-    ctx.lineTo(x1 - hd * Math.cos(a - 0.45), y1 - hd * Math.sin(a - 0.45));
-    ctx.lineTo(x1 - hd * Math.cos(a + 0.45), y1 - hd * Math.sin(a + 0.45));
-    ctx.closePath(); ctx.fill();
-  }
-  var MONO = 'IBM Plex Mono, monospace';
+  return `<div class="view">
+    <header class="top">
+      <span class="mark" aria-label="Physics Tube">PHYSICS <b>TUBE</b></span>
+      <span class="pill">
+        <button class="stat" data-tab="profile" aria-label="الدروس المكتملة">${icon('checkc')}<span>${ar(totalWatched())}</span></button>
+        <button class="me" data-tab="profile" aria-label="حسابي">${icon('user')}</button>
+      </span>
+    </header>
+    <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
+    <div class="promos" aria-label="العروض">
+      <button class="promo" data-act="plan" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
+        <h2>باقة ${esc(g.short)}</h2>
+        <p>كل دروس الفيزياء لصفك في مكان واحد</p>
+        <span class="badge">مجانية حالياً</span>
+        <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
+        <span class="foot">${ar(g.units.length)} وحدات · ${ar(lessons)} درساً</span>
+      </button>
+      <button class="promo" data-tab="notes" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[5].a} 0%, transparent 70%), linear-gradient(170deg, #160A02, ${THEMES[5].b})">
+        <h2>المذكرات</h2>
+        <p>ملخص PDF لكل وحدة، جاهز للمراجعة قبل الاختبار</p>
+        <span class="badge">تحميل مجاني</span>
+        <svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('doc', 5)}</g></svg>
+        <span class="foot">لكل الصفوف</span>
+      </button>
+      <button class="promo" data-tab="lab" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[0].a} 0%, transparent 70%), linear-gradient(170deg, #021310, ${THEMES[0].b})">
+        <h2>المختبر</h2>
+        <p>جرّب القوانين بنفسك وشاهد النتيجة لحظياً</p>
+        <span class="badge">${ar(Object.keys(SIMS).length)} تجارب</span>
+        <svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('flask', 0)}</g></svg>
+        <span class="foot">يعمل بدون إنترنت</span>
+      </button>
+    </div>
+    ${cont}
+    <h2 class="sec">الوحدات <small>${ar(g.units.length)} وحدات · ${ar(lessons)} درساً</small></h2>
+    <div class="units">${g.units.map((u, i) => {
+      const s = unitStats(S.grade, i);
+      return `<button class="unit" data-go="unit:${i}" style="${tileStyle(u.theme)}">
+        <span class="chip">${lessonWord(u.lessons.length)}</span>
+        ${glyph(u.glyph, u.theme)}
+        <h3>${esc(u.title)}</h3>
+        ${s.done ? `<span class="bar"><i style="width:${s.pct}%"></i></span>` : ''}
+      </button>`;
+    }).join('')}</div>
+  </div>`;
+}
+function glyphInner(name, theme) {
+  const p = GLYPHS[name];
+  return `<g class="glyph" style="--glow:${THEMES[theme].c2}66"><g class="gb" stroke="url(#gl${theme})" fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">${p.replace(/class="f"/g, `class="f" fill="url(#gl${theme})"`)}</g><g class="gg">${p}</g></g>`;
+}
+function packArt(theme) {
+  return `<g transform="translate(30 0) scale(1.6)">${glyphInner('box', theme)}</g>
+    <g transform="translate(2 92) scale(.6)">${glyphInner('atom', 6)}</g>
+    <g transform="translate(142 104) scale(.5)">${glyphInner('wave', 0)}</g>`;
+}
 
-  /* ---------- interactive simulations ---------- */
-  var SIMS = {
-    proj: {
-      title: 'جرّب بنفسك: المقذوفات', tag: 'g = 9.8 m/s²', aria: 'رسم بياني لمسار كرة مقذوفة', mode: 'once', go: 'أطلق الكرة', aspect: '2 / 1',
-      hint: 'جرّب {{45°}} وجرّب {{60°}}: أي زاوية تعطيك أبعد مدى؟',
-      controls: [
-        { id: 'ang', label: 'زاوية الإطلاق', min: 5, max: 85, step: 1, value: 45, unit: '°' },
-        { id: 'spd', label: 'السرعة الابتدائية', min: 5, max: 40, step: 1, value: 24, unit: ' m/s' }
-      ],
-      calc: function (v) {
-        var a = v.ang * Math.PI / 180;
-        return { a: a, v: v.spd, R: v.spd * v.spd * Math.sin(2 * a) / G0, H: Math.pow(v.spd * Math.sin(a), 2) / (2 * G0), T: 2 * v.spd * Math.sin(a) / G0 };
-      },
-      read: function (c) { return [['المدى', fmtNum(c.R) + ' m'], ['أقصى ارتفاع', fmtNum(c.H) + ' m'], ['زمن الطيران', c.T.toFixed(1) + ' s']]; },
-      dur: function (c) { return clamp(c.T * 550, 1200, 3400); },
-      draw: function (g, p, f) {
-        var ctx = g.ctx, w = g.w, h = g.h, col = g.col, i, j, k, t;
-        var ml = 40, mr = 14, mt = 14, mb = 28, pw = w - ml - mr, ph = h - mt - mb;
-        var W = nice(Math.max(p.R / 0.86, p.H / 0.36, 5));
-        var s = Math.min(pw / W, ph / (W / 2)), ox = ml, oy = h - mb, step = W / 5;
-        var X = function (x) { return ox + x * s; }, Y = function (y) { return oy - y * s; };
-        ctx.lineWidth = 1; ctx.strokeStyle = col.grid; ctx.fillStyle = col.muted; ctx.font = '11px ' + MONO;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-        for (i = 0; i <= 5; i++) { var gx = X(i * step); ctx.beginPath(); ctx.moveTo(gx, oy); ctx.lineTo(gx, mt); ctx.stroke(); ctx.fillText(tick(i * step), gx, oy + 6); }
-        ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-        var rows = Math.floor((oy - mt) / (step * s));
-        for (j = 0; j <= rows; j++) { var gy = Y(j * step); ctx.beginPath(); ctx.moveTo(ox, gy); ctx.lineTo(w - mr, gy); ctx.stroke(); ctx.fillText(tick(j * step), ox - 6, gy); }
-        ctx.strokeStyle = col.ink; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(ox, mt); ctx.lineTo(ox, oy); ctx.lineTo(w - mr, oy); ctx.stroke();
-        var L0 = Math.min(ph * 0.55, 24 + p.v * 1.9), vx = Math.cos(p.a) * L0, vy = Math.sin(p.a) * L0;
-        ctx.setLineDash([3, 4]); ctx.lineWidth = 1.5; ctx.strokeStyle = col.muted;
-        ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + vx, oy); ctx.lineTo(ox + vx, oy - vy); ctx.stroke();
-        arrow(ctx, ox, oy, ox + vx, oy - vy, col.vec, 2.5);
-        ctx.fillStyle = col.vec; ctx.font = '600 12px ' + MONO; ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
-        ctx.fillText('v₀', ox + vx + 6, oy - vy - 2);
-        var N = 80;
-        ctx.setLineDash([5, 5]); ctx.lineWidth = 2; ctx.strokeStyle = col.accent; ctx.beginPath();
-        for (k = 0; k <= N; k++) { t = p.T * k / N; var px = X(p.v * Math.cos(p.a) * t), py = Y(p.v * Math.sin(p.a) * t - 0.5 * G0 * t * t); if (k === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py); }
-        ctx.stroke(); ctx.setLineDash([]);
-        var tt = p.T * f, M = Math.max(2, Math.round(N * f));
-        ctx.lineWidth = 3.5; ctx.strokeStyle = col.accent; ctx.beginPath();
-        for (k = 0; k <= M; k++) { t = tt * k / M; var qx = X(p.v * Math.cos(p.a) * t), qy = Y(p.v * Math.sin(p.a) * t - 0.5 * G0 * t * t); if (k === 0) ctx.moveTo(qx, qy); else ctx.lineTo(qx, qy); }
-        ctx.stroke();
-        var bx = X(p.v * Math.cos(p.a) * tt), by = Y(Math.max(0, p.v * Math.sin(p.a) * tt - 0.5 * G0 * tt * tt));
-        ctx.fillStyle = col.vec; ctx.strokeStyle = col.ink; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(bx, by, 7, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-        if (f >= 1) {
-          ctx.fillStyle = col.ink; ctx.font = '600 12px ' + MONO; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
-          ctx.fillText('R = ' + fmtNum(p.R) + ' m', clamp(X(p.R), ox + 28, w - mr - 28), oy - 12);
-        }
-      }
-    },
+function navBar(title = '') {
+  return `<div class="nav"><button class="circle" data-act="back" aria-label="رجوع">${icon('back')}</button>${title}<span style="width:42px"></span></div>`;
+}
 
-    fall: {
-      title: 'جرّب بنفسك: السقوط الحر', tag: '', aria: 'رسم لكرة تسقط سقوطاً حراً مع مواضعها كل خُمس زمن السقوط', mode: 'once', go: 'أسقط الكرة', aspect: '16 / 11',
-      hint: 'الدوائر الباهتة تُسجَّل كل خُمس زمن السقوط. لاحظ كيف تكبر المسافة بينها: هذا هو التسارع. جرّب القمر وشوف الفرق.',
-      controls: [
-        { id: 'h', label: 'ارتفاع الإسقاط', min: 5, max: 100, step: 5, value: 45, unit: ' m' },
-        { id: 'g', type: 'select', label: 'المكان', value: '9.8', options: [['9.8', 'الأرض'], ['3.7', 'المريخ'], ['1.6', 'القمر']] }
-      ],
-      calc: function (v) { var g = parseFloat(v.g), t = Math.sqrt(2 * v.h / g); return { h: v.h, g: g, t: t, vf: g * t }; },
-      read: function (c) { return [['زمن السقوط', c.t.toFixed(1) + ' s'], ['السرعة قبل الأرض', fmtNum(c.vf) + ' m/s'], ['التسارع g', c.g + ' m/s²']]; },
-      dur: function (c) { return clamp(c.t * 600, 1500, 4200); },
-      draw: function (g, c, f) {
-        var ctx = g.ctx, w = g.w, h = g.h, col = g.col, i, k;
-        var ml = 46, mr = 14, mt = 16, mb = 24, H = h - mt - mb, cx = ml + (w - ml - mr) / 2;
-        var Y = function (hh) { return mt + (1 - hh / c.h) * H; };
-        ctx.lineWidth = 1; ctx.strokeStyle = col.grid; ctx.fillStyle = col.muted; ctx.font = '11px ' + MONO; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
-        for (i = 0; i <= 5; i++) { var hh = c.h * i / 5, y = Y(hh); ctx.beginPath(); ctx.moveTo(ml, y); ctx.lineTo(w - mr, y); ctx.stroke(); ctx.fillText(fmtNum(hh), ml - 6, y); }
-        ctx.strokeStyle = col.ink; ctx.lineWidth = 2.5;
-        ctx.beginPath(); ctx.moveTo(ml, mt); ctx.lineTo(ml, Y(0)); ctx.lineTo(w - mr, Y(0)); ctx.stroke();
-        ctx.lineWidth = 1.5; ctx.strokeStyle = col.accent; ctx.globalAlpha = 0.6;
-        for (k = 0; k <= 5; k++) {
-          var fk = k / 5; if (fk > f + 1e-9) break;
-          ctx.beginPath(); ctx.arc(cx, Y(c.h - c.h * fk * fk), 7, 0, Math.PI * 2); ctx.stroke();
-        }
-        ctx.globalAlpha = 1;
-        var hb = Math.max(0, c.h - c.h * f * f), yb = Y(hb);
-        if (f > 0.02) {
-          arrow(ctx, cx + 20, yb, cx + 20, yb + 8 + 44 * f, col.vec, 2.5);
-          ctx.fillStyle = col.vec; ctx.font = '600 12px ' + MONO; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-          ctx.fillText('v', cx + 28, yb + 4 + 22 * f);
-        }
-        ctx.fillStyle = col.vec; ctx.strokeStyle = col.ink; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(cx, yb, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      }
-    },
+function vUnit(u) {
+  const unit = G().units[u], s = unitStats(S.grade, u);
+  const sim = unit.sim && SIMS[unit.sim];
+  return `<div class="view push">
+    ${navBar()}
+    <section class="hero" style="${tileStyle(unit.theme)}">
+      ${glyph(unit.glyph, unit.theme)}
+      <small>${esc(G().name)} · الوحدة ${ar(u + 1)}</small>
+      <h1>${esc(unit.title)}</h1>
+      <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
+    </section>
+    <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
+    <div class="list">${unit.lessons.map((l, i) => {
+      const done = S.watched[lid(S.grade, u, i)], has = ytId(l.video);
+      return `<button class="row" data-go="lesson:${u}:${i}">
+        <span class="n ${done ? 'done' : ''}">${done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : ar(i + 1)}</span>
+        <span class="t"><b>${esc(l.t)}</b><small>${has ? (l.min ? `${ar(l.min)} دقيقة` : 'فيديو شرح') : 'الفيديو قيد التجهيز'}</small></span>
+        <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : '<span class="soon">قريباً</span>'}</span>
+      </button>`;
+    }).join('')}</div>
+    <h2 class="sec">مع هذه الوحدة</h2>
+    <div class="list">
+      ${unit.pdf ? `<a class="row" href="${esc(unit.pdf)}" target="_blank" rel="noopener">` : '<div class="row">'}
+        <span class="n">${icon('notes', 'style="width:20px;height:20px"')}</span>
+        <span class="t"><b>مذكرة الوحدة</b><small>ملخص PDF</small></span>
+        <span class="end">${unit.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>
+      ${unit.pdf ? '</a>' : '</div>'}
+      ${sim ? `<button class="row" data-go="sim:${unit.sim}">
+        <span class="n">${icon('lab', 'style="width:20px;height:20px"')}</span>
+        <span class="t"><b>${esc(sim.title)}</b><small>تجربة تفاعلية في المختبر</small></span>
+        <span class="end">${icon('chev')}</span></button>` : ''}
+    </div>
+  </div>`;
+}
 
-    circ: {
-      title: 'جرّب بنفسك: الحركة الدائرية', tag: 'a = v² ÷ r', aria: 'رسم لجسم يتحرك في دائرة مع سهم السرعة وسهم القوة المركزية', mode: 'loop', aspect: '16 / 11',
-      hint: 'السهم البرتقالي سرعة الجسم ويماس الدائرة، والسهم الأزرق القوة المركزية وتتجه دائماً نحو المركز. طول السهمين تقريبي.',
-      controls: [
-        { id: 'r', label: 'نصف القطر', min: 0.5, max: 5, step: 0.5, value: 2, unit: ' m' },
-        { id: 'T', label: 'الزمن الدوري', min: 0.5, max: 5, step: 0.5, value: 2, unit: ' s' },
-        { id: 'm', label: 'الكتلة', min: 1, max: 10, step: 1, value: 2, unit: ' kg' }
-      ],
-      calc: function (v) { var vel = 2 * Math.PI * v.r / v.T, a = vel * vel / v.r; return { r: v.r, T: v.T, m: v.m, v: vel, a: a, F: v.m * a }; },
-      read: function (c) { return [['السرعة المماسية', fmtNum(c.v) + ' m/s'], ['التسارع المركزي', fmtNum(c.a) + ' m/s²'], ['القوة المركزية', fmtNum(c.F) + ' N']]; },
-      draw: function (g, c, t) {
-        var ctx = g.ctx, w = g.w, h = g.h, col = g.col;
-        var cx = w / 2, cy = h / 2, maxR = Math.max(40, Math.min(w, h) / 2 - 62);
-        var R = 22 + (c.r / 5) * (maxR - 22), th = (t / c.T) * 2 * Math.PI;
-        var bx = cx + R * Math.cos(th), by = cy - R * Math.sin(th);
-        ctx.setLineDash([5, 5]); ctx.lineWidth = 1.5; ctx.strokeStyle = col.muted;
-        ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-        ctx.lineWidth = 1.5; ctx.strokeStyle = col.grid; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(bx, by); ctx.stroke();
-        ctx.fillStyle = col.ink; ctx.beginPath(); ctx.arc(cx, cy, 3, 0, Math.PI * 2); ctx.fill();
-        var Lv = 12 + 36 * Math.min(1, c.v / 63), Lf = 12 + 36 * Math.min(1, Math.log(1 + c.F) / Math.log(10) / 3.6);
-        var tx = -Math.sin(th), ty = -Math.cos(th), fx = -Math.cos(th), fy = Math.sin(th);
-        arrow(ctx, bx, by, bx + tx * Lv, by + ty * Lv, col.vec, 3);
-        arrow(ctx, bx, by, bx + fx * Lf, by + fy * Lf, col.accent, 3);
-        ctx.font = '600 12px ' + MONO; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillStyle = col.vec; ctx.fillText('v', bx + tx * (Lv + 12), by + ty * (Lv + 12));
-        ctx.fillStyle = col.accent; ctx.fillText('F', bx + fx * (Lf + 12), by + fy * (Lf + 12));
-        ctx.fillStyle = col.vec; ctx.strokeStyle = col.ink; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.arc(bx, by, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      }
-    },
+function vLesson(u, i) {
+  const unit = G().units[u], l = unit.lessons[i], id = ytId(l.video), key = lid(S.grade, u, i), done = !!S.watched[key];
+  const nx = unit.lessons[i + 1] ? { u, i: i + 1 } : (G().units[u + 1] ? { u: u + 1, i: 0 } : null);
+  let player;
+  if (id && CAN_EMBED) player = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&modestbranding=1" title="${esc(l.t)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+  else if (id) player = `<a class="poster" href="https://youtu.be/${id}" target="_blank" rel="noopener" style="${tileStyle(unit.theme)}">${glyph(unit.glyph, unit.theme)}<span class="playbtn">${icon('play')}</span></a>`;
+  else player = `<div class="poster" style="${tileStyle(unit.theme)}">${glyph(unit.glyph, unit.theme)}<span class="msg"><b>الفيديو قيد التجهيز</b><span>سيظهر شرح هذا الدرس هنا قريباً</span></span></div>`;
+  const sim = unit.sim && SIMS[unit.sim];
+  return `<div class="view push">
+    ${navBar()}
+    <div class="player">${player}</div>
+    <div class="lesson-h"><small>${esc(unit.title)} · الدرس ${ar(i + 1)} من ${ar(unit.lessons.length)}</small><h1>${esc(l.t)}</h1></div>
+    <div class="actions">
+      <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
+      ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
+      ${sim ? `<button class="btn" data-go="sim:${unit.sim}">${icon('lab')}جرّبها</button>` : (id ? `<a class="btn" href="https://youtu.be/${id}" target="_blank" rel="noopener">${icon('ext')}يوتيوب</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}يوتيوب</span>`)}
+    </div>
+    ${nx ? `<div class="next"><div class="label">الدرس التالي</div><div class="list"><button class="row" data-go="lesson:${nx.u}:${nx.i}" data-replace="1">
+      <span class="n">${ar(nx.i + 1)}</span>
+      <span class="t"><b>${esc(G().units[nx.u].lessons[nx.i].t)}</b><small>${esc(G().units[nx.u].title)}</small></span>
+      <span class="end">${icon('chev')}</span></button></div></div>` : ''}
+  </div>`;
+}
 
-    coll: {
-      title: 'جرّب بنفسك: التصادم وحفظ كمية الحركة', tag: 'p = m × v', aria: 'رسم لعربتين تتصادمان على خط مستقيم', mode: 'once', go: 'ابدأ التصادم', aspect: '2 / 1',
-      hint: 'قارن كمية الحركة قبل وبعد: تبقى ثابتة دائماً. أما الطاقة الحركية فتبقى ثابتة في التصادم المرن فقط.',
-      controls: [
-        { id: 'm1', label: 'كتلة العربة الزرقاء', min: 1, max: 5, step: 1, value: 2, unit: ' kg' },
-        { id: 'v1', label: 'سرعة العربة الزرقاء', min: 1, max: 10, step: 1, value: 6, unit: ' m/s' },
-        { id: 'm2', label: 'كتلة العربة البرتقالية', min: 1, max: 5, step: 1, value: 2, unit: ' kg' },
-        { id: 'v2', label: 'سرعتها نحو اليسار', min: 0, max: 6, step: 1, value: 2, unit: ' m/s' },
-        { id: 'kind', type: 'select', label: 'نوع التصادم', value: 'el', options: [['el', 'مرن'], ['in', 'عديم المرونة (يلتحمان)']] }
-      ],
-      calc: function (v) {
-        var m1 = v.m1, m2 = v.m2, a = v.v1, b = -v.v2, w1 = 3 + m1, w2 = 3 + m2, X1 = 8, X2 = 32, vr = a - b;
-        var tc = (X2 - X1 - (w1 + w2) / 2) / vr, u1, u2;
-        if (v.kind === 'el') { u1 = ((m1 - m2) * a + 2 * m2 * b) / (m1 + m2); u2 = ((m2 - m1) * b + 2 * m1 * a) / (m1 + m2); }
-        else { u1 = u2 = (m1 * a + m2 * b) / (m1 + m2); }
-        return {
-          m1: m1, m2: m2, w1: w1, w2: w2, X1: X1, X2: X2, v1: a, v2: b, u1: u1, u2: u2, tc: tc, total: tc + 1.0,
-          xc1: X1 + a * tc, xc2: X2 + b * tc,
-          pb: m1 * a + m2 * b, pa: m1 * u1 + m2 * u2,
-          kb: 0.5 * m1 * a * a + 0.5 * m2 * b * b, ka: 0.5 * m1 * u1 * u1 + 0.5 * m2 * u2 * u2
-        };
-      },
-      read: function (c) {
-        return [['كمية الحركة قبل', fmtNum(c.pb) + ' kg·m/s'], ['كمية الحركة بعد', fmtNum(c.pa) + ' kg·m/s'], ['الطاقة الحركية قبل', fmtNum(c.kb) + ' J'], ['الطاقة الحركية بعد', fmtNum(c.ka) + ' J']];
-      },
-      dur: function (c) { return clamp(c.total * 900, 2200, 4500); },
-      draw: function (g, c, f) {
-        var ctx = g.ctx, w = g.w, h = g.h, col = g.col;
-        var X0 = -10, XE = 60, s = (w - 24) / (XE - X0), px = function (x) { return 12 + (x - X0) * s; };
-        var gy = h - 30, ch = 36, tt = f * c.total, after = tt > c.tc, x1, x2, vv1, vv2;
-        if (!after) { x1 = c.X1 + c.v1 * tt; x2 = c.X2 + c.v2 * tt; vv1 = c.v1; vv2 = c.v2; }
-        else { var d = tt - c.tc; x1 = c.xc1 + c.u1 * d; x2 = c.xc2 + c.u2 * d; vv1 = c.u1; vv2 = c.u2; }
-        ctx.strokeStyle = col.ink; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(8, gy); ctx.lineTo(w - 8, gy); ctx.stroke();
-        var carts = [[x1, c.w1, col.accent, c.m1, vv1], [x2, c.w2, col.vec, c.m2, vv2]];
-        for (var i = 0; i < 2; i++) {
-          var o = carts[i], cw = o[1] * s, cxp = px(o[0]);
-          ctx.fillStyle = o[2]; ctx.strokeStyle = col.ink; ctx.lineWidth = 2;
-          ctx.beginPath(); ctx.rect(cxp - cw / 2, gy - ch, cw, ch); ctx.fill(); ctx.stroke();
-          ctx.fillStyle = col.on; ctx.font = '600 12px ' + MONO; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-          ctx.fillText(o[3] + ' kg', cxp, gy - ch / 2);
-          var len = clamp(o[4] * 6, -64, 64), ay = gy - ch - 16;
-          if (Math.abs(len) > 2) arrow(ctx, cxp, ay, cxp + len, ay, o[2] === col.accent ? col.accent : col.vec, 2.5);
-          ctx.fillStyle = col.ink; ctx.font = '11px ' + MONO; ctx.textBaseline = 'bottom';
-          ctx.fillText(fmtNum(o[4]) + ' m/s', cxp, ay - 6);
-        }
-        ctx.fillStyle = col.muted; ctx.font = '600 13px IBM Plex Sans Arabic, sans-serif'; ctx.direction = 'rtl'; ctx.textAlign = 'right'; ctx.textBaseline = 'top';
-        ctx.fillText(after ? 'بعد الاصطدام' : 'قبل الاصطدام', w - 12, 10);
-        ctx.direction = 'ltr';
-      }
+function vLab() {
+  return `<div class="view">
+    <div class="page-h"><h1>المختبر</h1><p>حرّك المؤشرات وشاهد كيف تتغير النتائج. كل التجارب تعمل على جهازك مباشرة.</p></div>
+    <div class="sims">${Object.entries(SIMS).map(([k, s]) => `<button class="sim-card" data-go="sim:${k}" style="${tileStyle(s.theme)}">
+      ${glyph(s.glyph, s.theme)}
+      <span class="t"><small>${esc(s.tag)}</small><b>${esc(s.title)}</b><span>${esc(s.sub)}</span></span></button>`).join('')}</div>
+  </div>`;
+}
+
+function vNotes() {
+  const g = G();
+  return `<div class="view">
+    <div class="page-h"><h1>المذكرات</h1><p>ملخصات ${esc(g.name)}. غيّر الصف من الرئيسية لرؤية مذكرات صف آخر.</p></div>
+    <div class="unitgroup"><div class="list">${g.units.map((u, i) => {
+      const inner = `<span class="n" style="${tileStyle(u.theme)};background:var(--tile)">${glyph(u.glyph, u.theme)}</span>
+        <span class="t"><b>${esc(u.title)}</b><small>الوحدة ${ar(i + 1)} · PDF</small></span>
+        <span class="end">${u.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>`;
+      return u.pdf ? `<a class="row" href="${esc(u.pdf)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="row">${inner}</div>`;
+    }).join('')}</div></div>
+  </div>`;
+}
+
+function vProfile() {
+  const g = G();
+  const all = g.units.reduce((n, u) => n + u.lessons.length, 0);
+  const doneHere = g.units.reduce((n, _, u) => n + unitStats(S.grade, u).done, 0);
+  const finishedUnits = g.units.filter((_, u) => { const s = unitStats(S.grade, u); return s.total && s.done === s.total; }).length;
+  const standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
+  const initial = (S.name.trim()[0] || '؟');
+  return `<div class="view">
+    <div class="page-h"><h1>حسابي</h1></div>
+    <div class="me-card">
+      <span class="avatar">${esc(initial)}</span>
+      <span class="t"><input id="name" value="${esc(S.name)}" placeholder="اكتب اسمك" maxlength="40" autocomplete="name" aria-label="اسمك"><small>${esc(g.name)}</small></span>
+    </div>
+    <div class="stats">
+      <div><b>${ar(doneHere)}</b><small>درس مكتمل</small></div>
+      <div><b>${ar(all ? Math.round(doneHere / all * 100) : 0)}%</b><small>من المنهج</small></div>
+      <div><b>${ar(finishedUnits)}</b><small>وحدة منتهية</small></div>
+    </div>
+    <h2 class="sec">تقدّمك في الوحدات</h2>
+    <div class="list">${g.units.map((u, i) => { const s = unitStats(S.grade, i); return `<button class="row" data-go="unit:${i}">
+      <span class="t"><b>${esc(u.title)}</b><span class="prog" style="margin-top:6px"><span class="track" style="background:var(--surface-2)"><i style="width:${s.pct}%;background:var(--accent)"></i></span><span style="color:var(--muted)">${ar(s.done)}/${ar(s.total)}</span></span></span>
+      <span class="end">${icon('chev')}</span></button>`; }).join('')}</div>
+    <h2 class="sec">الإعدادات</h2>
+    <div class="list">
+      <button class="row" data-act="grade"><span class="t"><b>المرحلة الدراسية</b><small>${esc(g.name)}</small></span><span class="end">${icon('chev')}</span></button>
+      <button class="row" data-act="reset"><span class="t"><b style="color:#FF6B6B">مسح تقدّمي</b><small>يحذف علامات الدروس المكتملة من هذا الجهاز</small></span></button>
+    </div>
+    ${standalone ? '' : `<div class="install"><b>ثبّت التطبيق على جوالك</b><p>في سفاري اضغط زر المشاركة ${icon('share', 'style="width:16px;height:16px;vertical-align:-3px"')} ثم اختر «إضافة إلى الشاشة الرئيسية». سيفتح بعدها بملء الشاشة مثل أي تطبيق.</p></div>`}
+  </div>`;
+}
+
+function vSim(k) {
+  const s = SIMS[k];
+  const C = SIMCTL[k];
+  return `<div class="view push">
+    ${navBar()}
+    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">${esc(s.title)}</h1><p>${esc(s.sub)}</p></div>
+    <div class="stage" style="margin-top:14px"><canvas id="cv" width="800" height="500" aria-label="${esc(s.title)}"></canvas></div>
+    <div class="readout" id="ro"></div>
+    <div class="controls">${C.map(c => c.type === 'seg'
+      ? `<div class="ctl"><label>${c.label}</label><div class="seg" role="group" aria-label="${c.label}">${c.opts.map((o, j) => `<button data-seg="${c.id}" data-v="${o.v}" aria-pressed="${j === 0}">${o.t}</button>`).join('')}</div></div>`
+      : `<div class="ctl"><label for="${c.id}">${c.label}<output id="${c.id}-o"></output></label><input type="range" id="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.v}"></div>`).join('')}
+      ${k === 'projectile' ? `<div class="ctl"><button class="btn primary" id="fire">${icon('replay')}أطلق من جديد</button></div>` : ''}
+    </div>
+    <p class="law">${s.law || LAWS[k]}</p>
+  </div>`;
+}
+
+const LAWS = {
+  projectile: 'المدى <code>R = v² sin2θ / g</code> وأقصى ارتفاع <code>H = v² sin²θ / 2g</code>. لاحظ أن الزاويتين 30° و60° تعطيان المدى نفسه.',
+  pendulum: 'الزمن الدوري <code>T = 2π √(L / g)</code> لا يعتمد على كتلة الثقل. ضاعف الطول أربع مرات يتضاعف الزمن مرتين.',
+  wave: 'سرعة الموجة <code>v = f λ</code>. كل جسيم في الوسط يهتز للأعلى والأسفل في مكانه، والموجة هي التي تنتقل.',
+  ohm: 'قانون أوم <code>I = V / R</code> والقدرة <code>P = V I</code>. كلما زادت القدرة زاد توهج المصباح.',
+};
+const SIMCTL = {
+  projectile: [
+    { id: 'v', label: 'السرعة الابتدائية', min: 5, max: 30, step: 1, v: 20, unit: 'm/s' },
+    { id: 'a', label: 'زاوية الإطلاق', min: 10, max: 80, step: 1, v: 45, unit: '°' },
+  ],
+  pendulum: [
+    { id: 'L', label: 'طول الخيط', min: 0.2, max: 2, step: 0.1, v: 1, unit: 'm' },
+    { id: 'g', type: 'seg', label: 'المكان', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'المريخ', v: 3.71 }, { t: 'القمر', v: 1.62 }] },
+  ],
+  wave: [
+    { id: 'A', label: 'السعة', min: 0.2, max: 1, step: 0.05, v: 0.6, unit: 'm' },
+    { id: 'f', label: 'التردد', min: 0.2, max: 2, step: 0.1, v: 0.6, unit: 'Hz' },
+    { id: 'l', label: 'الطول الموجي', min: 1, max: 6, step: 0.5, v: 3, unit: 'm' },
+  ],
+  ohm: [
+    { id: 'V', label: 'فرق الجهد', min: 1, max: 12, step: 0.5, v: 6, unit: 'V' },
+    { id: 'R', label: 'المقاومة', min: 1, max: 20, step: 0.5, v: 4, unit: 'Ω' },
+  ],
+};
+
+/* ---------------- Simulations ---------------- */
+let simStop = null;
+function startSim(k) {
+  const cv = document.getElementById('cv'); if (!cv) return;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = 800, H = 500; cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
+  const P = {}, ro = document.getElementById('ro');
+  const fmt = (x, d = 2) => Number(x).toFixed(d);
+  SIMCTL[k].forEach(c => {
+    if (c.type === 'seg') {
+      P[c.id] = c.opts[0].v;
+      document.querySelectorAll(`[data-seg="${c.id}"]`).forEach(b => b.onclick = () => {
+        document.querySelectorAll(`[data-seg="${c.id}"]`).forEach(x => x.setAttribute('aria-pressed', x === b));
+        P[c.id] = +b.dataset.v; reset();
+      });
+      return;
     }
+    const el = document.getElementById(c.id), out = document.getElementById(c.id + '-o');
+    const sync = () => { P[c.id] = +el.value; out.textContent = `${fmt(el.value, c.step < 1 ? (c.step < .1 ? 2 : 1) : 0)} ${c.unit}`; el.style.setProperty('--p', ((el.value - c.min) / (c.max - c.min) * 100) + '%'); };
+    el.oninput = () => { sync(); reset(); }; sync();
+  });
+  const setRO = items => { ro.innerHTML = items.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join(''); };
+  const grid = () => {
+    ctx.fillStyle = '#07080B'; ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(255,255,255,.05)'; ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
   };
+  const label = (t, x, y, c = 'rgba(255,255,255,.55)', al = 'left') => { ctx.fillStyle = c; ctx.font = '600 20px -apple-system, "SF Pro Text", Arial, sans-serif'; ctx.textAlign = al; ctx.fillText(t, x, y); };
+  let t0 = performance.now(), raf, reset = () => { t0 = performance.now(); };
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  var activeSim = null;
-  function stopSim() { if (activeSim) { activeSim.stop(); activeSim = null; } }
-
-  function mountSim(el, key) {
-    stopSim();
-    var def = SIMS[key];
-    if (!def || !el) return;
-    var uid = 'sm' + Math.random().toString(36).slice(2, 7);
-    var ctl = def.controls.map(function (c) {
-      if (c.type === 'select') {
-        return '<label for="' + uid + c.id + '"><span class="crow"><span>' + c.label + '</span></span><select id="' + uid + c.id + '" data-c="' + c.id + '">' +
-          c.options.map(function (o) { return '<option value="' + o[0] + '"' + (String(o[0]) === String(c.value) ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></label>';
+  const draws = {
+    projectile(t) {
+      const g = 9.8, v = P.v, th = P.a * Math.PI / 180, vx = v * Math.cos(th), vy = v * Math.sin(th);
+      const T = 2 * vy / g, R = vx * T, Hm = vy * vy / (2 * g);
+      setRO([['المدى', `${fmt(R, 1)} m`], ['أقصى ارتفاع', `${fmt(Hm, 1)} m`], ['زمن التحليق', `${fmt(T, 2)} s`]]);
+      const ox = 50, oy = H - 50, sc = (W - 90) / 95;
+      grid();
+      ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+      for (let m = 0; m <= 90; m += 10) { const x = ox + m * sc; ctx.beginPath(); ctx.moveTo(x, oy); ctx.lineTo(x, oy + 8); ctx.stroke(); label(m + '', x, oy + 30, 'rgba(255,255,255,.4)', 'center'); }
+      label('m', W - 20, oy + 30, 'rgba(255,255,255,.4)', 'center');
+      const tt = reduce ? T : Math.min(t * 1.2, T);
+      ctx.strokeStyle = 'rgba(76,134,255,.35)'; ctx.setLineDash([6, 8]); ctx.beginPath();
+      for (let s = 0; s <= 60; s++) { const q = T * s / 60, x = ox + vx * q * sc, y = oy - (vy * q - g * q * q / 2) * sc; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke(); ctx.setLineDash([]);
+      const grd = ctx.createLinearGradient(ox, 0, ox + R * sc, 0); grd.addColorStop(0, '#4C86FF'); grd.addColorStop(1, '#33C2FF');
+      ctx.strokeStyle = grd; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath();
+      for (let s = 0; s <= 80; s++) { const q = tt * s / 80, x = ox + vx * q * sc, y = oy - (vy * q - g * q * q / 2) * sc; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+      ctx.stroke();
+      const bx = ox + vx * tt * sc, by = oy - (vy * tt - g * tt * tt / 2) * sc;
+      ctx.shadowColor = '#4C86FF'; ctx.shadowBlur = 24; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(bx, by, 11, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+      const vyn = vy - g * tt, k2 = 2.2;
+      ctx.strokeStyle = '#FFA53A'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + vx * k2, by - vyn * k2); ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 46, -th, 0); ctx.stroke();
+      label(P.a + '°', ox + 54, oy - 12, '#fff');
+      if (tt >= T) { ctx.fillStyle = 'rgba(51,194,255,.25)'; ctx.beginPath(); ctx.arc(ox + R * sc, oy, 14, 0, 7); ctx.fill(); }
+    },
+    pendulum(t) {
+      const L = P.L, g = P.g, T = 2 * Math.PI * Math.sqrt(L / g), th0 = 20 * Math.PI / 180;
+      const th = reduce ? th0 : th0 * Math.cos(2 * Math.PI * t / T);
+      setRO([['الزمن الدوري', `${fmt(T, 2)} s`], ['التردد', `${fmt(1 / T, 2)} Hz`], ['الاهتزازات', `${Math.floor(t / T)}`]]);
+      grid();
+      const px = W / 2, py = 50, len = 60 + L * 180, bx = px + len * Math.sin(th), by = py + len * Math.cos(th);
+      ctx.fillStyle = 'rgba(255,255,255,.2)'; ctx.fillRect(px - 120, py - 10, 240, 10);
+      ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.setLineDash([4, 8]); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + len + 30); ctx.stroke();
+      ctx.beginPath(); ctx.arc(px, py, len, Math.PI / 2 - th0, Math.PI / 2 + th0); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = '#D6F5FF'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(bx, by); ctx.stroke();
+      const rg = ctx.createRadialGradient(bx - 8, by - 8, 2, bx, by, 26); rg.addColorStop(0, '#C8FFF2'); rg.addColorStop(1, '#0F7A66');
+      ctx.shadowColor = '#2BD4B0'; ctx.shadowBlur = 26; ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(bx, by, 24, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+      label(`L = ${fmt(L, 1)} m`, 24, H - 24); label(`g = ${g} m/s²`, W - 24, H - 24, 'rgba(255,255,255,.55)', 'right');
+    },
+    wave(t) {
+      const A = P.A, f = P.f, lam = P.l, v = f * lam;
+      setRO([['السرعة', `${fmt(v, 2)} m/s`], ['الزمن الدوري', `${fmt(1 / f, 2)} s`], ['الطول الموجي', `${fmt(lam, 1)} m`]]);
+      grid();
+      const oy = H / 2, sx = W / 12, sy = 150, tt = reduce ? 0 : t;
+      ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
+      const y = x => oy - A * sy * Math.sin(2 * Math.PI * (x / lam - f * tt));
+      const grd = ctx.createLinearGradient(0, 0, W, 0); grd.addColorStop(0, '#33C2FF'); grd.addColorStop(1, '#A866FF');
+      ctx.strokeStyle = grd; ctx.lineWidth = 4; ctx.beginPath();
+      for (let px = 0; px <= W; px += 4) { const yy = y(px / sx); px ? ctx.lineTo(px, yy) : ctx.moveTo(px, yy); }
+      ctx.stroke();
+      for (let m = 0.5; m < 12; m += 0.5) { ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(m * sx, y(m), 3.5, 0, 7); ctx.fill(); }
+      const mx = 6 * sx, my = y(6);
+      ctx.shadowColor = '#FFA53A'; ctx.shadowBlur = 20; ctx.fillStyle = '#FFA53A'; ctx.beginPath(); ctx.arc(mx, my, 11, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
+      ctx.strokeStyle = 'rgba(255,165,58,.35)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(mx, oy - A * sy); ctx.lineTo(mx, oy + A * sy); ctx.stroke(); ctx.setLineDash([]);
+      const x0 = sx * 1, x1 = x0 + lam * sx;
+      ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, H - 50); ctx.lineTo(x1, H - 50); ctx.moveTo(x0, H - 58); ctx.lineTo(x0, H - 42); ctx.moveTo(x1, H - 58); ctx.lineTo(x1, H - 42); ctx.stroke();
+      label('λ', (x0 + x1) / 2, H - 62, '#fff', 'center');
+    },
+    ohm(t) {
+      const V = P.V, R = P.R, I = V / R, Pw = V * I;
+      setRO([['شدة التيار', `${fmt(I, 2)} A`], ['القدرة', `${fmt(Pw, 1)} W`], ['المقاومة', `${fmt(R, 1)} Ω`]]);
+      grid();
+      const x0 = 140, y0 = 110, x1 = 660, y1 = 400;
+      ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
+      ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
+      ctx.fillStyle = '#07080B'; ctx.fillRect(x0 - 20, 220, 40, 70);
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x0 - 26, 240); ctx.lineTo(x0 + 26, 240); ctx.stroke();
+      ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(x0 - 14, 268); ctx.lineTo(x0 + 14, 268); ctx.stroke();
+      label(`${fmt(V, 1)} V`, x0 - 40, 262, '#FFA53A', 'right');
+      ctx.fillStyle = '#07080B'; ctx.fillRect(330, y0 - 20, 140, 40);
+      ctx.strokeStyle = '#FFA53A'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(320, y0);
+      for (let i = 0; i < 8; i++) ctx.lineTo(340 + i * 17, y0 + (i % 2 ? 14 : -14));
+      ctx.lineTo(480, y0); ctx.stroke();
+      label(`${fmt(R, 1)} Ω`, 400, y0 - 34, '#FFA53A', 'center');
+      const glow = Math.min(1, Pw / 40), bx = x1, by = 255;
+      ctx.fillStyle = '#07080B'; ctx.fillRect(bx - 30, by - 40, 60, 80);
+      const rg = ctx.createRadialGradient(bx, by, 4, bx, by, 40 + 90 * glow); rg.addColorStop(0, `rgba(255,214,120,${0.25 + .75 * glow})`); rg.addColorStop(1, 'rgba(255,214,120,0)');
+      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(bx, by, 40 + 90 * glow, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(bx, by, 26, 0, 7); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(bx - 12, by + 10); ctx.lineTo(bx - 4, by - 8); ctx.lineTo(bx + 4, by + 8); ctx.lineTo(bx + 12, by - 10); ctx.stroke();
+      const per = 2 * ((x1 - x0) + (y1 - y0)), n = 22, sp = reduce ? 0 : I * 40 * t;
+      ctx.fillStyle = '#33C2FF';
+      for (let i = 0; i < n; i++) {
+        let d = ((i / n) * per + sp) % per, px, py;
+        const w = x1 - x0, h = y1 - y0;
+        if (d < w) { px = x0 + d; py = y0; } else if ((d -= w) < h) { px = x1; py = y0 + d; } else if ((d -= h) < w) { px = x1 - d; py = y1; } else { d -= w; px = x0; py = y1 - d; }
+        ctx.beginPath(); ctx.arc(px, py, 5, 0, 7); ctx.fill();
       }
-      return '<label for="' + uid + c.id + '"><span class="crow"><span>' + c.label + '</span><span class="mono" id="' + uid + c.id + 'v"></span></span>' +
-        '<input id="' + uid + c.id + '" data-c="' + c.id + '" type="range" min="' + c.min + '" max="' + c.max + '" step="' + c.step + '" value="' + c.value + '"></label>';
-    }).join('');
-    el.innerHTML = '<div class="shead"><h2>' + def.title + '</h2>' + (def.tag ? '<span class="tag">' + def.tag + '</span>' : '') + '</div>' +
-      '<canvas role="img" aria-label="' + def.aria + '" style="aspect-ratio:' + def.aspect + '"></canvas>' +
-      '<div class="ctl">' + ctl + '</div><div class="read" id="' + uid + 'r"></div>' +
-      '<button class="btn" type="button" id="' + uid + 'go">' + (def.mode === 'loop' ? (reduce ? 'تشغيل' : 'إيقاف') : def.go) + '</button>' +
-      '<p class="hint">' + L(def.hint) + '</p>';
-    var cv = el.querySelector('canvas'), ctx = cv.getContext('2d');
-    var tau = def.mode === 'loop' ? 0.3 : 1, anim = null, playing = def.mode === 'loop' && !reduce;
+    },
+  };
+  const loop = now => { draws[k]((now - t0) / 1000); raf = requestAnimationFrame(loop); };
+  if (k === 'projectile') { const fb = document.getElementById('fire'); if (fb) fb.onclick = reset; }
+  raf = requestAnimationFrame(loop);
+  simStop = () => cancelAnimationFrame(raf);
+}
 
-    function vals() {
-      var o = {};
-      def.controls.forEach(function (c) {
-        var inp = el.querySelector('[data-c="' + c.id + '"]');
-        o[c.id] = c.type === 'select' ? inp.value : parseFloat(inp.value);
-      });
-      return o;
-    }
-    function readouts() {
-      var v = vals(), c = def.calc(v);
-      def.controls.forEach(function (k) {
-        if (k.type === 'select') return;
-        var o = $(uid + k.id + 'v'); if (o) o.textContent = v[k.id] + (k.unit || '');
-      });
-      $(uid + 'r').innerHTML = def.read(c).map(function (r) { return '<div><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('');
-    }
-    function paint() {
-      var w = cv.clientWidth, h = cv.clientHeight;
-      if (!w || !h) return;
-      var dpr = window.devicePixelRatio || 1;
-      cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h); ctx.direction = 'ltr'; ctx.setLineDash([]); ctx.globalAlpha = 1;
-      var col = { ink: css('--fg'), muted: css('--muted'), grid: css('--grid2'), accent: css('--accent'), vec: css('--vec'), on: css('--on-accent') };
-      def.draw({ ctx: ctx, w: w, h: h, col: col }, def.calc(vals()), tau);
-    }
-    function stopAnim() { if (anim) { cancelAnimationFrame(anim); anim = null; } }
-    function startLoop() {
-      stopAnim();
-      var s0 = null, base = tau;
-      function step(now) {
-        if (s0 === null) s0 = now - base * 1000;
-        tau = (now - s0) / 1000; paint();
-        anim = requestAnimationFrame(step);
-      }
-      anim = requestAnimationFrame(step);
-    }
-    function launch() {
-      stopAnim();
-      var c = def.calc(vals());
-      if (reduce) { tau = 1; paint(); return; }
-      var D = def.dur(c), s0 = null;
-      function step(now) {
-        if (s0 === null) s0 = now;
-        tau = Math.min(1, (now - s0) / D); paint();
-        anim = tau < 1 ? requestAnimationFrame(step) : null;
-      }
-      anim = requestAnimationFrame(step);
-    }
-    function onInput(e) {
-      if (!e.target.getAttribute || !e.target.getAttribute('data-c')) return;
-      if (def.mode !== 'loop') { stopAnim(); tau = 1; }
-      readouts(); paint();
-    }
-    el.addEventListener('input', onInput);
-    el.addEventListener('change', onInput);
-    $(uid + 'go').addEventListener('click', function () {
-      if (def.mode === 'loop') {
-        playing = !playing; this.textContent = playing ? 'إيقاف' : 'تشغيل';
-        if (playing) startLoop(); else stopAnim();
-      } else { launch(); }
-    });
-    var redraw = function () { paint(); };
-    var ro = null, mo = null, mq = null;
-    try { ro = new ResizeObserver(redraw); ro.observe(cv); } catch (e) {}
-    try { mo = new MutationObserver(redraw); mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] }); } catch (e) {}
-    try { mq = window.matchMedia('(prefers-color-scheme: dark)'); mq.addEventListener('change', redraw); } catch (e) { mq = null; }
-    readouts(); paint();
-    if (playing) startLoop();
-    activeSim = {
-      stop: function () {
-        stopAnim();
-        if (ro) ro.disconnect();
-        if (mo) mo.disconnect();
-        if (mq) { try { mq.removeEventListener('change', redraw); } catch (e) {} }
-      }
-    };
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
-  }
+/* ---------------- Router ---------------- */
+const app = document.getElementById('app'), tabbar = document.getElementById('tabbar'), layer = document.getElementById('layer');
+const TABS = [['home', 'الرئيسية', 'home'], ['lab', 'المختبر', 'lab'], ['notes', 'المذكرات', 'notes'], ['profile', 'حسابي', 'user']];
 
-  var SUBJECTS = [
-    { id: 'g10', name: 'الصف العاشر', glyph: '10', h: 195,
-      lessons: [
-        { c: 'الفصل الأول: علم الفيزياء', k: '1-1', t: 'علم الفيزياء', m: 8, n: [
-          'الفيزياء علم يدرس المادة والطاقة والعلاقة بينهما، ويفسر الظواهر الطبيعية.',
-          'يعتمد الفيزيائي على الملاحظة والتجربة والنماذج الرياضية لاختبار الفرضيات.',
-          'من فروعها: الميكانيكا والكهرباء والمغناطيسية والبصريات والفيزياء الحديثة.'] },
-        { c: 'الفصل الأول: علم الفيزياء', k: '1-2', t: 'الكميات الفيزيائية', m: 10, n: [
-          'الكمية الفيزيائية خاصية يمكن قياسها، ولها قيمة ووحدة.',
-          'الوحدات الأساسية في النظام الدولي: المتر {{m}} والكيلوغرام {{kg}} والثانية {{s}}.',
-          'البادئات: كيلو {{k = 10³}} وسنتي {{c = 10⁻²}} وميلي {{m = 10⁻³}}، ونحول إلى الوحدات الأساسية قبل الحساب.'] },
-        { c: 'الفصل الثاني: الحركة في بعد واحد', k: '2-1', t: 'الكميات العددية والمتجهة', m: 11, n: [
-          'الكمية العددية لها مقدار فقط، مثل المسافة والزمن والكتلة.',
-          'الكمية المتجهة لها مقدار واتجاه، مثل الإزاحة والسرعة المتجهة والتسارع.',
-          'السرعة المتجهة المتوسطة {{v = Δx ÷ Δt}} والتسارع {{a = Δv ÷ Δt}}.'] },
-        { c: 'الفصل الثاني: الحركة في بعد واحد', k: '2-2', t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', m: 15, n: [
-          'عندما يكون التسارع ثابتاً في خط مستقيم تحكم الحركةَ ثلاث معادلات.',
-          '{{v = v₀ + a t}} و {{Δx = v₀ t + ½ a t²}}.',
-          '{{v² = v₀² + 2 a Δx}} وتفيد عندما لا يُعطى الزمن.'] },
-        { c: 'الفصل الثاني: الحركة في بعد واحد', k: '2-3', t: 'السقوط الحر', m: 12, n: [
-          'السقوط الحر حركة جسم تحت تأثير الجاذبية وحدها، بإهمال مقاومة الهواء.',
-          'تسارع السقوط الحر ثابت {{g ≈ 9.8 m/s²}} نحو الأسفل ولا يعتمد على كتلة الجسم.',
-          'نستخدم معادلات الحركة نفسها بعد استبدال التسارع {{a}} بالقيمة {{g}}.'] },
-        { c: 'الفصل الثالث: الحركة في بعدين', k: '3-1', t: 'خصائص المتجهات', m: 10, n: [
-          'يُمثَّل المتجه بسهم؛ طوله يدل على المقدار ورأسه على الاتجاه.',
-          'المتجهان المتساويان لهما المقدار والاتجاه نفسهما حتى لو اختلف موضعهما.',
-          'المتجه المعاكس للمتجه {{A}} له المقدار نفسه والاتجاه المضاد ويُكتب {{−A}}.'] },
-        { c: 'الفصل الثالث: الحركة في بعدين', k: '3-2', t: 'جمع المتجهات وتحليلها', m: 14, n: [
-          'المحصلة هي المتجه الناتج عن جمع متجهين أو أكثر، ويمكن إيجادها بطريقة الذيل إلى الرأس.',
-          'يُحلَّل المتجه إلى مركبتين متعامدتين: {{Aₓ = A cosθ}} و {{A_y = A sinθ}}.',
-          'مقدار المتجه من مركبتيه {{A = √(Aₓ² + A_y²)}}.'] },
-        { c: 'الفصل الثالث: الحركة في بعدين', k: '3-3', t: 'ضرب المتجهات', m: 13, n: [
-          'ضرب متجه في كمية عددية يغيّر مقداره، وإذا كانت العددية سالبة ينعكس اتجاهه.',
-          'الضرب القياسي {{A·B = A B cosθ}} ناتجه كمية عددية.',
-          'الضرب الاتجاهي {{A × B}} ناتجه متجه عمودي على المتجهين ومقداره {{A B sinθ}}.'] },
-        { c: 'الفصل الثالث: الحركة في بعدين', k: '3-4', t: 'حركة المقذوفات', m: 16, n: [
-          'بإهمال مقاومة الهواء تتحلل حركة المقذوف إلى مركبة أفقية بسرعة ثابتة ومركبة رأسية بتسارع {{g}}.',
-          'السرعة الأفقية {{vₓ = v₀ cosθ}} والسرعة الرأسية الابتدائية {{v₀ sinθ}}.',
-          'على أرض مستوية يكون المدى الأفقي أكبر ما يمكن عند زاوية الإطلاق {{45°}}.'] }
-      ],
-      quiz: [
-        { q: 'أي مما يلي كمية متجهة؟', o: ['المسافة', 'الزمن', 'الإزاحة', 'الكتلة'], a: 2, e: 'الإزاحة لها مقدار واتجاه، أما الباقي فكميات عددية.' },
-        { q: 'جسم يبدأ من السكون بتسارع {{2 m/s²}}. ما سرعته بعد {{5 s}}؟', o: ['{{10 m/s}}', '{{7 m/s}}', '{{2.5 m/s}}', '{{25 m/s}}'], a: 0, e: '{{v = 0 + 2 × 5 = 10 m/s}}.' },
-        { q: 'تُركت كرة لتسقط حرة من السكون. ما سرعتها بعد {{2 s}} إذا اعتبرنا {{g = 10 m/s²}}؟', o: ['{{5 m/s}}', '{{12 m/s}}', '{{20 m/s}}', '{{40 m/s}}'], a: 2, e: '{{v = g × t = 10 × 2 = 20 m/s}}.' },
-        { q: 'قوة مقدارها {{10 N}} تصنع زاوية {{30°}} مع الأفقي. ما مركبتها الرأسية؟', o: ['{{5 N}}', '{{8.7 N}}', '{{10 N}}', '{{0 N}}'], a: 0, e: '{{10 × sin 30° = 10 × 0.5 = 5 N}}.' },
-        { q: 'ما زاوية الإطلاق التي تعطي أكبر مدى أفقي لمقذوف على أرض مستوية بإهمال مقاومة الهواء؟', o: ['{{30°}}', '{{45°}}', '{{60°}}', '{{90°}}'], a: 1, e: 'المدى الأفقي {{R ∝ sin 2θ}} وهو أكبر ما يمكن عند {{θ = 45°}}.' },
-        { q: 'قوتان متعامدتان مقدارهما {{3 N}} و {{4 N}}. ما مقدار محصلتهما؟', o: ['{{7 N}}', '{{1 N}}', '{{12 N}}', '{{5 N}}'], a: 3, e: '{{√(3² + 4²) = √25 = 5 N}}.' }
-      ] },
-    { id: 'g11', name: 'الصف الحادي عشر', glyph: '11', h: 150,
-      lessons: [
-        { c: 'الفصل الأول: حركة المقذوفات', k: '1-1', t: 'الكميات العددية والكميات المتجهة', m: 11, n: [
-          'الكمية العددية لها مقدار فقط، والمتجهة لها مقدار واتجاه.',
-          'الإزاحة متجه والمسافة عددية، ولا يتساويان إلا في مسار مستقيم باتجاه واحد.',
-          'تُمثَّل المتجهات بأسهم، ويمكن نقلها دون تغيير مقدارها أو اتجاهها.'] },
-        { c: 'الفصل الأول: حركة المقذوفات', k: '1-2', t: 'تحليل المتجهات', m: 12, n: [
-          'يُحلَّل المتجه إلى مركبتين متعامدتين أفقية ورأسية.',
-          '{{Aₓ = A cosθ}} و {{A_y = A sinθ}} حيث {{θ}} الزاوية مع المحور الأفقي.',
-          'المقدار {{A = √(Aₓ² + A_y²)}} والزاوية {{θ = tan⁻¹(A_y ÷ Aₓ)}}.'] },
-        { c: 'الفصل الأول: حركة المقذوفات', k: '1-3', t: 'حركة القذيفة', m: 15, n: [
-          'بإهمال مقاومة الهواء تتحلل حركة القذيفة إلى حركة أفقية بسرعة ثابتة وحركة رأسية بتسارع {{g ≈ 9.8 m/s²}}.',
-          'عند أعلى نقطة في المسار تنعدم السرعة الرأسية لحظياً.',
-          'على أرض مستوية يكون المدى الأفقي أكبر ما يمكن عند زاوية إطلاق {{45°}}.'] },
-        { c: 'الفصل الثاني: الحركة الدائرية', k: '2-1', t: 'وصف الحركة الدائرية', m: 12, n: [
-          'في الحركة الدائرية المنتظمة تبقى السرعة المماسية ثابتة المقدار ويتغير اتجاهها.',
-          'الزمن الدوري {{T}} هو زمن دورة كاملة، والتردد {{f = 1 ÷ T}}.',
-          'السرعة المماسية {{v = 2πr ÷ T}} والتسارع المركزي {{a = v² ÷ r}} نحو المركز.'] },
-        { c: 'الفصل الثاني: الحركة الدائرية', k: '2-2', t: 'القوة الجاذبة المركزية', m: 13, n: [
-          'القوة الجاذبة المركزية هي المحصلة المتجهة نحو مركز الدائرة، وتُبقي الجسم في مساره الدائري.',
-          '{{F = m v² ÷ r}}.',
-          'ليست قوة جديدة؛ فقد تكون الشد أو الاحتكاك أو الجاذبية بحسب الحالة.'] },
-        { c: 'الفصل الثالث: مركز الثقل', k: '3-1', t: 'مركز الثقل', m: 10, n: [
-          'مركز الثقل هو النقطة التي يؤثر عندها وزن الجسم كاملاً.',
-          'الجسم المعلق من نقطة يتزن عندما يقع مركز ثقله رأسياً أسفل نقطة التعليق.',
-          'لجسم منتظم متماثل يقع مركز الثقل في مركزه الهندسي.'] },
-        { c: 'الفصل الثالث: مركز الثقل', k: '3-2', t: 'مركز الكتلة', m: 10, n: [
-          'مركز الكتلة نقطة يتحرك عندها النظام كأن كتلته كلها مركّزة فيها.',
-          'في مجال جاذبية منتظم ينطبق مركز الكتلة على مركز الثقل.',
-          'قد يقع مركز الكتلة خارج الجسم، كما في الحلقة.'] },
-        { c: 'الفصل الثالث: مركز الثقل', k: '3-3', t: 'تحديد موضع مركز الكتلة أو مركز الثقل', m: 14, n: [
-          'لجسيمات على خط مستقيم: {{x_cm = (m₁x₁ + m₂x₂ + …) ÷ (m₁ + m₂ + …)}}.',
-          'وبالمثل نحسب الإحداثي {{y}} للأجسام في المستوى.',
-          'عملياً يمكن تحديد مركز ثقل جسم مسطح بتعليقه من نقطتين ورسم الخط الرأسي في كل مرة.'] }
-      ],
-      quiz: [
-        { q: 'سرعة مقدارها {{20 m/s}} تصنع زاوية {{60°}} مع الأفقي. ما مركبتها الأفقية؟', o: ['{{17.3 m/s}}', '{{10 m/s}}', '{{20 m/s}}', '{{5 m/s}}'], a: 1, e: '{{20 × cos 60° = 20 × 0.5 = 10 m/s}}.' },
-        { q: 'ما سرعة القذيفة الرأسية لحظة وصولها إلى أعلى نقطة في مسارها؟', o: ['تساوي صفراً', 'تبلغ أكبر قيمة لها', 'تساوي سرعتها الأفقية', 'تساوي {{9.8 m/s}}'], a: 0, e: 'تنعدم السرعة الرأسية لحظياً عند القمة، بينما يبقى التسارع {{g}} نحو الأسفل.' },
-        { q: 'جسم يدور في دائرة وزمنه الدوري {{2 s}}. ما تردده؟', o: ['{{2 Hz}}', '{{4 Hz}}', '{{0.5 Hz}}', '{{1 Hz}}'], a: 2, e: '{{f = 1 ÷ T = 1 ÷ 2 = 0.5 Hz}}.' },
-        { q: 'جسم كتلته {{2 kg}} يتحرك في دائرة نصف قطرها {{2 m}} بسرعة {{4 m/s}}. ما القوة المركزية؟', o: ['{{8 N}}', '{{4 N}}', '{{32 N}}', '{{16 N}}'], a: 3, e: '{{F = m v² ÷ r = 2 × 16 ÷ 2 = 16 N}}.' },
-        { q: 'كتلة {{2 kg}} عند {{x = 0}} وكتلة {{4 kg}} عند {{x = 6 m}}. أين يقع مركز كتلتهما؟', o: ['{{3 m}}', '{{2 m}}', '{{5 m}}', '{{4 m}}'], a: 3, e: '{{(2 × 0 + 4 × 6) ÷ (2 + 4) = 24 ÷ 6 = 4 m}}.' },
-        { q: 'إلى أين يتجه التسارع المركزي في الحركة الدائرية المنتظمة؟', o: ['نحو مركز الدائرة', 'مماساً للمسار', 'بعيداً عن المركز', 'عكس اتجاه الحركة'], a: 0, e: 'يتجه دائماً نحو المركز ويغيّر اتجاه السرعة دون تغيير مقدارها.' }
-      ] },
-    { id: 'g12', name: 'الصف الثاني عشر', glyph: '12', h: 28,
-      lessons: [
-        { c: 'الفصل الأول: الطاقة', k: '1-1', t: 'الشغل', m: 13, n: [
-          'الشغل المبذول من قوة ثابتة {{W = F d cosθ}} ويقاس بالجول {{J}}.',
-          'الشغل موجب إذا كانت القوة في اتجاه الإزاحة، وسالب إذا عاكستها، وصفر إذا تعامدت عليها.',
-          'الشغل الكلي هو مجموع شغل القوى المؤثرة، أو شغل القوة المحصلة.'] },
-        { c: 'الفصل الأول: الطاقة', k: '1-2', t: 'الشغل والطاقة', m: 14, n: [
-          'الطاقة الحركية {{KE = ½ m v²}}.',
-          'نظرية الشغل والطاقة: الشغل الكلي يساوي التغير في الطاقة الحركية {{W = ΔKE}}.',
-          'القدرة هي معدل بذل الشغل {{P = W ÷ t}} وتقاس بالواط.'] },
-        { c: 'الفصل الأول: الطاقة', k: '1-3', t: 'حفظ (بقاء) الطاقة', m: 14, n: [
-          'الطاقة الكامنة التثاقلية {{PE = m g h}}.',
-          'في غياب الاحتكاك تبقى الطاقة الميكانيكية الكلية {{KE + PE}} ثابتة.',
-          'الطاقة لا تفنى ولا تُستحدث، وإنما تتحول من شكل إلى آخر.'] },
-        { c: 'الفصل الثاني: ميكانيكا الدوران', k: '2-1', t: 'عزم الدوران (عزم القوة)', m: 13, n: [
-          'عزم القوة {{τ = r F sinθ}} ويقاس بوحدة {{N·m}}.',
-          'يكون العزم أكبر ما يمكن عندما تكون القوة عمودية على ذراع القوة.',
-          'يتزن الجسم دورانياً عندما يكون مجموع العزوم حوله صفراً.'] },
-        { c: 'الفصل الثاني: ميكانيكا الدوران', k: '2-2', t: 'القصور الذاتي الدوراني', m: 13, n: [
-          'القصور الذاتي الدوراني {{I}} مقياس لمقاومة الجسم لتغير حركته الدورانية.',
-          'لجسيم كتلته {{m}} على بعد {{r}} من محور الدوران {{I = m r²}}.',
-          'قانون نيوتن الثاني للدوران {{τ = I α}} حيث {{α}} التسارع الزاوي.'] },
-        { c: 'الفصل الثالث: كمية الحركة الخطية', k: '3-1', t: 'كمية الحركة والدفع', m: 12, n: [
-          'كمية الحركة الخطية {{p = m v}} ووحدتها {{kg·m/s}}.',
-          'الدفع {{J = F Δt}} يساوي التغير في كمية الحركة {{Δp}}.',
-          'زيادة زمن التصادم تقلل القوة المؤثرة عند الدفع نفسه.'] },
-        { c: 'الفصل الثالث: كمية الحركة الخطية', k: '3-2', t: 'حفظ (بقاء) كمية الحركة والتصادمات', m: 15, n: [
-          'في نظام معزول تبقى كمية الحركة الكلية ثابتة قبل التصادم وبعده.',
-          'في التصادم المرن تبقى الطاقة الحركية الكلية محفوظة أيضاً.',
-          'في التصادم عديم المرونة يلتحم الجسمان ويتحركان بسرعة مشتركة، وتقل الطاقة الحركية الكلية.'] }
-      ],
-      quiz: [
-        { q: 'قوة {{10 N}} تحرك جسماً مسافة {{5 m}} في اتجاهها. ما الشغل المبذول؟', o: ['{{2 J}}', '{{15 J}}', '{{50 J}}', '{{0 J}}'], a: 2, e: '{{W = F × d × cos 0° = 10 × 5 = 50 J}}.' },
-        { q: 'جسم كتلته {{4 kg}} يتحرك بسرعة {{3 m/s}}. ما طاقته الحركية؟', o: ['{{6 J}}', '{{12 J}}', '{{36 J}}', '{{18 J}}'], a: 3, e: '{{KE = ½ × 4 × 3² = 18 J}}.' },
-        { q: 'قوة {{20 N}} عمودية على ذراع طوله {{0.5 m}}. ما عزمها؟', o: ['{{10 N·m}}', '{{40 N·m}}', '{{20 N·m}}', '{{0.5 N·m}}'], a: 0, e: '{{τ = r × F = 0.5 × 20 = 10 N·m}}.' },
-        { q: 'كتلة {{2 kg}} تسقط حرة من ارتفاع {{5 m}}. ما سرعتها قبل لحظة وصولها الأرض إذا كان {{g = 10 m/s²}}؟', o: ['{{5 m/s}}', '{{10 m/s}}', '{{50 m/s}}', '{{100 m/s}}'], a: 1, e: 'من حفظ الطاقة {{m g h = ½ m v²}} فيكون {{v = √(2 × 10 × 5) = 10 m/s}}.' },
-        { q: 'كرة كتلتها {{0.2 kg}} تصطدم بحائط بسرعة {{5 m/s}} وترتد بالسرعة نفسها. ما مقدار التغير في كمية حركتها؟', o: ['{{0 kg·m/s}}', '{{1 kg·m/s}}', '{{4 kg·m/s}}', '{{2 kg·m/s}}'], a: 3, e: '{{Δp = 0.2 × (5 − (−5)) = 2 kg·m/s}}.' },
-        { q: 'عربة كتلتها {{1 kg}} وسرعتها {{4 m/s}} تصطدم بعربة ساكنة كتلتها {{1 kg}} ويلتحمان. ما سرعتهما بعد التصادم؟', o: ['{{4 m/s}}', '{{2 m/s}}', '{{1 m/s}}', '{{8 m/s}}'], a: 1, e: 'بحفظ كمية الحركة {{1 × 4 = (1 + 1) × v}} فتكون {{v = 2 m/s}}.' }
-      ] }
-  ];
+function render(scroll = true) {
+  if (simStop) { simStop(); simStop = null; }
+  const top = S.stack[S.stack.length - 1];
+  let html;
+  if (!top) html = { home: vHome, lab: vLab, notes: vNotes, profile: vProfile }[S.tab]();
+  else if (top.type === 'unit') html = vUnit(top.u);
+  else if (top.type === 'lesson') html = vLesson(top.u, top.i);
+  else if (top.type === 'sim') html = vSim(top.k);
+  app.innerHTML = html;
+  tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
+  if (top && top.type === 'sim') startSim(top.k);
+  const nm = document.getElementById('name');
+  if (nm) nm.oninput = () => { S.name = nm.value; store.set('name', S.name); const a = document.querySelector('.avatar'); if (a) a.textContent = S.name.trim()[0] || '؟'; };
+  if (scroll) window.scrollTo(0, 0);
+}
 
-  var SIMMAP = { 'g10:2-3': 'fall', 'g10:3-4': 'proj', 'g11:1-3': 'proj', 'g11:2-1': 'circ', 'g11:2-2': 'circ', 'g12:3-2': 'coll' };
+function go(spec, replace) {
+  const [type, a, b] = spec.split(':');
+  const entry = type === 'unit' ? { type, u: +a } : type === 'lesson' ? { type, u: +a, i: +b } : { type, k: a };
+  if (type === 'lesson') { S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last); }
+  if (replace) S.stack.pop();
+  S.stack.push(entry);
+  render();
+}
 
-  var KEY = 'fizya-tube-v2';
-  var st = { done: {}, best: {} };
-  try {
-    var raw = localStorage.getItem(KEY);
-    if (raw) { var pp = JSON.parse(raw); st.done = pp.done || {}; st.best = pp.best || {}; }
-  } catch (e) {}
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(st)); } catch (e) {} }
+function toast(msg) {
+  const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg; t.setAttribute('role', 'status');
+  document.body.appendChild(t); setTimeout(() => t.remove(), 1800);
+}
 
-  var ui = { tab: 'home', subj: 'g10', qs: 'g10', lesson: null, q: null, cr: false, vdel: false, search: '' };
+function sheet(html) {
+  layer.innerHTML = `<div class="scrim" data-act="close"></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+  const f = layer.querySelector('.sheet button'); if (f) f.focus({ preventScroll: true });
+}
+const closeSheet = () => { layer.innerHTML = ''; };
 
-  var byId = function (id) { return SUBJECTS.filter(function (s) { return s.id === id; })[0]; };
-  var isDone = function (s, i) { return !!st.done[s.id + ':' + i]; };
-  var doneCount = function (s) { var c = 0; s.lessons.forEach(function (_, i) { if (isDone(s, i)) c++; }); return c; };
-  var totalLessons = function () { return SUBJECTS.reduce(function (a, s) { return a + s.lessons.length; }, 0); };
-  var pct = function (a, b) { return b ? Math.round(a / b * 100) : 0; };
-  var chapterCount = function (s) { var seen = {}, n = 0; s.lessons.forEach(function (l) { if (!seen[l.c]) { seen[l.c] = 1; n++; } }); return n; };
-  function norm(x) {
-    return String(x).replace(/[ً-ٰٟـ]/g, '').replace(/[أإآٱ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').toLowerCase().trim();
-  }
-  function nextLesson() {
-    for (var a = 0; a < SUBJECTS.length; a++) {
-      for (var i = 0; i < SUBJECTS[a].lessons.length; i++) {
-        if (!isDone(SUBJECTS[a], i)) return { s: SUBJECTS[a], i: i, l: SUBJECTS[a].lessons[i] };
-      }
-    }
-    return null;
-  }
+function gradeSheet() {
+  sheet(`<h2>اختر مرحلتك</h2><p>نعرض لك دروس صفك ومذكراته فقط.</p>
+    <div class="opts">${GRADE_ORDER.map(k => { const g = GRADES[k], n = g.units.reduce((s, u) => s + u.lessons.length, 0); return `<button class="opt" data-grade="${k}" aria-pressed="${S.grade === k}">
+      <span class="thumb" style="${tileStyle(g.theme)}">${glyph(g.units[1].glyph, g.theme)}</span>
+      <span class="t"><b>${g.name}</b><small>${ar(g.units.length)} وحدات · ${ar(n)} درساً</small></span>
+      ${S.grade === k ? `<span class="tick">${icon('checkc')}</span>` : ''}</button>`; }).join('')}</div>`);
+}
+function planSheet() {
+  const g = G();
+  sheet(`<h2>باقة ${esc(g.short)}</h2><p>الباقة مجانية بالكامل حالياً. عند إطلاق الاشتراك ستظهر الأسعار هنا.</p>
+    <ul class="perks">
+      <li>${icon('checkc')}شرح فيديو لكل دروس المنهج</li>
+      <li>${icon('checkc')}مذكرة PDF لكل وحدة</li>
+      <li>${icon('checkc')}تجارب تفاعلية في المختبر</li>
+      <li>${icon('checkc')}متابعة تقدّمك درساً بدرس</li>
+    </ul>
+    <button class="btn primary" data-act="start">ابدأ التعلّم الآن</button>`);
+}
 
-  var ICON_CHECK = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
-  var ICON_CHEV = '<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>';
-  var ICON_BACK = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
-  var LOGO = '<svg viewBox="0 0 40 40" fill="none" aria-hidden="true"><rect x="1.5" y="1.5" width="37" height="37" rx="9" fill="var(--accent)" stroke="var(--fg)" stroke-width="2"/><path d="M7 31 Q20 -2 33 31" stroke="var(--on-accent)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="1 5.5" fill="none"/><circle cx="33" cy="31" r="3.4" fill="var(--vec)" stroke="var(--fg)" stroke-width="1.5"/></svg>';
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-go],[data-tab],[data-act],[data-grade]');
+  if (!el || el.getAttribute('aria-disabled') === 'true') return;
+  if (el.dataset.go) { closeSheet(); return go(el.dataset.go, el.dataset.replace); }
+  if (el.dataset.tab) { closeSheet(); S.tab = el.dataset.tab; S.stack = []; return render(); }
+  if (el.dataset.grade) {
+    S.grade = el.dataset.grade; store.set('grade', S.grade); closeSheet(); S.stack = []; render();
+    return toast(`تم التغيير إلى ${GRADES[S.grade].name}`);
+  }
+  const act = el.dataset.act;
+  if (act === 'back') { S.stack.pop(); render(); }
+  else if (act === 'grade') gradeSheet();
+  else if (act === 'plan') planSheet();
+  else if (act === 'close') closeSheet();
+  else if (act === 'start') { closeSheet(); S.tab = 'home'; S.stack = []; go('unit:0'); }
+  else if (act === 'watched') {
+    const k = el.dataset.key; S.watched[k] = !S.watched[k]; if (!S.watched[k]) delete S.watched[k];
+    store.set('watched', S.watched); render(false);
+    if (S.watched[k]) toast('أحسنت! تم حفظ تقدّمك');
+  }
+  else if (act === 'reset') {
+    if (el.dataset.confirm) { S.watched = {}; store.set('watched', {}); S.last = null; store.set('last', null); render(false); toast('تم مسح التقدّم'); }
+    else { el.dataset.confirm = '1'; el.querySelector('small').textContent = 'اضغط مرة أخرى للتأكيد'; }
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
-  function bar(p) { return '<div class="bar" role="progressbar" aria-valuenow="' + p + '" aria-valuemin="0" aria-valuemax="100"><i style="width:' + p + '%"></i></div>'; }
-  function chips(sel, action) {
-    return '<div class="chips">' + SUBJECTS.map(function (s) {
-      return '<button class="chip" data-a="' + action + '" data-v="' + s.id + '" aria-pressed="' + (s.id === sel) + '">' + s.name + '</button>';
-    }).join('') + '</div>';
-  }
-  function topbar() {
-    return '<header class="top"><button class="brand" data-a="tab" data-v="home" aria-label="فيزياء تيوب">' + LOGO + '<span>فيزياء تيوب</span></button><span class="pill">نموذج تجريبي</span></header>';
-  }
+const start = (location.hash || '').slice(1);
+if (['home', 'lab', 'notes', 'profile'].includes(start)) S.tab = start;
+render();
 
-  /* ---------- lesson videos (several per lesson; shared db + asset uploads for editors) ---------- */
-  var cap = { db: null, assets: null, edit: false };
-  var vids = {};
-  var vbusy = false;
-  var vkey = function (sid, i) { return sid + '-' + i; };
-  var vlist = function (sid, i) { return vids[vkey(sid, i)] || []; };
-  var vcount = function (s) { var c = 0; s.lessons.forEach(function (_, i) { c += vlist(s.id, i).length; }); return c; };
-  var escAttr = function (x) { return String(x).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); };
-  var curKey = function () { return vkey(ui.lesson.s, ui.lesson.i); };
-
-  function adminPanel(n) {
-    return '<section class="card vadmin"><h2 class="sec-t">إضافة فيديو للدرس</h2>' +
-      '<p class="note">هذا القسم يظهر لك أنت فقط، والطلاب يشوفون الفيديوهات بس. تقدر تضيف أي عدد من الفيديوهات للدرس' + (n ? ' (فيه الحين <span class="num">' + n + '</span>)' : '') + '.</p>' +
-      '<label class="vlab" for="vtitle">عنوان الفيديو (اختياري)</label><input id="vtitle" class="vin" type="text" maxlength="80" placeholder="مثلاً: شرح القانون الأول">' +
-      '<label class="vlab" for="vfile">ملف فيديو (mp4 أو webm، حتى 20MB)</label><input id="vfile" type="file" accept="video/mp4,video/webm">' +
-      '<button class="btn" data-a="vupload">أضف الفيديو</button>' +
-      '<label class="vlab" for="vlink">أو رابط فيديو من يوتيوب أو غيره</label><input id="vlink" class="vin" type="url" inputmode="url" dir="ltr" placeholder="https://">' +
-      '<button class="btn ghost" data-a="vlink">أضف الرابط</button>' +
-      '<p class="vmsg" id="vmsg" role="status"></p></section>';
-  }
-  function videoItem(v, n, total) {
-    var t = v.title ? escAttr(v.title) : (total > 1 ? 'الفيديو ' + (n + 1) : '');
-    var body;
-    if (v.kind === 'file' && v.asset) {
-      body = '<video class="vid" controls playsinline preload="metadata" src="/_blob/' + escAttr(v.asset) + '"></video>';
-    } else if (v.kind === 'link' && v.href) {
-      body = '<div class="vempty"><p>الفيديو موجود على موقع خارجي.</p><a class="btn inv" href="' + escAttr(v.href) + '" target="_blank" rel="noopener">شاهد الفيديو</a></div>';
-    } else {
-      body = '<div class="vempty"><p>تعذّر عرض هذا الفيديو.</p></div>';
-    }
-    return '<div class="vitem">' + (t ? '<h3 class="vt">' + t + '</h3>' : '') + body +
-      (cap.edit ? '<div><button class="btn ghost bad vdelb" data-a="vdel" data-id="' + escAttr(v.id) + '">حذف هذا الفيديو</button></div>' : '') + '</div>';
-  }
-  function videoBlock(s, i) {
-    var list = vlist(s.id, i), main;
-    if (!list.length) {
-      main = '<div class="vempty"><p>' + (cap.edit ? 'ما أضفت فيديو لهذا الدرس بعد.' : 'الفيديو ما انضاف بعد لهذا الدرس.') + '</p></div>';
-    } else {
-      main = '<div class="vlist">' + list.map(function (v, n) { return videoItem(v, n, list.length); }).join('') + '</div>';
-    }
-    return main + (cap.edit ? adminPanel(list.length) : '');
-  }
-  function vmsg(t, bad) {
-    var el = $('vmsg');
-    if (el) { el.textContent = t; el.className = 'vmsg' + (bad ? ' bad' : ''); }
-  }
-  function vErr(e) {
-    var m = {
-      too_large: 'حجم الملف أكبر من الحد المسموح (20MB).',
-      unsupported_type: 'هذي الصيغة غير مدعومة. استخدم mp4 أو webm.',
-      quota_or_state: 'مساحة التخزين ممتلئة. احذف فيديو قديم أو استخدم رابطاً.',
-      quota_exceeded: 'امتلأ حد البيانات المسموح.',
-      rate_limited: 'محاولات كثيرة، انتظر شوي وجرّب مرة ثانية.',
-      invalid_argument: 'ما عندك صلاحية الحفظ هنا.',
-      store_unavailable: 'مشكلة مؤقتة، جرّب مرة ثانية.'
-    }[e && e.code];
-    vmsg(m || 'ما انحفظ الفيديو. جرّب مرة ثانية.', true);
-  }
-  function dropOld(old) {
-    if (old && old.kind === 'file' && old.asset && cap.assets) return cap.assets.delete(old.asset).catch(function () {});
-  }
-  function newId(key) { return key + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5); }
-  function vTitle() { var t = $('vtitle'); return t ? t.value.trim().slice(0, 80) : ''; }
-  function vUpload() {
-    if (!cap.edit || vbusy) return;
-    var inp = $('vfile'), f = inp && inp.files && inp.files[0];
-    if (!f) { vmsg('اختر ملف الفيديو أولاً.', true); return; }
-    var type = f.type;
-    if (!type) { var mt = /\.(mp4|webm)$/i.exec(f.name); type = mt ? 'video/' + mt[1].toLowerCase() : ''; }
-    if (type !== 'video/mp4' && type !== 'video/webm') { vmsg('الصيغة المدعومة هي mp4 أو webm فقط.', true); return; }
-    if (f.size > 20 * 1024 * 1024) { vmsg('حجم الملف أكبر من 20MB. ارفعه على يوتيوب وحط الرابط بدل الرفع.', true); return; }
-    var key = curKey(), title = vTitle(), id = newId(key);
-    vbusy = true; vmsg('جاري الرفع...');
-    cap.assets.upload(f, { type: type }).then(function (res) {
-      return cap.db.doc('videos/' + id).set({ lesson: key, kind: 'file', asset: res.id, title: title, name: f.name, size: res.sizeBytes, at: Date.now() });
-    }).then(function () { vbusy = false; vmsg('تمت إضافة الفيديو.'); }).catch(function (e) { vbusy = false; vErr(e); });
-  }
-  function vLink() {
-    if (!cap.edit || vbusy) return;
-    var inp = $('vlink'), raw2 = inp ? inp.value.trim() : '', u = null;
-    try { u = new URL(raw2); } catch (e) {}
-    if (!u || u.protocol !== 'https:') { vmsg('اكتب رابطاً صحيحاً يبدأ بـ https://', true); return; }
-    var key = curKey(), title = vTitle(), id = newId(key);
-    vbusy = true; vmsg('جاري الحفظ...');
-    cap.db.doc('videos/' + id).set({ lesson: key, kind: 'link', href: u.href, title: title, at: Date.now() })
-      .then(function () { vbusy = false; vmsg('تمت إضافة الرابط.'); })
-      .catch(function (e) { vbusy = false; vErr(e); });
-  }
-  function vDelete(btn) {
-    if (!cap.edit || vbusy) return;
-    var id = btn.getAttribute('data-id');
-    if (ui.vdel !== id) {
-      var all = document.querySelectorAll('.vdelb');
-      for (var q = 0; q < all.length; q++) all[q].textContent = 'حذف هذا الفيديو';
-      ui.vdel = id; btn.textContent = 'اضغط مرة ثانية للحذف النهائي'; return;
-    }
-    var v = vlist(ui.lesson.s, ui.lesson.i).filter(function (x) { return x.id === id; })[0];
-    ui.vdel = false; vbusy = true;
-    cap.db.doc('videos/' + id).delete()
-      .then(function () { return dropOld(v); })
-      .then(function () { vbusy = false; })
-      .catch(function (e) { vbusy = false; vErr(e); });
-  }
-  function refreshLists() {
-    if (ui.tab === 'home' && $('gradeTiles')) $('gradeTiles').innerHTML = tilesHtml();
-    else if (ui.tab === 'subjects' && $('lres')) $('lres').innerHTML = lessonRows();
-    else if (ui.tab === 'progress') render(false);
-  }
-  function onVideos(snap) {
-    var next = {}, changed = {}, any = false, k;
-    snap.docs.forEach(function (d) {
-      if (!d.exists) return;
-      var x = d.data(), lk = x.lesson || (/^g1[0-2]-\d+$/.test(d.id) ? d.id : null);
-      if (!lk) return;
-      (next[lk] = next[lk] || []).push({ id: d.id, kind: x.kind, asset: x.asset, href: x.href, title: x.title || '', at: x.at || 0 });
-    });
-    Object.keys(next).forEach(function (key) {
-      next[key].sort(function (a, b) { return (a.at - b.at) || (a.id < b.id ? -1 : 1); });
-      if (JSON.stringify(next[key]) !== JSON.stringify(vids[key])) changed[key] = 1;
-    });
-    Object.keys(vids).forEach(function (key) { if (!next[key]) changed[key] = 1; });
-    vids = next;
-    for (k in changed) { any = true; break; }
-    if (!any) return;
-    if (ui.lesson) { if (changed[curKey()]) render(false); }
-    else refreshLists();
-  }
-  function initCaps() {
-    var c = window.claude;
-    if (!c || !c.use) return;
-    Promise.all([c.use('db'), c.use('assets'), c.use('user')]).then(function (r) {
-      cap.db = r[0]; cap.assets = r[1];
-      if (!cap.db) return;
-      var pe = r[2] ? r[2].canEdit() : Promise.resolve(true);
-      return pe.then(function (ok) {
-        cap.edit = !!(cap.assets && ok);
-        cap.db.collection('videos').onSnapshot(onVideos, function () {});
-        if (cap.edit && ui.lesson) render(false);
-      });
-    }).catch(function () {});
-  }
-  document.addEventListener('error', function (e) {
-    var t = e.target;
-    if (t && t.tagName === 'VIDEO') {
-      var d = document.createElement('div');
-      d.className = 'vempty';
-      d.innerHTML = '<p>تعذّر تشغيل الفيديو. أعد تحميل الصفحة أو جرّب لاحقاً.</p>';
-      t.replaceWith(d);
-    }
-  }, true);
-
-  /* ---------- views ---------- */
-  function tilesHtml() {
-    return SUBJECTS.map(function (s) {
-      var d = doneCount(s), n = s.lessons.length, vc = vcount(s);
-      return '<button class="card tile" data-a="subj" data-v="' + s.id + '"><span class="gn">' + s.glyph + '</span><h3>' + s.name + '</h3>' +
-        '<p class="meta">' + chapterCount(s) + ' فصول · <span class="num">' + d + '</span> من <span class="num">' + n + '</span> دروس' + (vc ? ' · <span class="num">' + vc + '</span> فيديو' : '') + '</p>' + bar(pct(d, n)) + '</button>';
-    }).join('');
-  }
-
-  function home() {
-    var nx = nextLesson();
-    var cont = nx
-      ? '<section class="card"><p class="eyebrow">تابع من حيث وقفت</p><h2 class="sec-t">' + nx.l.t + '</h2><p class="note">' + nx.s.name + ' · <span class="num">' + nx.l.m + '</span> دقيقة</p><div><button class="btn" data-a="open" data-s="' + nx.s.id + '" data-i="' + nx.i + '">ابدأ الدرس</button></div></section>'
-      : '<section class="card"><p class="eyebrow">أحسنت</p><h2 class="sec-t">أنهيت كل الدروس المتاحة</h2><div><button class="btn" data-a="tab" data-v="quiz">اختبر نفسك</button></div></section>';
-    return topbar() +
-      '<section class="hero"><div><p class="eyebrow">الصف العاشر · الحادي عشر · الثاني عشر</p><h1>الفيزياء <mark>تنفهم</mark>، مو تنحفظ.</h1>' +
-      '<p class="lead">دروس مرتبة على فصول كتابك، وفيديو وتجربة تفاعلية وملخص واختبار لكل درس. وقبل لا تبدأ، جرّب بنفسك: غيّر الزاوية والسرعة وشوف وين تنزل الكرة.</p>' +
-      '<div class="cta"><button class="btn" data-a="tab" data-v="subjects">ابدأ الدروس</button><button class="btn alt" data-a="tab" data-v="quiz">اختبر نفسك</button></div></div>' +
-      '<div class="sim" id="simhome"></div></section>' +
-      cont +
-      '<section class="head"><p class="eyebrow">// الصفوف</p><h2 class="sec-h">ابدأ من صفك</h2><p class="sec-p">الدروس مأخوذة من فهرس الجزء الأول في كتاب كل صف، بنفس ترتيب الفصول.</p></section>' +
-      '<div class="grades" id="gradeTiles">' + tilesHtml() + '</div>' +
-      '<section class="head"><p class="eyebrow">// تقرير المختبر</p><h2 class="sec-h">شنو في كل درس</h2></section>' +
-      '<div class="sheet"><div class="cap"><span>FIZYA TUBE</span><span>4 أدوات</span></div>' +
-      '<div class="sline"><span class="sym">v</span><div><h3>فيديو الشرح</h3><p>مقطع لكل درس تضيفه أنت، ويقدر الطالب يعيده بالسرعة اللي تناسبه.</p></div></div>' +
-      '<div class="sline"><span class="sym">θ</span><div><h3>تجربة تفاعلية</h3><p>في الدروس اللي تنفع فيها: مقذوفات وسقوط حر وحركة دائرية وتصادمات. تغيّر الأرقام وتشوف النتيجة.</p></div></div>' +
-      '<div class="sline"><span class="sym">Σ</span><div><h3>ملخص الدرس</h3><p>القوانين والوحدات في صفحة وحدة تراجع منها قبل الاختبار.</p></div></div>' +
-      '<div class="sline"><span class="sym">✓</span><div><h3>اختبار قصير</h3><p>أسئلة بتصحيح فوري وشرح للإجابة، وتتابع تقدمك في كل صف.</p></div></div></div>' +
-      '<p class="note">عناوين الدروس مأخوذة من فهارس كتب الفيزياء، أما الملخصات والأسئلة فأمثلة للتجربة وتحتاج مراجعة معلم.</p>';
-  }
-
-  function rowHtml(s, i, showGrade) {
-    var l = s.lessons[i], on = isDone(s, i);
-    return '<button class="row" data-a="open" data-s="' + s.id + '" data-i="' + i + '"><span class="dot' + (on ? ' on' : '') + '">' + (on ? ICON_CHECK : '') + '</span>' +
-      '<span class="txt"><span class="t">' + l.t + '</span><br><span class="m">' + (showGrade ? s.name + ' · ' : '') + 'الدرس <bdi dir="ltr" class="f">' + l.k + '</bdi> · <span class="num">' + l.m + '</span> دقيقة' +
-      (on ? ' · مكتمل' : '') + (vlist(s.id, i).length ? ' · <span class="vtag">' + (vlist(s.id, i).length > 1 ? vlist(s.id, i).length + ' فيديوهات' : 'فيديو') + '</span>' : '') + '</span></span>' + ICON_CHEV + '</button>';
-  }
-  function lessonRows() {
-    var q = norm(ui.search), out = '', n = 0;
-    if (q) {
-      SUBJECTS.forEach(function (s) {
-        s.lessons.forEach(function (l, i) {
-          if (norm(l.t).indexOf(q) >= 0 || norm(l.c).indexOf(q) >= 0 || l.k.indexOf(q) >= 0) { out += rowHtml(s, i, true); n++; }
-        });
-      });
-      return n ? out : '<p class="note">ما لقينا درس بهذا الاسم. جرّب كلمة ثانية.</p>';
-    }
-    var s = byId(ui.subj), prev = '';
-    s.lessons.forEach(function (l, i) {
-      if (l.c !== prev) { out += '<h3 class="chap">' + l.c + '</h3>'; prev = l.c; }
-      out += rowHtml(s, i, false);
-    });
-    return out;
-  }
-  function subjects() {
-    var s = byId(ui.subj);
-    return topbar() + '<h1 class="page-h">الدروس</h1>' +
-      '<input id="q" class="search" type="search" placeholder="ابحث عن درس، مثلاً: مقذوفات" value="' + escAttr(ui.search) + '" aria-label="ابحث عن درس">' +
-      chips(ui.subj, 'subj') +
-      '<div class="prow"><div class="line"><span>' + s.name + '</span><span><span class="num">' + doneCount(s) + '</span> من <span class="num">' + s.lessons.length + '</span></span></div>' + bar(pct(doneCount(s), s.lessons.length)) + '</div>' +
-      '<div class="rows" id="lres">' + lessonRows() + '</div>';
-  }
-
-  function lessonView() {
-    var s = byId(ui.lesson.s), i = ui.lesson.i, l = s.lessons[i], on = isDone(s, i);
-    return '<div class="backbar"><button class="back" data-a="back">' + ICON_BACK + 'رجوع</button></div>' +
-      '<div><p class="note">' + s.name + ' · ' + l.c + '</p><h1 class="lesson-h">' + l.t + '</h1></div>' +
-      videoBlock(s, i) +
-      (SIMMAP[s.id + ':' + l.k] ? '<div class="sim" id="simbox"></div>' : '') +
-      '<section class="card"><h2 class="sec-t">ملخص الدرس</h2><ul class="notes">' + l.n.map(function (x) { return '<li>' + L(x) + '</li>'; }).join('') + '</ul></section>' +
-      '<button class="btn block ' + (on ? 'ghost' : '') + '" data-a="finish">' + (on ? ICON_CHECK + ' تم إنهاء الدرس' : 'أنهيت الدرس') + '</button>' +
-      '<button class="btn block alt" data-a="qgo" data-v="' + s.id + '">اختبر نفسك في ' + s.name + '</button>';
-  }
-
-  function quiz() {
-    if (!ui.q) {
-      var s = byId(ui.qs), b = st.best[s.id];
-      return topbar() + '<h1 class="page-h">اختبار</h1>' + chips(ui.qs, 'qsubj') +
-        '<section class="card" style="align-items:flex-start"><h2 class="sec-t">' + s.name + '</h2><p><span class="num">' + s.quiz.length + '</span> أسئلة · ' + (b != null ? 'أفضل نتيجة <span class="num">' + b + '</span> من <span class="num">' + s.quiz.length + '</span>' : 'لم تحاول بعد') + '</p><button class="btn" data-a="qstart">ابدأ الاختبار</button></section>';
-    }
-    var q = ui.q, sb = byId(q.s), n = sb.quiz.length;
-    if (q.done) {
-      var msg = q.score === n ? 'ممتاز، إجاباتك كلها صحيحة.' : (q.score * 2 >= n ? 'جيد، راجع الأسئلة اللي أخطأت فيها.' : 'راجع دروس الصف ثم أعد المحاولة.');
-      return topbar() + '<h1 class="page-h">النتيجة</h1>' +
-        '<section class="card" style="align-items:flex-start"><p class="note">' + sb.name + '</p><p class="score num">' + q.score + ' / ' + n + '</p><p>' + msg + '</p>' +
-        '<button class="btn" data-a="qretry">أعد الاختبار</button><button class="btn ghost" data-a="qexit">اختبار صف آخر</button><button class="btn ghost" data-a="subj" data-v="' + sb.id + '">راجع الدروس</button></section>';
-    }
-    var item = sb.quiz[q.i], answered = q.pick !== null;
-    var opts = item.o.map(function (o, k) {
-      var cls = 'opt', lab = '';
-      if (answered) {
-        if (k === item.a) { cls += ' right'; lab = 'صحيحة'; }
-        else if (k === q.pick) { cls += ' wrong'; lab = 'خاطئة'; }
-      }
-      return '<button class="' + cls + '" data-a="qpick" data-v="' + k + '"' + (answered ? ' disabled' : '') + '><span>' + L(o) + '</span><span class="lab">' + lab + '</span></button>';
-    }).join('');
-    var last = q.i + 1 === n;
-    return topbar() + '<div class="qhead"><span>' + sb.name + '</span><span>السؤال <span class="num">' + (q.i + 1) + '</span> من <span class="num">' + n + '</span></span></div>' + bar(pct(q.i + (answered ? 1 : 0), n)) +
-      '<h2 class="qtext">' + L(item.q) + '</h2><div class="rows">' + opts + '</div>' +
-      (answered ? '<div class="explain">' + L(item.e) + '</div><div><button class="btn" data-a="qnext">' + (last ? 'عرض النتيجة' : 'السؤال التالي') + '</button></div>' : '');
-  }
-
-  function progress() {
-    var tot = totalLessons(), d = 0, mins = 0, allMins = 0;
-    SUBJECTS.forEach(function (s) { s.lessons.forEach(function (l, i) { allMins += l.m; if (isDone(s, i)) { d++; mins += l.m; } }); });
-    var rows = SUBJECTS.map(function (s) {
-      var c = doneCount(s), b = st.best[s.id];
-      return '<div class="prow"><div class="line"><span>' + s.name + '</span><span><span class="num">' + c + '</span> من <span class="num">' + s.lessons.length + '</span> دروس · ' + (b != null ? 'الاختبار <span class="num">' + b + '/' + s.quiz.length + '</span>' : 'بلا اختبار') + '</span></div>' + bar(pct(c, s.lessons.length)) + '</div>';
-    }).join('');
-    return topbar() + '<h1 class="page-h">تقدمي</h1>' +
-      '<section class="card"><p class="big num">' + pct(d, tot) + '%</p><p>أنهيت <span class="num">' + d + '</span> من <span class="num">' + tot + '</span> درساً</p><p class="note">وقت الدراسة المكتمل: <span class="num">' + mins + '</span> من <span class="num">' + allMins + '</span> دقيقة</p></section>' +
-      '<section class="card" style="gap:16px"><h2 class="sec-t">حسب الصف</h2>' + rows + '</section>' +
-      '<button class="link" data-a="reset">' + (ui.cr ? 'اضغط مرة ثانية لمسح تقدمك' : 'مسح التقدم') + '</button>';
-  }
-
-  var views = { home: home, subjects: subjects, quiz: quiz, progress: progress };
-
-  function render(scroll) {
-    stopSim();
-    var v = $('view'), isHome = !ui.lesson && ui.tab === 'home';
-    v.className = 'wrap' + (isHome ? '' : ' narrow');
-    v.innerHTML = ui.lesson ? lessonView() : views[ui.tab]();
-    var tabs = document.querySelectorAll('.tab');
-    for (var k = 0; k < tabs.length; k++) {
-      if (tabs[k].getAttribute('data-v') === ui.tab && !ui.lesson) tabs[k].setAttribute('aria-current', 'page');
-      else tabs[k].removeAttribute('aria-current');
-    }
-    if (isHome) mountSim($('simhome'), 'proj');
-    else if (ui.lesson) {
-      var s = byId(ui.lesson.s), sk = SIMMAP[s.id + ':' + s.lessons[ui.lesson.i].k];
-      if (sk) mountSim($('simbox'), sk);
-    }
-    if (scroll !== false) window.scrollTo(0, 0);
-  }
-
-  document.addEventListener('input', function (e) {
-    if (e.target && e.target.id === 'q') {
-      ui.search = e.target.value;
-      var r = $('lres'); if (r) r.innerHTML = lessonRows();
-    }
-  });
-
-  document.addEventListener('click', function (e) {
-    var b = e.target.closest('[data-a]');
-    if (!b) return;
-    var a = b.getAttribute('data-a'), v = b.getAttribute('data-v');
-    switch (a) {
-      case 'tab':
-        ui.lesson = null; ui.tab = v; ui.cr = false; render(); break;
-      case 'subj':
-        ui.lesson = null; ui.tab = 'subjects'; ui.subj = v; ui.search = ''; render(); break;
-      case 'open':
-        ui.tab = 'subjects'; ui.subj = b.getAttribute('data-s');
-        ui.lesson = { s: b.getAttribute('data-s'), i: parseInt(b.getAttribute('data-i'), 10) };
-        ui.vdel = false; render(); break;
-      case 'back':
-        ui.lesson = null; render(); break;
-      case 'finish':
-        var k = ui.lesson.s + ':' + ui.lesson.i;
-        if (st.done[k]) delete st.done[k]; else st.done[k] = 1;
-        save(); render(false); break;
-      case 'qgo':
-        ui.lesson = null; ui.tab = 'quiz'; ui.qs = v; ui.q = null; render(); break;
-      case 'qsubj':
-        ui.qs = v; render(false); break;
-      case 'qstart':
-        ui.q = { s: ui.qs, i: 0, pick: null, score: 0, done: false }; render(); break;
-      case 'qpick':
-        if (ui.q.pick !== null) break;
-        ui.q.pick = parseInt(v, 10);
-        if (ui.q.pick === byId(ui.q.s).quiz[ui.q.i].a) ui.q.score++;
-        render(false); break;
-      case 'qnext':
-        var sb = byId(ui.q.s);
-        if (ui.q.i + 1 < sb.quiz.length) { ui.q.i++; ui.q.pick = null; }
-        else {
-          ui.q.done = true;
-          if (st.best[sb.id] == null || ui.q.score > st.best[sb.id]) st.best[sb.id] = ui.q.score;
-          save();
-        }
-        render(); break;
-      case 'qretry':
-        ui.q = { s: ui.q.s, i: 0, pick: null, score: 0, done: false }; render(); break;
-      case 'qexit':
-        ui.q = null; render(); break;
-      case 'vupload': vUpload(); break;
-      case 'vlink': vLink(); break;
-      case 'vdel': vDelete(b); break;
-      case 'reset':
-        if (!ui.cr) { ui.cr = true; render(false); }
-        else { st = { done: {}, best: {} }; save(); ui.cr = false; render(false); }
-        break;
-    }
-  });
-
-  render(false);
-  initCaps();
-})();
+if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:') {
+  try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+}
 </script>
-
-</body></html>
+</body>
+</html>
