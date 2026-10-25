@@ -833,7 +833,7 @@ function vProfile() {
     <h2 class="sec">الإعدادات</h2>
     <div class="list">
       <button class="row" data-act="grade"><span class="t"><b>المرحلة الدراسية</b><small>${esc(g.name)}</small></span><span class="end">${icon('chev')}</span></button>
-      ${ADMIN
+      ${!db ? '' : ADMIN
         ? `<button class="row" data-act="logout"><span class="t"><b>تسجيل خروج المعلم</b><small>${esc(ADMIN.email || '')}</small></span></button>`
         : `<button class="row" data-act="login"><span class="t"><b>دخول المعلم</b><small>لإضافة الفيديوهات والمذكرات</small></span><span class="end">${icon('chev')}</span></button>`}
       <button class="row" data-act="reset"><span class="t"><b style="color:#FF6B6B">مسح تقدّمي</b><small>يحذف علامات الدروس المكتملة من هذا الجهاز</small></span></button>
