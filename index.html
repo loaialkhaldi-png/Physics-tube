@@ -469,9 +469,9 @@ const GRADES = {
     name: 'الثاني عشر علمي', short: 'الثاني عشر', theme: 7,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sims: ['work', 'skate', 'pendulum'], lessons: [
+      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sims: ['work', 'spring', 'skate', 'pendulum'], lessons: [
         { t: 'الشغل', sim: 'work', video: '', min: '' },
-        { t: 'الشغل والطاقة', sim: 'work', video: '', min: '' },
+        { t: 'الشغل والطاقة', sim: 'spring', video: '', min: '' },
         { t: 'حفظ (بقاء) الطاقة', sim: 'skate', video: '', min: '' },
         { t: 'حركة البندول', sim: 'pendulum', video: '', min: '' },
         { t: 'عدم حفظ الطاقة', sim: 'skate', video: '', min: '' },
@@ -539,6 +539,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  spring:     { title: 'الطاقة المرونية في النابض', sub: 'اسحب الكتلة وشاهد الطاقة المختزنة في النابض', glyph: 'coil', theme: 7 },
   skate:      { title: 'حفظ الطاقة الميكانيكية', sub: 'متزلج على مسار: طاقة الوضع والحركية والحرارية', glyph: 'bolt', theme: 6 },
   balance:    { title: 'اتزان العزوم', sub: 'ضع الكتل على اللوح وحقق الاتزان', glyph: 'ruler', theme: 5 },
   collision:  { title: 'التصادمات وحفظ الزخم', sub: 'تصادم مرن وتصادم عديم المرونة', glyph: 'collide', theme: 3 },
@@ -1037,6 +1038,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  spring: 'قانون هوك <code>F = k·x</code>، والطاقة المرونية المختزنة في النابض <code>PEs = ½·k·x²</code> وهي تساوي المساحة تحت منحنى (القوة–الاستطالة). الخط الأزرق طول النابض الطبيعي، والأخضر موضع الاتزان. اسحب الكتلة لأسفل ثم اتركها.',
   skate: 'الطاقة الميكانيكية <code>ME = PE + KE = m·g·h + ½·m·v²</code>. بدون احتكاك تبقى ثابتة: كلما نزل المتزلج تحولت طاقة الوضع إلى حركية والعكس. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية فلا يعود إلى نفس الارتفاع. اسحب المتزلج إلى أي ارتفاع لتبدأ من هناك، ولاحظ أن الكتلة لا تغيّر السرعة.',
   balance: 'شرط الاتزان الدوراني: مجموع العزوم حول محور الدوران يساوي صفراً، أي <code>Σ m·g·d (يسار) = Σ m·g·d (يمين)</code>. مثلاً كتلة 20 kg على بعد 1 m تتزن مع كتلة 10 kg على بعد 2 m. اسحب الكتل إلى اللوح، ثم أزل الدعامات لترى هل يتزن.',
   torque: 'عزم القوة <code>τ = r·F·sinθ</code>. يكون العزم أكبر ما يمكن عندما تكون القوة عمودية على الذراع (θ = 90°)، وينعدم عندما تكون القوة على امتداد الذراع (θ = 0° أو 180°).',
@@ -1088,6 +1090,13 @@ const SIMCTL = {
     { id: 'a', label: 'زاوية الإفلات', min: 10, max: 60, step: 5, v: 40, unit: '°' },
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
+  ],
+  spring: [
+    { id: 'k', label: 'ثابت النابض k', min: 5, max: 60, step: 1, v: 10, unit: 'N/m', keep: true },
+    { id: 'm', label: 'الكتلة', min: 50, max: 500, step: 50, v: 200, unit: 'g', keep: true },
+    { id: 'b', label: 'التخميد (الاحتكاك)', min: 0, max: 1, step: 0.05, v: 0, unit: '', keep: true },
+    { id: 'g', type: 'seg', keep: true, label: 'الجاذبية', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'القمر', v: 1.62 }, { t: 'بلا جاذبية', v: 0 }] },
+    { type: 'btn', label: 'أعد النابض' },
   ],
   skate: [
     { id: 'track', type: 'seg', label: 'شكل المسار', opts: [{ t: 'حرف U', v: 0 }, { t: 'حرف W', v: 1 }] },
@@ -1354,6 +1363,63 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    spring(t) {
+      const k = P.k, m = P.m / 1000, g = P.g, b = P.b * 3, seq = m * g / k, sc = 500, top = 34, sx = 230, L0 = 130, SMIN = -.2, SMAX = .5;
+      if (!st.init) { st.init = 1; st.s = seq + .15; st.v = 0; st.last = t; st.heat = 0; st.ref = seq + .15; }
+      const dt = Math.min(Math.max(t - st.last, 0), .05); st.last = t;
+      if (!st.drag && !reduce) for (let i = 0; i < 20; i++) {
+        const h = dt / 20, v0 = st.v;
+        st.v += (g - (k / m) * st.s - b * st.v) * h; st.s += st.v * h; st.heat += m * b * v0 * v0 * h;
+        if (st.s > SMAX) { st.s = SMAX; st.v = 0; } if (st.s < SMIN) { st.s = SMIN; st.v = 0; }
+      }
+      if (st.gk !== `${g}|${k}|${m}`) { st.gk = `${g}|${k}|${m}`; st.ref = seq + Math.abs(st.s - seq); st.heat = 0; }
+      {
+      }
+      const x = st.s, F = k * x, PEs = .5 * k * x * x, KE = .5 * m * st.v * st.v, PEg = Math.max(0, m * g * (st.ref - x)), Q = st.heat;
+      setRO([['الاستطالة x', `${fmt(x * 100, 1)} cm`], ['قوة النابض F', `${fmt(Math.abs(F), 2)} N`], ['الطاقة المرونية', `${fmt(PEs, 3)} J`]]);
+      grid();
+      box(sx - 90, top - 14, 180, 14, '#3A3D46', 4);
+      const yEnd = top + L0 + x * sc, coils = Math.max(4, Math.min(16, Math.round((L0 + x * sc) / 14))), amp = 22;
+      ctx.strokeStyle = '#C9CCD6'; ctx.lineWidth = 3; ctx.lineJoin = 'round'; ctx.beginPath(); ctx.moveTo(sx, top); ctx.lineTo(sx, top + 10);
+      for (let i = 0; i <= coils * 2; i++) { const y = top + 10 + (yEnd - top - 20) * i / (coils * 2); ctx.lineTo(sx + (i === 0 || i === coils * 2 ? 0 : (i % 2 ? amp : -amp)), y); }
+      ctx.lineTo(sx, yEnd); ctx.stroke();
+      const yNat = top + L0, yEq = top + L0 + seq * sc;
+      line(sx - 120, yNat, sx + 120, yNat, 'rgba(76,134,255,.8)', 2, [8, 6]); label('الطول الطبيعي', sx - 126, yNat + 5, BLUE, 'right', 14);
+      if (seq > .002) { line(sx - 120, yEq, sx + 120, yEq, 'rgba(50,209,122,.8)', 2, [8, 6]); label('موضع الاتزان', sx - 126, yEq + 5, '#32D17A', 'right', 14); }
+      const mw = 34 + P.m / 12, mh = 30 + P.m / 14;
+      box(sx - mw / 2, yEnd, mw, mh, ORANGE, 6); label(`${P.m} g`, sx, yEnd + mh / 2 + 6, '#07080B', 'center', 15);
+      if (Math.abs(x) > .005) { arrow(sx + mw / 2 + 24, yEnd + mh / 2, sx + mw / 2 + 24, yEnd + mh / 2 - Math.sign(x) * Math.min(20 + Math.abs(F) * 6, 120), PINK, 3); label('F', sx + mw / 2 + 34, yEnd + mh / 2 - Math.sign(x) * 30, PINK, 'left', 16); }
+      if (Math.abs(x) > .005) { line(sx + 120, yNat, sx + 120, yEnd, 'rgba(255,255,255,.6)', 2); label('x', sx + 128, (yNat + yEnd) / 2 + 6, WHITE, 'left', 16); }
+      // Force–extension graph: the shaded area is the stored elastic energy.
+      const gx = 470, gy = 260, gw = 290, gh = 200, xMax = .5, fMax = k * xMax, GX = v => gx + v / xMax * gw, GY = f => gy - f / fMax * gh;
+      line(gx, gy, gx + gw + 10, gy, DIM, 2); line(gx, gy, gx, gy - gh - 10, DIM, 2);
+      label('F (N)', gx + 6, gy - gh - 14, DIM, 'left', 14); label('x (m)', gx + gw + 10, gy - 10, DIM, 'right', 14);
+      line(GX(0), GY(0), GX(xMax), GY(fMax), 'rgba(255,77,122,.5)', 2);
+      const xc = Math.max(0, Math.min(xMax, x));
+      if (xc > .001) { ctx.fillStyle = 'rgba(168,102,255,.35)'; ctx.beginPath(); ctx.moveTo(GX(0), GY(0)); ctx.lineTo(GX(xc), GY(0)); ctx.lineTo(GX(xc), GY(k * xc)); ctx.closePath(); ctx.fill(); label('½kx²', GX(xc * .66), GY(k * xc * .25) + 4, PURPLE, 'center', 15); }
+      ball(GX(xc), GY(k * xc), 6, WHITE, PINK);
+      label(`${fmt(fMax, 0)}`, gx - 8, GY(fMax) + 5, 'rgba(255,255,255,.35)', 'right', 13); label(`${xMax}`, GX(xMax), gy + 20, 'rgba(255,255,255,.35)', 'center', 13);
+      const E = PEs + KE + PEg + Q || 1, bars = [['المرونية', PEs, PURPLE], ['الحركية', KE, ORANGE], ['الجاذبية', PEg, BLUE], ['الحرارية', Q, PINK], ['الكلية', PEs + KE + PEg + Q, WHITE]];
+      const bw = 40, gap = 16, bx0 = gx, base = 470, maxH = 150;
+      bars.forEach(([n, val, c], i) => { const bx = bx0 + i * (bw + gap), hh = val / E * maxH; box(bx, base - hh, bw, Math.max(hh, 2), c, 5); label(n, bx + bw / 2, base + 20, c, 'center', 12); });
+      label('اسحب الكتلة لأعلى أو لأسفل', 20, H - 16, DIM, 'left', 15);
+      st.geo = { sx, top, L0, sc, mw, mh, SMIN, SMAX };
+      if (!cv._spring) {
+        cv._spring = true; cv.style.touchAction = 'none';
+        const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+        cv.addEventListener('pointerdown', e => {
+          const G = st.geo; if (!G) return; const [px, py] = pt(e), ym = G.top + G.L0 + st.s * G.sc;
+          if (Math.abs(px - G.sx) > G.mw / 2 + 30 || py < ym - 30 || py > ym + G.mh + 30) return;
+          st.drag = { dy: py - ym }; try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        cv.addEventListener('pointermove', e => {
+          if (!st.drag) return; const G = st.geo, [, py] = pt(e);
+          st.s = Math.max(G.SMIN, Math.min(G.SMAX, (py - st.drag.dy - G.top - G.L0) / G.sc)); st.v = 0; st.heat = 0;
+        });
+        const up = () => { if (!st.drag) return; st.drag = null; const se = (P.m / 1000) * P.g / P.k; st.ref = se + Math.abs(st.s - se); st.last = (performance.now() - t0) / 1000; };
+        cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+      }
     },
     skate(t) {
       const g = P.g, m = P.m, k = P.fr * .5, X0 = 400, Y0 = 470, sc = 72, XM = 5;
