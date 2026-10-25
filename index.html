@@ -175,7 +175,9 @@ p { margin: 0; }
 
 /* Lesson */
 .player { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: var(--r-md); overflow: hidden; background: #000; border: 1px solid var(--line); }
-.player iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.player iframe, .player video { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+.player.tall { aspect-ratio: 9 / 16; width: min(100%, 56vh); margin-inline: auto; }
+.hint { color: var(--muted); font-size: 12px; line-height: 1.5; }
 .poster { position: absolute; inset: 0; display: grid; place-items: center; background: var(--tile); text-align: center; padding: 16px; }
 .poster .glyph { width: 84px; position: absolute; top: 16px; left: 16px; opacity: .9; }
 .poster .playbtn { width: 68px; height: 68px; border-radius: 50%; background: rgba(255, 255, 255, .95); color: var(--on-light); display: grid; place-items: center; box-shadow: 0 10px 30px rgba(0, 0, 0, .4); }
@@ -358,7 +360,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_iZNxrR8oYkxjXTPBZOVHcw_qhr2DPZO';
 
 /* =====================================================================
    المحتوى — عدّل هنا فقط لإضافة الفيديوهات والمذكرات
-   - video: ضع رابط يوتيوب للدرس، مثال: "https://youtu.be/abc123XYZ"
+   - video: رابط الفيديو (يوتيوب، تيك توك، Google Drive، Vimeo، وغيرها)
    - pdf:   ضع رابط ملف المذكرة (رابط مباشر أو رابط Google Drive)
    - min:   مدة الفيديو بالدقائق (اختياري)
    - term:  الفصل الدراسي (1 = الأول، 2 = الثاني)
@@ -630,7 +632,7 @@ function parseVideos(raw, min) {
   if (raw[0] === '[') { try { return JSON.parse(raw).filter(v => v && v.url); } catch (e) { return []; } }
   return [{ url: raw, title: '', min: min || '' }];
 }
-const vids = l => (l.videos || parseVideos(l.video, l.min)).filter(v => ytId(v.url));
+const vids = l => (l.videos || parseVideos(l.video, l.min)).filter(v => videoSource(v.url));
 const totalMin = l => vids(l).reduce((n, v) => n + (+v.min || 0), 0);
 const videoWord = n => n === 1 ? 'فيديو واحد' : n === 2 ? 'فيديوهان' : (n <= 10 ? `${n} فيديوهات` : `${n} فيديو`);
 applyRemote();
@@ -682,12 +684,12 @@ function lessonEditor(key, l) {
     <div class="ed-h"><b>تعديل الدرس</b><span class="tag">وضع المعلم</span></div>
     ${vs.length ? `<div class="label" style="padding:0">فيديوهات الدرس (${ar(vs.length)})</div>
     <div class="ed-list">${vs.map((v, j) => `<div class="ed-vid">
-      <span class="t"><b>${ar(j + 1)}. ${esc(v.title || `الجزء ${ar(j + 1)}`)}</b><small>${v.min ? `${ar(v.min)} دقيقة · ` : ''}youtu.be/${ytId(v.url)}</small></span>
+      <span class="t"><b>${ar(j + 1)}. ${esc(v.title || `الجزء ${ar(j + 1)}`)}</b><small>${v.min ? `${ar(v.min)} دقيقة · ` : ''}${esc(videoSource(v.url).name)}</small></span>
       ${j ? `<button class="circle sm" data-act="vid-up" data-key="${key}" data-j="${j}" aria-label="نقل للأعلى">${icon('up')}</button>` : ''}
       <button class="circle sm danger" data-act="vid-del" data-key="${key}" data-j="${j}" aria-label="حذف الفيديو">${icon('trash')}</button>
     </div>`).join('')}</div>` : ''}
     <div class="label" style="padding:0">${vs.length ? 'إضافة فيديو آخر' : 'إضافة فيديو'}</div>
-    <div class="field"><label for="ed-video">رابط فيديو يوتيوب</label><input id="ed-video" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/..."></div>
+    <div class="field"><label for="ed-video">رابط الفيديو</label><input id="ed-video" type="url" inputmode="url" autocomplete="off" placeholder="https://..."><small class="hint">يقبل يوتيوب، تيك توك، Google Drive، Vimeo، إنستغرام، فيسبوك، Dropbox، ورابط أي ملف فيديو مباشر. في Google Drive اجعل المشاركة «أي شخص لديه الرابط».</small></div>
     <div class="field"><label for="ed-title">عنوان الفيديو (اختياري)</label><input id="ed-title" maxlength="60" placeholder="مثال: حل أمثلة الكتاب"></div>
     <div class="field"><label for="ed-min">المدة بالدقائق (اختياري)</label><input id="ed-min" inputmode="numeric" maxlength="4" placeholder="12"></div>
     <button class="btn primary" data-act="add-video" data-key="${key}">${icon('play', 'style="fill:currentColor;stroke:none;width:16px;height:16px"')}إضافة الفيديو</button>
@@ -721,6 +723,43 @@ const ORD = ['', 'الأول', 'الثاني', 'الثالث', 'الرابع', '
 const lessonNo = (unit, i) => unit.lessons[i].extra ? '' : (unit.ch ? `${i + 1}-${unit.ch}` : `${i + 1}`);
 const unitLabel = (g, i) => { const u = GRADES[g].units[i]; return u.ch ? `الفصل ${ORD[u.ch]}` : `الوحدة ${unitNo(g, i)}`; };
 const ytId = url => { const m = String(url || '').match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/); return m ? m[1] : ''; };
+// Turns a pasted link into something the lesson player can show.
+// kind: frame (iframe), file (<video>), link (opens in the platform's own app).
+function videoSource(raw) {
+  const url = String(raw || '').trim();
+  let u; try { u = new URL(url); } catch (e) { return null; }
+  if (!/^https?:$/.test(u.protocol)) return null;
+  const host = u.hostname.replace(/^www\.|^m\./, ''), path = u.pathname;
+  const yt = /youtube\.com|youtu\.be/.test(host) && ytId(url);
+  if (yt) return { name: 'يوتيوب', kind: 'frame', src: `https://www.youtube-nocookie.com/embed/${yt}?playsinline=1&rel=0&modestbranding=1`, open: `https://youtu.be/${yt}` };
+  if (/tiktok\.com$/.test(host)) {
+    const m = path.match(/\/video\/(\d+)/) || path.match(/\/player\/v1\/(\d+)/) || path.match(/\/embed\/(?:v2\/)?(\d+)/);
+    return m ? { name: 'تيك توك', kind: 'frame', tall: true, src: `https://www.tiktok.com/player/v1/${m[1]}?music_info=0&description=0&rel=0`, open: url }
+             : { name: 'تيك توك', kind: 'link', open: url };
+  }
+  if (host === 'drive.google.com' || host === 'docs.google.com') {
+    const m = path.match(/\/d\/([\w-]{10,})/) || [null, u.searchParams.get('id')];
+    return m && m[1] ? { name: 'Google Drive', kind: 'frame', src: `https://drive.google.com/file/d/${m[1]}/preview`, open: `https://drive.google.com/file/d/${m[1]}/view` } : { name: 'Google Drive', kind: 'link', open: url };
+  }
+  if (/vimeo\.com$/.test(host)) {
+    const m = path.match(/(\d{6,})(?:\/(\w+))?/);
+    return m ? { name: 'Vimeo', kind: 'frame', src: `https://player.vimeo.com/video/${m[1]}${m[2] ? `?h=${m[2]}` : ''}`, open: url } : { name: 'Vimeo', kind: 'link', open: url };
+  }
+  if (/instagram\.com$/.test(host)) {
+    const m = path.match(/\/(reel|reels|p|tv)\/([\w-]+)/);
+    return m ? { name: 'إنستغرام', kind: 'frame', tall: true, src: `https://www.instagram.com/${m[1] === 'reels' ? 'reel' : m[1]}/${m[2]}/embed`, open: url } : { name: 'إنستغرام', kind: 'link', open: url };
+  }
+  if (/facebook\.com$|fb\.watch$/.test(host)) return { name: 'فيسبوك', kind: 'frame', src: `https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(url)}&show_text=false`, open: url };
+  if (/dropbox\.com$|dropboxusercontent\.com$/.test(host)) {
+    u.searchParams.delete('dl'); u.searchParams.set('raw', '1');
+    return { name: 'Dropbox', kind: 'file', src: u.toString(), open: url };
+  }
+  if (/onedrive\.live\.com$/.test(host) && /\/embed/.test(path)) return { name: 'OneDrive', kind: 'frame', src: url, open: url };
+  if (/\.(mp4|m4v|mov|webm|ogv)$/i.test(path)) return { name: 'ملف فيديو', kind: 'file', src: url, open: url };
+  const names = { '1drv.ms': 'OneDrive', 'onedrive.live.com': 'OneDrive', 'icloud.com': 'iCloud', 'box.com': 'Box', 'mega.nz': 'MEGA', 'x.com': 'X', 'twitter.com': 'X', 'snapchat.com': 'سناب شات' };
+  const name = Object.keys(names).find(h => host === h || host.endsWith('.' + h));
+  return { name: name ? names[name] : host, kind: 'link', open: url };
+}
 const CAN_EMBED = !/claude|anthropic/i.test(location.hostname);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const ar = n => String(n);
@@ -853,16 +892,17 @@ function vUnit(u) {
 
 function vLesson(u, i) {
   const unit = G().units[u], l = unit.lessons[i], key = lid(S.grade, u, i), done = !!S.watched[key];
-  const vs = vids(l), vi = Math.min(S.vi || 0, Math.max(vs.length - 1, 0)), cur = vs[vi], id = cur ? ytId(cur.url) : '';
+  const vs = vids(l), vi = Math.min(S.vi || 0, Math.max(vs.length - 1, 0)), cur = vs[vi], src = cur ? videoSource(cur.url) : null;
   const nx = unit.lessons[i + 1] ? { u, i: i + 1 } : (G().units[u + 1] ? { u: u + 1, i: 0 } : null);
   let player;
-  if (id && CAN_EMBED) player = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&modestbranding=1" title="${esc(l.t)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-  else if (id) player = `<a class="poster" href="https://youtu.be/${id}" target="_blank" rel="noopener" style="${tileStyle(unit.theme)}">${glyph(unit.glyph, unit.theme)}<span class="playbtn">${icon('play')}</span></a>`;
+  if (src && src.kind === 'frame' && CAN_EMBED) player = `<iframe src="${esc(src.src)}" title="${esc(l.t)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>`;
+  else if (src && src.kind === 'file') player = `<video src="${esc(src.src)}" controls playsinline preload="metadata"></video>`;
+  else if (src) player = `<a class="poster" href="${esc(src.open)}" target="_blank" rel="noopener" style="${tileStyle(unit.theme)}">${glyph(unit.glyph, unit.theme)}<span class="msg"><span class="playbtn">${icon('play')}</span><span>شاهد الفيديو على ${esc(src.name)}</span></span></a>`;
   else player = `<div class="poster" style="${tileStyle(unit.theme)}">${glyph(unit.glyph, unit.theme)}<span class="msg"><b>الفيديو قيد التجهيز</b><span>سيظهر شرح هذا الدرس هنا قريباً</span></span></div>`;
   const simK = [l.sim, ...(unit.sims || [])].find(k => k && SIMS[k]);
   return `<div class="view push">
     ${navBar()}
-    <div class="player">${player}</div>
+    <div class="player ${src && src.tall && CAN_EMBED ? 'tall' : ''}">${player}</div>
     <div class="lesson-h"><small>${esc(unit.title)}${lessonNo(unit, i) ? ` · الدرس <bdi dir="ltr">[${lessonNo(unit, i)}]</bdi>` : ''}</small><h1>${esc(l.t)}</h1>
       ${vs.length > 1 ? `<span class="now">${icon('play', 'style="fill:currentColor;stroke:none;width:14px;height:14px"')}${esc(cur.title || `الجزء ${ar(vi + 1)}`)} · ${ar(vi + 1)} من ${ar(vs.length)}</span>` : ''}</div>
     ${vs.length > 1 ? `<div class="list playlist">${vs.map((v, j) => `<button class="row ${j === vi ? 'on' : ''}" data-act="play-part" data-j="${j}" ${j === vi ? 'aria-current="true"' : ''}>
@@ -872,7 +912,7 @@ function vLesson(u, i) {
     <div class="actions">
       <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
       ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
-      ${simK ? `<button class="btn" data-go="sim:${simK}">${icon('lab')}جرّبها</button>` : (id ? `<a class="btn" href="https://youtu.be/${id}" target="_blank" rel="noopener">${icon('ext')}يوتيوب</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}يوتيوب</span>`)}
+      ${simK ? `<button class="btn" data-go="sim:${simK}">${icon('lab')}جرّبها</button>` : (src ? `<a class="btn" href="${esc(src.open)}" target="_blank" rel="noopener">${icon('ext')}${esc(src.name)}</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}فتح الفيديو</span>`)}
     </div>
     ${ADMIN ? lessonEditor(key, l) : ''}
     ${nx ? `<div class="next"><div class="label">الدرس التالي</div><div class="list"><button class="row" data-go="lesson:${nx.u}:${nx.i}" data-replace="1">
@@ -1410,7 +1450,9 @@ document.addEventListener('click', e => {
   else if (act === 'add-video') {
     const url = document.getElementById('ed-video').value.trim(), title = document.getElementById('ed-title').value.trim(), min = document.getElementById('ed-min').value.trim().replace(/[^0-9]/g, '');
     if (!url) return toast('الصق رابط الفيديو أولاً');
-    if (!ytId(url)) return toast('الرابط غير صحيح. انسخ رابط الفيديو من يوتيوب كما هو.');
+    const vs0 = videoSource(url);
+    if (!vs0) return toast('الرابط غير صحيح. انسخ رابط الفيديو كاملاً، ويبدأ بـ https://');
+    if (/vm\.tiktok\.com|vt\.tiktok\.com|tiktok\.com\/t\//.test(url)) toast('هذا رابط تيك توك مختصر وسيفتح في تطبيق تيك توك. للتشغيل داخل التطبيق افتح الفيديو في المتصفح وانسخ الرابط الطويل.');
     const list = currentVideos(el.dataset.key).concat([{ url, title, min }]);
     el.classList.add('busy'); el.lastChild.textContent = 'جارٍ الحفظ…';
     saveVideos(el.dataset.key, list).then(ok => { if (ok) { S.vi = list.length - 1; render(false); toast('تمت إضافة الفيديو'); } else { el.classList.remove('busy'); el.lastChild.textContent = 'إضافة الفيديو'; } });
