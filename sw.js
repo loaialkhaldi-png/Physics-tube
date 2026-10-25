@@ -1,5 +1,5 @@
 // يحفظ ملفات التطبيق على الجهاز ليفتح بسرعة ويعمل بدون إنترنت
-const CACHE = 'physics-tube-v9';
+const CACHE = 'physics-tube-v10';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
