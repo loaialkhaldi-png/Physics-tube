@@ -1732,7 +1732,15 @@ if (db) {
 if (start === 'admin') { S.tab = 'profile'; render(); loginSheet(); }
 
 if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:') {
-  try { navigator.serviceWorker.register('sw.js').catch(() => {}); } catch (e) {}
+  try {
+    navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' }).then(reg => {
+      reg.update();
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update(); });
+    }).catch(() => {});
+    // When a new version takes over, reload once so the latest app shows straight away.
+    let reloaded = false, hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } hadController = true; });
+  } catch (e) {}
 }
 </script>
 </body>

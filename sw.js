@@ -1,5 +1,5 @@
 // يحفظ ملفات التطبيق على الجهاز ليفتح بسرعة ويعمل بدون إنترنت
-const CACHE = 'physics-tube-v18';
+const CACHE = 'physics-tube-v19';
 const SHELL = ['./', 'index.html', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -13,7 +13,8 @@ self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.origin !== location.origin) return;
   e.respondWith(
-    fetch(e.request).then(r => {
+    // Pages may serve a cached copy for up to 10 minutes; always revalidate the app page itself.
+    fetch(e.request, e.request.mode === 'navigate' || /index\.html$|\/$/.test(url.pathname) ? { cache: 'no-cache' } : undefined).then(r => {
       const copy = r.clone();
       caches.open(CACHE).then(c => c.put(e.request, copy));
       return r;
