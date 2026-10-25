@@ -374,16 +374,16 @@ const GRADES = {
         { t: 'علم الفيزياء', video: '', min: '' },
         { t: 'الكميات الفيزيائية', video: '', min: '' },
       ]},
-      { id: 'g10-m2', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 2, title: 'الحركة في بُعد واحد', glyph: 'motion', theme: 1, pdf: '', lessons: [
+      { id: 'g10-m2', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 2, title: 'الحركة في بُعد واحد', glyph: 'motion', theme: 1, pdf: '', sims: ['accel', 'freefall'], lessons: [
         { t: 'الكميات الفيزيائية العددية والمتجهة', video: '', min: '' },
-        { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', video: '', min: '' },
-        { t: 'السقوط الحر', video: '', min: '' },
+        { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', sim: 'accel', video: '', min: '' },
+        { t: 'السقوط الحر', sim: 'freefall', video: '', min: '' },
       ]},
-      { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sim: 'projectile', lessons: [
+      { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sims: ['vectors', 'projectile'], lessons: [
         { t: 'خصائص المتجهات', video: '', min: '' },
         { t: 'جمع المتجهات وتحليلها', video: '', min: '' },
         { t: 'ضرب المتجهات', video: '', min: '' },
-        { t: 'حركة المقذوفات', video: '', min: '' },
+        { t: 'حركة المقذوفات', sim: 'projectile', video: '', min: '' },
         { t: 'أسئلة مراجعة الوحدة', extra: true, video: '', min: '' },
       ]},
       // الفصل الدراسي الثاني — مؤقت حتى يصل فهرس الجزء الثاني
@@ -412,28 +412,28 @@ const GRADES = {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sim: 'projectile', lessons: [
+      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['vectors', 'projectile'], lessons: [
         { t: 'الكميات العددية والكميات المتجهة', video: '', min: '' },
         { t: 'ضرب المتجهات', video: '', min: '' },
         { t: 'تحليل المتجهات', video: '', min: '' },
-        { t: 'حركة القذيفة', video: '', min: '' },
+        { t: 'حركة القذيفة', sim: 'projectile', video: '', min: '' },
       ]},
-      { id: 'g11-circular', term: 1, title: 'الحركة الدائرية', glyph: 'orbit', theme: 2, pdf: '', lessons: [
+      { id: 'g11-circular', term: 1, title: 'الحركة الدائرية', glyph: 'orbit', theme: 2, pdf: '', sims: ['circular'], lessons: [
         { t: 'وصف الحركة الدائرية', video: '', min: '' },
         { t: 'القوة الجاذبة المركزية', video: '', min: '' },
       ]},
-      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', lessons: [
+      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', sims: ['com'], lessons: [
         { t: 'مركز الثقل', video: '', min: '' },
         { t: 'مركز الكتلة', video: '', min: '' },
         { t: 'تحديد موضع مركز الثقل (الكتلة)', video: '', min: '' },
       ]},
       // الفصل الدراسي الثاني — مؤقت حتى يصل الفهرس
-      { term: 2, title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', sim: 'pendulum', lessons: [
+      { term: 2, title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', lessons: [
         { t: 'الحركة التوافقية البسيطة', video: '', min: '' },
         { t: 'البندول البسيط', video: '', min: '' },
         { t: 'النابض المهتز', video: '', min: '' },
       ]},
-      { term: 2, title: 'الموجات والصوت', glyph: 'wave', theme: 6, pdf: '', sim: 'wave', lessons: [
+      { term: 2, title: 'الموجات والصوت', glyph: 'wave', theme: 6, pdf: '', lessons: [
         { t: 'خصائص الموجات', video: '', min: '' },
         { t: 'انعكاس الموجات وانكسارها', video: '', min: '' },
         { t: 'الصوت', video: '', min: '' },
@@ -451,18 +451,18 @@ const GRADES = {
     name: 'الثاني عشر علمي', short: 'الثاني عشر', theme: 7,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sim: 'pendulum', lessons: [
-        { t: 'الشغل', video: '', min: '' },
-        { t: 'الشغل والطاقة', video: '', min: '' },
-        { t: 'حفظ (بقاء) الطاقة', video: '', min: '' },
-        { t: 'حركة البندول', video: '', min: '' },
-        { t: 'عدم حفظ الطاقة', video: '', min: '' },
+      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sims: ['work', 'pendulum'], lessons: [
+        { t: 'الشغل', sim: 'work', video: '', min: '' },
+        { t: 'الشغل والطاقة', sim: 'work', video: '', min: '' },
+        { t: 'حفظ (بقاء) الطاقة', sim: 'pendulum', video: '', min: '' },
+        { t: 'حركة البندول', sim: 'pendulum', video: '', min: '' },
+        { t: 'عدم حفظ الطاقة', sim: 'pendulum', video: '', min: '' },
       ]},
-      { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'orbit', theme: 2, pdf: '', lessons: [
+      { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'orbit', theme: 2, pdf: '', sims: ['torque'], lessons: [
         { t: 'عزم القوة', video: '', min: '' },
         { t: 'القصور الذاتي الدوراني', video: '', min: '' },
       ]},
-      { id: 'g12-momentum', term: 1, title: 'كمية الحركة الخطية', glyph: 'collide', theme: 3, pdf: '', lessons: [
+      { id: 'g12-momentum', term: 1, title: 'كمية الحركة الخطية', glyph: 'collide', theme: 3, pdf: '', sims: ['collision'], lessons: [
         { t: 'كمية الحركة والدفع', video: '', min: '' },
         { t: 'حفظ كمية الحركة', video: '', min: '' },
         { t: 'التصادمات', video: '', min: '' },
@@ -474,7 +474,7 @@ const GRADES = {
         { t: 'الجهد الكهربائي', video: '', min: '' },
         { t: 'المكثفات', video: '', min: '' },
       ]},
-      { term: 2, title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', sim: 'ohm', lessons: [
+      { term: 2, title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', lessons: [
         { t: 'شدة التيار', video: '', min: '' },
         { t: 'قانون أوم والمقاومة', video: '', min: '' },
         { t: 'توصيل المقاومات', video: '', min: '' },
@@ -512,11 +512,19 @@ const UNIT_BY_ID = {};
 GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; UNIT_BY_ID[u.id] = u; }));
 
 const SIMS = {
-  projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 1, tag: 'العاشر · الحادي عشر' },
-  pendulum:   { title: 'البندول البسيط', sub: 'قِس الزمن الدوري على الأرض والقمر', glyph: 'pendulum', theme: 0, tag: 'الحادي عشر · الثاني عشر' },
-  wave:       { title: 'الموجات المستعرضة', sub: 'السعة والتردد والطول الموجي', glyph: 'wave', theme: 6, tag: 'الحادي عشر' },
-  ohm:        { title: 'قانون أوم', sub: 'الجهد والمقاومة وشدة التيار', glyph: 'battery', theme: 5, tag: 'الثاني عشر' },
+  accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
+  freefall:   { title: 'السقوط الحر', sub: 'أسقط جسماً على الأرض والقمر والمريخ', glyph: 'drop', theme: 6 },
+  vectors:    { title: 'جمع المتجهات وتحليلها', sub: 'متجهان ومحصلتهما ومركبتاها', glyph: 'vectors', theme: 2 },
+  projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 7 },
+  circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
+  com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'box', theme: 0 },
+  work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
+  pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
+  torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  collision:  { title: 'التصادمات وحفظ الزخم', sub: 'تصادم مرن وتصادم عديم المرونة', glyph: 'collide', theme: 3 },
 };
+// Which grades and units use each experiment (derived from the curriculum above).
+const simUses = k => GRADE_ORDER.flatMap(g => GRADES[g].units.filter(u => (u.sims || []).includes(k)).map(u => ({ g, u })));
 
 /* ---------------- Visual system ---------------- */
 const THEMES = [
@@ -772,7 +780,7 @@ function vHome() {
       <button class="promo" data-tab="lab" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[0].a} 0%, transparent 70%), linear-gradient(170deg, #021310, ${THEMES[0].b})">
         <h2>المختبر</h2>
         <p>جرّب القوانين بنفسك وشاهد النتيجة لحظياً</p>
-        <span class="badge">${ar(Object.keys(SIMS).length)} تجارب</span>
+        <span class="badge">${ar(new Set(g.units.flatMap(u => u.sims || [])).size)} تجارب</span>
         <svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('flask', 0)}</g></svg>
         <span class="foot">يعمل بدون إنترنت</span>
       </button>
@@ -809,7 +817,7 @@ function navBar(title = '') {
 
 function vUnit(u) {
   const unit = G().units[u], s = unitStats(S.grade, u);
-  const sim = unit.sim && SIMS[unit.sim];
+  const sims = (unit.sims || []).filter(k => SIMS[k]);
   return `<div class="view push">
     ${navBar()}
     <section class="hero" style="${tileStyle(unit.theme)}">
@@ -835,10 +843,10 @@ function vUnit(u) {
         <span class="t"><b>مذكرة الوحدة</b><small>ملخص PDF</small></span>
         <span class="end">${unit.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>
       ${unit.pdf ? '</a>' : '</div>'}
-      ${sim ? `<button class="row" data-go="sim:${unit.sim}">
+      ${sims.map(k => `<button class="row" data-go="sim:${k}">
         <span class="n">${icon('lab', 'style="width:20px;height:20px"')}</span>
-        <span class="t"><b>${esc(sim.title)}</b><small>تجربة تفاعلية في المختبر</small></span>
-        <span class="end">${icon('chev')}</span></button>` : ''}
+        <span class="t"><b>${esc(SIMS[k].title)}</b><small>تجربة تفاعلية في المختبر</small></span>
+        <span class="end">${icon('chev')}</span></button>`).join('')}
     </div>
   </div>`;
 }
@@ -851,7 +859,7 @@ function vLesson(u, i) {
   if (id && CAN_EMBED) player = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&modestbranding=1" title="${esc(l.t)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
   else if (id) player = `<a class="poster" href="https://youtu.be/${id}" target="_blank" rel="noopener" style="${tileStyle(unit.theme)}">${glyph(unit.glyph, unit.theme)}<span class="playbtn">${icon('play')}</span></a>`;
   else player = `<div class="poster" style="${tileStyle(unit.theme)}">${glyph(unit.glyph, unit.theme)}<span class="msg"><b>الفيديو قيد التجهيز</b><span>سيظهر شرح هذا الدرس هنا قريباً</span></span></div>`;
-  const sim = unit.sim && SIMS[unit.sim];
+  const simK = [l.sim, ...(unit.sims || [])].find(k => k && SIMS[k]);
   return `<div class="view push">
     ${navBar()}
     <div class="player">${player}</div>
@@ -864,7 +872,7 @@ function vLesson(u, i) {
     <div class="actions">
       <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
       ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
-      ${sim ? `<button class="btn" data-go="sim:${unit.sim}">${icon('lab')}جرّبها</button>` : (id ? `<a class="btn" href="https://youtu.be/${id}" target="_blank" rel="noopener">${icon('ext')}يوتيوب</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}يوتيوب</span>`)}
+      ${simK ? `<button class="btn" data-go="sim:${simK}">${icon('lab')}جرّبها</button>` : (id ? `<a class="btn" href="https://youtu.be/${id}" target="_blank" rel="noopener">${icon('ext')}يوتيوب</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}يوتيوب</span>`)}
     </div>
     ${ADMIN ? lessonEditor(key, l) : ''}
     ${nx ? `<div class="next"><div class="label">الدرس التالي</div><div class="list"><button class="row" data-go="lesson:${nx.u}:${nx.i}" data-replace="1">
@@ -875,11 +883,15 @@ function vLesson(u, i) {
 }
 
 function vLab() {
+  const g = G(), seen = new Set(), groups = [];
+  g.units.forEach(u => { const ks = (u.sims || []).filter(k => SIMS[k] && !seen.has(k)); ks.forEach(k => seen.add(k)); if (ks.length) groups.push([u, ks]); });
   return `<div class="view">
-    <div class="page-h"><h1>المختبر</h1><p>حرّك المؤشرات وشاهد كيف تتغير النتائج. كل التجارب تعمل على جهازك مباشرة.</p></div>
-    <div class="sims">${Object.entries(SIMS).map(([k, s]) => `<button class="sim-card" data-go="sim:${k}" style="${tileStyle(s.theme)}">
+    <div class="page-h"><h1>المختبر</h1><p>تجارب ${esc(g.name)} مرتبة حسب الوحدات. حرّك المؤشرات وشاهد النتائج مباشرة.</p></div>
+    ${groups.length ? groups.map(([u, ks]) => `<div class="label unit-name" style="padding-top:20px">${esc(u.title)}</div>
+    <div class="sims" style="margin-top:0">${ks.map(k => { const s = SIMS[k]; return `<button class="sim-card" data-go="sim:${k}" style="${tileStyle(s.theme)}">
       ${glyph(s.glyph, s.theme)}
-      <span class="t"><small>${esc(s.tag)}</small><b>${esc(s.title)}</b><span>${esc(s.sub)}</span></span></button>`).join('')}</div>
+      <span class="t"><small>${esc(TERMS[u.term])}</small><b>${esc(s.title)}</b><span>${esc(s.sub)}</span></span></button>`; }).join('')}</div>`).join('')
+    : `<p class="law">لا توجد تجارب لهذا الصف بعد.</p>`}
   </div>`;
 }
 
@@ -941,36 +953,85 @@ function vSim(k) {
     <div class="readout" id="ro"></div>
     <div class="controls">${C.map(c => c.type === 'seg'
       ? `<div class="ctl"><label>${c.label}</label><div class="seg" role="group" aria-label="${c.label}">${c.opts.map((o, j) => `<button data-seg="${c.id}" data-v="${o.v}" aria-pressed="${j === 0}">${o.t}</button>`).join('')}</div></div>`
+      : c.type === 'btn'
+      ? `<div class="ctl"><button class="btn primary" data-simbtn="${c.act || 'reset'}">${icon(c.icon || 'replay')}${c.label}</button></div>`
       : `<div class="ctl"><label for="${c.id}">${c.label}<output id="${c.id}-o"></output></label><input type="range" id="${c.id}" min="${c.min}" max="${c.max}" step="${c.step}" value="${c.v}"></div>`).join('')}
-      ${k === 'projectile' ? `<div class="ctl"><button class="btn primary" id="fire">${icon('replay')}أطلق من جديد</button></div>` : ''}
     </div>
-    <p class="law">${s.law || LAWS[k]}</p>
+    <p class="law">${LAWS[k]}</p>
   </div>`;
 }
 
 const LAWS = {
-  projectile: 'المدى <code>R = v² sin2θ / g</code> وأقصى ارتفاع <code>H = v² sin²θ / 2g</code>. لاحظ أن الزاويتين 30° و60° تعطيان المدى نفسه.',
-  pendulum: 'الزمن الدوري <code>T = 2π √(L / g)</code> لا يعتمد على كتلة الثقل. ضاعف الطول أربع مرات يتضاعف الزمن مرتين.',
-  wave: 'سرعة الموجة <code>v = f λ</code>. كل جسيم في الوسط يهتز للأعلى والأسفل في مكانه، والموجة هي التي تنتقل.',
-  ohm: 'قانون أوم <code>I = V / R</code> والقدرة <code>P = V I</code>. كلما زادت القدرة زاد توهج المصباح.',
+  accel: 'معادلات الحركة المتسارعة بانتظام: <code>v = v₀ + a·t</code> و<code>Δx = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·Δx</code>. اجعل التسارع سالباً وشاهد الجسم يتباطأ ثم يعود.',
+  freefall: 'في السقوط الحر من السكون: <code>v = g·t</code> و<code>h = ½·g·t²</code>. الصور الباهتة تُلتقط كل نصف ثانية، ولاحظ أن المسافة بينها تزداد لأن السرعة تزداد بانتظام.',
+  vectors: 'المحصلة: <code>Rx = Ax + Bx</code> و<code>Ry = Ay + By</code> و<code>R = √(Rx² + Ry²)</code> و<code>tanθ = Ry / Rx</code>. الخطان المتقطعان هما مركبتا المحصلة.',
+  projectile: 'المدى <code>R = v₀² sin2θ / g</code> وأقصى ارتفاع <code>H = v₀² sin²θ / 2g</code>. السهم البرتقالي هو متجه السرعة. لاحظ أن الزاويتين 30° و60° تعطيان المدى نفسه.',
+  circular: 'القوة الجاذبة المركزية <code>Fc = m·v² / r</code> والتسارع المركزي <code>ac = v² / r</code>. القوة (الوردي) تتجه دائماً نحو المركز والسرعة (الأزرق) مماسة للمسار. اقطع الخيط وشاهد ماذا يحدث.',
+  com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
+  work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
+  pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  torque: 'عزم القوة <code>τ = r·F·sinθ</code>. يكون العزم أكبر ما يمكن عندما تكون القوة عمودية على الذراع (θ = 90°)، وينعدم عندما تكون القوة على امتداد الذراع (θ = 0° أو 180°).',
+  collision: 'حفظ الزخم <code>m₁v₁ + m₂v₂ = m₁v₁′ + m₂v₂′</code>. الزخم محفوظ في كل التصادمات، أما الطاقة الحركية فتُحفظ في التصادم المرن فقط. القيم السالبة تعني الحركة نحو اليسار.',
 };
+const REPLAY = { type: 'btn', label: 'ابدأ من جديد' };
 const SIMCTL = {
+  accel: [
+    { id: 'v0', label: 'السرعة الابتدائية v₀', min: 0, max: 20, step: 1, v: 4, unit: 'm/s' },
+    { id: 'a', label: 'التسارع a', min: -3, max: 5, step: 0.5, v: 2, unit: 'm/s²' },
+    REPLAY,
+  ],
+  freefall: [
+    { id: 'h', label: 'الارتفاع', min: 5, max: 100, step: 5, v: 45, unit: 'm' },
+    { id: 'g', type: 'seg', label: 'المكان', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'المريخ', v: 3.71 }, { t: 'القمر', v: 1.62 }] },
+    { type: 'btn', label: 'أسقط من جديد' },
+  ],
+  vectors: [
+    { id: 'A', label: 'مقدار المتجه A', min: 1, max: 10, step: 0.5, v: 6, unit: '' },
+    { id: 'ta', label: 'زاوية A', min: 0, max: 180, step: 5, v: 30, unit: '°' },
+    { id: 'B', label: 'مقدار المتجه B', min: 1, max: 10, step: 0.5, v: 5, unit: '' },
+    { id: 'tb', label: 'زاوية B', min: 0, max: 180, step: 5, v: 110, unit: '°' },
+  ],
   projectile: [
     { id: 'v', label: 'السرعة الابتدائية', min: 5, max: 30, step: 1, v: 20, unit: 'm/s' },
     { id: 'a', label: 'زاوية الإطلاق', min: 10, max: 80, step: 1, v: 45, unit: '°' },
+    { type: 'btn', label: 'أطلق من جديد' },
+  ],
+  circular: [
+    { id: 'm', label: 'الكتلة', min: 0.5, max: 5, step: 0.5, v: 1, unit: 'kg' },
+    { id: 'r', label: 'نصف القطر', min: 0.5, max: 3, step: 0.1, v: 1.5, unit: 'm' },
+    { id: 'v', label: 'السرعة', min: 1, max: 10, step: 0.5, v: 4, unit: 'm/s' },
+    { type: 'btn', label: 'اقطع الخيط', act: 'cut', icon: 'ext' },
+  ],
+  com: [
+    { id: 'm1', label: 'الكتلة m₁ (عند 0 m)', min: 1, max: 10, step: 0.5, v: 4, unit: 'kg' },
+    { id: 'm2', label: 'الكتلة m₂', min: 0, max: 10, step: 0.5, v: 2, unit: 'kg' },
+    { id: 'x2', label: 'موضع m₂', min: 0, max: 10, step: 0.5, v: 6, unit: 'm' },
+    { id: 'm3', label: 'الكتلة m₃ (عند 10 m)', min: 1, max: 10, step: 0.5, v: 3, unit: 'kg' },
+  ],
+  work: [
+    { id: 'F', label: 'القوة F', min: 0, max: 50, step: 1, v: 30, unit: 'N' },
+    { id: 'th', label: 'الزاوية θ', min: 0, max: 90, step: 5, v: 30, unit: '°' },
+    { id: 'd', label: 'الإزاحة d', min: 1, max: 10, step: 0.5, v: 6, unit: 'm' },
+    REPLAY,
   ],
   pendulum: [
-    { id: 'L', label: 'طول الخيط', min: 0.2, max: 2, step: 0.1, v: 1, unit: 'm' },
-    { id: 'g', type: 'seg', label: 'المكان', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'المريخ', v: 3.71 }, { t: 'القمر', v: 1.62 }] },
+    { id: 'L', label: 'طول الخيط', min: 0.5, max: 2, step: 0.1, v: 1, unit: 'm' },
+    { id: 'a', label: 'زاوية الإفلات', min: 10, max: 60, step: 5, v: 40, unit: '°' },
+    { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
+    REPLAY,
   ],
-  wave: [
-    { id: 'A', label: 'السعة', min: 0.2, max: 1, step: 0.05, v: 0.6, unit: 'm' },
-    { id: 'f', label: 'التردد', min: 0.2, max: 2, step: 0.1, v: 0.6, unit: 'Hz' },
-    { id: 'l', label: 'الطول الموجي', min: 1, max: 6, step: 0.5, v: 3, unit: 'm' },
+  torque: [
+    { id: 'F', label: 'القوة F', min: 0, max: 100, step: 5, v: 50, unit: 'N' },
+    { id: 'r', label: 'ذراع القوة r', min: 0.1, max: 1, step: 0.05, v: 0.6, unit: 'm' },
+    { id: 'th', label: 'الزاوية θ بين القوة والذراع', min: 0, max: 180, step: 5, v: 90, unit: '°' },
   ],
-  ohm: [
-    { id: 'V', label: 'فرق الجهد', min: 1, max: 12, step: 0.5, v: 6, unit: 'V' },
-    { id: 'R', label: 'المقاومة', min: 1, max: 20, step: 0.5, v: 4, unit: 'Ω' },
+  collision: [
+    { id: 'm1', label: 'كتلة الجسم الأزرق m₁', min: 1, max: 10, step: 0.5, v: 3, unit: 'kg' },
+    { id: 'v1', label: 'سرعته v₁', min: 0, max: 10, step: 0.5, v: 6, unit: 'm/s' },
+    { id: 'm2', label: 'كتلة الجسم البرتقالي m₂', min: 1, max: 10, step: 0.5, v: 3, unit: 'kg' },
+    { id: 'v2', label: 'سرعته v₂', min: -10, max: 5, step: 0.5, v: -2, unit: 'm/s' },
+    { id: 'e', type: 'seg', label: 'نوع التصادم', opts: [{ t: 'مرن', v: 1 }, { t: 'عديم المرونة', v: 0 }] },
+    REPLAY,
   ],
 };
 
@@ -980,10 +1041,13 @@ function startSim(k) {
   const cv = document.getElementById('cv'); if (!cv) return;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const W = 800, H = 500; cv.width = W * dpr; cv.height = H * dpr;
-  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
-  const P = {}, ro = document.getElementById('ro');
+  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr); ctx.direction = 'ltr';
+  const P = {}, ro = document.getElementById('ro'), D = Math.PI / 180;
   const fmt = (x, d = 2) => Number(x).toFixed(d);
+  let t0 = performance.now(), raf, st = {}, lastT = 0;
+  const reset = () => { t0 = performance.now(); st = {}; };
   SIMCTL[k].forEach(c => {
+    if (c.type === 'btn') return;
     if (c.type === 'seg') {
       P[c.id] = c.opts[0].v;
       document.querySelectorAll(`[data-seg="${c.id}"]`).forEach(b => b.onclick = () => {
@@ -993,114 +1057,247 @@ function startSim(k) {
       return;
     }
     const el = document.getElementById(c.id), out = document.getElementById(c.id + '-o');
-    const sync = () => { P[c.id] = +el.value; out.textContent = `${fmt(el.value, c.step < 1 ? (c.step < .1 ? 2 : 1) : 0)} ${c.unit}`; el.style.setProperty('--p', ((el.value - c.min) / (c.max - c.min) * 100) + '%'); };
+    const dec = c.step < 1 ? (c.step < .1 ? 2 : 1) : 0;
+    const sync = () => { P[c.id] = +el.value; out.textContent = `${fmt(el.value, dec)} ${c.unit}`.trim(); el.style.setProperty('--p', ((el.value - c.min) / (c.max - c.min) * 100) + '%'); };
     el.oninput = () => { sync(); reset(); }; sync();
   });
-  const setRO = items => { ro.innerHTML = items.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join(''); };
+  document.querySelectorAll('[data-simbtn]').forEach(b => b.onclick = () => { if (b.dataset.simbtn === 'cut') st.cutReq = true; else reset(); });
+
+  const setRO = items => { const h = items.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join(''); if (ro.innerHTML !== h) ro.innerHTML = h; };
   const grid = () => {
     ctx.fillStyle = '#07080B'; ctx.fillRect(0, 0, W, H);
     ctx.strokeStyle = 'rgba(255,255,255,.05)'; ctx.lineWidth = 1;
     for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
     for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
   };
-  const label = (t, x, y, c = 'rgba(255,255,255,.55)', al = 'left') => { ctx.fillStyle = c; ctx.font = '600 20px -apple-system, "SF Pro Text", Arial, sans-serif'; ctx.textAlign = al; ctx.fillText(t, x, y); };
-  let t0 = performance.now(), raf, reset = () => { t0 = performance.now(); };
+  const label = (t, x, y, c = 'rgba(255,255,255,.55)', al = 'left', size = 20) => { ctx.fillStyle = c; ctx.font = `600 ${size}px -apple-system, "SF Arabic", "SF Pro Text", "Noto Sans Arabic", Arial, sans-serif`; ctx.textAlign = al; ctx.fillText(t, x, y); };
+  const line = (x1, y1, x2, y2, c = 'rgba(255,255,255,.3)', w = 2, dash) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]); };
+  const arrow = (x1, y1, x2, y2, c, w = 4) => {
+    const a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1); if (L < 3) return;
+    const h = Math.min(16, L * .45);
+    ctx.strokeStyle = c; ctx.fillStyle = c; ctx.lineWidth = w; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2 - h * .6 * Math.cos(a), y2 - h * .6 * Math.sin(a)); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - h * Math.cos(a - .42), y2 - h * Math.sin(a - .42)); ctx.lineTo(x2 - h * Math.cos(a + .42), y2 - h * Math.sin(a + .42)); ctx.closePath(); ctx.fill();
+  };
+  const ball = (x, y, r, c, glow = c) => { ctx.shadowColor = glow; ctx.shadowBlur = 22; ctx.fillStyle = c; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); ctx.shadowBlur = 0; };
+  const box = (x, y, w, h, c, r = 8) => { ctx.fillStyle = c; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(x, y, w, h, r) : ctx.rect(x, y, w, h); ctx.fill(); };
+  const BLUE = '#4C86FF', ORANGE = '#FFA53A', TEAL = '#2BD4B0', PINK = '#FF4D7A', PURPLE = '#A866FF', WHITE = '#F5F5F7', DIM = 'rgba(255,255,255,.45)';
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const draws = {
+    accel(t) {
+      const v0 = P.v0, a = P.a, T = 8, tc = reduce ? T : Math.min(t, T);
+      const pos = q => v0 * q + .5 * a * q * q, x = pos(tc), v = v0 + a * tc;
+      setRO([['الزمن', `${fmt(tc, 1)} s`], ['السرعة', `${fmt(v, 1)} m/s`], ['الإزاحة', `${fmt(x, 1)} m`]]);
+      grid();
+      let lo = 0, hi = 0; for (let s = 0; s <= 40; s++) { const xx = pos(T * s / 40); lo = Math.min(lo, xx); hi = Math.max(hi, xx); }
+      const span = Math.max(hi - lo, 10), X = xx => 70 + (xx - lo) / span * (W - 140), road = 140;
+      line(0, road, W, road, 'rgba(255,255,255,.35)', 2);
+      line(X(0), road - 70, X(0), road + 12, DIM, 2, [4, 6]); label('0', X(0), road + 34, DIM, 'center', 18);
+      for (let s = 1; s <= Math.floor(tc); s++) { ctx.fillStyle = 'rgba(76,134,255,.45)'; ctx.beginPath(); ctx.arc(X(pos(s)), road, 5, 0, 7); ctx.fill(); label(`${s}s`, X(pos(s)), road + 34, 'rgba(255,255,255,.35)', 'center', 15); }
+      const cx = X(x);
+      box(cx - 30, road - 38, 60, 26, BLUE); box(cx - 16, road - 52, 32, 16, BLUE, 6);
+      ctx.fillStyle = WHITE; [cx - 17, cx + 17].forEach(wx => { ctx.beginPath(); ctx.arc(wx, road - 9, 8, 0, 7); ctx.fill(); });
+      if (Math.abs(v) > .05) { arrow(cx, road - 66, cx + v * 5, road - 66, TEAL); label('v', cx + v * 5 + (v > 0 ? 10 : -22), road - 60, TEAL); }
+      if (a) { arrow(cx, road - 88, cx + a * 12, road - 88, ORANGE, 3); label('a', cx + a * 12 + (a > 0 ? 10 : -22), road - 82, ORANGE); }
+      const gx = 90, gy = 220, gw = 670, gh = 230, vlo = Math.min(0, v0, v0 + a * T), vhi = Math.max(1, v0, v0 + a * T);
+      const GX = q => gx + q / T * gw, GY = vv => gy + gh - (vv - vlo) / (vhi - vlo) * gh;
+      line(gx, gy, gx, gy + gh, DIM, 2); line(gx, GY(0), gx + gw, GY(0), DIM, 2);
+      for (let s = 0; s <= T; s += 2) label(`${s}`, GX(s), GY(0) + 24, 'rgba(255,255,255,.35)', 'center', 15);
+      [vlo, vhi].forEach(vv => { if (vv) label(fmt(vv, 0), gx - 10, GY(vv) + 6, 'rgba(255,255,255,.35)', 'right', 15); });
+      label('v (m/s)', gx + 8, gy + 4, DIM, 'left', 16); label('t (s)', gx + gw, GY(0) - 10, DIM, 'right', 16);
+      line(GX(0), GY(v0), GX(T), GY(v0 + a * T), 'rgba(43,212,176,.25)', 2, [5, 7]);
+      line(GX(0), GY(v0), GX(tc), GY(v), TEAL, 4);
+      ball(GX(tc), GY(v), 7, WHITE, TEAL);
+    },
+    freefall(t) {
+      const h = P.h, g = P.g, T = Math.sqrt(2 * h / g), tt = reduce ? T : Math.min(t, T), fell = .5 * g * tt * tt, v = g * tt;
+      setRO([['زمن السقوط', `${fmt(T, 2)} s`], ['السرعة الآن', `${fmt(v, 1)} m/s`], ['سرعة الاصطدام', `${fmt(g * T, 1)} m/s`]]);
+      grid();
+      const bot = H - 40, top = 30, Y = m => bot - m / 100 * (bot - top), bx = 430;
+      ctx.fillStyle = 'rgba(255,255,255,.08)'; ctx.fillRect(0, bot, W, H - bot); line(0, bot, W, bot, 'rgba(255,255,255,.4)', 2);
+      line(90, Y(0), 90, Y(100), DIM, 2);
+      for (let m = 0; m <= 100; m += 10) { line(90, Y(m), 102, Y(m), DIM, 2); label(`${m}`, 80, Y(m) + 6, 'rgba(255,255,255,.35)', 'right', 15); }
+      label('m', 80, Y(100) - 14, DIM, 'right', 15);
+      box(bx - 150, Y(h) - 6, 132, 8, 'rgba(255,255,255,.35)', 3);
+      label(`h = ${h} m`, bx + 76, Y(h) + 2, WHITE, 'left', 18);
+      for (let q = .5; q < tt; q += .5) { ctx.fillStyle = 'rgba(51,194,255,.28)'; ctx.beginPath(); ctx.arc(bx, Y(h) - 18 + (.5 * g * q * q) / 100 * (bot - top), 12, 0, 7); ctx.fill(); label(`${fmt(q, 1)}s`, bx - 24, Y(h) - 12 + (.5 * g * q * q) / 100 * (bot - top), 'rgba(255,255,255,.3)', 'right', 14); }
+      const by = Y(h) - 18 + fell / 100 * (bot - top);
+      ball(bx, Math.min(by, bot - 12), 12, WHITE, '#33C2FF');
+      if (v > .2) { const L = Math.min(v * 3, 140); arrow(bx + 30, by, bx + 30, by + L, TEAL); label('v', bx + 42, by + L / 2, TEAL); }
+      label(`g = ${g} m/s²`, W - 20, 40, DIM, 'right', 18);
+      if (tt >= T) { ctx.fillStyle = 'rgba(51,194,255,.22)'; ctx.beginPath(); ctx.ellipse(bx, bot, 40, 8, 0, 0, 7); ctx.fill(); }
+    },
+    vectors() {
+      const ax = P.A * Math.cos(P.ta * D), ay = P.A * Math.sin(P.ta * D), bx = P.B * Math.cos(P.tb * D), by = P.B * Math.sin(P.tb * D);
+      const rx = ax + bx, ry = ay + by, R = Math.hypot(rx, ry), th = Math.atan2(ry, rx) / D;
+      setRO([['مقدار المحصلة R', fmt(R, 2)], ['اتجاه المحصلة', `${fmt(th, 1)}°`], ['المركبتان Rx , Ry', `${fmt(rx, 1)} , ${fmt(ry, 1)}`]]);
+      grid();
+      const s = 19, ox = 400, oy = 440, X = x => ox + x * s, Y = y => oy - y * s;
+      line(20, oy, W - 20, oy, DIM, 2); line(ox, oy + 30, ox, 20, DIM, 2);
+      label('x', W - 24, oy - 10, DIM, 'right', 16); label('y', ox + 10, 34, DIM, 'left', 16);
+      line(X(0), Y(0), X(rx), Y(0), 'rgba(255,255,255,.55)', 2, [6, 6]); line(X(rx), Y(0), X(rx), Y(ry), 'rgba(255,255,255,.55)', 2, [6, 6]);
+      label('Rx', X(rx / 2), Y(0) + 26, DIM, 'center', 16); label('Ry', X(rx) + (rx >= 0 ? 10 : -10), Y(ry / 2), DIM, rx >= 0 ? 'left' : 'right', 16);
+      arrow(X(0), Y(0), X(ax), Y(ay), BLUE); label('A', X(ax / 2) - 14, Y(ay / 2) - 10, BLUE, 'right');
+      arrow(X(ax), Y(ay), X(rx), Y(ry), ORANGE); label('B', X(ax + bx / 2) + 12, Y(ay + by / 2) - 10, ORANGE);
+      arrow(X(0), Y(0), X(rx), Y(ry), WHITE, 5); label('R', X(rx * .6) + 14, Y(ry * .6) + 18, WHITE);
+      ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 40, -Math.max(0, th) * D, 0, false); ctx.stroke();
+      label(`${fmt(th, 0)}°`, ox + 48, oy - 12, WHITE, 'left', 16);
+    },
     projectile(t) {
-      const g = 9.8, v = P.v, th = P.a * Math.PI / 180, vx = v * Math.cos(th), vy = v * Math.sin(th);
+      const g = 9.8, v = P.v, th = P.a * D, vx = v * Math.cos(th), vy = v * Math.sin(th);
       const T = 2 * vy / g, R = vx * T, Hm = vy * vy / (2 * g);
       setRO([['المدى', `${fmt(R, 1)} m`], ['أقصى ارتفاع', `${fmt(Hm, 1)} m`], ['زمن التحليق', `${fmt(T, 2)} s`]]);
       const ox = 50, oy = H - 50, sc = (W - 90) / 95;
       grid();
-      ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
-      for (let m = 0; m <= 90; m += 10) { const x = ox + m * sc; ctx.beginPath(); ctx.moveTo(x, oy); ctx.lineTo(x, oy + 8); ctx.stroke(); label(m + '', x, oy + 30, 'rgba(255,255,255,.4)', 'center'); }
+      line(0, oy, W, oy, 'rgba(255,255,255,.25)', 2);
+      for (let m = 0; m <= 90; m += 10) { const x = ox + m * sc; line(x, oy, x, oy + 8, 'rgba(255,255,255,.25)'); label(m + '', x, oy + 30, 'rgba(255,255,255,.4)', 'center'); }
       label('m', W - 20, oy + 30, 'rgba(255,255,255,.4)', 'center');
       const tt = reduce ? T : Math.min(t * 1.2, T);
-      ctx.strokeStyle = 'rgba(76,134,255,.35)'; ctx.setLineDash([6, 8]); ctx.beginPath();
+      ctx.strokeStyle = 'rgba(76,134,255,.35)'; ctx.lineWidth = 2; ctx.setLineDash([6, 8]); ctx.beginPath();
       for (let s = 0; s <= 60; s++) { const q = T * s / 60, x = ox + vx * q * sc, y = oy - (vy * q - g * q * q / 2) * sc; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
       ctx.stroke(); ctx.setLineDash([]);
-      const grd = ctx.createLinearGradient(ox, 0, ox + R * sc, 0); grd.addColorStop(0, '#4C86FF'); grd.addColorStop(1, '#33C2FF');
-      ctx.strokeStyle = grd; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath();
+      ctx.strokeStyle = BLUE; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath();
       for (let s = 0; s <= 80; s++) { const q = tt * s / 80, x = ox + vx * q * sc, y = oy - (vy * q - g * q * q / 2) * sc; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
       ctx.stroke();
-      const bx = ox + vx * tt * sc, by = oy - (vy * tt - g * tt * tt / 2) * sc;
-      ctx.shadowColor = '#4C86FF'; ctx.shadowBlur = 24; ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(bx, by, 11, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
-      const vyn = vy - g * tt, k2 = 2.2;
-      ctx.strokeStyle = '#FFA53A'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(bx, by); ctx.lineTo(bx + vx * k2, by - vyn * k2); ctx.stroke();
+      const bx = ox + vx * tt * sc, by = oy - (vy * tt - g * tt * tt / 2) * sc, vyn = vy - g * tt;
+      ball(bx, by, 11, WHITE, BLUE);
+      arrow(bx, by, bx + vx * 2.2, by - vyn * 2.2, ORANGE, 3);
       ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 46, -th, 0); ctx.stroke();
-      label(P.a + '°', ox + 54, oy - 12, '#fff');
+      label(P.a + '°', ox + 54, oy - 12, WHITE);
       if (tt >= T) { ctx.fillStyle = 'rgba(51,194,255,.25)'; ctx.beginPath(); ctx.arc(ox + R * sc, oy, 14, 0, 7); ctx.fill(); }
     },
-    pendulum(t) {
-      const L = P.L, g = P.g, T = 2 * Math.PI * Math.sqrt(L / g), th0 = 20 * Math.PI / 180;
-      const th = reduce ? th0 : th0 * Math.cos(2 * Math.PI * t / T);
-      setRO([['الزمن الدوري', `${fmt(T, 2)} s`], ['التردد', `${fmt(1 / T, 2)} Hz`], ['الاهتزازات', `${Math.floor(t / T)}`]]);
+    circular(t) {
+      const m = P.m, r = P.r, v = P.v, w = v / r, Fc = m * v * v / r, ac = v * v / r, Tp = 2 * Math.PI * r / v;
+      setRO([['القوة المركزية Fc', `${fmt(Fc, 1)} N`], ['التسارع المركزي', `${fmt(ac, 1)} m/s²`], ['الزمن الدوري', `${fmt(Tp, 2)} s`]]);
       grid();
-      const px = W / 2, py = 50, len = 60 + L * 180, bx = px + len * Math.sin(th), by = py + len * Math.cos(th);
-      ctx.fillStyle = 'rgba(255,255,255,.2)'; ctx.fillRect(px - 120, py - 10, 240, 10);
-      ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.setLineDash([4, 8]); ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, py + len + 30); ctx.stroke();
-      ctx.beginPath(); ctx.arc(px, py, len, Math.PI / 2 - th0, Math.PI / 2 + th0); ctx.stroke(); ctx.setLineDash([]);
-      ctx.strokeStyle = '#D6F5FF'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(bx, by); ctx.stroke();
-      const rg = ctx.createRadialGradient(bx - 8, by - 8, 2, bx, by, 26); rg.addColorStop(0, '#C8FFF2'); rg.addColorStop(1, '#0F7A66');
-      ctx.shadowColor = '#2BD4B0'; ctx.shadowBlur = 26; ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(bx, by, 24, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
-      label(`L = ${fmt(L, 1)} m`, 24, H - 24); label(`g = ${g} m/s²`, W - 24, H - 24, 'rgba(255,255,255,.55)', 'right');
-    },
-    wave(t) {
-      const A = P.A, f = P.f, lam = P.l, v = f * lam;
-      setRO([['السرعة', `${fmt(v, 2)} m/s`], ['الزمن الدوري', `${fmt(1 / f, 2)} s`], ['الطول الموجي', `${fmt(lam, 1)} m`]]);
-      grid();
-      const oy = H / 2, sx = W / 12, sy = 150, tt = reduce ? 0 : t;
-      ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(0, oy); ctx.lineTo(W, oy); ctx.stroke();
-      const y = x => oy - A * sy * Math.sin(2 * Math.PI * (x / lam - f * tt));
-      const grd = ctx.createLinearGradient(0, 0, W, 0); grd.addColorStop(0, '#33C2FF'); grd.addColorStop(1, '#A866FF');
-      ctx.strokeStyle = grd; ctx.lineWidth = 4; ctx.beginPath();
-      for (let px = 0; px <= W; px += 4) { const yy = y(px / sx); px ? ctx.lineTo(px, yy) : ctx.moveTo(px, yy); }
-      ctx.stroke();
-      for (let m = 0.5; m < 12; m += 0.5) { ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(m * sx, y(m), 3.5, 0, 7); ctx.fill(); }
-      const mx = 6 * sx, my = y(6);
-      ctx.shadowColor = '#FFA53A'; ctx.shadowBlur = 20; ctx.fillStyle = '#FFA53A'; ctx.beginPath(); ctx.arc(mx, my, 11, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
-      ctx.strokeStyle = 'rgba(255,165,58,.35)'; ctx.setLineDash([4, 6]); ctx.beginPath(); ctx.moveTo(mx, oy - A * sy); ctx.lineTo(mx, oy + A * sy); ctx.stroke(); ctx.setLineDash([]);
-      const x0 = sx * 1, x1 = x0 + lam * sx;
-      ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x0, H - 50); ctx.lineTo(x1, H - 50); ctx.moveTo(x0, H - 58); ctx.lineTo(x0, H - 42); ctx.moveTo(x1, H - 58); ctx.lineTo(x1, H - 42); ctx.stroke();
-      label('λ', (x0 + x1) / 2, H - 62, '#fff', 'center');
-    },
-    ohm(t) {
-      const V = P.V, R = P.R, I = V / R, Pw = V * I;
-      setRO([['شدة التيار', `${fmt(I, 2)} A`], ['القدرة', `${fmt(Pw, 1)} W`], ['المقاومة', `${fmt(R, 1)} Ω`]]);
-      grid();
-      const x0 = 140, y0 = 110, x1 = 660, y1 = 400;
-      ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 4; ctx.lineJoin = 'round';
-      ctx.strokeRect(x0, y0, x1 - x0, y1 - y0);
-      ctx.fillStyle = '#07080B'; ctx.fillRect(x0 - 20, 220, 40, 70);
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x0 - 26, 240); ctx.lineTo(x0 + 26, 240); ctx.stroke();
-      ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(x0 - 14, 268); ctx.lineTo(x0 + 14, 268); ctx.stroke();
-      label(`${fmt(V, 1)} V`, x0 - 40, 262, '#FFA53A', 'right');
-      ctx.fillStyle = '#07080B'; ctx.fillRect(330, y0 - 20, 140, 40);
-      ctx.strokeStyle = '#FFA53A'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(320, y0);
-      for (let i = 0; i < 8; i++) ctx.lineTo(340 + i * 17, y0 + (i % 2 ? 14 : -14));
-      ctx.lineTo(480, y0); ctx.stroke();
-      label(`${fmt(R, 1)} Ω`, 400, y0 - 34, '#FFA53A', 'center');
-      const glow = Math.min(1, Pw / 40), bx = x1, by = 255;
-      ctx.fillStyle = '#07080B'; ctx.fillRect(bx - 30, by - 40, 60, 80);
-      const rg = ctx.createRadialGradient(bx, by, 4, bx, by, 40 + 90 * glow); rg.addColorStop(0, `rgba(255,214,120,${0.25 + .75 * glow})`); rg.addColorStop(1, 'rgba(255,214,120,0)');
-      ctx.fillStyle = rg; ctx.beginPath(); ctx.arc(bx, by, 40 + 90 * glow, 0, 7); ctx.fill();
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(bx, by, 26, 0, 7); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(bx - 12, by + 10); ctx.lineTo(bx - 4, by - 8); ctx.lineTo(bx + 4, by + 8); ctx.lineTo(bx + 12, by - 10); ctx.stroke();
-      const per = 2 * ((x1 - x0) + (y1 - y0)), n = 22, sp = reduce ? 0 : I * 40 * t;
-      ctx.fillStyle = '#33C2FF';
-      for (let i = 0; i < n; i++) {
-        let d = ((i / n) * per + sp) % per, px, py;
-        const w = x1 - x0, h = y1 - y0;
-        if (d < w) { px = x0 + d; py = y0; } else if ((d -= w) < h) { px = x1; py = y0 + d; } else if ((d -= h) < w) { px = x1 - d; py = y1; } else { d -= w; px = x0; py = y1 - d; }
-        ctx.beginPath(); ctx.arc(px, py, 5, 0, 7); ctx.fill();
+      const cx = 400, cy = 250, sc = 68, R = r * sc, rad = 9 + m * 2;
+      ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.lineWidth = 2; ctx.setLineDash([5, 8]); ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke(); ctx.setLineDash([]);
+      ball(cx, cy, 6, WHITE, WHITE);
+      const ang = reduce ? .6 : w * t;
+      if (st.cutReq && !st.cut) st.cut = { t, a: ang }; st.cutReq = false;
+      if (st.cut && t - st.cut.t > 3) st.cut = null;
+      if (st.cut) {
+        const a0 = st.cut.a, el = t - st.cut.t, x0 = cx + R * Math.cos(a0), y0 = cy - R * Math.sin(a0);
+        const dx = -Math.sin(a0), dy = -Math.cos(a0), px = x0 + dx * v * sc * el, py = y0 + dy * v * sc * el;
+        line(x0, y0, px, py, 'rgba(76,134,255,.35)', 2, [4, 6]);
+        ball(px, py, rad, WHITE, BLUE); arrow(px, py, px + dx * v * 12, py + dy * v * 12, BLUE);
+        label('بلا قوة مركزية يتحرك الجسم في خط مستقيم مماس للمسار', W / 2, H - 22, WHITE, 'center', 18);
+        return;
       }
+      const bx = cx + R * Math.cos(ang), by = cy - R * Math.sin(ang);
+      line(cx, cy, bx, by, 'rgba(255,255,255,.6)', 2);
+      ball(bx, by, rad, WHITE, PURPLE);
+      const tx = -Math.sin(ang), ty = -Math.cos(ang); arrow(bx, by, bx + tx * v * 12, by + ty * v * 12, BLUE); label('v', bx + tx * (v * 12 + 16), by + ty * (v * 12 + 16) + 6, BLUE, 'center');
+      const fl = Math.min(R - rad - 6, 24 + Math.sqrt(Fc) * 6), ux = (cx - bx) / R, uy = (cy - by) / R;
+      if (fl > 8) arrow(bx + ux * (rad + 2), by + uy * (rad + 2), bx + ux * (rad + 2 + fl), by + uy * (rad + 2 + fl), PINK);
+      label('Fc', bx + ux * (rad + fl / 2) + 14, by + uy * (rad + fl / 2) - 8, PINK, 'left', 17);
+      label(`r = ${fmt(r, 1)} m`, cx + 12, cy + 26, DIM, 'left', 16);
+    },
+    com() {
+      const m1 = P.m1, m2 = P.m2, m3 = P.m3, x2 = P.x2, M = m1 + m2 + m3, mx = m2 * x2 + m3 * 10, xc = mx / M;
+      setRO([['موضع مركز الكتلة', `${fmt(xc, 2)} m`], ['الكتلة الكلية', `${fmt(M, 1)} kg`], ['Σ m·x', `${fmt(mx, 1)} kg·m`]]);
+      grid();
+      const L = 90, Rr = 710, X = x => L + x / 10 * (Rr - L), ry = 270;
+      box(X(0) - 8, ry, Rr - L + 16, 12, 'rgba(255,255,255,.75)', 4);
+      for (let x = 0; x <= 10; x++) { line(X(x), ry + 12, X(x), ry + 20, DIM, 2); label(`${x}`, X(x), ry + 100, 'rgba(255,255,255,.35)', 'center', 15); }
+      label('m', X(10) + 30, ry + 100, 'rgba(255,255,255,.35)', 'center', 15);
+      [[m1, 0, BLUE, 'm₁'], [m2, x2, TEAL, 'm₂'], [m3, 10, ORANGE, 'm₃']].forEach(([m, x, c, n]) => {
+        if (!m) return; const rad = 10 + m * 2.4;
+        ball(X(x), ry - rad - 2, rad, c, c);
+        label(`${n} = ${fmt(m, 1)} kg`, X(x), ry - 2 * rad - 16, c, 'center', 16);
+        arrow(X(x), ry + 26, X(x), ry + 26 + m * 4, 'rgba(255,255,255,.3)', 3);
+      });
+      const cxp = X(xc);
+      line(cxp, 60, cxp, ry, 'rgba(255,165,58,.5)', 2, [5, 6]);
+      ctx.fillStyle = ORANGE; ctx.beginPath(); ctx.moveTo(cxp, ry + 12); ctx.lineTo(cxp - 22, ry + 56); ctx.lineTo(cxp + 22, ry + 56); ctx.closePath(); ctx.fill();
+      label('مركز الكتلة', cxp, 50, ORANGE, 'center', 18);
+    },
+    work(t) {
+      const F = P.F, th = P.th * D, d = P.d, Fx = F * Math.cos(th), Fy = F * Math.sin(th), Wk = F * d * Math.cos(th);
+      setRO([['الشغل W', `${fmt(Wk, 1)} J`], ['المركبة الأفقية', `${fmt(Fx, 1)} N`], ['المركبة الرأسية', `${fmt(Fy, 1)} N`]]);
+      grid();
+      const gy = 360, sx = 58, x0 = 70, p = reduce ? 1 : Math.min(1, (t % 5) / 3), bx = x0 + d * sx * p, bw = 76, bh = 56;
+      ctx.fillStyle = 'rgba(255,255,255,.07)'; ctx.fillRect(0, gy, W, H - gy); line(0, gy, W, gy, 'rgba(255,255,255,.4)', 2);
+      box(x0, gy - bh, bw, bh, 'rgba(255,255,255,.12)'); 
+      box(bx, gy - bh, bw, bh, '#2A2D35'); ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.strokeRect(bx, gy - bh, bw, bh);
+      const ax = bx + bw / 2, ay = gy - bh / 2, L = 30 + F * 2.6;
+      if (F > 0) {
+        line(ax, ay, ax + L * Math.cos(th), ay, 'rgba(43,212,176,.8)', 3, [6, 5]); line(ax + L * Math.cos(th), ay, ax + L * Math.cos(th), ay - L * Math.sin(th), 'rgba(255,77,122,.8)', 3, [6, 5]);
+        arrow(ax, ay, ax + L * Math.cos(th), ay - L * Math.sin(th), ORANGE, 5); label('F', ax + L * Math.cos(th) + 10, ay - L * Math.sin(th) - 6, ORANGE);
+        label('F cosθ', ax + L * Math.cos(th) / 2, ay + 26, TEAL, 'center', 16);
+        if (P.th) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ax, ay, 34, -th, 0); ctx.stroke(); label('θ', ax + 44, ay - 10, WHITE, 'left', 17); }
+      }
+      arrow(x0 + bw / 2, gy + 40, x0 + bw / 2 + d * sx, gy + 40, BLUE, 3); label(`d = ${fmt(d, 1)} m`, x0 + bw / 2 + d * sx / 2, gy + 74, BLUE, 'center', 18);
+      if (Math.abs(Math.cos(th)) < .01 && F > 0) label('القوة عمودية على الإزاحة: لا يُبذل شغل', W / 2, 50, WHITE, 'center', 19);
+    },
+    pendulum(t) {
+      const L = P.L, g = 9.8, b = P.f ? .45 : 0, th0 = P.a * D;
+      if (!st.init) { st.init = 1; st.th = th0; st.w = 0; st.last = t; }
+      const dt = Math.min(Math.max(t - st.last, 0), .05); st.last = t;
+      if (!reduce) for (let i = 0; i < 10; i++) { const h = dt / 10; st.w += (-(g / L) * Math.sin(st.th) - b * st.w) * h; st.th += st.w * h; }
+      const E0 = g * L * (1 - Math.cos(th0)), PE = g * L * (1 - Math.cos(st.th)), KE = .5 * (L * st.w) ** 2, Q = Math.max(0, E0 - PE - KE);
+      setRO([['طاقة الوضع', `${fmt(PE, 2)} J`], ['الطاقة الحركية', `${fmt(KE, 2)} J`], ['الطاقة الميكانيكية', `${fmt(PE + KE, 2)} J`]]);
+      grid();
+      const px = 270, py = 46, len = 70 + L * 150, bx = px + len * Math.sin(st.th), by = py + len * Math.cos(st.th);
+      box(px - 110, py - 12, 220, 10, 'rgba(255,255,255,.25)', 3);
+      ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2; ctx.setLineDash([4, 8]); ctx.beginPath(); ctx.arc(px, py, len, Math.PI / 2 - th0, Math.PI / 2 + th0); ctx.stroke(); ctx.setLineDash([]);
+      line(px - 150, py + len, px + 150, py + len, 'rgba(255,255,255,.2)', 2, [4, 6]); label('h = 0', px - 156, py + len + 6, 'rgba(255,255,255,.35)', 'right', 15);
+      if (by < py + len - 4) { line(bx + 26, by, bx + 26, py + len, 'rgba(76,134,255,.6)', 2); label('h', bx + 34, (by + py + len) / 2 + 6, BLUE, 'left', 16); }
+      line(px, py, bx, by, '#D6F5FF', 2.5);
+      ball(bx, by, 20, TEAL, TEAL);
+      const bars = [['الوضع', PE, BLUE], ['الحركية', KE, ORANGE]].concat(P.f ? [['الحرارية', Q, PINK]] : []).concat([['الكلية', P.f ? E0 : PE + KE, WHITE]]);
+      const bw = 44, gap = 18, base = 420, maxH = 300, x0 = W - 30 - bars.length * (bw + gap);
+      line(x0 - 10, base, W - 20, base, DIM, 2);
+      bars.forEach(([n, val, c], i) => { const x = x0 + i * (bw + gap), hgt = E0 ? val / E0 * maxH : 0; box(x, base - hgt, bw, Math.max(hgt, 2), c, 6); label(n, x + bw / 2, base + 26, c, 'center', 15); });
+    },
+    torque(t) {
+      const F = P.F, r = P.r, th = P.th * D, tau = r * F * Math.sin(th), Fp = F * Math.sin(th);
+      setRO([['العزم τ', `${fmt(tau, 1)} N·m`], ['المركبة العمودية F⊥', `${fmt(Fp, 1)} N`], ['ذراع القوة r', `${fmt(r, 2)} m`]]);
+      grid();
+      const ox = 130, oy = 300, sx = 560, ex = ox + r * sx;
+      box(ox - 16, oy - 13, sx + 40, 26, '#3A3D46', 13);
+      ball(ox, oy, 14, WHITE, WHITE); ctx.fillStyle = '#07080B'; ctx.beginPath(); ctx.arc(ox, oy, 5, 0, 7); ctx.fill();
+      if (tau > .5) {
+        const rot = reduce ? 0 : t * Math.min(tau, 100) * .03;
+        ctx.strokeStyle = `rgba(168,102,255,${.35 + Math.min(tau / 100, 1) * .6})`; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(ox, oy, 62, -rot - .2, -rot - 2.2, true); ctx.stroke();
+        const ea = -rot - 2.2; arrow(ox + 62 * Math.cos(ea + .25), oy + 62 * Math.sin(ea + .25), ox + 62 * Math.cos(ea), oy + 62 * Math.sin(ea), PURPLE, 4);
+        label('دوران عكس عقارب الساعة', ox, oy + 110, PURPLE, 'left', 18);
+      } else label('لا يحدث دوران: العزم صفر', ox, oy + 110, WHITE, 'left', 18);
+      line(ox, oy + 40, ex, oy + 40, BLUE, 2); line(ox, oy + 32, ox, oy + 48, BLUE, 2); line(ex, oy + 32, ex, oy + 48, BLUE, 2);
+      label(`r = ${fmt(r, 2)} m`, (ox + ex) / 2, oy + 70, BLUE, 'center', 17);
+      if (F > 0) {
+        const L = 30 + F * 1.7;
+        if (Fp > .5) { line(ex, oy, ex, oy - Fp * 1.7 - 30 * Math.sin(th), 'rgba(255,77,122,.85)', 3, [6, 5]); label('F⊥', ex + 12, oy - (Fp * 1.7) / 2, PINK, 'left', 17); }
+        arrow(ex, oy, ex + L * Math.cos(th), oy - L * Math.sin(th), ORANGE, 5); label('F', ex + L * Math.cos(th) + (Math.cos(th) >= 0 ? 12 : -12), oy - L * Math.sin(th) - 8, ORANGE, Math.cos(th) >= 0 ? 'left' : 'right');
+        if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
+      }
+      ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    collision(t) {
+      const m1 = P.m1, m2 = P.m2, v1 = P.v1, v2 = P.v2, elastic = P.e === 1;
+      const u1 = elastic ? ((m1 - m2) * v1 + 2 * m2 * v2) / (m1 + m2) : (m1 * v1 + m2 * v2) / (m1 + m2);
+      const u2 = elastic ? ((m2 - m1) * v2 + 2 * m1 * v1) / (m1 + m2) : u1;
+      const p0 = m1 * v1 + m2 * v2, K0 = .5 * m1 * v1 * v1 + .5 * m2 * v2 * v2, K1 = .5 * m1 * u1 * u1 + .5 * m2 * u2 * u2;
+      setRO([['الزخم قبل', `${fmt(p0, 1)} kg·m/s`], ['الزخم بعد', `${fmt(m1 * u1 + m2 * u2, 1)} kg·m/s`], ['الطاقة الحركية المفقودة', `${fmt(K0 - K1, 1)} J`]]);
+      grid();
+      const sc = 30, ty = 330, w1 = 44 + m1 * 6, w2 = 44 + m2 * 6, c1 = 220, c2 = 580, gap = (w1 + w2) / 2, rel = v1 - v2;
+      const tc = rel > 0 ? (c2 - c1 - gap) / (rel * sc) : Infinity, cycle = (isFinite(tc) ? tc : 3) + 3.5, tt = reduce ? (isFinite(tc) ? tc + 1 : 2) : t % cycle;
+      const after = tt > tc, d = Math.max(0, tt - tc), tb = Math.min(tt, tc);
+      const x1 = c1 + v1 * tb * sc + (after ? u1 * d * sc : 0), x2 = c2 + v2 * tb * sc + (after ? u2 * d * sc : 0);
+      const cv1 = after ? u1 : v1, cv2 = after ? u2 : v2;
+      line(0, ty, W, ty, 'rgba(255,255,255,.4)', 2);
+      [[x1, w1, BLUE, 'm₁', cv1], [x2, w2, ORANGE, 'm₂', cv2]].forEach(([x, w, c, n, vv]) => {
+        box(x - w / 2, ty - 54, w, 46, c, 8); ctx.fillStyle = WHITE; [x - w / 4, x + w / 4].forEach(wx => { ctx.beginPath(); ctx.arc(wx, ty - 6, 6, 0, 7); ctx.fill(); });
+        label(n, x, ty - 24, '#07080B', 'center', 18);
+        if (Math.abs(vv) > .05) arrow(x, ty - 80, x + vv * 9, ty - 80, c, 4);
+        label(`${fmt(vv, 1)} m/s`, x, ty - 100, c, 'center', 16);
+      });
+      label(rel > 0 ? (after ? 'بعد التصادم' : 'قبل التصادم') : 'لن يحدث تصادم: الجسم الأزرق لا يلحق بالبرتقالي', W / 2, 60, WHITE, 'center', 20);
+      if (after && d < .25) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); ctx.arc((x1 + x2) / 2, ty - 30, 30 * (1 - d * 3), 0, 7); ctx.fill(); }
     },
   };
-  const loop = now => { draws[k]((now - t0) / 1000); raf = requestAnimationFrame(loop); };
-  if (k === 'projectile') { const fb = document.getElementById('fire'); if (fb) fb.onclick = reset; }
+  const loop = now => { lastT = (now - t0) / 1000; draws[k](lastT); raf = requestAnimationFrame(loop); };
   raf = requestAnimationFrame(loop);
   simStop = () => cancelAnimationFrame(raf);
 }
