@@ -469,12 +469,12 @@ const GRADES = {
     name: 'الثاني عشر علمي', short: 'الثاني عشر', theme: 7,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sims: ['work', 'pendulum'], lessons: [
+      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sims: ['work', 'skate', 'pendulum'], lessons: [
         { t: 'الشغل', sim: 'work', video: '', min: '' },
         { t: 'الشغل والطاقة', sim: 'work', video: '', min: '' },
-        { t: 'حفظ (بقاء) الطاقة', sim: 'pendulum', video: '', min: '' },
+        { t: 'حفظ (بقاء) الطاقة', sim: 'skate', video: '', min: '' },
         { t: 'حركة البندول', sim: 'pendulum', video: '', min: '' },
-        { t: 'عدم حفظ الطاقة', sim: 'pendulum', video: '', min: '' },
+        { t: 'عدم حفظ الطاقة', sim: 'skate', video: '', min: '' },
       ]},
       { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'orbit', theme: 2, pdf: '', sims: ['torque', 'balance'], lessons: [
         { t: 'عزم القوة', video: '', min: '' },
@@ -539,6 +539,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  skate:      { title: 'حفظ الطاقة الميكانيكية', sub: 'متزلج على مسار: طاقة الوضع والحركية والحرارية', glyph: 'bolt', theme: 6 },
   balance:    { title: 'اتزان العزوم', sub: 'ضع الكتل على اللوح وحقق الاتزان', glyph: 'ruler', theme: 5 },
   collision:  { title: 'التصادمات وحفظ الزخم', sub: 'تصادم مرن وتصادم عديم المرونة', glyph: 'collide', theme: 3 },
 };
@@ -1036,6 +1037,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  skate: 'الطاقة الميكانيكية <code>ME = PE + KE = m·g·h + ½·m·v²</code>. بدون احتكاك تبقى ثابتة: كلما نزل المتزلج تحولت طاقة الوضع إلى حركية والعكس. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية فلا يعود إلى نفس الارتفاع. اسحب المتزلج إلى أي ارتفاع لتبدأ من هناك، ولاحظ أن الكتلة لا تغيّر السرعة.',
   balance: 'شرط الاتزان الدوراني: مجموع العزوم حول محور الدوران يساوي صفراً، أي <code>Σ m·g·d (يسار) = Σ m·g·d (يمين)</code>. مثلاً كتلة 20 kg على بعد 1 m تتزن مع كتلة 10 kg على بعد 2 m. اسحب الكتل إلى اللوح، ثم أزل الدعامات لترى هل يتزن.',
   torque: 'عزم القوة <code>τ = r·F·sinθ</code>. يكون العزم أكبر ما يمكن عندما تكون القوة عمودية على الذراع (θ = 90°)، وينعدم عندما تكون القوة على امتداد الذراع (θ = 0° أو 180°).',
   collision: 'حفظ الزخم <code>m₁v₁ + m₂v₂ = m₁v₁′ + m₂v₂′</code>. الزخم محفوظ في كل التصادمات، أما الطاقة الحركية فتُحفظ في التصادم المرن فقط. القيم السالبة تعني الحركة نحو اليسار.',
@@ -1087,6 +1089,13 @@ const SIMCTL = {
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
   ],
+  skate: [
+    { id: 'track', type: 'seg', label: 'شكل المسار', opts: [{ t: 'حرف U', v: 0 }, { t: 'حرف W', v: 1 }] },
+    { id: 'fr', label: 'الاحتكاك', min: 0, max: 1, step: 0.05, v: 0, unit: '', keep: true },
+    { id: 'g', type: 'seg', keep: true, label: 'الجاذبية', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'القمر', v: 1.62 }, { t: 'المشتري', v: 24.8 }] },
+    { id: 'm', label: 'الكتلة', min: 20, max: 100, step: 5, v: 60, unit: 'kg', keep: true },
+    { type: 'btn', label: 'أعد المتزلج' },
+  ],
   balance: [
     { id: 'sup', type: 'seg', keep: true, label: 'الدعامات', opts: [{ t: 'مثبّتة', v: 1 }, { t: 'مُزالة', v: 0 }] },
     { id: 'dist', type: 'seg', keep: true, label: 'المسافات', opts: [{ t: 'إظهار', v: 1 }, { t: 'إخفاء', v: 0 }] },
@@ -1131,7 +1140,7 @@ function startSim(k) {
     const el = document.getElementById(c.id), out = document.getElementById(c.id + '-o');
     const dec = c.step < 1 ? (c.step < .1 ? 2 : 1) : 0;
     const sync = () => { P[c.id] = +el.value; out.textContent = `${fmt(el.value, dec)} ${c.unit}`.trim(); el.style.setProperty('--p', ((el.value - c.min) / (c.max - c.min) * 100) + '%'); };
-    el.oninput = () => { sync(); reset(); }; sync();
+    el.oninput = () => { sync(); if (!c.keep) reset(); }; sync();
   });
   document.querySelectorAll('[data-simbtn]').forEach(b => b.onclick = () => { if (b.dataset.simbtn === 'cut') st.cutReq = true; else reset(); });
 
@@ -1345,6 +1354,55 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    skate(t) {
+      const g = P.g, m = P.m, k = P.fr * .5, X0 = 400, Y0 = 470, sc = 72, XM = 5;
+      const yf = P.track ? (x => .022 * (x * x - 9) ** 2) : (x => .24 * x * x);
+      const dy = x => (yf(x + 1e-3) - yf(x - 1e-3)) / 2e-3;
+      if (!st.init) { st.init = 1; st.x = -4; st.v = 0; st.last = t; st.heat = 0; }
+      st.yf = yf;
+      const dt = Math.min(Math.max(t - st.last, 0), .05); st.last = t;
+      if (!st.drag && !reduce) for (let i = 0; i < 20; i++) {
+        const h = dt / 20, d = dy(st.x), n = Math.sqrt(1 + d * d), v0 = st.v;
+        st.v += (-g * d / n - k * st.v) * h; st.x += st.v / n * h;
+        st.heat += k * v0 * v0 * h;
+        if (Math.abs(st.x) > XM) { st.x = Math.sign(st.x) * XM; st.v = 0; }
+      }
+      const hgt = yf(st.x), PE = m * g * hgt, KE = .5 * m * st.v * st.v, Q = st.heat * m;
+      setRO([['طاقة الوضع', `${fmt(PE / 1000, 2)} kJ`], ['الطاقة الحركية', `${fmt(KE / 1000, 2)} kJ`], ['السرعة', `${fmt(Math.abs(st.v), 1)} m/s`]]);
+      grid();
+      const SX = x => X0 + x * sc, SY = y => Y0 - y * sc;
+      ctx.fillStyle = 'rgba(162,86,11,.18)'; ctx.fillRect(0, Y0 + 6, W, H - Y0);
+      line(0, Y0 + 6, W, Y0 + 6, 'rgba(255,255,255,.25)', 2, [4, 6]); label('h = 0', 12, Y0 - 4, 'rgba(255,255,255,.35)', 'left', 14);
+      ctx.strokeStyle = '#6B6F7A'; ctx.lineWidth = 12; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath();
+      for (let x = -XM; x <= XM + 1e-9; x += .05) { x > -XM ? ctx.lineTo(SX(x), SY(yf(x)) + 6) : ctx.moveTo(SX(x), SY(yf(x)) + 6); } ctx.stroke();
+      ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 1.5; ctx.setLineDash([10, 10]); ctx.stroke(); ctx.setLineDash([]);
+      const d = dy(st.x), ang = Math.atan(-d), sx = SX(st.x), sy = SY(hgt);
+      if (hgt > .05) { line(sx + 30, sy, sx + 30, SY(0), 'rgba(76,134,255,.6)', 2, [4, 5]); label(`h = ${fmt(hgt, 1)} m`, sx + 38, (sy + SY(0)) / 2, BLUE, 'left', 15); }
+      ctx.save(); ctx.translate(sx, sy); ctx.rotate(ang);
+      box(-24, -10, 48, 7, '#3A3D46', 3); ctx.fillStyle = WHITE; [-14, 14].forEach(wx => { ctx.beginPath(); ctx.arc(wx, -2, 4, 0, 7); ctx.fill(); });
+      box(-9, -46, 18, 34, ORANGE, 7); ctx.fillStyle = '#F2D2B6'; ctx.beginPath(); ctx.arc(0, -56, 9, 0, 7); ctx.fill();
+      ctx.restore();
+      if (Math.abs(st.v) > .2) { const tx = Math.cos(Math.atan(d)) * Math.sign(st.v), ty = -Math.sin(Math.atan(d)) * Math.sign(st.v), L = Math.min(Math.abs(st.v) * 8, 110); arrow(sx, sy - 70, sx + tx * L, sy - 70 + ty * L, TEAL, 3); }
+      const E = PE + KE + Q || 1, bars = [['الوضع', PE, BLUE], ['الحركية', KE, ORANGE], ['الحرارية', Q, PINK], ['الكلية', PE + KE + Q, WHITE]];
+      const bw = 34, gap = 14, bx0 = W / 2 - (bars.length * (bw + gap) - gap) / 2, base = 190, maxH = 150;
+      box(bx0 - 16, base - maxH - 18, bars.length * (bw + gap) - gap + 32, maxH + 56, 'rgba(7,8,11,.82)', 12);
+      bars.forEach(([n, val, c], i) => { const x = bx0 + i * (bw + gap), hh = val / E * maxH; box(x, base - hh, bw, Math.max(hh, 2), c, 5); label(n, x + bw / 2, base + 22, c, 'center', 13); });
+      label('اسحب المتزلج لتغيير ارتفاعه', W - 16, 30, DIM, 'right', 15);
+      if (!cv._skate) {
+        cv._skate = true; cv.style.touchAction = 'none';
+        const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+        cv.addEventListener('pointerdown', e => {
+          const [x, y] = pt(e); if (!st.yf || Math.hypot(x - SX(st.x), y - (SY(st.yf(st.x)) - 30)) > 60) return;
+          st.drag = true; try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        cv.addEventListener('pointermove', e => {
+          if (!st.drag) return; const [x] = pt(e);
+          st.x = Math.max(-XM, Math.min(XM, (x - X0) / sc)); st.v = 0; st.heat = 0;
+        });
+        const up = () => { st.drag = false; st.last = (performance.now() - t0) / 1000; };
+        cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+      }
     },
     balance(t) {
       const g = 9.8, L = 2, sc = 165, px = 400, py = 250, gy = 380, Mp = 8;
