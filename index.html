@@ -332,7 +332,11 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .circle.confirm { background: #FF5A5A; color: #fff; }
 .now { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; color: var(--accent); font-size: 14px; font-weight: 600; }
 .playlist { margin-top: 14px; }
-.playlist.sortable .row { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .18s ease, box-shadow .18s; }
+.playlist.sortable .row { transition: transform .18s ease, box-shadow .18s; }
+.playlist.sortable, .playlist.sortable * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.grip { display: grid; place-items: center; width: 44px; height: 44px; margin-inline-start: auto; color: var(--muted); touch-action: none; cursor: grab; flex: none; }
+.grip .ico { width: 24px; height: 24px; }
+body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; }
 .playlist.sorting { overflow: visible; }
 .playlist .row.lifted { transition: box-shadow .18s; position: relative; z-index: 3; background: #262A35; border-radius: 16px; box-shadow: 0 14px 34px rgba(0, 0, 0, .55), 0 0 0 1.5px var(--accent); }
 .playlist .row.on { background: rgba(47, 140, 255, .08); }
@@ -596,6 +600,7 @@ const ICONS = {
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>',
   share: '<path d="M12 3v12M8 7l4-4 4 4M6 11H5.5A1.5 1.5 0 0 0 4 12.5v7A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H18"/>',
   replay: '<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/>',
+  grip: '<path d="M5 8h14M5 12h14M5 16h14"/>',
   up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7M9 7V4.5A.5.5 0 0 1 9.5 4h5a.5.5 0 0 1 .5.5V7"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>',
@@ -919,10 +924,11 @@ function vLesson(u, i) {
     <div class="player ${src && src.tall && CAN_EMBED ? 'tall' : ''}">${player}</div>
     <div class="lesson-h"><small>${esc(unit.title)}${lessonNo(unit, i) ? ` · الدرس <bdi dir="ltr">[${lessonNo(unit, i)}]</bdi>` : ''}</small><h1>${esc(l.t)}</h1>
       ${vs.length > 1 ? `<span class="now">${icon('play', 'style="fill:currentColor;stroke:none;width:14px;height:14px"')}${esc(cur.title || `الجزء ${ar(vi + 1)}`)} · ${ar(vi + 1)} من ${ar(vs.length)}</span>` : ''}</div>
-    ${vs.length > 1 && ADMIN ? `<p class="hint" style="margin-top:14px">اضغط مطولاً على أي جزء ثم اسحبه لأعلى أو لأسفل لتغيير ترتيبه.</p>` : ''}
+    ${vs.length > 1 && ADMIN ? `<p class="hint" style="margin-top:14px">اسحب أي جزء من علامة ☰ بجانبه، أو اضغط عليه مطولاً ثم اسحبه، لتغيير ترتيبه.</p>` : ''}
     ${vs.length > 1 ? `<div class="list playlist ${ADMIN ? 'sortable' : ''}" ${ADMIN ? `data-key="${key}"` : ''}>${vs.map((v, j) => `<button class="row ${j === vi ? 'on' : ''}" data-act="play-part" data-j="${j}" ${j === vi ? 'aria-current="true"' : ''}>
       <span class="n">${j === vi ? icon('play', 'style="fill:currentColor;stroke:none;width:16px;height:16px"') : ar(j + 1)}</span>
       <span class="t"><b>${esc(v.title || `الجزء ${ar(j + 1)}`)}</b><small>${v.min ? `${ar(v.min)} دقيقة` : 'فيديو'}</small></span>
+      ${ADMIN ? `<span class="grip" aria-hidden="true">${icon('grip')}</span>` : ''}
     </button>`).join('')}</div>` : ''}
     <div class="actions">
       <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
@@ -1361,46 +1367,66 @@ function startSim(k) {
 const app = document.getElementById('app'), tabbar = document.getElementById('tabbar'), layer = document.getElementById('layer');
 const TABS = [['home', 'الرئيسية', 'home'], ['lab', 'المختبر', 'lab'], ['notes', 'المذكرات', 'notes'], ['profile', 'حسابي', 'user']];
 
-/* Teacher mode: long-press a lesson part, then drag it to a new position. */
+/* Teacher mode: long-press a lesson part (or grab its handle), then drag it to a new position.
+   Touch events are used on phones because iOS only lets a non-passive touchmove stop the page from scrolling. */
 const drag = { timer: 0, active: false, suppressClick: false };
 function setupReorder() {
   const list = document.querySelector('.playlist.sortable'); if (!list) return;
   const rows = [...list.querySelectorAll('.row')];
-  rows.forEach((row, i) => row.addEventListener('pointerdown', e => {
-    if (e.button > 0) return;
-    const sx = e.clientX, sy = e.clientY, id = e.pointerId;
-    let target = i;
-    const move = ev => {
-      if (ev.pointerId !== id) return;
-      const dy = ev.clientY - sy;
-      if (!drag.active) { if (Math.hypot(ev.clientX - sx, dy) > 10) end(); return; }
-      const h = row.offsetHeight;
-      target = Math.max(0, Math.min(rows.length - 1, i + Math.round(dy / h)));
-      row.style.transform = `translateY(${dy}px) scale(1.03)`;
-      rows.forEach((r, j) => { if (r !== row) r.style.transform = (i < j && j <= target) ? `translateY(${-h}px)` : (target <= j && j < i) ? `translateY(${h}px)` : ''; });
-    };
-    const end = ev => {
+  let cur = null;
+  const begin = (row, i, y) => {
+    cur = { row, i, y, target: i, h: row.offsetHeight };
+    drag.active = true; list.classList.add('sorting'); row.classList.add('lifted'); document.body.classList.add('dragging');
+    if (navigator.vibrate) navigator.vibrate(12);
+  };
+  const moveTo = y => {
+    if (!cur) return;
+    const dy = y - cur.y, { row, i, h } = cur;
+    cur.target = Math.max(0, Math.min(rows.length - 1, i + Math.round(dy / h)));
+    row.style.transform = `translateY(${dy}px) scale(1.03)`;
+    rows.forEach((r, j) => { if (r !== row) r.style.transform = (i < j && j <= cur.target) ? `translateY(${-h}px)` : (cur.target <= j && j < i) ? `translateY(${h}px)` : ''; });
+  };
+  const finish = commit => {
+    clearTimeout(drag.timer);
+    if (!cur) return;
+    const { row, i, target } = cur; cur = null;
+    drag.active = false; drag.suppressClick = true; setTimeout(() => { drag.suppressClick = false; }, 450);
+    list.classList.remove('sorting'); row.classList.remove('lifted'); document.body.classList.remove('dragging');
+    if (!commit || target === i) { rows.forEach(r => { r.style.transform = ''; }); return; }
+    const key = list.dataset.key, vids0 = currentVideos(key), [moved] = vids0.splice(i, 1); vids0.splice(target, 0, moved);
+    const playing = S.vi || 0;
+    S.vi = playing === i ? target : (i < playing && playing <= target) ? playing - 1 : (target <= playing && playing < i) ? playing + 1 : playing;
+    saveVideos(key, vids0).then(ok => { if (ok) toast(`نُقل الجزء إلى الترتيب ${target + 1}`); else rows.forEach(r => { r.style.transform = ''; }); });
+  };
+  rows.forEach((row, i) => {
+    const grip = row.querySelector('.grip');
+    // Touch: the handle drags at once; anywhere else on the row needs a long press.
+    row.addEventListener('touchstart', e => {
+      if (e.touches.length > 1) return;
+      const t = e.touches[0], sx = t.clientX, sy = t.clientY;
+      if (grip && grip.contains(e.target)) { e.preventDefault(); begin(row, i, sy); return; }
       clearTimeout(drag.timer);
-      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); window.removeEventListener('pointercancel', end);
-      if (!drag.active) return;
-      drag.active = false; drag.suppressClick = true; setTimeout(() => { drag.suppressClick = false; }, 400);
-      list.classList.remove('sorting'); row.classList.remove('lifted');
-      if (!ev || ev.type === 'pointercancel' || target === i) { rows.forEach(r => { r.style.transform = ''; }); return; }
-      const key = list.dataset.key, vids0 = currentVideos(key), [moved] = vids0.splice(i, 1); vids0.splice(target, 0, moved);
-      const playing = S.vi || 0;
-      S.vi = playing === i ? target : (i < playing && playing <= target) ? playing - 1 : (target <= playing && playing < i) ? playing + 1 : playing;
-      saveVideos(key, vids0).then(ok => { if (ok) toast(`نُقل الجزء إلى الترتيب ${target + 1}`); else rows.forEach(r => { r.style.transform = ''; }); });
-    };
-    window.addEventListener('pointermove', move); window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
-    drag.timer = setTimeout(() => {
-      drag.active = true; list.classList.add('sorting'); row.classList.add('lifted');
-      try { row.setPointerCapture(id); } catch (err) {}
-      if (navigator.vibrate) navigator.vibrate(12);
-    }, 420);
-  }));
+      drag.timer = setTimeout(() => begin(row, i, sy), 380);
+      row._start = { sx, sy };
+    }, { passive: false });
+    row.addEventListener('touchmove', e => {
+      const t = e.touches[0];
+      if (drag.active && cur && cur.row === row) { e.preventDefault(); moveTo(t.clientY); return; }
+      const st0 = row._start; if (st0 && Math.hypot(t.clientX - st0.sx, t.clientY - st0.sy) > 8) clearTimeout(drag.timer);
+    }, { passive: false });
+    row.addEventListener('touchend', e => { if (cur && cur.row === row) { e.preventDefault(); finish(true); } else clearTimeout(drag.timer); });
+    row.addEventListener('touchcancel', () => finish(false));
+    // Mouse (computers): same long press, or drag the handle.
+    row.addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button > 0) return;
+      const sy = e.clientY, sx = e.clientX, onGrip = grip && grip.contains(e.target);
+      const mm = ev => { if (cur) moveTo(ev.clientY); else if (Math.hypot(ev.clientX - sx, ev.clientY - sy) > 8) up(); };
+      const up = () => { window.removeEventListener('pointermove', mm); window.removeEventListener('pointerup', up); finish(true); };
+      window.addEventListener('pointermove', mm); window.addEventListener('pointerup', up);
+      if (onGrip) { e.preventDefault(); begin(row, i, sy); } else drag.timer = setTimeout(() => begin(row, i, sy), 380);
+    });
+  });
 }
-// Stop the page from scrolling while a part is being dragged (iOS needs a non-passive listener).
-document.addEventListener('touchmove', e => { if (drag.active) e.preventDefault(); }, { passive: false });
 document.addEventListener('contextmenu', e => { if (e.target.closest('.playlist.sortable')) e.preventDefault(); });
 
 function render(scroll = true) {
