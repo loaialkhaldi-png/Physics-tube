@@ -223,6 +223,8 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 26p
 input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; border-radius: 50%; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .5); }
 .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: var(--surface-2); border-radius: 12px; padding: 3px; }
 .seg button { padding: 7px 4px; border-radius: 9px; font-size: 14px; font-weight: 600; color: var(--muted); }
+.term-seg { margin-bottom: 14px; padding: 4px; border-radius: 14px; }
+.term-seg button { padding: 10px 4px; font-size: 15px; border-radius: 11px; }
 .seg button[aria-pressed="true"] { background: #3A3D46; color: var(--fg); box-shadow: 0 1px 4px rgba(0, 0, 0, .4); }
 .law { margin-top: 12px; padding: 14px 16px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-size: 15px; }
 .law code { font-family: ui-monospace, "SF Mono", Menlo, monospace; color: var(--fg); direction: ltr; unicode-bidi: isolate; font-size: 15px; }
@@ -339,44 +341,45 @@ const SUPABASE_ANON_KEY = 'sb_publishable_iZNxrR8oYkxjXTPBZOVHcw_qhr2DPZO';
    - video: ضع رابط يوتيوب للدرس، مثال: "https://youtu.be/abc123XYZ"
    - pdf:   ضع رابط ملف المذكرة (رابط مباشر أو رابط Google Drive)
    - min:   مدة الفيديو بالدقائق (اختياري)
+   - term:  الفصل الدراسي للوحدة (1 = الفصل الأول، 2 = الفصل الثاني)
    أي درس بدون رابط يظهر للطالب بعلامة «قريباً».
    ===================================================================== */
 const GRADES = {
   g10: {
     name: 'الصف العاشر', short: 'العاشر', theme: 1,
     units: [
-      { title: 'القياس والكميات الفيزيائية', glyph: 'ruler', theme: 0, pdf: '', lessons: [
+      { term: 1, title: 'القياس والكميات الفيزيائية', glyph: 'ruler', theme: 0, pdf: '', lessons: [
         { t: 'الكميات الأساسية والمشتقة', video: '', min: '' },
         { t: 'النظام الدولي للوحدات', video: '', min: '' },
         { t: 'الكميات القياسية والمتجهة', video: '', min: '' },
       ]},
-      { title: 'الحركة في خط مستقيم', glyph: 'motion', theme: 1, pdf: '', sim: 'projectile', lessons: [
+      { term: 1, title: 'الحركة في خط مستقيم', glyph: 'motion', theme: 1, pdf: '', sim: 'projectile', lessons: [
         { t: 'المسافة والإزاحة', video: '', min: '' },
         { t: 'السرعة والسرعة المتجهة', video: '', min: '' },
         { t: 'العجلة', video: '', min: '' },
         { t: 'معادلات الحركة بعجلة منتظمة', video: '', min: '' },
         { t: 'السقوط الحر', video: '', min: '' },
       ]},
-      { title: 'قوانين نيوتن', glyph: 'force', theme: 2, pdf: '', lessons: [
+      { term: 1, title: 'قوانين نيوتن', glyph: 'force', theme: 2, pdf: '', lessons: [
         { t: 'القانون الأول والقصور الذاتي', video: '', min: '' },
         { t: 'القانون الثاني', video: '', min: '' },
         { t: 'القانون الثالث', video: '', min: '' },
         { t: 'قوة الاحتكاك', video: '', min: '' },
       ]},
-      { title: 'الشغل والطاقة', glyph: 'bolt', theme: 5, pdf: '', lessons: [
+      { term: 2, title: 'الشغل والطاقة', glyph: 'bolt', theme: 5, pdf: '', lessons: [
         { t: 'الشغل', video: '', min: '' },
         { t: 'طاقة الحركة', video: '', min: '' },
         { t: 'طاقة الوضع', video: '', min: '' },
         { t: 'حفظ الطاقة الميكانيكية', video: '', min: '' },
         { t: 'القدرة', video: '', min: '' },
       ]},
-      { title: 'الحرارة', glyph: 'thermo', theme: 3, pdf: '', lessons: [
+      { term: 2, title: 'الحرارة', glyph: 'thermo', theme: 3, pdf: '', lessons: [
         { t: 'درجة الحرارة والطاقة الحرارية', video: '', min: '' },
         { t: 'الحرارة النوعية', video: '', min: '' },
         { t: 'انتقال الحرارة', video: '', min: '' },
         { t: 'التمدد الحراري', video: '', min: '' },
       ]},
-      { title: 'الضغط والموائع', glyph: 'drop', theme: 6, pdf: '', lessons: [
+      { term: 2, title: 'الضغط والموائع', glyph: 'drop', theme: 6, pdf: '', lessons: [
         { t: 'الضغط', video: '', min: '' },
         { t: 'ضغط السوائل', video: '', min: '' },
         { t: 'قاعدة باسكال', video: '', min: '' },
@@ -387,35 +390,35 @@ const GRADES = {
   g11: {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
-      { title: 'المتجهات والحركة في بعدين', glyph: 'vectors', theme: 1, pdf: '', sim: 'projectile', lessons: [
+      { term: 1, title: 'المتجهات والحركة في بعدين', glyph: 'vectors', theme: 1, pdf: '', sim: 'projectile', lessons: [
         { t: 'جمع المتجهات وتحليلها', video: '', min: '' },
         { t: 'حركة المقذوفات', video: '', min: '' },
         { t: 'المدى وأقصى ارتفاع', video: '', min: '' },
       ]},
-      { title: 'الحركة الدائرية والجاذبية', glyph: 'orbit', theme: 2, pdf: '', lessons: [
+      { term: 1, title: 'الحركة الدائرية والجاذبية', glyph: 'orbit', theme: 2, pdf: '', lessons: [
         { t: 'الحركة الدائرية المنتظمة', video: '', min: '' },
         { t: 'القوة المركزية', video: '', min: '' },
         { t: 'قانون الجذب العام', video: '', min: '' },
         { t: 'حركة الأقمار الصناعية', video: '', min: '' },
       ]},
-      { title: 'الزخم والتصادمات', glyph: 'collide', theme: 3, pdf: '', lessons: [
+      { term: 1, title: 'الزخم والتصادمات', glyph: 'collide', theme: 3, pdf: '', lessons: [
         { t: 'الزخم الخطي', video: '', min: '' },
         { t: 'الدفع', video: '', min: '' },
         { t: 'قانون حفظ الزخم', video: '', min: '' },
         { t: 'التصادمات المرنة وغير المرنة', video: '', min: '' },
       ]},
-      { title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', sim: 'pendulum', lessons: [
+      { term: 2, title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', sim: 'pendulum', lessons: [
         { t: 'الحركة التوافقية البسيطة', video: '', min: '' },
         { t: 'البندول البسيط', video: '', min: '' },
         { t: 'النابض المهتز', video: '', min: '' },
       ]},
-      { title: 'الموجات والصوت', glyph: 'wave', theme: 6, pdf: '', sim: 'wave', lessons: [
+      { term: 2, title: 'الموجات والصوت', glyph: 'wave', theme: 6, pdf: '', sim: 'wave', lessons: [
         { t: 'خصائص الموجات', video: '', min: '' },
         { t: 'انعكاس الموجات وانكسارها', video: '', min: '' },
         { t: 'الصوت', video: '', min: '' },
         { t: 'ظاهرة دوبلر', video: '', min: '' },
       ]},
-      { title: 'الضوء', glyph: 'prism', theme: 7, pdf: '', lessons: [
+      { term: 2, title: 'الضوء', glyph: 'prism', theme: 7, pdf: '', lessons: [
         { t: 'طبيعة الضوء', video: '', min: '' },
         { t: 'الانعكاس والمرايا', video: '', min: '' },
         { t: 'الانكسار والعدسات', video: '', min: '' },
@@ -426,37 +429,37 @@ const GRADES = {
   g12: {
     name: 'الثاني عشر علمي', short: 'الثاني عشر', theme: 7,
     units: [
-      { title: 'الكهرباء الساكنة', glyph: 'charges', theme: 2, pdf: '', lessons: [
+      { term: 1, title: 'الكهرباء الساكنة', glyph: 'charges', theme: 2, pdf: '', lessons: [
         { t: 'الشحنة وقانون كولوم', video: '', min: '' },
         { t: 'المجال الكهربائي', video: '', min: '' },
         { t: 'الجهد الكهربائي', video: '', min: '' },
         { t: 'المكثفات', video: '', min: '' },
       ]},
-      { title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', sim: 'ohm', lessons: [
+      { term: 1, title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', sim: 'ohm', lessons: [
         { t: 'شدة التيار', video: '', min: '' },
         { t: 'قانون أوم والمقاومة', video: '', min: '' },
         { t: 'توصيل المقاومات', video: '', min: '' },
         { t: 'القدرة الكهربائية', video: '', min: '' },
         { t: 'قانونا كيرشوف', video: '', min: '' },
       ]},
-      { title: 'المغناطيسية', glyph: 'magnet', theme: 3, pdf: '', lessons: [
+      { term: 1, title: 'المغناطيسية', glyph: 'magnet', theme: 3, pdf: '', lessons: [
         { t: 'المجال المغناطيسي', video: '', min: '' },
         { t: 'القوة على شحنة متحركة', video: '', min: '' },
         { t: 'القوة على سلك يحمل تياراً', video: '', min: '' },
         { t: 'المجال حول سلك وملف', video: '', min: '' },
       ]},
-      { title: 'الحث الكهرومغناطيسي', glyph: 'coil', theme: 1, pdf: '', lessons: [
+      { term: 2, title: 'الحث الكهرومغناطيسي', glyph: 'coil', theme: 1, pdf: '', lessons: [
         { t: 'قانون فاراداي', video: '', min: '' },
         { t: 'قانون لنز', video: '', min: '' },
         { t: 'المولد الكهربائي', video: '', min: '' },
         { t: 'المحول الكهربائي', video: '', min: '' },
       ]},
-      { title: 'الفيزياء الحديثة', glyph: 'atom', theme: 6, pdf: '', lessons: [
+      { term: 2, title: 'الفيزياء الحديثة', glyph: 'atom', theme: 6, pdf: '', lessons: [
         { t: 'الظاهرة الكهروضوئية', video: '', min: '' },
         { t: 'نموذج بور للذرة', video: '', min: '' },
         { t: 'ثنائية الموجة والجسيم', video: '', min: '' },
       ]},
-      { title: 'الفيزياء النووية', glyph: 'nucleus', theme: 4, pdf: '', lessons: [
+      { term: 2, title: 'الفيزياء النووية', glyph: 'nucleus', theme: 4, pdf: '', lessons: [
         { t: 'تركيب النواة', video: '', min: '' },
         { t: 'النشاط الإشعاعي', video: '', min: '' },
         { t: 'عمر النصف', video: '', min: '' },
@@ -547,6 +550,8 @@ const S = {
   watched: store.get('watched', {}),
   last: store.get('last', null),
   name: store.get('name', ''),
+  // Kuwait school year: first term Sep–Jan, second term Feb–Jun.
+  term: store.get('term', [1, 2, 3, 4, 5, 6].includes(new Date().getMonth() + 1) ? 2 : 1),
   tab: 'home',
   stack: [],
 };
@@ -651,12 +656,17 @@ function unitStats(g, u) {
   const done = L.filter((_, i) => S.watched[lid(g, u, i)]).length;
   return { done, total: L.length, pct: L.length ? Math.round(done / L.length * 100) : 0 };
 }
+const TERMS = { 1: 'الفصل الأول', 2: 'الفصل الثاني' };
+const termUnits = (g, term) => GRADES[g].units.map((u, i) => ({ u, i })).filter(x => x.u.term === term);
+const unitNo = (g, i) => { const u = GRADES[g].units[i]; return termUnits(g, u.term).findIndex(x => x.i === i) + 1; };
+const termSeg = () => `<div class="seg term-seg" role="group" aria-label="الفصل الدراسي">${[1, 2].map(t => `<button data-term="${t}" aria-pressed="${S.term === t}">${TERMS[t]}</button>`).join('')}</div>`;
 const totalWatched = () => Object.keys(S.watched).filter(k => S.watched[k]).length;
 
 /* ---------------- Views ---------------- */
 function vHome() {
   const g = G();
   const lessons = g.units.reduce((n, u) => n + u.lessons.length, 0);
+  const tu = termUnits(S.grade, S.term);
   let cont = '';
   if (S.last && GRADES[S.last.g] && S.last.g === S.grade) {
     const u = GRADES[S.last.g].units[S.last.u], l = u && u.lessons[S.last.i];
@@ -699,8 +709,9 @@ function vHome() {
       </button>
     </div>
     ${cont}
-    <h2 class="sec">الوحدات <small>${ar(g.units.length)} وحدات · ${ar(lessons)} درساً</small></h2>
-    <div class="units">${g.units.map((u, i) => {
+    <h2 class="sec">الوحدات <small>${ar(tu.length)} وحدات · ${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
+    ${termSeg()}
+    <div class="units">${tu.map(({ u, i }) => {
       const s = unitStats(S.grade, i);
       return `<button class="unit" data-go="unit:${i}" style="${tileStyle(u.theme)}">
         <span class="chip">${lessonWord(u.lessons.length)}</span>
@@ -732,7 +743,7 @@ function vUnit(u) {
     ${navBar()}
     <section class="hero" style="${tileStyle(unit.theme)}">
       ${glyph(unit.glyph, unit.theme)}
-      <small>${esc(G().name)} · الوحدة ${ar(u + 1)}</small>
+      <small>${esc(G().name)} · ${TERMS[unit.term]} · الوحدة ${ar(unitNo(S.grade, u))}</small>
       <h1>${esc(unit.title)}</h1>
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
@@ -799,12 +810,12 @@ function vNotes() {
   const g = G();
   return `<div class="view">
     <div class="page-h"><h1>المذكرات</h1><p>ملخصات ${esc(g.name)}. غيّر الصف من الرئيسية لرؤية مذكرات صف آخر.</p></div>
-    <div class="unitgroup"><div class="list">${g.units.map((u, i) => {
+    ${[1, 2].map(t => `<div class="unitgroup"><div class="label">${TERMS[t]}</div><div class="list">${termUnits(S.grade, t).map(({ u, i }) => {
       const inner = `<span class="n" style="${tileStyle(u.theme)};background:var(--tile)">${glyph(u.glyph, u.theme)}</span>
-        <span class="t"><b>${esc(u.title)}</b><small>الوحدة ${ar(i + 1)} · PDF</small></span>
+        <span class="t"><b>${esc(u.title)}</b><small>الوحدة ${ar(unitNo(S.grade, i))} · PDF</small></span>
         <span class="end">${u.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>`;
       return u.pdf ? `<a class="row" href="${esc(u.pdf)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="row">${inner}</div>`;
-    }).join('')}</div></div>
+    }).join('')}</div></div>`).join('')}
   </div>`;
 }
 
@@ -1077,8 +1088,9 @@ function planSheet() {
 }
 
 document.addEventListener('click', e => {
-  const el = e.target.closest('[data-go],[data-tab],[data-act],[data-grade]');
+  const el = e.target.closest('[data-go],[data-tab],[data-act],[data-grade],[data-term]');
   if (!el || el.getAttribute('aria-disabled') === 'true') return;
+  if (el.dataset.term) { S.term = +el.dataset.term; store.set('term', S.term); return render(false); }
   if (el.dataset.go) { closeSheet(); return go(el.dataset.go, el.dataset.replace); }
   if (el.dataset.tab) { closeSheet(); S.tab = el.dataset.tab; S.stack = []; return render(); }
   if (el.dataset.grade) {
