@@ -476,7 +476,7 @@ const GRADES = {
         { t: 'حركة البندول', sim: 'pendulum', video: '', min: '' },
         { t: 'عدم حفظ الطاقة', sim: 'pendulum', video: '', min: '' },
       ]},
-      { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'orbit', theme: 2, pdf: '', sims: ['torque'], lessons: [
+      { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'orbit', theme: 2, pdf: '', sims: ['torque', 'balance'], lessons: [
         { t: 'عزم القوة', video: '', min: '' },
         { t: 'القصور الذاتي الدوراني', video: '', min: '' },
       ]},
@@ -539,6 +539,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  balance:    { title: 'اتزان العزوم', sub: 'ضع الكتل على اللوح وحقق الاتزان', glyph: 'ruler', theme: 5 },
   collision:  { title: 'التصادمات وحفظ الزخم', sub: 'تصادم مرن وتصادم عديم المرونة', glyph: 'collide', theme: 3 },
 };
 // Which grades and units use each experiment (derived from the curriculum above).
@@ -1035,6 +1036,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  balance: 'شرط الاتزان الدوراني: مجموع العزوم حول محور الدوران يساوي صفراً، أي <code>Σ m·g·d (يسار) = Σ m·g·d (يمين)</code>. مثلاً كتلة 20 kg على بعد 1 m تتزن مع كتلة 10 kg على بعد 2 m. اسحب الكتل إلى اللوح، ثم أزل الدعامات لترى هل يتزن.',
   torque: 'عزم القوة <code>τ = r·F·sinθ</code>. يكون العزم أكبر ما يمكن عندما تكون القوة عمودية على الذراع (θ = 90°)، وينعدم عندما تكون القوة على امتداد الذراع (θ = 0° أو 180°).',
   collision: 'حفظ الزخم <code>m₁v₁ + m₂v₂ = m₁v₁′ + m₂v₂′</code>. الزخم محفوظ في كل التصادمات، أما الطاقة الحركية فتُحفظ في التصادم المرن فقط. القيم السالبة تعني الحركة نحو اليسار.',
 };
@@ -1085,6 +1087,11 @@ const SIMCTL = {
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
   ],
+  balance: [
+    { id: 'sup', type: 'seg', keep: true, label: 'الدعامات', opts: [{ t: 'مثبّتة', v: 1 }, { t: 'مُزالة', v: 0 }] },
+    { id: 'dist', type: 'seg', keep: true, label: 'المسافات', opts: [{ t: 'إظهار', v: 1 }, { t: 'إخفاء', v: 0 }] },
+    { type: 'btn', label: 'أعد الكتل إلى مكانها' },
+  ],
   torque: [
     { id: 'F', label: 'القوة F', min: 0, max: 100, step: 5, v: 50, unit: 'N' },
     { id: 'r', label: 'ذراع القوة r', min: 0.1, max: 1, step: 0.05, v: 0.6, unit: 'm' },
@@ -1117,7 +1124,7 @@ function startSim(k) {
       P[c.id] = c.opts[0].v;
       document.querySelectorAll(`[data-seg="${c.id}"]`).forEach(b => b.onclick = () => {
         document.querySelectorAll(`[data-seg="${c.id}"]`).forEach(x => x.setAttribute('aria-pressed', x === b));
-        P[c.id] = +b.dataset.v; reset();
+        P[c.id] = +b.dataset.v; if (!c.keep) reset();
       });
       return;
     }
@@ -1338,6 +1345,79 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    balance(t) {
+      const g = 9.8, L = 2, sc = 165, px = 400, py = 250, gy = 380, Mp = 8;
+      if (!st.objs) {
+        st.objs = [5, 10, 20, 30, 50].map((m, i) => ({ m, x: null, slot: i }));
+        st.objs[2].x = -1; st.objs[1].x = 2; st.th = 0; st.w = 0; st.last = t;
+      }
+      const objs = st.objs, on = objs.filter(o => o.x !== null && o !== (st.drag && st.drag.o));
+      const tl = on.filter(o => o.x < 0).reduce((n, o) => n + o.m * g * -o.x, 0), tr = on.filter(o => o.x > 0).reduce((n, o) => n + o.m * g * o.x, 0), net = tr - tl;
+      setRO([['العزم يساراً', `${fmt(tl, 0)} N·m`], ['العزم يميناً', `${fmt(tr, 0)} N·m`], ['العزم المحصل', `${fmt(Math.abs(net), 0)} N·m`]]);
+      const dt = Math.min(Math.max(t - st.last, 0), .05); st.last = t;
+      const thMax = Math.asin((gy - py - 6) / (L * sc));
+      if (P.sup) { st.th += (0 - st.th) * Math.min(1, dt * 8); st.w = 0; }
+      else if (!reduce) {
+        const I = Mp * (2 * L) ** 2 / 12 + on.reduce((n, o) => n + o.m * o.x * o.x, 0);
+        st.w += (net / I - 1.2 * st.w) * dt; st.th += st.w * dt;
+        if (Math.abs(st.th) > thMax) { st.th = Math.sign(st.th) * thMax; st.w = 0; }
+      } else st.th = Math.abs(net) < .01 ? 0 : Math.sign(net) * thMax;
+      const th = st.th, c = Math.cos(th), s = Math.sin(th);
+      const toScreen = (x, up = 0) => [px + x * sc * c + up * s, py + x * sc * s - up * c];
+      grid();
+      ctx.fillStyle = 'rgba(52,209,122,.08)'; ctx.fillRect(0, gy, W, H - gy); line(0, gy, W, gy, 'rgba(255,255,255,.35)', 2);
+      if (P.sup) [-1.6, 1.6].forEach(x => { box(px + x * sc - 14, py + 8, 28, gy - py - 8, '#3A3D46', 4); });
+      ctx.fillStyle = ORANGE; ctx.beginPath(); ctx.moveTo(px, py + 4); ctx.lineTo(px - 40, gy); ctx.lineTo(px + 40, gy); ctx.closePath(); ctx.fill();
+      ctx.save(); ctx.translate(px, py); ctx.rotate(th);
+      box(-L * sc - 10, -5, 2 * L * sc + 20, 12, '#D8C3A0', 3);
+      for (let q = -L; q <= L + 1e-9; q += .25) { const X = q * sc, major = Math.abs(q * 2 - Math.round(q * 2)) < 1e-6; ctx.fillStyle = major ? '#5A4630' : 'rgba(90,70,48,.5)'; ctx.fillRect(X - 1, -5, 2, major ? 12 : 7); }
+      if (P.dist) for (let q = -L; q <= L + 1e-9; q += .5) if (q) label(`${Math.abs(q)}`, q * sc, 30, 'rgba(255,255,255,.4)', 'center', 14);
+      ctx.restore();
+      ball(px, py, 6, WHITE, WHITE);
+      const COLORS = { 5: TEAL, 10: BLUE, 20: PURPLE, 30: ORANGE, 50: PINK };
+      const size = m => [30 + m * .7, 22 + m * .75];
+      const drawObj = (o, x, y, ang) => {
+        const [w, h] = size(o.m);
+        ctx.save(); ctx.translate(x, y); ctx.rotate(ang); box(-w / 2, -h, w, h, COLORS[o.m], 6);
+        label(`${o.m} kg`, 0, -h / 2 + 6, '#07080B', 'center', 15); ctx.restore();
+      };
+      const trayY = 470, slotX = i => 130 + i * 135;
+      label('اسحب الكتل إلى اللوح', W / 2, 410, DIM, 'center', 16);
+      objs.forEach(o => {
+        if (st.drag && st.drag.o === o) return;
+        if (o.x === null) { drawObj(o, slotX(o.slot), trayY, 0); o.hit = [slotX(o.slot), trayY - size(o.m)[1] / 2]; return; }
+        const [bx, by] = toScreen(o.x, 7); drawObj(o, bx, by, th);
+        const h = size(o.m)[1]; o.hit = [bx + s * h / 2, by - c * h / 2];
+        if (P.dist && o.x) {
+          const [lx, ly] = toScreen(o.x, -46); label(`${fmt(Math.abs(o.x), 2)} m`, lx, ly, COLORS[o.m], 'center', 15);
+        }
+      });
+      if (st.drag) drawObj(st.drag.o, st.drag.x, st.drag.y + size(st.drag.o.m)[1] / 2, 0);
+      const balanced = Math.abs(net) < .01;
+      label(balanced ? 'متزن: العزم المحصل = صفر' : `غير متزن: يدور نحو ${net > 0 ? 'اليمين' : 'اليسار'}`, W / 2, 40, balanced ? '#32D17A' : WHITE, 'center', 20);
+      if (Math.abs(th) > .01) label(`زاوية الميل ${fmt(Math.abs(th) / D, 0)} درجة`, W / 2, 68, DIM, 'center', 16);
+      // Drag and drop on the canvas (set up once per experiment run).
+      if (!cv._balance) {
+        cv._balance = true; cv.style.touchAction = 'none';
+        const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+        cv.addEventListener('pointerdown', e => {
+          const [x, y] = pt(e);
+          const o = st.objs && st.objs.filter(q => q.hit).sort((a, b) => Math.hypot(a.hit[0] - x, a.hit[1] - y) - Math.hypot(b.hit[0] - x, b.hit[1] - y))[0];
+          if (!o || Math.hypot(o.hit[0] - x, o.hit[1] - y) > 45) return;
+          st.drag = { o, x, y }; try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+        });
+        cv.addEventListener('pointermove', e => { if (!st.drag) return; const [x, y] = pt(e); st.drag.x = x; st.drag.y = y; });
+        const drop = () => {
+          const d = st.drag; if (!d) return; st.drag = null;
+          const rx = d.x - px, ry = d.y - py, along = (rx * Math.cos(st.th) + ry * Math.sin(st.th)) / sc, perp = -rx * Math.sin(st.th) + ry * Math.cos(st.th);
+          if (Math.abs(along) > L + .2 || perp < -170 || perp > 60) { d.o.x = null; return; }
+          const taken = st.objs.filter(q => q !== d.o && q.x !== null).map(q => q.x);
+          const spots = []; for (let q = -L; q <= L + 1e-9; q += .25) if (!taken.some(x => Math.abs(x - q) < 1e-6)) spots.push(Math.round(q * 100) / 100);
+          d.o.x = spots.length ? spots.sort((a, b) => Math.abs(a - along) - Math.abs(b - along))[0] : null;
+        };
+        cv.addEventListener('pointerup', drop); cv.addEventListener('pointercancel', drop);
+      }
     },
     collision(t) {
       const m1 = P.m1, m2 = P.m2, v1 = P.v1, v2 = P.v2, elastic = P.e === 1;
