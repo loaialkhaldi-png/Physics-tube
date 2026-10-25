@@ -333,7 +333,10 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .now { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; color: var(--accent); font-size: 14px; font-weight: 600; }
 .playlist { margin-top: 14px; }
 .playlist.sortable .row { transition: transform .18s ease, box-shadow .18s; }
-.playlist.sortable, .playlist.sortable * { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.sortable, .sortable *:not(input):not(select) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+.ed-list.sortable .ed-vid { transition: transform .18s ease, box-shadow .18s; }
+.ed-list.sorting .ed-vid.lifted { transition: box-shadow .18s; position: relative; z-index: 3; background: #2B2F3A; box-shadow: 0 14px 34px rgba(0, 0, 0, .55), 0 0 0 1.5px var(--accent); }
+.ed-vid .grip { width: 36px; height: 44px; margin-inline-start: 0; }
 .grip { display: grid; place-items: center; width: 44px; height: 44px; margin-inline-start: auto; color: var(--muted); touch-action: none; cursor: grab; flex: none; }
 .grip .ico { width: 24px; height: 24px; }
 body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; }
@@ -697,8 +700,9 @@ function lessonEditor(key, l) {
   return `<section class="editor" aria-label="تعديل الدرس">
     <div class="ed-h"><b>تعديل الدرس</b><span class="tag">وضع المعلم</span></div>
     ${vs.length ? `<div class="label" style="padding:0">فيديوهات الدرس (${ar(vs.length)})</div>
-    <p class="hint">غيّر رقم «الترتيب» لنقل أي فيديو إلى المكان الذي تريده، واكتب عنواناً لكل فيديو ليسهل التمييز بينها.</p>
-    <div class="ed-list">${vs.map((v, j) => { const src = videoSource(v.url), yt = ytId(v.url); return `<div class="ed-vid">
+    <p class="hint">اسحب أي فيديو من علامة ☰ لتغيير ترتيبه، أو غيّر رقم «الترتيب». واكتب عنواناً لكل فيديو ليسهل التمييز بينها.</p>
+    <div class="ed-list sortable" data-key="${key}">${vs.map((v, j) => { const src = videoSource(v.url), yt = ytId(v.url); return `<div class="ed-vid">
+      <span class="grip" aria-hidden="true">${icon('grip')}</span>
       <a class="vthumb" href="${esc(src.open)}" target="_blank" rel="noopener" aria-label="افتح الفيديو">${yt ? `<img src="https://i.ytimg.com/vi/${yt}/mqdefault.jpg" alt="" loading="lazy">` : `<span>${esc(src.name)}</span>`}</a>
       <span class="t">
         <input class="vtitle" data-vid-title="${key}" data-j="${j}" value="${esc(v.title || '')}" placeholder="الجزء ${ar(j + 1)}" maxlength="60" aria-label="عنوان الفيديو ${ar(j + 1)}">
@@ -1370,12 +1374,12 @@ const TABS = [['home', 'الرئيسية', 'home'], ['lab', 'المختبر', 'l
 /* Teacher mode: long-press a lesson part (or grab its handle), then drag it to a new position.
    Touch events are used on phones because iOS only lets a non-passive touchmove stop the page from scrolling. */
 const drag = { timer: 0, active: false, suppressClick: false };
-function setupReorder() {
-  const list = document.querySelector('.playlist.sortable'); if (!list) return;
-  const rows = [...list.querySelectorAll('.row')];
+function setupReorder() { document.querySelectorAll('.sortable[data-key]').forEach(makeSortable); }
+function makeSortable(list) {
+  const rows = [...list.querySelectorAll(':scope > .row, :scope > .ed-vid')];
   let cur = null;
   const begin = (row, i, y) => {
-    cur = { row, i, y, target: i, h: row.offsetHeight };
+    cur = { row, i, y, target: i, h: rows.length > 1 ? Math.abs(rows[1].getBoundingClientRect().top - rows[0].getBoundingClientRect().top) : row.offsetHeight };
     drag.active = true; list.classList.add('sorting'); row.classList.add('lifted'); document.body.classList.add('dragging');
     if (navigator.vibrate) navigator.vibrate(12);
   };
@@ -1405,6 +1409,7 @@ function setupReorder() {
       if (e.touches.length > 1) return;
       const t = e.touches[0], sx = t.clientX, sy = t.clientY;
       if (grip && grip.contains(e.target)) { e.preventDefault(); begin(row, i, sy); return; }
+      if (e.target.closest('input, select, textarea, a, [data-act]:not(.row)')) return;
       clearTimeout(drag.timer);
       drag.timer = setTimeout(() => begin(row, i, sy), 380);
       row._start = { sx, sy };
@@ -1420,6 +1425,7 @@ function setupReorder() {
     row.addEventListener('pointerdown', e => {
       if (e.pointerType !== 'mouse' || e.button > 0) return;
       const sy = e.clientY, sx = e.clientX, onGrip = grip && grip.contains(e.target);
+      if (!onGrip && e.target.closest('input, select, textarea, a, [data-act]:not(.row)')) return;
       const mm = ev => { if (cur) moveTo(ev.clientY); else if (Math.hypot(ev.clientX - sx, ev.clientY - sy) > 8) up(); };
       const up = () => { window.removeEventListener('pointermove', mm); window.removeEventListener('pointerup', up); finish(true); };
       window.addEventListener('pointermove', mm); window.addEventListener('pointerup', up);
@@ -1427,7 +1433,7 @@ function setupReorder() {
     });
   });
 }
-document.addEventListener('contextmenu', e => { if (e.target.closest('.playlist.sortable')) e.preventDefault(); });
+document.addEventListener('contextmenu', e => { if (e.target.closest('.sortable') && !e.target.closest('input')) e.preventDefault(); });
 
 function render(scroll = true) {
   if (simStop) { simStop(); simStop = null; }
