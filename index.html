@@ -309,6 +309,19 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .ed-file .t b { display: block; color: var(--fg); font-size: 15px; }
 .ed-file .btn { min-height: 40px; padding: 8px 14px; font-size: 14px; }
 .ed-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ed-list { display: grid; gap: 8px; }
+.ed-vid { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; background: var(--surface-2); }
+.ed-vid .t { flex: 1; min-width: 0; display: grid; }
+.ed-vid .t b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ed-vid .t small { color: var(--muted); font-size: 12px; direction: ltr; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.circle.sm { width: 36px; height: 36px; flex: none; }
+.circle.sm .ico { width: 18px; height: 18px; }
+.circle.danger { color: #FF7A7A; }
+.circle.confirm { background: #FF5A5A; color: #fff; }
+.now { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; color: var(--accent); font-size: 14px; font-weight: 600; }
+.playlist { margin-top: 14px; }
+.playlist .row.on { background: rgba(47, 140, 255, .08); }
+.playlist .row.on .n { background: var(--accent); color: #fff; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .err { color: #FF7A7A; font-size: 14px; min-height: 1em; }
 .btn.danger { color: #FF7A7A; }
@@ -560,6 +573,8 @@ const ICONS = {
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>',
   share: '<path d="M12 3v12M8 7l4-4 4 4M6 11H5.5A1.5 1.5 0 0 0 4 12.5v7A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H18"/>',
   replay: '<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/>',
+  up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+  trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7M9 7V4.5A.5.5 0 0 1 9.5 4h5a.5.5 0 0 1 .5.5V7"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>',
 };
 const icon = (n, extra = '') => `<svg class="ico" viewBox="0 0 24 24" aria-hidden="true" ${extra}>${ICONS[n]}</svg>`;
@@ -593,9 +608,19 @@ function applyRemote() {
     const unit = UNIT_BY_ID[id]; if (!unit) continue;
     if (i === undefined) { unit.pdf = row.pdf || ''; continue; }
     const l = unit.lessons[+i]; if (!l) continue;
-    l.video = row.video || ''; l.pdf = row.pdf || ''; l.min = row.minutes || '';
+    l.videos = parseVideos(row.video, row.minutes); l.pdf = row.pdf || '';
   }
 }
+// The video column holds a JSON list [{url, title, min}]; older rows hold one plain URL.
+function parseVideos(raw, min) {
+  raw = String(raw || '').trim();
+  if (!raw) return [];
+  if (raw[0] === '[') { try { return JSON.parse(raw).filter(v => v && v.url); } catch (e) { return []; } }
+  return [{ url: raw, title: '', min: min || '' }];
+}
+const vids = l => (l.videos || parseVideos(l.video, l.min)).filter(v => ytId(v.url));
+const totalMin = l => vids(l).reduce((n, v) => n + (+v.min || 0), 0);
+const videoWord = n => n === 1 ? 'فيديو واحد' : n === 2 ? 'فيديوهان' : (n <= 10 ? `${n} فيديوهات` : `${n} فيديو`);
 applyRemote();
 async function loadRemote() {
   if (!db) return;
@@ -626,6 +651,9 @@ async function uploadPdf(key, file, btn) {
   const url = db.storage.from('notes').getPublicUrl(path).data.publicUrl;
   if (await saveRow(key, { pdf: url })) toast('تم رفع المذكرة');
 }
+const lessonByKey = key => { const [id, i] = key.split('.'); const u = UNIT_BY_ID[id]; return u && u.lessons[+i]; };
+const currentVideos = key => vids(lessonByKey(key) || {}).map(v => ({ url: v.url, title: v.title || '', min: v.min || '' }));
+const saveVideos = (key, list) => saveRow(key, { video: list.length ? JSON.stringify(list) : '', minutes: '' });
 const fileName = url => { try { return decodeURIComponent(url.split('/').pop()); } catch (e) { return 'ملف PDF'; } };
 function pdfEditor(key, current, label) {
   return `<div class="ed-file">
@@ -637,14 +665,20 @@ function pdfEditor(key, current, label) {
     </div>`;
 }
 function lessonEditor(key, l) {
+  const vs = vids(l);
   return `<section class="editor" aria-label="تعديل الدرس">
     <div class="ed-h"><b>تعديل الدرس</b><span class="tag">وضع المعلم</span></div>
-    <div class="field"><label for="ed-video">رابط فيديو يوتيوب</label><input id="ed-video" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/..." value="${esc(l.video || '')}"></div>
-    <div class="field"><label for="ed-min">مدة الفيديو بالدقائق (اختياري)</label><input id="ed-min" inputmode="numeric" maxlength="4" placeholder="12" value="${esc(l.min || '')}"></div>
-    <div class="ed-row">
-      <button class="btn primary" data-act="save-video" data-key="${key}">حفظ الفيديو</button>
-      <button class="btn danger" data-act="clear-video" data-key="${key}" ${l.video ? '' : 'aria-disabled="true"'}>إزالة الفيديو</button>
-    </div>
+    ${vs.length ? `<div class="label" style="padding:0">فيديوهات الدرس (${ar(vs.length)})</div>
+    <div class="ed-list">${vs.map((v, j) => `<div class="ed-vid">
+      <span class="t"><b>${ar(j + 1)}. ${esc(v.title || `الجزء ${ar(j + 1)}`)}</b><small>${v.min ? `${ar(v.min)} دقيقة · ` : ''}youtu.be/${ytId(v.url)}</small></span>
+      ${j ? `<button class="circle sm" data-act="vid-up" data-key="${key}" data-j="${j}" aria-label="نقل للأعلى">${icon('up')}</button>` : ''}
+      <button class="circle sm danger" data-act="vid-del" data-key="${key}" data-j="${j}" aria-label="حذف الفيديو">${icon('trash')}</button>
+    </div>`).join('')}</div>` : ''}
+    <div class="label" style="padding:0">${vs.length ? 'إضافة فيديو آخر' : 'إضافة فيديو'}</div>
+    <div class="field"><label for="ed-video">رابط فيديو يوتيوب</label><input id="ed-video" type="url" inputmode="url" autocomplete="off" placeholder="https://youtu.be/..."></div>
+    <div class="field"><label for="ed-title">عنوان الفيديو (اختياري)</label><input id="ed-title" maxlength="60" placeholder="مثال: حل أمثلة الكتاب"></div>
+    <div class="field"><label for="ed-min">المدة بالدقائق (اختياري)</label><input id="ed-min" inputmode="numeric" maxlength="4" placeholder="12"></div>
+    <button class="btn primary" data-act="add-video" data-key="${key}">${icon('play', 'style="fill:currentColor;stroke:none;width:16px;height:16px"')}إضافة الفيديو</button>
     ${pdfEditor(key, l.pdf, 'مذكرة هذا الدرس')}
   </section>`;
 }
@@ -781,10 +815,10 @@ function vUnit(u) {
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
     <div class="list">${unit.lessons.map((l, i) => {
-      const done = S.watched[lid(S.grade, u, i)], has = ytId(l.video);
+      const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
       return `<button class="row" data-go="lesson:${u}:${i}">
         <span class="n ${done ? 'done' : ''}">${done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : (lessonNo(unit, i) ? `<bdi dir="ltr">${lessonNo(unit, i)}</bdi>` : icon('checkc', 'style="width:18px;height:18px"'))}</span>
-        <span class="t"><b>${esc(l.t)}</b><small>${has ? (l.min ? `${ar(l.min)} دقيقة` : 'فيديو شرح') : 'الفيديو قيد التجهيز'}</small></span>
+        <span class="t"><b>${esc(l.t)}</b><small>${has ? (has > 1 ? videoWord(has) + (mins ? ` · ${ar(mins)} دقيقة` : '') : (mins ? `${ar(mins)} دقيقة` : 'فيديو شرح')) : 'الفيديو قيد التجهيز'}</small></span>
         <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${ADMIN ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
       </button>`;
     }).join('')}</div>
@@ -805,7 +839,8 @@ function vUnit(u) {
 }
 
 function vLesson(u, i) {
-  const unit = G().units[u], l = unit.lessons[i], id = ytId(l.video), key = lid(S.grade, u, i), done = !!S.watched[key];
+  const unit = G().units[u], l = unit.lessons[i], key = lid(S.grade, u, i), done = !!S.watched[key];
+  const vs = vids(l), vi = Math.min(S.vi || 0, Math.max(vs.length - 1, 0)), cur = vs[vi], id = cur ? ytId(cur.url) : '';
   const nx = unit.lessons[i + 1] ? { u, i: i + 1 } : (G().units[u + 1] ? { u: u + 1, i: 0 } : null);
   let player;
   if (id && CAN_EMBED) player = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?playsinline=1&rel=0&modestbranding=1" title="${esc(l.t)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
@@ -815,7 +850,12 @@ function vLesson(u, i) {
   return `<div class="view push">
     ${navBar()}
     <div class="player">${player}</div>
-    <div class="lesson-h"><small>${esc(unit.title)}${lessonNo(unit, i) ? ` · الدرس <bdi dir="ltr">[${lessonNo(unit, i)}]</bdi>` : ''}</small><h1>${esc(l.t)}</h1></div>
+    <div class="lesson-h"><small>${esc(unit.title)}${lessonNo(unit, i) ? ` · الدرس <bdi dir="ltr">[${lessonNo(unit, i)}]</bdi>` : ''}</small><h1>${esc(l.t)}</h1>
+      ${vs.length > 1 ? `<span class="now">${icon('play', 'style="fill:currentColor;stroke:none;width:14px;height:14px"')}${esc(cur.title || `الجزء ${ar(vi + 1)}`)} · ${ar(vi + 1)} من ${ar(vs.length)}</span>` : ''}</div>
+    ${vs.length > 1 ? `<div class="list playlist">${vs.map((v, j) => `<button class="row ${j === vi ? 'on' : ''}" data-act="play-part" data-j="${j}" ${j === vi ? 'aria-current="true"' : ''}>
+      <span class="n">${j === vi ? icon('play', 'style="fill:currentColor;stroke:none;width:16px;height:16px"') : ar(j + 1)}</span>
+      <span class="t"><b>${esc(v.title || `الجزء ${ar(j + 1)}`)}</b><small>${v.min ? `${ar(v.min)} دقيقة` : 'فيديو'}</small></span>
+    </button>`).join('')}</div>` : ''}
     <div class="actions">
       <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
       ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
@@ -1082,7 +1122,7 @@ function render(scroll = true) {
 function go(spec, replace) {
   const [type, a, b] = spec.split(':');
   const entry = type === 'unit' ? { type, u: +a } : type === 'lesson' ? { type, u: +a, i: +b } : { type, k: a };
-  if (type === 'lesson') { S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last); }
+  if (type === 'lesson') { S.vi = 0; S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last); }
   if (replace) S.stack.pop();
   S.stack.push(entry);
   render();
@@ -1142,13 +1182,24 @@ document.addEventListener('click', e => {
   }
   else if (act === 'login') loginSheet();
   else if (act === 'logout') { db && db.auth.signOut(); ADMIN = null; render(false); toast('تم تسجيل الخروج'); }
-  else if (act === 'save-video') {
-    const v = document.getElementById('ed-video').value.trim(), m = document.getElementById('ed-min').value.trim().replace(/[^0-9]/g, '');
-    if (v && !ytId(v)) return toast('الرابط غير صحيح. انسخ رابط الفيديو من يوتيوب كما هو.');
-    el.classList.add('busy'); el.textContent = 'جارٍ الحفظ…';
-    saveRow(el.dataset.key, { video: v, minutes: m }).then(ok => { if (ok) toast('تم حفظ الفيديو'); else { el.classList.remove('busy'); el.textContent = 'حفظ الفيديو'; } });
+  else if (act === 'play-part') { S.vi = +el.dataset.j; render(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+  else if (act === 'add-video') {
+    const url = document.getElementById('ed-video').value.trim(), title = document.getElementById('ed-title').value.trim(), min = document.getElementById('ed-min').value.trim().replace(/[^0-9]/g, '');
+    if (!url) return toast('الصق رابط الفيديو أولاً');
+    if (!ytId(url)) return toast('الرابط غير صحيح. انسخ رابط الفيديو من يوتيوب كما هو.');
+    const list = currentVideos(el.dataset.key).concat([{ url, title, min }]);
+    el.classList.add('busy'); el.lastChild.textContent = 'جارٍ الحفظ…';
+    saveVideos(el.dataset.key, list).then(ok => { if (ok) { S.vi = list.length - 1; render(false); toast('تمت إضافة الفيديو'); } else { el.classList.remove('busy'); el.lastChild.textContent = 'إضافة الفيديو'; } });
   }
-  else if (act === 'clear-video') { saveRow(el.dataset.key, { video: '', minutes: '' }).then(ok => ok && toast('تمت إزالة الفيديو')); }
+  else if (act === 'vid-del') {
+    if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الفيديو'); }
+    const list = currentVideos(el.dataset.key); list.splice(+el.dataset.j, 1);
+    S.vi = 0; saveVideos(el.dataset.key, list).then(ok => ok && toast('تم حذف الفيديو'));
+  }
+  else if (act === 'vid-up') {
+    const list = currentVideos(el.dataset.key), j = +el.dataset.j; [list[j - 1], list[j]] = [list[j], list[j - 1]];
+    saveVideos(el.dataset.key, list);
+  }
   else if (act === 'del-pdf') {
     if (el.dataset.confirm) saveRow(el.dataset.key, { pdf: '' }).then(ok => ok && toast('تم حذف المذكرة'));
     else { el.dataset.confirm = '1'; el.textContent = 'تأكيد الحذف'; }
