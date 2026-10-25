@@ -332,6 +332,9 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .circle.confirm { background: #FF5A5A; color: #fff; }
 .now { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; color: var(--accent); font-size: 14px; font-weight: 600; }
 .playlist { margin-top: 14px; }
+.playlist.sortable .row { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; transition: transform .18s ease, box-shadow .18s; }
+.playlist.sorting { overflow: visible; }
+.playlist .row.lifted { transition: box-shadow .18s; position: relative; z-index: 3; background: #262A35; border-radius: 16px; box-shadow: 0 14px 34px rgba(0, 0, 0, .55), 0 0 0 1.5px var(--accent); }
 .playlist .row.on { background: rgba(47, 140, 255, .08); }
 .playlist .row.on .n { background: var(--accent); color: #fff; }
 .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
@@ -916,7 +919,8 @@ function vLesson(u, i) {
     <div class="player ${src && src.tall && CAN_EMBED ? 'tall' : ''}">${player}</div>
     <div class="lesson-h"><small>${esc(unit.title)}${lessonNo(unit, i) ? ` · الدرس <bdi dir="ltr">[${lessonNo(unit, i)}]</bdi>` : ''}</small><h1>${esc(l.t)}</h1>
       ${vs.length > 1 ? `<span class="now">${icon('play', 'style="fill:currentColor;stroke:none;width:14px;height:14px"')}${esc(cur.title || `الجزء ${ar(vi + 1)}`)} · ${ar(vi + 1)} من ${ar(vs.length)}</span>` : ''}</div>
-    ${vs.length > 1 ? `<div class="list playlist">${vs.map((v, j) => `<button class="row ${j === vi ? 'on' : ''}" data-act="play-part" data-j="${j}" ${j === vi ? 'aria-current="true"' : ''}>
+    ${vs.length > 1 && ADMIN ? `<p class="hint" style="margin-top:14px">اضغط مطولاً على أي جزء ثم اسحبه لأعلى أو لأسفل لتغيير ترتيبه.</p>` : ''}
+    ${vs.length > 1 ? `<div class="list playlist ${ADMIN ? 'sortable' : ''}" ${ADMIN ? `data-key="${key}"` : ''}>${vs.map((v, j) => `<button class="row ${j === vi ? 'on' : ''}" data-act="play-part" data-j="${j}" ${j === vi ? 'aria-current="true"' : ''}>
       <span class="n">${j === vi ? icon('play', 'style="fill:currentColor;stroke:none;width:16px;height:16px"') : ar(j + 1)}</span>
       <span class="t"><b>${esc(v.title || `الجزء ${ar(j + 1)}`)}</b><small>${v.min ? `${ar(v.min)} دقيقة` : 'فيديو'}</small></span>
     </button>`).join('')}</div>` : ''}
@@ -1357,6 +1361,48 @@ function startSim(k) {
 const app = document.getElementById('app'), tabbar = document.getElementById('tabbar'), layer = document.getElementById('layer');
 const TABS = [['home', 'الرئيسية', 'home'], ['lab', 'المختبر', 'lab'], ['notes', 'المذكرات', 'notes'], ['profile', 'حسابي', 'user']];
 
+/* Teacher mode: long-press a lesson part, then drag it to a new position. */
+const drag = { timer: 0, active: false, suppressClick: false };
+function setupReorder() {
+  const list = document.querySelector('.playlist.sortable'); if (!list) return;
+  const rows = [...list.querySelectorAll('.row')];
+  rows.forEach((row, i) => row.addEventListener('pointerdown', e => {
+    if (e.button > 0) return;
+    const sx = e.clientX, sy = e.clientY, id = e.pointerId;
+    let target = i;
+    const move = ev => {
+      if (ev.pointerId !== id) return;
+      const dy = ev.clientY - sy;
+      if (!drag.active) { if (Math.hypot(ev.clientX - sx, dy) > 10) end(); return; }
+      const h = row.offsetHeight;
+      target = Math.max(0, Math.min(rows.length - 1, i + Math.round(dy / h)));
+      row.style.transform = `translateY(${dy}px) scale(1.03)`;
+      rows.forEach((r, j) => { if (r !== row) r.style.transform = (i < j && j <= target) ? `translateY(${-h}px)` : (target <= j && j < i) ? `translateY(${h}px)` : ''; });
+    };
+    const end = ev => {
+      clearTimeout(drag.timer);
+      window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', end); window.removeEventListener('pointercancel', end);
+      if (!drag.active) return;
+      drag.active = false; drag.suppressClick = true; setTimeout(() => { drag.suppressClick = false; }, 400);
+      list.classList.remove('sorting'); row.classList.remove('lifted');
+      if (!ev || ev.type === 'pointercancel' || target === i) { rows.forEach(r => { r.style.transform = ''; }); return; }
+      const key = list.dataset.key, vids0 = currentVideos(key), [moved] = vids0.splice(i, 1); vids0.splice(target, 0, moved);
+      const playing = S.vi || 0;
+      S.vi = playing === i ? target : (i < playing && playing <= target) ? playing - 1 : (target <= playing && playing < i) ? playing + 1 : playing;
+      saveVideos(key, vids0).then(ok => { if (ok) toast(`نُقل الجزء إلى الترتيب ${target + 1}`); else rows.forEach(r => { r.style.transform = ''; }); });
+    };
+    window.addEventListener('pointermove', move); window.addEventListener('pointerup', end); window.addEventListener('pointercancel', end);
+    drag.timer = setTimeout(() => {
+      drag.active = true; list.classList.add('sorting'); row.classList.add('lifted');
+      try { row.setPointerCapture(id); } catch (err) {}
+      if (navigator.vibrate) navigator.vibrate(12);
+    }, 420);
+  }));
+}
+// Stop the page from scrolling while a part is being dragged (iOS needs a non-passive listener).
+document.addEventListener('touchmove', e => { if (drag.active) e.preventDefault(); }, { passive: false });
+document.addEventListener('contextmenu', e => { if (e.target.closest('.playlist.sortable')) e.preventDefault(); });
+
 function render(scroll = true) {
   if (simStop) { simStop(); simStop = null; }
   const top = S.stack[S.stack.length - 1];
@@ -1368,6 +1414,7 @@ function render(scroll = true) {
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
+  if (ADMIN) setupReorder();
   const nm = document.getElementById('name');
   if (nm) nm.oninput = () => { S.name = nm.value; store.set('name', S.name); const a = document.querySelector('.avatar'); if (a) a.textContent = S.name.trim()[0] || '؟'; };
   if (scroll) window.scrollTo(0, 0);
@@ -1432,6 +1479,7 @@ function planSheet() {
 }
 
 document.addEventListener('click', e => {
+  if (drag.suppressClick) { drag.suppressClick = false; e.preventDefault(); return; }
   const el = e.target.closest('[data-go],[data-tab],[data-act],[data-grade],[data-term]');
   if (!el || el.getAttribute('aria-disabled') === 'true') return;
   if (el.dataset.term) { S.term = +el.dataset.term; store.set('term', S.term); return render(false); }
