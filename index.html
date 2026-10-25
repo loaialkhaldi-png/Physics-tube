@@ -316,10 +316,16 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .ed-file .btn { min-height: 40px; padding: 8px 14px; font-size: 14px; }
 .ed-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .ed-list { display: grid; gap: 8px; }
-.ed-vid { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; background: var(--surface-2); }
-.ed-vid .t { flex: 1; min-width: 0; display: grid; }
-.ed-vid .t b { font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ed-vid .t small { color: var(--muted); font-size: 12px; direction: ltr; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ed-vid { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 10px; border-radius: 14px; background: var(--surface-2); }
+.ed-vid .t { flex: 1 1 140px; min-width: 0; display: grid; gap: 4px; }
+.ed-vid .t small { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.vthumb { width: 72px; aspect-ratio: 16 / 9; border-radius: 8px; overflow: hidden; background: #000; display: grid; place-items: center; flex: none; }
+.vthumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vthumb span { font-size: 10px; font-weight: 700; color: var(--muted); text-align: center; padding: 2px; }
+.vtitle { width: 100%; min-height: 36px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-size: 15px; font-weight: 600; }
+.vtitle:focus { outline: none; border-color: var(--accent); }
+.vpos { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.vpos select { min-height: 36px; padding: 4px 10px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); font: inherit; font-size: 15px; font-weight: 700; }
 .circle.sm { width: 36px; height: 36px; flex: none; }
 .circle.sm .ico { width: 18px; height: 18px; }
 .circle.danger { color: #FF7A7A; }
@@ -683,11 +689,16 @@ function lessonEditor(key, l) {
   return `<section class="editor" aria-label="تعديل الدرس">
     <div class="ed-h"><b>تعديل الدرس</b><span class="tag">وضع المعلم</span></div>
     ${vs.length ? `<div class="label" style="padding:0">فيديوهات الدرس (${ar(vs.length)})</div>
-    <div class="ed-list">${vs.map((v, j) => `<div class="ed-vid">
-      <span class="t"><b>${ar(j + 1)}. ${esc(v.title || `الجزء ${ar(j + 1)}`)}</b><small>${v.min ? `${ar(v.min)} دقيقة · ` : ''}${esc(videoSource(v.url).name)}</small></span>
-      ${j ? `<button class="circle sm" data-act="vid-up" data-key="${key}" data-j="${j}" aria-label="نقل للأعلى">${icon('up')}</button>` : ''}
+    <p class="hint">غيّر رقم «الترتيب» لنقل أي فيديو إلى المكان الذي تريده، واكتب عنواناً لكل فيديو ليسهل التمييز بينها.</p>
+    <div class="ed-list">${vs.map((v, j) => { const src = videoSource(v.url), yt = ytId(v.url); return `<div class="ed-vid">
+      <a class="vthumb" href="${esc(src.open)}" target="_blank" rel="noopener" aria-label="افتح الفيديو">${yt ? `<img src="https://i.ytimg.com/vi/${yt}/mqdefault.jpg" alt="" loading="lazy">` : `<span>${esc(src.name)}</span>`}</a>
+      <span class="t">
+        <input class="vtitle" data-vid-title="${key}" data-j="${j}" value="${esc(v.title || '')}" placeholder="الجزء ${ar(j + 1)}" maxlength="60" aria-label="عنوان الفيديو ${ar(j + 1)}">
+        <small>${esc(src.name)}${v.min ? ` · ${ar(v.min)} دقيقة` : ''}</small>
+      </span>
+      <label class="vpos"><span>الترتيب</span><select data-vid-pos="${key}" data-j="${j}" aria-label="ترتيب الفيديو">${vs.map((_, n) => `<option value="${n}" ${n === j ? 'selected' : ''}>${ar(n + 1)}</option>`).join('')}</select></label>
       <button class="circle sm danger" data-act="vid-del" data-key="${key}" data-j="${j}" aria-label="حذف الفيديو">${icon('trash')}</button>
-    </div>`).join('')}</div>` : ''}
+    </div>`; }).join('')}</div>` : ''}
     <div class="label" style="padding:0">${vs.length ? 'إضافة فيديو آخر' : 'إضافة فيديو'}</div>
     <div class="field"><label for="ed-video">رابط الفيديو</label><input id="ed-video" type="url" inputmode="url" autocomplete="off" placeholder="https://..."><small class="hint">يقبل يوتيوب، تيك توك، Google Drive، Vimeo، إنستغرام، فيسبوك، Dropbox، ورابط أي ملف فيديو مباشر. في Google Drive اجعل المشاركة «أي شخص لديه الرابط».</small></div>
     <div class="field"><label for="ed-title">عنوان الفيديو (اختياري)</label><input id="ed-title" maxlength="60" placeholder="مثال: حل أمثلة الكتاب"></div>
@@ -1462,10 +1473,6 @@ document.addEventListener('click', e => {
     const list = currentVideos(el.dataset.key); list.splice(+el.dataset.j, 1);
     S.vi = 0; saveVideos(el.dataset.key, list).then(ok => ok && toast('تم حذف الفيديو'));
   }
-  else if (act === 'vid-up') {
-    const list = currentVideos(el.dataset.key), j = +el.dataset.j; [list[j - 1], list[j]] = [list[j], list[j - 1]];
-    saveVideos(el.dataset.key, list);
-  }
   else if (act === 'del-pdf') {
     if (el.dataset.confirm) saveRow(el.dataset.key, { pdf: '' }).then(ok => ok && toast('تم حذف المذكرة'));
     else { el.dataset.confirm = '1'; el.textContent = 'تأكيد الحذف'; }
@@ -1477,7 +1484,22 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('change', e => {
   const inp = e.target.closest('[data-upload]');
-  if (inp && db) uploadPdf(inp.dataset.upload, inp.files[0], inp.previousElementSibling);
+  if (inp && db) return uploadPdf(inp.dataset.upload, inp.files[0], inp.previousElementSibling);
+  const pos = e.target.closest('[data-vid-pos]');
+  if (pos) {
+    const list = currentVideos(pos.dataset.vidPos), from = +pos.dataset.j, to = +pos.value;
+    if (from === to) return;
+    const [moved] = list.splice(from, 1); list.splice(to, 0, moved);
+    S.vi = to; saveVideos(pos.dataset.vidPos, list).then(ok => ok && toast(`نُقل الفيديو إلى الترتيب ${to + 1}`));
+    return;
+  }
+  const ttl = e.target.closest('[data-vid-title]');
+  if (ttl) {
+    const list = currentVideos(ttl.dataset.vidTitle), j = +ttl.dataset.j;
+    if (!list[j] || list[j].title === ttl.value.trim()) return;
+    list[j].title = ttl.value.trim();
+    saveVideos(ttl.dataset.vidTitle, list).then(ok => ok && toast('تم حفظ العنوان'));
+  }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
 
