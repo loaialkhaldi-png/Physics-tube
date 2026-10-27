@@ -575,7 +575,7 @@ GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g
 
 const SIMS = {
   accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
-  freefall:   { title: 'السقوط الحر', sub: 'أسقط جسماً على الأرض والقمر والمريخ', glyph: 'drop', theme: 6 },
+  freefall:   { title: 'السقوط الحر', sub: 'أنبوبة الريشة والعملة، والسقوط على الأرض والقمر والمريخ', glyph: 'drop', theme: 6 },
   vectors:    { title: 'جمع المتجهات وتحليلها', sub: 'متجهان ومحصلتهما ومركبتاها', glyph: 'vectors', theme: 2 },
   projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 7 },
   circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
@@ -1245,7 +1245,7 @@ function vSim(k) {
 
 const LAWS = {
   accel: 'معادلات الحركة المتسارعة بانتظام: <code>v = v₀ + a·t</code> و<code>Δx = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·Δx</code>. اجعل التسارع سالباً وشاهد الجسم يتباطأ ثم يعود.',
-  freefall: 'في السقوط الحر من السكون: <code>v = g·t</code> و<code>h = ½·g·t²</code>. الصور الباهتة تُلتقط كل نصف ثانية، ولاحظ أن المسافة بينها تزداد لأن السرعة تزداد بانتظام.',
+  freefall: 'في السقوط الحر من السكون: <code>v = g·t</code> و<code>h = ½·g·t²</code>. في «الريشة والعملة»: في الأنبوبة التي بها هواء تصل العملة أولاً لأن مقاومة الهواء تؤثر في الريشة أكثر، وفي الأنبوبة المفرغة من الهواء تصلان معاً. <b>الاستنتاج:</b> في غياب الهواء تسقط جميع الأجسام بنفس التسارع <code>g</code> مهما اختلفت كتلها وأشكالها.',
   vectors: 'المحصلة: <code>Rx = Ax + Bx</code> و<code>Ry = Ay + By</code> و<code>R = √(Rx² + Ry²)</code> و<code>tanθ = Ry / Rx</code>. الخطان المتقطعان هما مركبتا المحصلة.',
   projectile: 'المدى <code>R = v₀² sin2θ / g</code> وأقصى ارتفاع <code>H = v₀² sin²θ / 2g</code>. السهم البرتقالي هو متجه السرعة. لاحظ أن الزاويتين 30° و60° تعطيان المدى نفسه.',
   circular: 'القوة الجاذبة المركزية <code>Fc = m·v² / r</code> والتسارع المركزي <code>ac = v² / r</code>. القوة (الوردي) تتجه دائماً نحو المركز والسرعة (الأزرق) مماسة للمسار. اقطع الخيط وشاهد ماذا يحدث.',
@@ -1270,7 +1270,8 @@ const SIMCTL = {
     REPLAY,
   ],
   freefall: [
-    { id: 'h', label: 'الارتفاع', min: 5, max: 100, step: 5, v: 45, unit: 'm' },
+    { id: 'mode', type: 'seg', label: 'التجربة', opts: [{ t: 'الريشة والعملة', v: 1 }, { t: 'السقوط من ارتفاع', v: 0 }] },
+    { id: 'h', label: 'الارتفاع (للسقوط من ارتفاع)', min: 5, max: 100, step: 5, v: 45, unit: 'm' },
     { id: 'g', type: 'seg', label: 'المكان', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'المريخ', v: 3.71 }, { t: 'القمر', v: 1.62 }] },
     { type: 'btn', label: 'أسقط من جديد' },
   ],
@@ -1419,6 +1420,44 @@ function startSim(k) {
   const BLUE = '#4C86FF', ORANGE = '#FFA53A', TEAL = '#2BD4B0', PINK = '#FF4D7A', PURPLE = '#A866FF', WHITE = '#F5F5F7', DIM = 'rgba(255,255,255,.45)';
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // Feather and coin in two glass tubes: one with air, one emptied of air (shown in slow motion).
+  const tubes = t => {
+    const g = P.g, L = 1.2, slow = .2, q = reduce ? 3 : t * slow;
+    const fall = (k, q) => k ? Math.min(L, (g / k) * q - (g / (k * k)) * (1 - Math.exp(-k * q))) : Math.min(L, .5 * g * q * q);
+    const tVac = Math.sqrt(2 * L / g);
+    const air = { coin: fall(.25, q), feather: fall(g / .45, q) }, vac = fall(0, q);
+    const coinT = (() => { let a = 0, b = 10; for (let i = 0; i < 50; i++) { const m = (a + b) / 2; fall(.25, m) >= L ? b = m : a = m; } return b; })();
+    const featherDone = air.feather >= L - 1e-6, coinDone = air.coin >= L - 1e-6, vacDone = vac >= L - 1e-6;
+    setRO([['أنبوبة بها هواء', coinDone ? 'العملة أولاً' : '…'], ['أنبوبة مفرغة', vacDone ? 'تصلان معاً' : '…'], ['زمن السقوط في الفراغ', `${fmt(tVac, 2)} s`]]);
+    grid();
+    const top = 112, bot = 420, Yp = d => top + 28 + d / L * (bot - top - 46);
+    const tube = (x, vacuum) => {
+      ctx.fillStyle = vacuum ? 'rgba(120,170,255,.05)' : 'rgba(200,230,255,.12)'; ctx.fillRect(x - 32, top, 64, bot - top);
+      ctx.strokeStyle = 'rgba(220,235,255,.65)'; ctx.lineWidth = 3; ctx.strokeRect(x - 32, top, 64, bot - top);
+      box(x - 44, top - 10, 88, 12, '#6B6F7A', 5); box(x - 44, bot - 2, 88, 12, '#6B6F7A', 5);
+      box(x - 6, top - 52, 12, 44, '#8C8F9A', 4); box(x, top - 44, 22, 8, '#8C8F9A', 3);
+      if (!vacuum) for (let i = 0; i < 14; i++) { const yy = top + 20 + ((i * 53 + t * 9) % (bot - top - 30)), xx = x - 24 + (i * 37 % 48); ctx.fillStyle = 'rgba(200,230,255,.28)'; ctx.beginPath(); ctx.arc(xx, yy, 1.6, 0, 7); ctx.fill(); }
+    };
+    const coin = (x, y) => { ctx.fillStyle = '#C08A3E'; ctx.beginPath(); ctx.arc(x, y, 9, 0, 7); ctx.fill(); ctx.strokeStyle = '#E8B86A'; ctx.lineWidth = 2; ctx.stroke(); };
+    const feather = (x, y, rot) => {
+      ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+      ctx.fillStyle = '#F2EEE6'; ctx.beginPath(); ctx.ellipse(0, 0, 18, 6, 0, 0, 7); ctx.fill();
+      ctx.strokeStyle = '#6B5A44'; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(16, 0); ctx.stroke(); ctx.restore();
+    };
+    const ax = 250, vx = 560;
+    tube(ax, false); tube(vx, true);
+    coin(ax - 12, Yp(air.coin)); const fl = featherDone ? 0 : Math.sin(t * 5) * 10; feather(ax + 12 + fl, Yp(air.feather) - 2, -.5 + Math.sin(t * 4) * .4);
+    coin(vx - 12, Yp(vac)); feather(vx + 12, Yp(vac) - 2, -.5);
+    label('أنبوبة بها هواء', ax, bot + 38, WHITE, 'center', 17);
+    label('أنبوبة مفرغة من الهواء', vx, bot + 38, BLUE, 'center', 17);
+    label('✓', vx + 100, bot + 38, '#32D17A', 'center', 20);
+    label('حركة بطيئة', W - 20, 62, DIM, 'right', 14);
+    label('ما الذي يصل إلى الطرف الثاني أولاً؟', W / 2, 30, WHITE, 'center', 18);
+    if (coinDone) label(featherDone ? 'العملة وصلت أولاً' : 'العملة وصلت، والريشة ما زالت تسقط', ax + 44, bot - 12, ORANGE, 'left', 14);
+    if (vacDone) label('وصلتا معاً', vx + 44, bot - 12, '#32D17A', 'left', 15);
+    if (featherDone && vacDone) label('الاستنتاج: في الفراغ تسقط الأجسام بنفس التسارع g', W / 2, H - 6, '#32D17A', 'center', 16);
+  };
+
   const draws = {
     accel(t) {
       const v0 = P.v0, a = P.a, T = 8, tc = reduce ? T : Math.min(t, T);
@@ -1446,6 +1485,7 @@ function startSim(k) {
       ball(GX(tc), GY(v), 7, WHITE, TEAL);
     },
     freefall(t) {
+      if (P.mode === 1) return tubes(t);
       const h = P.h, g = P.g, T = Math.sqrt(2 * h / g), tt = reduce ? T : Math.min(t, T), fell = .5 * g * tt * tt, v = g * tt;
       setRO([['زمن السقوط', `${fmt(T, 2)} s`], ['السرعة الآن', `${fmt(v, 1)} m/s`], ['سرعة الاصطدام', `${fmt(g * T, 1)} m/s`]]);
       grid();
