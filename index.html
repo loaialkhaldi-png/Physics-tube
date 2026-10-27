@@ -263,6 +263,35 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .visits { display: grid; justify-items: center; color: var(--fg); }
 .visits b { font-size: 17px; font-variant-numeric: tabular-nums; }
 .visits small { color: var(--muted); font-size: 11px; }
+.sheet.auth-sheet { padding-top: 0; background: #0D1220; border-color: rgba(47, 140, 255, .25); }
+.sheet.auth-sheet .grab { position: relative; z-index: 2; margin: 10px auto 0; background: rgba(255, 255, 255, .35); }
+.auth-hero { position: relative; overflow: hidden; margin: -15px calc(-1 * max(20px, env(safe-area-inset-left, 0px))) 0; padding: 34px 24px 26px; text-align: center;
+  background: radial-gradient(120% 90% at 50% 0%, #2F6BFF 0%, #1546D6 38%, #0B1E5C 72%, #0D1220 100%); }
+.auth-orbits { position: absolute; inset: 0; pointer-events: none; }
+.auth-orbits i { position: absolute; left: 50%; top: 58px; width: 340px; height: 110px; margin-left: -170px; border: 1.5px solid rgba(255, 255, 255, .14); border-radius: 50%; }
+.auth-orbits i:nth-child(2) { transform: rotate(60deg); } .auth-orbits i:nth-child(3) { transform: rotate(-60deg); }
+.auth-logo { position: relative; width: 84px; height: 84px; border-radius: 22px; display: block; margin: 0 auto 14px; box-shadow: 0 12px 30px rgba(0, 0, 0, .4), 0 0 0 3px rgba(255, 255, 255, .25); }
+.auth-hero h2 { position: relative; font-size: 25px; color: #fff; }
+.auth-hero p { position: relative; margin-top: 6px; color: rgba(255, 255, 255, .8); font-size: 15px; }
+.auth-sheet .auth-seg { margin-top: 18px; background: #161D33; }
+.auth-sheet .auth-seg button[aria-pressed="true"] { background: linear-gradient(135deg, #2F8CFF, #1546D6); color: #fff; box-shadow: 0 4px 14px rgba(47, 140, 255, .35); }
+.auth-form { display: grid; gap: 14px; margin-top: 18px; }
+.afield { display: grid; gap: 6px; min-width: 0; }
+.auth-form, .ainput { min-width: 0; }
+.ainput input[type="password"], .ainput input[type="tel"] { width: 0; }
+.afield label { font-size: 13px; font-weight: 600; color: #9FB4E0; }
+.ainput { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 14px; border-radius: 16px; background: #141A2C; border: 1.5px solid #222B45; transition: border-color .2s, box-shadow .2s; }
+.ainput:focus-within { border-color: #2F8CFF; box-shadow: 0 0 0 4px rgba(47, 140, 255, .18); }
+.ainput > .ico { color: #5E8DF0; width: 20px; height: 20px; }
+.ainput input, .ainput select { flex: 1; min-width: 0; height: 50px; border: 0; background: transparent; color: var(--fg); font: inherit; font-size: 16px; outline: none; }
+.ainput input::placeholder { color: #4D5A78; }
+.ainput select { appearance: none; -webkit-appearance: none; cursor: pointer; }
+.ainput input[dir="ltr"] { text-align: left; }
+.peek { color: #5E8DF0; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 10px; }
+.peek.on { background: rgba(47, 140, 255, .18); }
+.auth-go { margin-top: 4px; min-height: 56px; border: 0; color: #fff; font-size: 17px; background: linear-gradient(135deg, #3B95FF 0%, #1F5BEA 60%, #1546D6 100%); box-shadow: 0 12px 28px rgba(31, 91, 234, .45); }
+.auth-go:active { transform: scale(.98); }
+.auth-foot { text-align: center; margin-top: 2px; }
 .install { margin-top: 12px; padding: 16px; border-radius: var(--r-md); background: linear-gradient(135deg, #10203F, #0B1226); border: 1px solid rgba(47, 140, 255, .25); display: grid; gap: 6px; }
 .install b { font-size: 16px; }
 .install p { color: rgba(255, 255, 255, .78); font-size: 14px; }
@@ -621,6 +650,11 @@ const ICONS = {
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>',
   share: '<path d="M12 3v12M8 7l4-4 4 4M6 11H5.5A1.5 1.5 0 0 0 4 12.5v7A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H18"/>',
   replay: '<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/>',
+  at: '<circle cx="12" cy="12" r="4"/><path d="M16 12v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.5 7.1"/>',
+  phone: '<rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/>',
+  lock: '<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
+  cap: '<path d="M2 9.5 12 5l10 4.5L12 14z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5M22 9.5V15"/>',
+  eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   grip: '<path d="M5 8h14M5 12h14M5 16h14"/>',
   up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
@@ -779,23 +813,29 @@ function lessonEditor(key, l) {
 function authSheet(mode = 'login', then) {
   if (!db) return sheet(`<h2>الحساب</h2><p>الحسابات غير مفعّلة بعد.</p><button class="btn" data-act="close">حسناً</button>`);
   const signup = mode === 'signup';
-  sheet(`<h2>${signup ? 'إنشاء حساب طالب' : 'تسجيل الدخول'}</h2>
-    <p>${signup ? 'سجّل مرة واحدة لمشاهدة الفيديوهات وتحميل المذكرات.' : 'ادخل باسم المستخدم وكلمة المرور.'}</p>
+  const fld = (id, label, ic, input, hint = '') => `<div class="afield"><label for="${id}">${label}</label><div class="ainput">${icon(ic)}${input}</div>${hint ? `<small class="hint">${hint}</small>` : ''}</div>`;
+  sheet(`<div class="auth-hero">
+      <div class="auth-orbits" aria-hidden="true"><i></i><i></i><i></i></div>
+      <img class="auth-logo" src="icons/icon-192.png?v=4" alt="">
+      <h2>${signup ? 'أهلاً بك في Physics Tube' : 'أهلاً بعودتك'}</h2>
+      <p>${signup ? 'أنشئ حسابك مرة واحدة، وشاهد كل الشروحات والمذكرات.' : 'سجّل دخولك لتكمل من حيث توقفت.'}</p>
+    </div>
     <div class="seg auth-seg" role="group" aria-label="نوع العملية">
       <button data-auth="signup" aria-pressed="${signup}">حساب جديد</button>
       <button data-auth="login" aria-pressed="${!signup}">لدي حساب</button>
     </div>
-    <form id="auth" class="opts" novalidate>
-      ${signup ? `<div class="field"><label for="au-name">الاسم الكامل</label><input id="au-name" autocomplete="name" maxlength="60" required></div>` : ''}
-      <div class="field"><label for="au-user">${signup ? 'اسم المستخدم' : 'اسم المستخدم (أو بريد المعلم)'}</label><input id="au-user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" dir="ltr" maxlength="60" required>
-        ${signup ? '<small class="hint">بالأحرف الإنجليزية والأرقام فقط، مثل: ahmad_12</small>' : ''}</div>
-      ${signup ? `<div class="field"><label for="au-phone">رقم الجوال</label><input id="au-phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="9xxxxxxx" maxlength="15" required><small class="hint">يراه المعلم فقط، للتواصل معك عند الحاجة.</small></div>
-      <div class="field"><label for="au-grade">الصف</label><select id="au-grade">${GRADE_ORDER.map(k => `<option value="${k}" ${k === S.grade ? 'selected' : ''}>${GRADES[k].name}</option>`).join('')}</select></div>` : ''}
-      <div class="field"><label for="au-pass">كلمة المرور</label><input id="au-pass" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" dir="ltr" required>${signup ? '<small class="hint">6 أحرف أو أرقام على الأقل.</small>' : ''}</div>
+    <form id="auth" class="auth-form" novalidate>
+      ${signup ? fld('au-name', 'الاسم الكامل', 'user', `<input id="au-name" autocomplete="name" maxlength="60" placeholder="مثال: أحمد الكندري" required>`) : ''}
+      ${fld('au-user', signup ? 'اسم المستخدم' : 'اسم المستخدم (أو بريد المعلم)', 'at', `<input id="au-user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" dir="ltr" maxlength="60" placeholder="ahmad_12" required>`, signup ? 'بالأحرف الإنجليزية والأرقام فقط، بدون مسافات.' : '')}
+      ${signup ? fld('au-phone', 'رقم الجوال', 'phone', `<input id="au-phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="9xxxxxxx" maxlength="15" required>`, 'يراه المعلم فقط، للتواصل معك عند الحاجة.')
+        + fld('au-grade', 'الصف', 'cap', `<select id="au-grade">${GRADE_ORDER.map(k => `<option value="${k}" ${k === S.grade ? 'selected' : ''}>${GRADES[k].name}</option>`).join('')}</select>`) : ''}
+      ${fld('au-pass', 'كلمة المرور', 'lock', `<input id="au-pass" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" dir="ltr" placeholder="••••••" required><button type="button" class="peek" data-peek aria-label="إظهار كلمة المرور">${icon('eye')}</button>`, signup ? '6 أحرف أو أرقام على الأقل.' : '')}
       <p class="err" id="au-err" role="alert"></p>
-      <button class="btn primary" type="submit" style="margin-top:0">${signup ? 'إنشاء الحساب' : 'دخول'}</button>
-      ${signup ? '' : '<p class="hint" style="text-align:center">نسيت كلمة المرور؟ تواصل مع معلمك ليعيد تفعيل حسابك.</p>'}
-    </form>`);
+      <button class="btn auth-go" type="submit">${signup ? 'إنشاء الحساب' : 'دخول'}</button>
+      ${signup ? '<p class="hint auth-foot">بإنشاء الحساب تستطيع مشاهدة الفيديوهات وتحميل المذكرات مجاناً.</p>' : '<p class="hint auth-foot">نسيت كلمة المرور؟ تواصل مع معلمك ليعيد تفعيل حسابك.</p>'}
+    </form>`, 'auth-sheet');
+  const pk = layer.querySelector('[data-peek]');
+  if (pk) pk.onclick = () => { const i = document.getElementById('au-pass'); i.type = i.type === 'password' ? 'text' : 'password'; pk.classList.toggle('on'); };
   layer.querySelectorAll('[data-auth]').forEach(bt => bt.onclick = () => authSheet(bt.dataset.auth, then));
   document.getElementById('auth').onsubmit = async e => {
     e.preventDefault();
@@ -1846,8 +1886,8 @@ function toast(msg) {
   document.body.appendChild(t); setTimeout(() => t.remove(), 1800);
 }
 
-function sheet(html) {
-  layer.innerHTML = `<div class="scrim" data-act="close"></div><div class="sheet" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+function sheet(html, cls = '') {
+  layer.innerHTML = `<div class="scrim" data-act="close"></div><div class="sheet ${cls}" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
   const f = layer.querySelector('.sheet button'); if (f) f.focus({ preventScroll: true });
 }
 const closeSheet = () => { layer.innerHTML = ''; };
