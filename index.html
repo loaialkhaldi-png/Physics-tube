@@ -248,6 +248,21 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .stats div { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: grid; gap: 2px; }
 .stats b { font-size: 26px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .stats small { color: var(--muted); font-size: 13px; }
+.admin-bar { width: 100%; text-align: right; cursor: pointer; }
+.admin-bar span { flex: 1; }
+.me-card.guest .avatar { background: var(--surface-2); color: var(--muted); }
+.me-card .t b { display: block; }
+.dash-btn { margin-top: 12px; width: 100%; }
+.auth-seg { margin-top: 16px; }
+.field select { width: 100%; min-height: 48px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: inherit; font-size: 16px; }
+.stats4 { grid-template-columns: repeat(2, 1fr); }
+.stats4 small.up { color: var(--good); font-weight: 600; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 14px; color: var(--fg); }
+.chart { display: block; width: 100%; height: auto; }
+.row.student .t small { display: block; }
+.visits { display: grid; justify-items: center; color: var(--fg); }
+.visits b { font-size: 17px; font-variant-numeric: tabular-nums; }
+.visits small { color: var(--muted); font-size: 11px; }
 .install { margin-top: 12px; padding: 16px; border-radius: var(--r-md); background: linear-gradient(135deg, #10203F, #0B1226); border: 1px solid rgba(47, 140, 255, .25); display: grid; gap: 6px; }
 .install b { font-size: 16px; }
 .install p { color: rgba(255, 255, 255, .78); font-size: 14px; }
@@ -606,6 +621,7 @@ const ICONS = {
   ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v4.5A1.5 1.5 0 0 1 16.5 20h-11A1.5 1.5 0 0 1 4 18.5v-11A1.5 1.5 0 0 1 5.5 6H10"/>',
   share: '<path d="M12 3v12M8 7l4-4 4 4M6 11H5.5A1.5 1.5 0 0 0 4 12.5v7A1.5 1.5 0 0 0 5.5 21h13a1.5 1.5 0 0 0 1.5-1.5v-7a1.5 1.5 0 0 0-1.5-1.5H18"/>',
   replay: '<path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4.5h4.5"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   grip: '<path d="M5 8h14M5 12h14M5 16h14"/>',
   up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7M9 7V4.5A.5.5 0 0 1 9.5 4h5a.5.5 0 0 1 .5.5V7"/>',
@@ -633,7 +649,45 @@ if (!GRADES[S.grade]) S.grade = 'g10';
 /* ---------------- Teacher mode (Supabase) ---------------- */
 let db = null;
 try { if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); } catch (e) {}
-let ADMIN = null;
+let ADMIN = null;     // the signed-in teacher (only when is_admin() says so)
+let USER = null;      // anyone signed in
+let PROFILE = null;   // the signed-in student's profile row
+const STUDENT_DOMAIN = 'student.physics-tube.com';
+let ACCOUNTS = false; // turns on by itself once supabase-students.sql has created the profiles table
+const studentEmail = u => `${u.toLowerCase()}@${STUDENT_DOMAIN}`;
+const isStudentUser = u => !!u && String(u.email || '').endsWith('@' + STUDENT_DOMAIN);
+async function applySession(session) {
+  USER = (session && session.user) || null; ADMIN = null; PROFILE = null;
+  if (USER && db) {
+    if (isStudentUser(USER)) {
+      const { data } = await db.from('profiles').select('*').eq('id', USER.id).maybeSingle();
+      PROFILE = data || null;
+      if (PROFILE && GRADES[PROFILE.grade] && !store.get('gradePicked', false)) { S.grade = PROFILE.grade; store.set('grade', S.grade); }
+      logOpen();
+    } else {
+      const { data } = await db.rpc('is_admin');
+      if (data === true) ADMIN = USER;
+    }
+  }
+  render(false);
+}
+// One "open" per 30 minutes per student, so reloads don't inflate the count.
+function logOpen() {
+  if (!USER || !PROFILE) return;
+  const k = 'opened.' + USER.id, last = store.get(k, 0);
+  if (Date.now() - last < 30 * 60 * 1000) return;
+  store.set(k, Date.now()); logEvent('open');
+}
+function logEvent(kind, ref) {
+  if (!db || !USER || !PROFILE) return;
+  db.rpc('log_event', { p_kind: kind, p_ref: ref || null }).then(() => {}, () => {});
+}
+// Videos and notes need an account; returns true when the visitor may continue.
+function needLogin(then) {
+  if (!db || !ACCOUNTS || USER) return true;
+  authSheet('signup', then);
+  return false;
+}
 let REMOTE = store.get('remote', {});
 // Rows keyed "<unit id>.<lesson index>" fill a lesson; rows keyed "<unit id>" fill a unit's PDF.
 function applyRemote() {
@@ -722,24 +776,61 @@ function lessonEditor(key, l) {
     ${pdfEditor(key, l.pdf, 'مذكرة هذا الدرس')}
   </section>`;
 }
-function loginSheet() {
-  if (!db) return sheet(`<h2>لوحة المعلم</h2><p>لوحة المعلم غير مفعّلة بعد. تحتاج ربط التطبيق بحساب Supabase أولاً.</p><button class="btn" data-act="close">حسناً</button>`);
-  sheet(`<h2>دخول المعلم</h2><p>للمعلم فقط. الطلاب لا يحتاجون إلى تسجيل الدخول.</p>
-    <form id="login" class="opts" novalidate>
-      <div class="field"><label for="lg-email">البريد الإلكتروني</label><input id="lg-email" type="email" autocomplete="username" required></div>
-      <div class="field"><label for="lg-pass">كلمة المرور</label><input id="lg-pass" type="password" autocomplete="current-password" required></div>
-      <p class="err" id="lg-err" role="alert"></p>
-      <button class="btn primary" type="submit" style="margin-top:0">دخول</button>
+function authSheet(mode = 'login', then) {
+  if (!db) return sheet(`<h2>الحساب</h2><p>الحسابات غير مفعّلة بعد.</p><button class="btn" data-act="close">حسناً</button>`);
+  const signup = mode === 'signup';
+  sheet(`<h2>${signup ? 'إنشاء حساب طالب' : 'تسجيل الدخول'}</h2>
+    <p>${signup ? 'سجّل مرة واحدة لمشاهدة الفيديوهات وتحميل المذكرات.' : 'ادخل باسم المستخدم وكلمة المرور.'}</p>
+    <div class="seg auth-seg" role="group" aria-label="نوع العملية">
+      <button data-auth="signup" aria-pressed="${signup}">حساب جديد</button>
+      <button data-auth="login" aria-pressed="${!signup}">لدي حساب</button>
+    </div>
+    <form id="auth" class="opts" novalidate>
+      ${signup ? `<div class="field"><label for="au-name">الاسم الكامل</label><input id="au-name" autocomplete="name" maxlength="60" required></div>` : ''}
+      <div class="field"><label for="au-user">${signup ? 'اسم المستخدم' : 'اسم المستخدم (أو بريد المعلم)'}</label><input id="au-user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" dir="ltr" maxlength="60" required>
+        ${signup ? '<small class="hint">بالأحرف الإنجليزية والأرقام فقط، مثل: ahmad_12</small>' : ''}</div>
+      ${signup ? `<div class="field"><label for="au-phone">رقم الجوال</label><input id="au-phone" type="tel" inputmode="tel" autocomplete="tel" dir="ltr" placeholder="9xxxxxxx" maxlength="15" required><small class="hint">يراه المعلم فقط، للتواصل معك عند الحاجة.</small></div>
+      <div class="field"><label for="au-grade">الصف</label><select id="au-grade">${GRADE_ORDER.map(k => `<option value="${k}" ${k === S.grade ? 'selected' : ''}>${GRADES[k].name}</option>`).join('')}</select></div>` : ''}
+      <div class="field"><label for="au-pass">كلمة المرور</label><input id="au-pass" type="password" autocomplete="${signup ? 'new-password' : 'current-password'}" dir="ltr" required>${signup ? '<small class="hint">6 أحرف أو أرقام على الأقل.</small>' : ''}</div>
+      <p class="err" id="au-err" role="alert"></p>
+      <button class="btn primary" type="submit" style="margin-top:0">${signup ? 'إنشاء الحساب' : 'دخول'}</button>
+      ${signup ? '' : '<p class="hint" style="text-align:center">نسيت كلمة المرور؟ تواصل مع معلمك ليعيد تفعيل حسابك.</p>'}
     </form>`);
-  document.getElementById('login').onsubmit = async e => {
+  layer.querySelectorAll('[data-auth]').forEach(bt => bt.onclick = () => authSheet(bt.dataset.auth, then));
+  document.getElementById('auth').onsubmit = async e => {
     e.preventDefault();
-    const b = e.target.querySelector('button'), err = document.getElementById('lg-err');
-    const email = document.getElementById('lg-email').value.trim(), password = document.getElementById('lg-pass').value;
-    if (!email || !password) { err.textContent = 'اكتب البريد وكلمة المرور.'; return; }
-    b.classList.add('busy'); b.textContent = 'جارٍ الدخول…';
-    const { data, error } = await db.auth.signInWithPassword({ email, password });
-    if (error) { b.classList.remove('busy'); b.textContent = 'دخول'; err.textContent = /invalid/i.test(error.message) ? 'البريد أو كلمة المرور غير صحيحة.' : 'تعذّر الدخول. تحقق من الإنترنت وحاول مرة أخرى.'; return; }
-    ADMIN = data.user; closeSheet(); render(false); toast('مرحباً بك في وضع المعلم');
+    const btn = e.target.querySelector('button[type=submit]'), err = document.getElementById('au-err'), label = btn.textContent;
+    const val = id => (document.getElementById(id) || {}).value || '';
+    const user = val('au-user').trim(), pass = val('au-pass');
+    const fail = msg => { err.textContent = msg; btn.classList.remove('busy'); btn.textContent = label; };
+    let res;
+    if (signup) {
+      const name = val('au-name').trim(), phone = val('au-phone').replace(/[^\d+]/g, ''), grade = val('au-grade');
+      if (name.length < 3) return fail('اكتب اسمك الكامل.');
+      if (!/^[a-zA-Z0-9_.]{3,20}$/.test(user)) return fail('اسم المستخدم من 3 إلى 20 حرفاً إنجليزياً أو رقماً، بدون مسافات.');
+      if (phone.replace(/\D/g, '').length < 8) return fail('اكتب رقم جوال صحيحاً.');
+      if (pass.length < 6) return fail('كلمة المرور 6 أحرف على الأقل.');
+      btn.classList.add('busy'); btn.textContent = 'جارٍ إنشاء الحساب…';
+      res = await db.auth.signUp({ email: studentEmail(user), password: pass, options: { data: { username: user.toLowerCase(), full_name: name, phone, grade } } });
+      if (!res.error && !res.data.session) return fail('أُنشئ الحساب لكنه يحتاج تفعيلاً. أخبر معلمك بإيقاف خيار «Confirm email» في Supabase.');
+      if (!res.error) { S.grade = grade; store.set('grade', grade); }
+    } else {
+      if (!user || !pass) return fail('اكتب اسم المستخدم وكلمة المرور.');
+      btn.classList.add('busy'); btn.textContent = 'جارٍ الدخول…';
+      res = await db.auth.signInWithPassword({ email: user.includes('@') ? user : studentEmail(user), password: pass });
+    }
+    if (res.error) {
+      const m = res.error.message || '';
+      return fail(/already registered|already been registered/i.test(m) ? 'اسم المستخدم مستخدم من قبل، اختر اسماً آخر.'
+        : /invalid login/i.test(m) ? 'اسم المستخدم أو كلمة المرور غير صحيحة.'
+        : /signups? not allowed|disabled/i.test(m) ? 'إنشاء الحسابات مغلق حالياً. تواصل مع معلمك.'
+        : (res.error.status === 429 || /rate limit/i.test(m)) ? 'محاولات كثيرة في وقت قصير. انتظر قليلاً ثم حاول مرة أخرى.'
+        : 'تعذّر الاتصال. تحقق من الإنترنت وحاول مرة أخرى.');
+    }
+    closeSheet();
+    await applySession(res.data.session);
+    toast(ADMIN ? 'مرحباً بك في وضع المعلم' : signup ? 'تم إنشاء حسابك، أهلاً بك!' : 'أهلاً بعودتك!');
+    if (then) then();
   };
 }
 const G = () => GRADES[S.grade];
@@ -826,7 +917,7 @@ function vHome() {
       </span>
     </header>
     <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
-    ${ADMIN ? `<div class="admin-bar">${icon('user')}وضع المعلم: افتح أي درس لإضافة الفيديو والمذكرة</div>` : ''}
+    ${ADMIN ? `<button class="admin-bar" data-go="admin">${icon('chart')}<span>وضع المعلم: لوحة الإحصائيات والطلاب</span>${icon('chev')}</button>` : ''}
     <div class="promos" aria-label="العروض">
       <button class="promo" data-act="plan" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
         <h2>باقة ${esc(g.short)}</h2>
@@ -903,7 +994,7 @@ function vUnit(u) {
     ${ADMIN ? `<section class="editor"><div class="ed-h"><b>مذكرة الوحدة</b><span class="tag">وضع المعلم</span></div>${pdfEditor(unit.id, unit.pdf, 'ملخص الوحدة كاملة')}</section>` : ''}
     <h2 class="sec">مع هذه الوحدة</h2>
     <div class="list">
-      ${unit.pdf ? `<a class="row" href="${esc(unit.pdf)}" target="_blank" rel="noopener">` : '<div class="row">'}
+      ${unit.pdf ? `<a class="row" href="${esc(unit.pdf)}" target="_blank" rel="noopener" data-gate="${unit.id}">` : '<div class="row">'}
         <span class="n">${icon('notes', 'style="width:20px;height:20px"')}</span>
         <span class="t"><b>مذكرة الوحدة</b><small>ملخص PDF</small></span>
         <span class="end">${unit.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>
@@ -939,7 +1030,7 @@ function vLesson(u, i) {
     </button>`).join('')}</div>` : ''}
     <div class="actions">
       <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
-      ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
+      ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener" data-gate="${key}">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
       ${simK ? `<button class="btn" data-go="sim:${simK}">${icon('lab')}جرّبها</button>` : (src ? `<a class="btn" href="${esc(src.open)}" target="_blank" rel="noopener">${icon('ext')}${esc(src.name)}</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}فتح الفيديو</span>`)}
     </div>
     ${ADMIN ? lessonEditor(key, l) : ''}
@@ -971,7 +1062,7 @@ function vNotes() {
       const inner = `<span class="n" style="${tileStyle(u.theme)};background:var(--tile)">${glyph(u.glyph, u.theme)}</span>
         <span class="t"><b>${esc(u.title)}</b><small>${u.unit ? esc(u.unit.split(':')[0]) + ' · ' : ''}${unitLabel(S.grade, i)} · PDF</small></span>
         <span class="end">${u.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>`;
-      return u.pdf ? `<a class="row" href="${esc(u.pdf)}" target="_blank" rel="noopener">${inner}</a>` : `<div class="row">${inner}</div>`;
+      return u.pdf ? `<a class="row" href="${esc(u.pdf)}" target="_blank" rel="noopener" data-gate="${u.id}">${inner}</a>` : `<div class="row">${inner}</div>`;
     }).join('')}</div></div>`).join('')}
   </div>`;
 }
@@ -982,13 +1073,19 @@ function vProfile() {
   const doneHere = g.units.reduce((n, _, u) => n + unitStats(S.grade, u).done, 0);
   const finishedUnits = g.units.filter((_, u) => { const s = unitStats(S.grade, u); return s.total && s.done === s.total; }).length;
   const standalone = (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone;
-  const initial = (S.name.trim()[0] || '؟');
+  const who = PROFILE ? PROFILE.full_name : ADMIN ? 'المعلم' : '';
+  const initial = (who.trim()[0] || '؟');
   return `<div class="view">
     <div class="page-h"><h1>حسابي</h1></div>
-    <div class="me-card">
+    ${USER ? `<div class="me-card">
       <span class="avatar">${esc(initial)}</span>
-      <span class="t"><input id="name" value="${esc(S.name)}" placeholder="اكتب اسمك" maxlength="40" autocomplete="name" aria-label="اسمك"><small>${esc(g.name)}</small></span>
-    </div>
+      <span class="t"><b style="font-size:20px">${esc(who)}</b><small dir="ltr" style="text-align:right">${PROFILE ? '@' + esc(PROFILE.username) : esc(USER.email || '')}</small><small>${PROFILE ? esc((GRADES[PROFILE.grade] || g).name) + ' · ' + esc(PROFILE.phone) : 'وضع المعلم'}</small></span>
+    </div>` : db && ACCOUNTS ? `<div class="me-card guest">
+      <span class="avatar">${icon('user')}</span>
+      <span class="t"><b style="font-size:18px">لم تسجّل الدخول بعد</b><small>سجّل لمشاهدة الفيديوهات وتحميل المذكرات</small></span>
+      <button class="btn primary" data-act="signup" style="min-height:44px">تسجيل</button>
+    </div>` : ''}
+    ${ADMIN ? `<button class="btn primary wide dash-btn" data-go="admin">${icon('chart')}لوحة المعلم والإحصائيات</button>` : ''}
     <div class="stats">
       <div><b>${ar(doneHere)}</b><small>درس مكتمل</small></div>
       <div><b>${ar(all ? Math.round(doneHere / all * 100) : 0)}%</b><small>من المنهج</small></div>
@@ -1002,12 +1099,85 @@ function vProfile() {
     <div class="list">
       <button class="row" data-act="share"><span class="t"><b>شارك التطبيق</b><small>أرسله لزملائك أو اعرض رمز QR</small></span><span class="end">${icon('share')}</span></button>
       <button class="row" data-act="grade"><span class="t"><b>المرحلة الدراسية</b><small>${esc(g.name)}</small></span><span class="end">${icon('chev')}</span></button>
-      ${!db ? '' : ADMIN
-        ? `<button class="row" data-act="logout"><span class="t"><b>تسجيل خروج المعلم</b><small>${esc(ADMIN.email || '')}</small></span></button>`
-        : `<button class="row" data-act="login"><span class="t"><b>دخول المعلم</b><small>لإضافة الفيديوهات والمذكرات</small></span><span class="end">${icon('chev')}</span></button>`}
+      ${!db ? '' : USER
+        ? `<button class="row" data-act="logout"><span class="t"><b>تسجيل الخروج</b><small>${ADMIN ? 'وضع المعلم' : esc(PROFILE ? '@' + PROFILE.username : '')}</small></span></button>`
+        : `<button class="row" data-act="login"><span class="t"><b>تسجيل الدخول</b><small>للطلاب والمعلم</small></span><span class="end">${icon('chev')}</span></button>`}
       <button class="row" data-act="reset"><span class="t"><b style="color:#FF6B6B">مسح تقدّمي</b><small>يحذف علامات الدروس المكتملة من هذا الجهاز</small></span></button>
     </div>
     ${standalone ? '' : `<div class="install"><b>ثبّت التطبيق على جوالك</b><p>في سفاري اضغط زر المشاركة ${icon('share', 'style="width:16px;height:16px;vertical-align:-3px"')} ثم اختر «إضافة إلى الشاشة الرئيسية». سيفتح بعدها بملء الشاشة مثل أي تطبيق.</p></div>`}
+  </div>`;
+}
+
+/* ---------------- Teacher dashboard ---------------- */
+const ADMIN_DATA = { at: 0, loading: false, stats: null, students: [], q: '', error: '' };
+async function loadAdmin() {
+  if (!db || !ADMIN) return;
+  ADMIN_DATA.loading = true; ADMIN_DATA.error = '';
+  const [st, pr] = await Promise.all([
+    db.rpc('admin_stats'),
+    db.from('profiles').select('username,full_name,phone,grade,created_at,last_seen,visits').order('created_at', { ascending: false }).limit(2000),
+  ]);
+  ADMIN_DATA.loading = false; ADMIN_DATA.at = Date.now();
+  if (st.error || pr.error) ADMIN_DATA.error = 'تعذّر تحميل الإحصائيات. تأكد أنك شغّلت ملف supabase-students.sql في Supabase.';
+  ADMIN_DATA.stats = st.data || null; ADMIN_DATA.students = pr.data || [];
+  const top = S.stack[S.stack.length - 1];
+  if (top && top.type === 'admin') render(false);
+}
+const lessonTitle = key => {
+  const [id, i] = String(key).split('.'), u = UNIT_BY_ID[id], l = u && u.lessons[+i];
+  if (!l) return { t: key, sub: '' };
+  const g = GRADE_ORDER.find(k => GRADES[k].units.includes(u));
+  return { t: l.t, sub: `${GRADES[g].short} · ${u.title}` };
+};
+const kwDate = iso => { try { return new Date(iso).toLocaleDateString('ar-KW-u-nu-latn', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
+const ago = iso => {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  return m < 2 ? 'الآن' : m < 60 ? `قبل ${m} دقيقة` : m < 1440 ? `قبل ${Math.round(m / 60)} ساعة` : `قبل ${Math.round(m / 1440)} يوم`;
+};
+function studentRows() {
+  const q = ADMIN_DATA.q.trim().toLowerCase();
+  const list = ADMIN_DATA.students.filter(p => !q || [p.full_name, p.username, p.phone].some(v => String(v || '').toLowerCase().includes(q)));
+  if (!list.length) return `<div class="row"><span class="t"><small>${ADMIN_DATA.students.length ? 'لا يوجد طالب بهذا الاسم.' : 'لم يسجّل أي طالب بعد. شارك رابط التطبيق مع طلابك.'}</small></span></div>`;
+  return list.slice(0, 300).map(p => `<div class="row student">
+    <span class="n">${esc((p.full_name || '?').trim()[0] || '?')}</span>
+    <span class="t"><b>${esc(p.full_name)}</b>
+      <small><span dir="ltr">@${esc(p.username)}</span> · ${esc((GRADES[p.grade] || {}).short || p.grade)} · <span dir="ltr">${esc(p.phone)}</span></small>
+      <small>سجّل ${kwDate(p.created_at)} · آخر دخول ${ago(p.last_seen)}</small></span>
+    <span class="end visits"><b>${ar(p.visits)}</b><small>مرة</small></span>
+  </div>`).join('') + (list.length > 300 ? `<div class="row"><span class="t"><small>يظهر أول 300 طالب. استخدم البحث للوصول إلى البقية.</small></span></div>` : '');
+}
+function dailyChart(daily) {
+  const days = [], map = Object.fromEntries((daily || []).map(x => [x.d, x.n]));
+  for (let i = 29; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5), k = d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kuwait' }); days.push([k, map[k] || 0]); }
+  const max = Math.max(1, ...days.map(d => d[1])), W = 600, H = 160, bw = W / days.length;
+  return `<svg class="chart" viewBox="0 0 ${W} ${H + 24}" role="img" aria-label="عدد مرات الدخول في آخر 30 يوماً">
+    <line x1="0" y1="${H}" x2="${W}" y2="${H}" stroke="currentColor" stroke-opacity=".15"/>
+    ${days.map(([k, n], i) => { const h = n / max * (H - 18); return `<rect x="${i * bw + 2}" y="${H - h}" width="${bw - 4}" height="${Math.max(h, n ? 3 : 1)}" rx="3" fill="${i === days.length - 1 ? 'var(--accent)' : 'rgba(47,140,255,.45)'}"><title>${k}: ${n}</title></rect>`; }).join('')}
+    <text x="${W}" y="${H + 18}" text-anchor="end" fill="currentColor" fill-opacity=".5" font-size="12">اليوم</text>
+    <text x="0" y="${H + 18}" text-anchor="start" fill="currentColor" fill-opacity=".5" font-size="12">قبل 30 يوماً</text>
+    <text x="0" y="12" fill="currentColor" fill-opacity=".5" font-size="12">${max}</text>
+  </svg>`;
+}
+function vAdmin() {
+  const d = ADMIN_DATA, st = d.stats;
+  const tiles = st ? [['الطلاب المسجلون', st.students, st.new_7 ? `+${st.new_7} هذا الأسبوع` : ''], ['مرات الدخول اليوم', st.opens_today, ''], ['الدخول آخر 7 أيام', st.opens_7, `${ar(st.active_7)} طالب نشط`], ['الدخول آخر 30 يوماً', st.opens_30, '']] : [];
+  const byG = st ? st.by_grade || {} : {}, maxG = Math.max(1, ...GRADE_ORDER.map(k => byG[k] || 0));
+  return `<div class="view push">
+    ${navBar()}
+    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">لوحة المعلم</h1><p>${d.at ? `آخر تحديث ${new Date(d.at).toLocaleTimeString('ar-KW-u-nu-latn', { hour: 'numeric', minute: '2-digit' })}` : 'جارٍ تحميل الإحصائيات…'}</p></div>
+    ${d.error ? `<p class="law" style="color:#FF7A7A">${d.error}</p>` : ''}
+    <div class="stats stats4">${(tiles.length ? tiles : [['الطلاب المسجلون', '…', ''], ['مرات الدخول اليوم', '…', ''], ['الدخول آخر 7 أيام', '…', ''], ['الدخول آخر 30 يوماً', '…', '']]).map(([t, n, sub]) => `<div><b>${typeof n === 'number' ? ar(n) : n}</b><small>${t}</small>${sub ? `<small class="up">${sub}</small>` : ''}</div>`).join('')}</div>
+    <button class="btn wide" data-act="admin-refresh" style="margin-top:12px;width:100%">${icon('replay')}تحديث الأرقام</button>
+    <h2 class="sec">مرات الدخول يومياً</h2>
+    <div class="panel">${st ? dailyChart(st.daily) : '<p class="hint">…</p>'}</div>
+    <h2 class="sec">الطلاب حسب الصف</h2>
+    <div class="list">${GRADE_ORDER.map(k => `<div class="row"><span class="t"><b>${GRADES[k].name}</b><span class="prog" style="margin-top:6px"><span class="track" style="background:var(--surface-2)"><i style="width:${(byG[k] || 0) / maxG * 100}%;background:var(--accent)"></i></span><span style="color:var(--muted)">${ar(byG[k] || 0)}</span></span></span></div>`).join('')}</div>
+    <h2 class="sec">أكثر الدروس مشاهدة</h2>
+    <div class="list">${st && st.top.length ? st.top.map((x, i) => { const lt = lessonTitle(x.ref); return `<div class="row"><span class="n">${ar(i + 1)}</span><span class="t"><b>${esc(lt.t)}</b><small>${esc(lt.sub)}</small></span><span class="end visits"><b>${ar(x.n)}</b><small>${ar(x.u)} طالب</small></span></div>`; }).join('') : `<div class="row"><span class="t"><small>لا توجد مشاهدات بعد.</small></span></div>`}</div>
+    <h2 class="sec">الطلاب <small>${ar(d.students.length)} طالب</small></h2>
+    <div class="field" style="margin-bottom:10px"><input id="st-search" type="search" placeholder="ابحث بالاسم أو اسم المستخدم أو الجوال" value="${esc(d.q)}" aria-label="بحث عن طالب"></div>
+    <div class="list" id="st-list">${studentRows()}</div>
+    <p class="hint" style="margin-top:10px">لحذف حساب طالب أو إعادة تعيين كلمة مروره: Supabase ← Authentication ← Users.</p>
   </div>`;
 }
 
@@ -1647,19 +1817,24 @@ function render(scroll = true) {
   else if (top.type === 'unit') html = vUnit(top.u);
   else if (top.type === 'lesson') html = vLesson(top.u, top.i);
   else if (top.type === 'sim') html = vSim(top.k);
+  else if (top.type === 'admin') html = ADMIN ? vAdmin() : vProfile();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
   if (ADMIN) setupReorder();
-  const nm = document.getElementById('name');
-  if (nm) nm.oninput = () => { S.name = nm.value; store.set('name', S.name); const a = document.querySelector('.avatar'); if (a) a.textContent = S.name.trim()[0] || '؟'; };
+  if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at) loadAdmin();
   if (scroll) window.scrollTo(0, 0);
 }
 
 function go(spec, replace) {
   const [type, a, b] = spec.split(':');
   const entry = type === 'unit' ? { type, u: +a } : type === 'lesson' ? { type, u: +a, i: +b } : { type, k: a };
-  if (type === 'lesson') { S.vi = 0; S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last); }
+  if (type === 'lesson') {
+    if (!needLogin(() => go(spec, replace))) return;
+    S.vi = 0; S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last);
+    logEvent('lesson', lid(S.grade, +a, +b));
+  }
+  if (type === 'admin') ADMIN_DATA.at = 0;
   if (replace) S.stack.pop();
   S.stack.push(entry);
   render();
@@ -1722,7 +1897,7 @@ document.addEventListener('click', e => {
   if (el.dataset.go) { closeSheet(); return go(el.dataset.go, el.dataset.replace); }
   if (el.dataset.tab) { closeSheet(); S.tab = el.dataset.tab; S.stack = []; return render(); }
   if (el.dataset.grade) {
-    S.grade = el.dataset.grade; store.set('grade', S.grade); closeSheet(); S.stack = []; render();
+    S.grade = el.dataset.grade; store.set('grade', S.grade); store.set('gradePicked', true); closeSheet(); S.stack = []; render();
     return toast(`تم التغيير إلى ${GRADES[S.grade].name}`);
   }
   const act = el.dataset.act;
@@ -1739,8 +1914,10 @@ document.addEventListener('click', e => {
   else if (act === 'share') shareSheet();
   else if (act === 'share-send') shareSend();
   else if (act === 'share-copy') shareCopy();
-  else if (act === 'login') loginSheet();
-  else if (act === 'logout') { db && db.auth.signOut(); ADMIN = null; render(false); toast('تم تسجيل الخروج'); }
+  else if (act === 'login') authSheet('login');
+  else if (act === 'signup') authSheet('signup');
+  else if (act === 'logout') { db && db.auth.signOut(); USER = ADMIN = PROFILE = null; S.stack = S.stack.filter(x => x.type !== 'admin' && x.type !== 'lesson'); render(false); toast('تم تسجيل الخروج'); }
+  else if (act === 'admin-refresh') { ADMIN_DATA.at = 0; loadAdmin(); }
   else if (act === 'play-part') { S.vi = +el.dataset.j; render(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   else if (act === 'add-video') {
     const url = document.getElementById('ed-video').value.trim(), title = document.getElementById('ed-title').value.trim(), min = document.getElementById('ed-min').value.trim().replace(/[^0-9]/g, '');
@@ -1786,16 +1963,27 @@ document.addEventListener('change', e => {
   }
 });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+// Notes (PDF links) need an account too.
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[data-gate]'); if (!a) return;
+  if (!needLogin(() => toast('اضغط على المذكرة مرة أخرى لفتحها'))) { e.preventDefault(); e.stopPropagation(); return; }
+  logEvent('pdf', a.dataset.gate);
+}, true);
+document.addEventListener('input', e => {
+  if (e.target.id !== 'st-search') return;
+  ADMIN_DATA.q = e.target.value; const box = document.getElementById('st-list'); if (box) box.innerHTML = studentRows();
+});
 
 const start = (location.hash || '').slice(1);
 if (['home', 'lab', 'notes', 'profile'].includes(start)) S.tab = start;
 render();
 if (db) {
-  db.auth.getSession().then(({ data }) => { ADMIN = (data.session && data.session.user) || null; if (ADMIN) render(false); });
-  db.auth.onAuthStateChange((_, session) => { ADMIN = (session && session.user) || null; });
+  db.auth.getSession().then(({ data }) => applySession(data.session));
+  db.from('profiles').select('id').limit(1).then(({ error }) => { ACCOUNTS = !error; if (ACCOUNTS) render(false); }, () => {});
+  db.auth.onAuthStateChange((ev, session) => { if (ev === 'SIGNED_OUT') { USER = ADMIN = PROFILE = null; } });
   loadRemote();
 }
-if (start === 'admin') { S.tab = 'profile'; render(); loginSheet(); }
+if (start === 'admin') { S.tab = 'profile'; render(); authSheet('login'); }
 
 if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:') {
   try {
