@@ -436,8 +436,8 @@ const GRADES = {
         { t: 'علم الفيزياء', video: '', min: '' },
         { t: 'الكميات الفيزيائية', video: '', min: '' },
       ]},
-      { id: 'g10-m2', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 2, title: 'الحركة في بُعد واحد', glyph: 'motion', theme: 1, pdf: '', sims: ['eqmotion', 'accel', 'freefall'], lessons: [
-        { t: 'الكميات الفيزيائية العددية والمتجهة', video: '', min: '' },
+      { id: 'g10-m2', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 2, title: 'الحركة في بُعد واحد', glyph: 'motion', theme: 1, pdf: '', sims: ['speedvel', 'eqmotion', 'accel', 'freefall'], lessons: [
+        { t: 'الكميات الفيزيائية العددية والمتجهة', sim: 'speedvel', video: '', min: '' },
         { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', sim: 'eqmotion', video: '', min: '' },
         { t: 'السقوط الحر', sim: 'freefall', video: '', min: '' },
       ]},
@@ -583,6 +583,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  speedvel:   { title: 'السرعة العددية والسرعة المتجهة', sub: 'المسافة والإزاحة لسيارة في رحلة', glyph: 'motion', theme: 0 },
   eqmotion:   { title: 'معادلات الحركة', sub: 'سيارة بتسارع منتظم والمعادلات الثلاث بالأرقام', glyph: 'motion', theme: 5 },
   trajectory: { title: 'شكل مسار القذيفة', sub: 'خط رأسي، نصف قطع مكافئ، أو قطع مكافئ حسب زاوية الإطلاق', glyph: 'vectors', theme: 7 },
   resultant:  { title: 'محصلة متجهين', sub: 'متوازيان، متعاكسان، متعامدان، أو بينهما زاوية', glyph: 'vectors', theme: 1 },
@@ -1251,6 +1252,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  speedvel: 'السرعة العددية <code>v = d / t</code> تعتمد على المسافة الكلية المقطوعة (المسار البرتقالي)، والسرعة المتجهة <code>v⃗ = Δx⃗ / t</code> تعتمد على الإزاحة: الخط المستقيم من البداية إلى النهاية (السهم الأبيض)، ولها اتجاه. جرّب «ذهاب وعودة»: المسافة كبيرة لكن الإزاحة صفر، فالسرعة المتجهة صفر.',
   eqmotion: 'معادلات الحركة بتسارع منتظم: <code>v = v₀ + a·t</code> و<code>Δx = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·Δx</code>. اجعل <code>v₀ = 0</code> لترى العلاقة بين <code>Δx</code> و<code>t²</code> خطاً مستقيماً ميله <code>½a</code>. تتوقف السيارة عند <code>t = 6 s</code> لتقرأ القيم وتتحقق منها بالمعادلات. اجعل التسارع سالباً لترى السيارة تتباطأ.',
   trajectory: 'شكل المسار يعتمد على زاوية الإطلاق: عند <code>θ = 90°</code> يكون المسار <b>خطاً رأسياً</b>، وعند <code>θ = 0°</code> (إطلاق أفقي من مرتفع) يكون <b>نصف قطع مكافئ</b>، وعند زاوية بين <code>0°</code> و<code>90°</code> يكون <b>قطعاً مكافئاً</b>. لاحظ أن المركبة الأفقية للسرعة <code>vx</code> (الأزرق) ثابتة، والمركبة الرأسية <code>vy</code> (البرتقالي) تتغير بسبب الجاذبية.',
   resultant: 'محصلة متجهين بينهما زاوية θ: <code>R = √(A² + B² + 2AB·cosθ)</code> واتجاهها عن A: <code>tanα = B·sinθ / (A + B·cosθ)</code>. عند θ = 0° تكون <code>R = A + B</code> أكبر ما يمكن، وعند θ = 180° تكون <code>R = |A − B|</code> أقل ما يمكن، وعند θ = 90° تكون <code>R = √(A² + B²)</code> و<code>tanα = B / A</code>.',
@@ -1306,6 +1308,14 @@ const SIMCTL = {
     { id: 'a', label: 'زاوية الإفلات', min: 10, max: 60, step: 5, v: 40, unit: '°' },
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
+  ],
+  speedvel: [
+    { id: 'ex', type: 'seg', keep: true, label: 'أمثلة', opts: [{ t: 'مثال الكتاب', v: 0 }, { t: 'ذهاب وعودة', v: 1 }, { t: 'خط مستقيم', v: 2 }] },
+    { id: 'L1', label: 'المسافة غرباً', min: 0, max: 5, step: 1, v: 3, unit: 'km' },
+    { id: 'L2', label: 'المسافة جنوباً', min: 0, max: 4, step: 1, v: 2, unit: 'km' },
+    { id: 'L3', label: 'المسافة شرقاً', min: 0, max: 5, step: 1, v: 3, unit: 'km' },
+    { id: 'T', label: 'زمن الرحلة t', min: 1, max: 4, step: 0.5, v: 2, unit: 'h' },
+    { type: 'btn', label: 'ابدأ الرحلة من جديد' },
   ],
   eqmotion: [
     { id: 'v0', label: 'السرعة الابتدائية v₀', min: 0, max: 20, step: 1, v: 4, unit: 'm/s' },
@@ -1598,6 +1608,62 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    speedvel(t) {
+      if (cv._ex !== P.ex) {
+        cv._ex = P.ex;
+        const pre = [{ L1: 3, L2: 2, L3: 3, T: 2 }, { L1: 4, L2: 0, L3: 4, T: 2 }, { L1: 6, L2: 0, L3: 0, T: 2 }][P.ex];
+        Object.entries(pre).forEach(([id, v]) => { const el = document.getElementById(id); if (el) { el.value = Math.min(v, +el.max); el.oninput(); } });
+        if (P.ex === 2) { const el = document.getElementById('L1'); el.max = 6; el.value = 6; el.oninput(); } else { const el = document.getElementById('L1'); if (+el.max !== 5) { el.max = 5; el.oninput(); } }
+      }
+      const L1 = P.L1, L2 = P.L2, L3 = P.L3, T = P.T, d = L1 + L2 + L3;
+      // Route: west L1, then south L2, then east L3 (x east, y north, in km).
+      const pts = [[0, 0], [-L1, 0], [-L1, -L2], [-L1 + L3, -L2]], segs = [L1, L2, L3];
+      const dur = 5, f = reduce ? 1 : Math.min(1, t / dur), done = f >= 1, go = d * f;
+      let cur = pts[0], trail = [pts[0]], left = go;
+      for (let i = 0; i < 3; i++) {
+        const [ax, ay] = pts[i], [bx, by] = pts[i + 1], L = segs[i];
+        if (!L) continue;
+        if (left >= L) { cur = pts[i + 1]; trail.push(cur); left -= L; continue; }
+        const k = left / L; cur = [ax + (bx - ax) * k, ay + (by - ay) * k]; trail.push(cur); left = 0; break;
+      }
+      const end = pts[3], dx = cur[0], dy = cur[1], disp = Math.hypot(dx, dy), tNow = T * f;
+      setRO([['المسافة d', `${fmt(go, 1)} km`], ['الإزاحة Δx', `${fmt(disp, 1)} km`], ['الزمن', `${fmt(tNow, 1)} h`]]);
+      grid();
+      // map
+      const xs = pts.map(p => p[0]), ys = pts.map(p => p[1]), minX = Math.min(...xs, 0), maxX = Math.max(...xs, 0), minY = Math.min(...ys, 0), maxY = Math.max(...ys, 0);
+      const sc = Math.min(560 / Math.max(maxX - minX, 1), 210 / Math.max(maxY - minY, 1), 120), cxm = 400 - (minX + maxX) / 2 * sc, cym = 165 + (minY + maxY) / 2 * sc;
+      const MX = x => cxm + x * sc, MY = y => cym - y * sc;
+      ctx.strokeStyle = 'rgba(255,255,255,.18)'; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath();
+      pts.forEach(([x, y], i) => i ? ctx.lineTo(MX(x), MY(y)) : ctx.moveTo(MX(x), MY(y))); ctx.stroke();
+      ctx.strokeStyle = ORANGE; ctx.lineWidth = 5; ctx.beginPath(); trail.forEach(([x, y], i) => i ? ctx.lineTo(MX(x), MY(y)) : ctx.moveTo(MX(x), MY(y))); ctx.stroke();
+      for (let i = 0; i < 3; i++) if (segs[i]) {
+        const [ax, ay] = pts[i], [bx, by] = pts[i + 1], mx = (MX(ax) + MX(bx)) / 2, my = (MY(ay) + MY(by)) / 2, vert = ax === bx;
+        label(`${segs[i]} km`, mx + (vert ? -14 : 0), my + (vert ? 6 : (i === 0 ? -16 : 30)), DIM, vert ? 'right' : 'center', 16);
+      }
+      if (disp > .01) { line(MX(0), MY(0), MX(dx), MY(dy), 'rgba(255,255,255,.0)'); arrow(MX(0), MY(0), MX(dx), MY(dy), WHITE, 4); }
+      ball(MX(0), MY(0), 9, '#32D17A', '#32D17A'); label('البداية', MX(0) + 14, MY(0) - 12, '#32D17A', 'left', 15);
+      if (done) { ball(MX(end[0]), MY(end[1]), 9, PINK, PINK); label('النهاية', MX(end[0]) + 14, MY(end[1]) + 22, PINK, 'left', 15); }
+      // car
+      const [cx, cy] = [MX(cur[0]), MY(cur[1])];
+      box(cx - 16, cy - 10, 32, 20, BLUE, 7); box(cx - 9, cy - 16, 18, 9, BLUE, 5);
+      // compass
+      const kx = 735, ky = 72; line(kx, ky - 22, kx, ky + 22, DIM, 2); line(kx - 22, ky, kx + 22, ky, DIM, 2);
+      label('شمال', kx, ky - 30, DIM, 'center', 13); label('جنوب', kx, ky + 40, DIM, 'center', 13); label('شرق', kx + 26, ky + 5, DIM, 'left', 13); label('غرب', kx - 26, ky + 5, DIM, 'right', 13);
+      // direction of displacement in words
+      const ang = Math.atan2(-dy, Math.abs(dx)) / D;
+      const dirTxt = disp < .01 ? '' : Math.abs(dx) < .01 ? (dy < 0 ? 'باتجاه الجنوب' : 'باتجاه الشمال') : Math.abs(dy) < .01 ? (dx > 0 ? 'باتجاه الشرق' : 'باتجاه الغرب')
+        : `بزاوية ${fmt(Math.abs(ang), 0)}° ${dy < 0 ? 'جنوب' : 'شمال'} ${dx > 0 ? 'الشرق' : 'الغرب'}`;
+      // formulas
+      box(30, 352, 740, 128, 'rgba(255,255,255,.04)', 14);
+      if (!done) { label('السيارة في الطريق… انتظر حتى تصل إلى النهاية لحساب السرعتين', W / 2, 422, DIM, 'center', 17); return; }
+      const v = d / T, vv = disp / T;
+      label('السرعة العددية', W - 50, 392, ORANGE, 'right', 18);
+      label(`v = d / t = ${d} / ${T} = ${fmt(v, 2)} km/h`, 50, 392, WHITE, 'left', 19);
+      label('السرعة المتجهة', W - 50, 448, WHITE, 'right', 18);
+      label(`v = Δx / t = ${fmt(disp, 2)} / ${T} = ${fmt(vv, 2)} km/h`, 50, 448, WHITE, 'left', 19);
+      arrow(50, 426, 62, 426, WHITE, 1.6); // vector mark over the v
+      if (dirTxt) label(dirTxt, W - 50, 472, DIM, 'right', 14); else label('الإزاحة صفر، فالسرعة المتجهة صفر', W - 50, 472, '#32D17A', 'right', 14);
     },
     eqmotion(t) {
       const v0 = P.v0, a = P.a, T = 6, tc = reduce ? T : Math.min(t / 1.4, T);
