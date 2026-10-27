@@ -292,6 +292,31 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .auth-go { margin-top: 4px; min-height: 56px; border: 0; color: #fff; font-size: 17px; background: linear-gradient(135deg, #3B95FF 0%, #1F5BEA 60%, #1546D6 100%); box-shadow: 0 12px 28px rgba(31, 91, 234, .45); }
 .auth-go:active { transform: scale(.98); }
 .auth-foot { text-align: center; margin-top: 2px; }
+.ficon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; color: var(--fc); background: color-mix(in srgb, var(--fc) 16%, transparent); }
+.ficon .ico { width: 21px; height: 21px; }
+.fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.fcard { position: relative; display: grid; gap: 8px; align-content: start; padding: 14px; min-height: 118px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); overflow: hidden; transition: transform .2s; }
+.fcard::after { content: ""; position: absolute; inset: auto -20% -60% auto; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--fc) 30%, transparent), transparent 70%); pointer-events: none; }
+.fcard:active { transform: scale(.97); }
+.fcard b { font-size: 15px; line-height: 1.35; }
+.fcard small { color: var(--muted); font-size: 12px; }
+.fgrid.compact { padding: 10px 12px 14px; }
+.fgrid.compact .fcard { min-height: 0; padding: 10px 12px; grid-template-columns: auto 1fr; align-items: center; column-gap: 10px; row-gap: 0; }
+.fgrid.compact .fcard .ficon { grid-row: span 2; width: 34px; height: 34px; }
+.fgrid.compact .fcard b { font-size: 14px; }
+.chips { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-block: 14px 2px; }
+.chips::-webkit-scrollbar { display: none; }
+.chip-f { flex: none; padding: 8px 14px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; font-weight: 600; color: var(--muted); }
+.chip-f[aria-pressed="true"] { background: color-mix(in srgb, var(--fc, var(--accent)) 22%, var(--surface)); border-color: var(--fc, var(--accent)); color: var(--fg); }
+.nunit { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+.nunit + .nunit { margin-top: 10px; }
+.nhead { display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; text-align: right; }
+.nhead .n { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none; }
+.nhead .n .glyph { width: 26px; }
+.nhead .t { flex: 1; min-width: 0; display: grid; } .nhead .t small { color: var(--muted); font-size: 13px; }
+.count { min-width: 26px; height: 26px; padding: 0 8px; border-radius: 13px; display: grid; place-items: center; background: rgba(47,140,255,.18); color: var(--accent); font-weight: 700; font-size: 13px; }
+.editor .ed-row .field { min-width: 0; }
+.editor select { width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: inherit; font-size: 15px; }
 .install { margin-top: 12px; padding: 16px; border-radius: var(--r-md); background: linear-gradient(135deg, #10203F, #0B1226); border: 1px solid rgba(47, 140, 255, .25); display: grid; gap: 6px; }
 .install b { font-size: 16px; }
 .install p { color: rgba(255, 255, 255, .78); font-size: 14px; }
@@ -661,6 +686,10 @@ const ICONS = {
   lock: '<rect x="4.5" y="10.5" width="15" height="10.5" rx="2.5"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/>',
   cap: '<path d="M2 9.5 12 5l10 4.5L12 14z"/><path d="M6 11.5V16c0 1.4 2.7 3 6 3s6-1.6 6-3v-4.5M22 9.5V15"/>',
   eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  book: '<path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H19v15H5.5A1.5 1.5 0 0 0 4 19.5zM4 19.5A1.5 1.5 0 0 0 5.5 21H19v-3M8 7h7"/>',
+  sigma: '<path d="M18 4H6l6 8-6 8h12"/>',
+  exam: '<path d="M9 3h6l1 2h2.5A1.5 1.5 0 0 1 20 6.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19.5v-13A1.5 1.5 0 0 1 5.5 5H8zM8.5 12.5l2 2 4.5-4.5M8.5 17.5h7"/>',
+  pencil: '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10zM13.5 7.5l3 3"/>',
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   grip: '<path d="M5 8h14M5 12h14M5 16h14"/>',
   up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
@@ -734,7 +763,7 @@ function applyRemote() {
   for (const [key, row] of Object.entries(REMOTE)) {
     const [id, i] = key.split('.');
     const unit = UNIT_BY_ID[id]; if (!unit) continue;
-    if (i === undefined) { unit.pdf = row.pdf || ''; continue; }
+    if (i === undefined) { unit.files = parseFiles(row.pdf); unit.pdf = (unit.files[0] || {}).url || ''; continue; }
     const l = unit.lessons[+i]; if (!l) continue;
     l.videos = parseVideos(row.video, row.minutes); l.pdf = row.pdf || '';
   }
@@ -767,6 +796,72 @@ async function saveRow(key, patch) {
   if (error) { toast(dbError(error)); return false; }
   REMOTE[key] = row; store.set('remote', REMOTE); applyRemote(); render(false);
   return true;
+}
+/* ---------- Unit file library: student book, summary, laws, review, mock exams… ---------- */
+const FILE_KINDS = {
+  book:    { t: 'كتاب الطالب', ic: 'book', c: '#4C86FF' },
+  summary: { t: 'تلخيص المادة', ic: 'notes', c: '#A866FF' },
+  laws:    { t: 'القوانين', ic: 'sigma', c: '#FFA53A' },
+  review:  { t: 'مراجعة', ic: 'replay', c: '#2BD4B0' },
+  exam:    { t: 'اختبار تجريبي', ic: 'exam', c: '#FF4D7A' },
+  answers: { t: 'نماذج الإجابة', ic: 'checkc', c: '#32D17A' },
+  sheet:   { t: 'أوراق عمل', ic: 'pencil', c: '#FFD84D' },
+  other:   { t: 'ملفات أخرى', ic: 'notes', c: '#8C8F9A' },
+};
+// The unit row's pdf column holds a JSON list [{url, kind, title}]; older rows hold one plain URL (a summary).
+function parseFiles(raw) {
+  raw = String(raw || '').trim();
+  if (!raw) return [];
+  if (raw[0] === '[') { try { return JSON.parse(raw).filter(f => f && f.url); } catch (e) { return []; } }
+  return [{ url: raw, kind: 'summary', title: '' }];
+}
+const unitFiles = u => u.files || parseFiles(u.pdf);
+const fileWord = n => n === 1 ? 'ملف واحد' : n === 2 ? 'ملفان' : n <= 10 ? `${n} ملفات` : `${n} ملفاً`;
+const fileTitle = f => f.title || FILE_KINDS[f.kind || 'other'].t;
+const isPdf = url => /\.pdf($|\?)/i.test(url) || /\/storage\/v1\/object\/public\/notes\//.test(url);
+async function saveFiles(key, list) { return saveRow(key, { pdf: list.length ? JSON.stringify(list) : '' }); }
+async function uploadUnitFile(key, file, btn) {
+  if (!file) return;
+  const kind = (document.getElementById('uf-kind') || {}).value || 'other', title = ((document.getElementById('uf-title') || {}).value || '').trim();
+  if (file.type !== 'application/pdf' && !/\.pdf$/i.test(file.name)) return toast('اختر ملفاً بصيغة PDF');
+  if (file.size > 50 * 1024 * 1024) return toast('حجم الملف أكبر من 50 ميغابايت');
+  if (btn) { btn.classList.add('busy'); btn.lastChild.textContent = 'جارٍ الرفع…'; }
+  const path = `${key}/${kind}-${Date.now()}.pdf`;
+  const { error } = await db.storage.from('notes').upload(path, file, { contentType: 'application/pdf', upsert: false });
+  if (error) { toast(dbError(error)); render(false); return; }
+  const url = db.storage.from('notes').getPublicUrl(path).data.publicUrl;
+  const list = unitFiles(UNIT_BY_ID[key]).concat([{ url, kind, title }]);
+  if (await saveFiles(key, list)) toast(`تم رفع «${title || FILE_KINDS[kind].t}»`);
+}
+function filesEditor(unit) {
+  const fs = unitFiles(unit), key = unit.id;
+  return `<section class="editor" aria-label="ملفات الوحدة">
+    <div class="ed-h"><b>ملفات الوحدة</b><span class="tag">وضع المعلم</span></div>
+    ${fs.length ? `<div class="ed-list">${fs.map((f, j) => { const k = FILE_KINDS[f.kind] || FILE_KINDS.other; return `<div class="ed-vid">
+      <span class="ficon" style="--fc:${k.c}">${icon(k.ic)}</span>
+      <span class="t"><b>${esc(fileTitle(f))}</b><small>${esc(k.t)} · ${isPdf(f.url) ? 'PDF' : 'رابط'}</small></span>
+      ${j ? `<button class="circle sm" data-act="file-up" data-key="${key}" data-j="${j}" aria-label="نقل للأعلى">${icon('up')}</button>` : ''}
+      <button class="circle sm danger" data-act="file-del" data-key="${key}" data-j="${j}" aria-label="حذف الملف">${icon('trash')}</button>
+    </div>`; }).join('')}</div>` : '<p class="hint">لم تُرفع ملفات لهذه الوحدة بعد.</p>'}
+    <div class="label" style="padding:0">إضافة ملف</div>
+    <div class="ed-row">
+      <div class="field"><label for="uf-kind">نوع الملف</label><select id="uf-kind">${Object.entries(FILE_KINDS).map(([k, v]) => `<option value="${k}">${v.t}</option>`).join('')}</select></div>
+      <div class="field"><label for="uf-title">العنوان (اختياري)</label><input id="uf-title" maxlength="60" placeholder="مثال: مراجعة الفصل الأول"></div>
+    </div>
+    <div class="ed-row">
+      <label class="btn primary" for="uf-file">${icon('down', 'style="transform:rotate(180deg)"')}<span>رفع ملف PDF</span></label>
+      <input class="vh" type="file" id="uf-file" accept="application/pdf,.pdf" data-ufile="${key}">
+      <button class="btn" data-act="file-link" data-key="${key}">${icon('ext')}إضافة رابط</button>
+    </div>
+    <div class="field"><label for="uf-url">رابط بدلاً من الرفع (Google Drive أو غيره)</label><input id="uf-url" type="url" inputmode="url" placeholder="https://..."></div>
+  </section>`;
+}
+// Student view: one card per file, coloured by type.
+function fileCards(unit, cls = '') {
+  const fs = unitFiles(unit);
+  if (!fs.length) return '';
+  return `<div class="fgrid ${cls}">${fs.map(f => { const k = FILE_KINDS[f.kind] || FILE_KINDS.other; return `<a class="fcard" style="--fc:${k.c}" href="${esc(f.url)}" target="_blank" rel="noopener" data-gate="${unit.id}">
+      <span class="ficon">${icon(k.ic)}</span><b>${esc(fileTitle(f))}</b><small>${f.title ? esc(k.t) + ' · ' : ''}${isPdf(f.url) ? 'PDF' : 'رابط'}</small></a>`; }).join('')}</div>`;
 }
 async function uploadPdf(key, file, btn) {
   if (!file) return;
@@ -1037,14 +1132,11 @@ function vUnit(u) {
         <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${ADMIN ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
       </button>`;
     }).join('')}</div>
-    ${ADMIN ? `<section class="editor"><div class="ed-h"><b>مذكرة الوحدة</b><span class="tag">وضع المعلم</span></div>${pdfEditor(unit.id, unit.pdf, 'ملخص الوحدة كاملة')}</section>` : ''}
-    <h2 class="sec">مع هذه الوحدة</h2>
+    ${ADMIN ? filesEditor(unit) : ''}
+    <h2 class="sec">ملفات الوحدة <small>${unitFiles(unit).length ? fileWord(unitFiles(unit).length) : ''}</small></h2>
+    ${fileCards(unit) || `<div class="list"><div class="row"><span class="n">${icon('notes', 'style="width:20px;height:20px"')}</span><span class="t"><b>الملفات قيد التجهيز</b><small>كتاب الطالب، والتلخيص، والقوانين، والمراجعة، والاختبارات التجريبية</small></span><span class="end"><span class="soon">قريباً</span></span></div></div>`}
+    ${sims.length ? '<h2 class="sec">المختبر</h2>' : ''}
     <div class="list">
-      ${unit.pdf ? `<a class="row" href="${esc(unit.pdf)}" target="_blank" rel="noopener" data-gate="${unit.id}">` : '<div class="row">'}
-        <span class="n">${icon('notes', 'style="width:20px;height:20px"')}</span>
-        <span class="t"><b>مذكرة الوحدة</b><small>ملخص PDF</small></span>
-        <span class="end">${unit.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>
-      ${unit.pdf ? '</a>' : '</div>'}
       ${sims.map(k => `<button class="row" data-go="sim:${k}">
         <span class="n">${icon('lab', 'style="width:20px;height:20px"')}</span>
         <span class="t"><b>${esc(SIMS[k].title)}</b><small>تجربة تفاعلية في المختبر</small></span>
@@ -1076,7 +1168,7 @@ function vLesson(u, i) {
     </button>`).join('')}</div>` : ''}
     <div class="actions">
       <button class="btn ${done ? 'done' : 'primary'} wide" data-act="watched" data-key="${key}">${icon(done ? 'checkc' : 'check')}${done ? 'تمت المشاهدة' : 'علّم الدرس كمكتمل'}</button>
-      ${l.pdf || unit.pdf ? `<a class="btn" href="${esc(l.pdf || unit.pdf)}" target="_blank" rel="noopener" data-gate="${key}">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`}
+      ${(() => { const uf = unitFiles(unit), pick = l.pdf || ((uf.find(x => x.kind === 'summary') || uf[0] || {}).url); return pick ? `<a class="btn" href="${esc(pick)}" target="_blank" rel="noopener" data-gate="${key}">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`; })()}
       ${simK ? `<button class="btn" data-go="sim:${simK}">${icon('lab')}جرّبها</button>` : (src ? `<a class="btn" href="${esc(src.open)}" target="_blank" rel="noopener">${icon('ext')}${esc(src.name)}</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}فتح الفيديو</span>`)}
     </div>
     ${ADMIN ? lessonEditor(key, l) : ''}
@@ -1101,15 +1193,23 @@ function vLab() {
 }
 
 function vNotes() {
-  const g = G();
+  const g = G(), f = S.fileKind || 'all';
+  const units = g.units.map((u, i) => ({ u, i, fs: unitFiles(u).filter(x => f === 'all' || (x.kind || 'other') === f) }));
+  const total = g.units.reduce((n, u) => n + unitFiles(u).length, 0);
+  const kinds = Object.keys(FILE_KINDS).filter(k => g.units.some(u => unitFiles(u).some(x => (x.kind || 'other') === k)));
   return `<div class="view">
-    <div class="page-h"><h1>المذكرات</h1><p>ملخصات ${esc(g.name)}. غيّر الصف من الرئيسية لرؤية مذكرات صف آخر.</p></div>
-    ${[1, 2].map(t => `<div class="unitgroup"><div class="label">${TERMS[t]}</div><div class="list">${termUnits(S.grade, t).map(({ u, i }) => {
-      const inner = `<span class="n" style="${tileStyle(u.theme)};background:var(--tile)">${glyph(u.glyph, u.theme)}</span>
-        <span class="t"><b>${esc(u.title)}</b><small>${u.unit ? esc(u.unit.split(':')[0]) + ' · ' : ''}${unitLabel(S.grade, i)} · PDF</small></span>
-        <span class="end">${u.pdf ? icon('down') : '<span class="soon">قريباً</span>'}</span>`;
-      return u.pdf ? `<a class="row" href="${esc(u.pdf)}" target="_blank" rel="noopener" data-gate="${u.id}">${inner}</a>` : `<div class="row">${inner}</div>`;
-    }).join('')}</div></div>`).join('')}
+    <div class="page-h"><h1>المذكرات والملفات</h1><p>${total ? `${fileWord(total)} في ${esc(g.name)}.` : `ملفات ${esc(g.name)} ستظهر هنا.`} غيّر الصف من الرئيسية لرؤية ملفات صف آخر.</p></div>
+    ${kinds.length > 1 ? `<div class="chips" role="group" aria-label="نوع الملف">
+      <button class="chip-f" data-fkind="all" aria-pressed="${f === 'all'}">الكل</button>
+      ${kinds.map(k => `<button class="chip-f" data-fkind="${k}" aria-pressed="${f === k}" style="--fc:${FILE_KINDS[k].c}">${FILE_KINDS[k].t}</button>`).join('')}
+    </div>` : ''}
+    ${[1, 2].map(t => { const us = units.filter(x => x.u.term === t); if (!us.length) return ''; return `<div class="unitgroup"><div class="label">${TERMS[t]}</div>
+      ${us.map(({ u, i, fs }) => `<div class="nunit">
+        <button class="nhead" data-go="unit:${i}"><span class="n" style="${tileStyle(u.theme)};background:var(--tile)">${glyph(u.glyph, u.theme)}</span>
+          <span class="t"><b>${esc(u.title)}</b><small>${u.unit ? esc(u.unit.split(':')[0]) + ' · ' : ''}${unitLabel(S.grade, i)}</small></span>
+          <span class="end">${fs.length ? `<span class="count">${ar(fs.length)}</span>` : '<span class="soon">قريباً</span>'}</span></button>
+        ${fs.length ? fileCards(Object.assign({}, u, { files: fs }), 'compact') : ''}
+      </div>`).join('')}</div>`; }).join('')}
   </div>`;
 }
 
@@ -2389,8 +2489,9 @@ function planSheet() {
 
 document.addEventListener('click', e => {
   if (drag.suppressClick) { drag.suppressClick = false; e.preventDefault(); return; }
-  const el = e.target.closest('[data-go],[data-tab],[data-act],[data-grade],[data-term]');
+  const el = e.target.closest('[data-go],[data-tab],[data-act],[data-grade],[data-term],[data-fkind]');
   if (!el || el.getAttribute('aria-disabled') === 'true') return;
+  if (el.dataset.fkind) { S.fileKind = el.dataset.fkind; return render(false); }
   if (el.dataset.term) { S.term = +el.dataset.term; store.set('term', S.term); return render(false); }
   if (el.dataset.go) { closeSheet(); return go(el.dataset.go, el.dataset.replace); }
   if (el.dataset.tab) { closeSheet(); S.tab = el.dataset.tab; S.stack = []; return render(); }
@@ -2432,6 +2533,21 @@ document.addEventListener('click', e => {
     const list = currentVideos(el.dataset.key); list.splice(+el.dataset.j, 1);
     S.vi = 0; saveVideos(el.dataset.key, list).then(ok => ok && toast('تم حذف الفيديو'));
   }
+  else if (act === 'file-del') {
+    if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الملف'); }
+    const list = unitFiles(UNIT_BY_ID[el.dataset.key]).slice(); list.splice(+el.dataset.j, 1);
+    saveFiles(el.dataset.key, list).then(ok => ok && toast('تم حذف الملف'));
+  }
+  else if (act === 'file-up') {
+    const list = unitFiles(UNIT_BY_ID[el.dataset.key]).slice(), j = +el.dataset.j; [list[j - 1], list[j]] = [list[j], list[j - 1]];
+    saveFiles(el.dataset.key, list);
+  }
+  else if (act === 'file-link') {
+    const url = (document.getElementById('uf-url').value || '').trim(), kind = document.getElementById('uf-kind').value, title = document.getElementById('uf-title').value.trim();
+    if (!/^https?:\/\//i.test(url)) return toast('الصق رابطاً كاملاً يبدأ بـ https://');
+    const list = unitFiles(UNIT_BY_ID[el.dataset.key]).concat([{ url, kind, title }]);
+    saveFiles(el.dataset.key, list).then(ok => ok && toast(`تمت إضافة «${title || FILE_KINDS[kind].t}»`));
+  }
   else if (act === 'del-pdf') {
     if (el.dataset.confirm) saveRow(el.dataset.key, { pdf: '' }).then(ok => ok && toast('تم حذف المذكرة'));
     else { el.dataset.confirm = '1'; el.textContent = 'تأكيد الحذف'; }
@@ -2442,6 +2558,8 @@ document.addEventListener('click', e => {
   }
 });
 document.addEventListener('change', e => {
+  const uf = e.target.closest('[data-ufile]');
+  if (uf && db) return uploadUnitFile(uf.dataset.ufile, uf.files[0], document.querySelector('label[for="uf-file"]'));
   const inp = e.target.closest('[data-upload]');
   if (inp && db) return uploadPdf(inp.dataset.upload, inp.files[0], inp.previousElementSibling);
   const pos = e.target.closest('[data-vid-pos]');
