@@ -441,7 +441,7 @@ const GRADES = {
         { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', sim: 'eqmotion', video: '', min: '' },
         { t: 'السقوط الحر', sim: 'freefall', video: '', min: '' },
       ]},
-      { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sims: ['resultant', 'vecprod', 'vectors', 'trajectory', 'projectile'], lessons: [
+      { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sims: ['resultant', 'vecprod', 'components', 'vectors', 'trajectory', 'projectile'], lessons: [
         { t: 'خصائص المتجهات', video: '', min: '' },
         { t: 'جمع المتجهات وتحليلها', sim: 'resultant', video: '', min: '' },
         { t: 'ضرب المتجهات', sim: 'vecprod', video: '', min: '' },
@@ -474,7 +474,7 @@ const GRADES = {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vecprod', 'vectors', 'trajectory', 'projectile'], lessons: [
+      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vecprod', 'components', 'vectors', 'trajectory', 'projectile'], lessons: [
         { t: 'الكميات العددية والكميات المتجهة', sim: 'resultant', video: '', min: '' },
         { t: 'ضرب المتجهات', sim: 'vecprod', video: '', min: '' },
         { t: 'تحليل المتجهات', sim: 'vectors', video: '', min: '' },
@@ -576,7 +576,8 @@ GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g
 const SIMS = {
   accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
   freefall:   { title: 'السقوط الحر', sub: 'أنبوبة الريشة والعملة، والسقوط على الأرض والقمر والمريخ', glyph: 'drop', theme: 6 },
-  vectors:    { title: 'جمع المتجهات وتحليلها', sub: 'محصلة عدة قوى بطريقة تحليل المتجهات', glyph: 'vectors', theme: 2 },
+  vectors:    { title: 'حساب المحصلة بطريقة تحليل المتجهات', sub: 'محصلة عدة قوى بجمع مركباتها', glyph: 'vectors', theme: 2 },
+  components: { title: 'تحليل المتجه', sub: 'المركبة الأفقية والمركبة الرأسية، ومثال زورق منتصر', glyph: 'vectors', theme: 6 },
   projectile: { title: 'حركة المقذوفات', sub: 'أمثلة الكتاب محلولة خطوة بخطوة: إطلاق أفقي وإطلاق بزاوية', glyph: 'vectors', theme: 7 },
   circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
   com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'box', theme: 0 },
@@ -1247,6 +1248,7 @@ function vSim(k) {
 const LAWS = {
   accel: 'معادلات الحركة المتسارعة بانتظام: <code>v = v₀ + a·t</code> و<code>Δx = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·Δx</code>. اجعل التسارع سالباً وشاهد الجسم يتباطأ ثم يعود.',
   freefall: 'في السقوط الحر من السكون: <code>v = g·t</code> و<code>h = ½·g·t²</code>. في «الريشة والعملة»: في الأنبوبة التي بها هواء تصل العملة أولاً لأن مقاومة الهواء تؤثر في الريشة أكثر، وفي الأنبوبة المفرغة من الهواء تصلان معاً. <b>الاستنتاج:</b> في غياب الهواء تسقط جميع الأجسام بنفس التسارع <code>g</code> مهما اختلفت كتلها وأشكالها.',
+  components: 'تحليل المتجه هو استبدال متجه مائل بمتجهين متعامدين يقومان بنفس عمله: المركبة الأفقية <code>Ax = A cosθ</code> (مسقط المتجه على المحور المجاور للزاوية)، والمركبة الرأسية <code>Ay = A sinθ</code> (مسقطه على المحور المقابل للزاوية). في مثال زورق منتصر: الحبل يميل 30° فالقوة التي تحرك المركب للأمام هي المركبة الأفقية فقط <code>5000 cos30° = 4330.13 N</code>، أما المركبة الرأسية فلا تحركه للأمام.',
   vectors: 'طريقة تحليل المتجهات: نحلّل كل قوة إلى مركبتين <code>Fx = F cosθ</code> و<code>Fy = F sinθ</code>، ثم نجمع المركبات: <code>ΣFx</code> و<code>ΣFy</code>، فتكون المحصلة <code>F<sub>R</sub> = √(ΣFx² + ΣFy²)</code> واتجاهها <code>tanθ = ΣFy / ΣFx</code>. الزوايا مقيسة من محور x الموجب عكس عقارب الساعة، فالقوة التي تصنع 40° مع محور x السالب زاويتها 140°.',
   projectile: 'بإهمال مقاومة الهواء تكون السرعة الأفقية <code>vx</code> ثابتة (السهم الأزرق)، والحركة الرأسية منتظمة العجلة <code>g</code> (السهم البرتقالي <code>vy</code>). <b>إطلاق أفقي:</b> <code>Δy = ½gt²</code> و<code>Δx = v·t</code>. <b>إطلاق بزاوية:</b> معادلة المسار <code>y = (−g / 2v₀²cos²θ)x² + tanθ·x</code>، وزمن الوصول لأقصى ارتفاع <code>t = v₀sinθ / g</code>، و<code>h<sub>max</sub> = v₀²sin²θ / 2g</code>، و<code>R = v₀²sin2θ / g</code>. زمن الصعود يساوي زمن الهبوط، ومقدار السرعة عند الاصطدام يساوي السرعة الابتدائية.',
   circular: 'القوة الجاذبة المركزية <code>Fc = m·v² / r</code> والتسارع المركزي <code>ac = v² / r</code>. القوة (الوردي) تتجه دائماً نحو المركز والسرعة (الأزرق) مماسة للمسار. اقطع الخيط وشاهد ماذا يحدث.',
@@ -1276,6 +1278,11 @@ const SIMCTL = {
     { id: 'h', label: 'الارتفاع (للسقوط من ارتفاع)', min: 5, max: 100, step: 5, v: 45, unit: 'm' },
     { id: 'g', type: 'seg', label: 'المكان', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'المريخ', v: 3.71 }, { t: 'القمر', v: 1.62 }] },
     { type: 'btn', label: 'أسقط الأجسام', act: 'drop', icon: 'down' },
+  ],
+  components: [
+    { id: 'mode', type: 'seg', keep: true, label: 'العرض', opts: [{ t: 'زورق منتصر (اكتشف بنفسك)', v: 1 }, { t: 'متجه على المحورين', v: 0 }] },
+    { id: 'A', label: 'مقدار المتجه (قوة الشد)', min: 0, max: 10000, step: 100, v: 5000, unit: 'N', keep: true },
+    { id: 'th', label: 'الزاوية θ مع الأفق', min: 0, max: 90, step: 5, v: 30, unit: '°', keep: true },
   ],
   vectors: [
     { id: 'ex', type: 'seg', keep: true, label: 'أمثلة', opts: [{ t: 'مثال الكتاب', v: 0 }, { t: 'متجهان', v: 1 }, { t: 'ثلاثة متجهات', v: 2 }] },
@@ -1522,6 +1529,55 @@ function startSim(k) {
       if (v > .2) { const L = Math.min(v * 3, 140); arrow(bx + 30, by, bx + 30, by + L, TEAL); label('v', bx + 42, by + L / 2, TEAL); }
       label(`g = ${g} m/s²`, W - 20, 40, DIM, 'right', 18);
       if (tt >= T) { ctx.fillStyle = 'rgba(51,194,255,.22)'; ctx.beginPath(); ctx.ellipse(bx, bot, 40, 8, 0, 0, 7); ctx.fill(); }
+    },
+    components(t) {
+      const A = P.A, thd = P.th, th = thd * D, Ax = A * Math.cos(th), Ay = A * Math.sin(th), z = v => Math.abs(v) < .005 ? 0 : v;
+      setRO([['المركبة الأفقية Ax', `${fmt(z(Ax), 2)} N`], ['المركبة الرأسية Ay', `${fmt(z(Ay), 2)} N`], ['θ', `${thd}°`]]);
+      grid();
+      const L = 300 * (A / 10000) + 40;
+      if (P.mode === 1) {
+        // tug pulling a fishing boat: rope at θ, only the horizontal part moves the boat forward
+        const sea = 300, bx = 120 + (reduce ? 0 : (t * Ax / 2500) % 80), Lr = 300, hx = bx + 46, hy = sea - 18;
+        const rx = hx + Lr * Math.cos(th), ry = Math.max(hy - Lr * Math.sin(th), 70), tx = rx + 40;
+        ctx.fillStyle = 'rgba(11,108,156,.28)'; ctx.fillRect(0, sea, W, H - sea);
+        for (let i = 0; i < 9; i++) { const wx = ((i * 97 - t * 30) % (W + 60) + W + 60) % (W + 60) - 30; line(wx, sea + 20 + (i % 3) * 22, wx + 28, sea + 20 + (i % 3) * 22, 'rgba(255,255,255,.18)', 2); }
+        // fishing boat (left, pulled)
+        ctx.fillStyle = '#D9DCE3'; ctx.beginPath(); ctx.moveTo(bx - 60, sea - 18); ctx.lineTo(bx + 46, sea - 18); ctx.lineTo(bx + 30, sea + 6); ctx.lineTo(bx - 50, sea + 6); ctx.closePath(); ctx.fill();
+        box(bx - 34, sea - 40, 40, 22, '#AEB4C2', 4);
+        label('مركب الصيد', bx - 6, sea + 34, WHITE, 'center', 14);
+        // tug (right): the rope is tied to the top of its towing mast, so the rope keeps the angle θ
+        line(rx, ry, rx, sea - 26, '#9AA0AC', 5); line(rx - 12, ry + 4, rx + 12, ry + 4, '#9AA0AC', 4);
+        ctx.fillStyle = '#C62B2B'; ctx.beginPath(); ctx.moveTo(tx - 50, sea - 26); ctx.lineTo(tx + 90, sea - 26); ctx.lineTo(tx + 70, sea + 8); ctx.lineTo(tx - 40, sea + 8); ctx.closePath(); ctx.fill();
+        box(tx - 10, sea - 66, 64, 40, '#F2F2F2', 5); box(tx + 6, sea - 92, 30, 26, '#E6E6E6', 4);
+        label('الزورق منتصر', tx + 22, sea + 34, '#FF6B6B', 'center', 14);
+        line(hx, hy, rx, ry, 'rgba(255,216,77,.85)', 3);
+        // force vectors from the hook point
+        const ex = hx + L * Math.cos(th), ey = hy - L * Math.sin(th);
+        line(ex, ey, ex, hy, 'rgba(255,255,255,.3)', 1.5, [5, 5]); line(ex, ey, hx, ey, 'rgba(255,255,255,.3)', 1.5, [5, 5]);
+        arrow(hx, hy, ex, ey, '#FF6B6B', 5); label(`F = ${A} N`, (hx + ex) / 2 - 8, (hy + ey) / 2 - 12, '#FF6B6B', 'right', 16);
+        arrow(hx, hy, hx + L * Math.cos(th), hy, BLUE, 6); label(`Fx = ${fmt(z(Ax), 2)} N`, hx + L * Math.cos(th) / 2, hy + 24, BLUE, 'center', 15);
+        if (Ay > 1) { arrow(hx, hy, hx, hy - L * Math.sin(th), '#32D17A', 5); label(`Fy = ${fmt(z(Ay), 2)} N`, hx - 8, hy - L * Math.sin(th) / 2, '#32D17A', 'right', 15); }
+        if (thd > 0) { ctx.strokeStyle = '#FFD84D'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(hx, hy, 40, -th, 0); ctx.stroke(); label(`${thd}°`, hx + 48, hy - 10, '#FFD84D', 'left', 15); }
+        label('لماذا القوة التي تحرك المركب أقل من قوة الشد؟', W / 2, 32, WHITE, 'center', 18);
+        label('لأن المركبة الأفقية فقط هي التي تحركه للأمام', W / 2, 58, '#7FB2FF', 'center', 16);
+        label(`Fx = F cosθ = ${A} × cos${thd}° = ${fmt(z(Ax), 2)} N`, W / 2, H - 46, WHITE, 'center', 18);
+        label(`Fy = F sinθ = ${A} × sin${thd}° = ${fmt(z(Ay), 2)} N`, W / 2, H - 18, DIM, 'center', 16);
+        return;
+      }
+      // plain vector on x–y axes, like figure (7)
+      const ox = 160, oy = 380, ex = ox + L * Math.cos(th), ey = oy - L * Math.sin(th);
+      line(ox - 40, oy, W - 60, oy, DIM, 2); line(ox, oy + 40, ox, 50, DIM, 2); label('+x', W - 56, oy + 6, DIM, 'left', 15); label('+y', ox + 8, 56, DIM, 'left', 15);
+      line(ex, ey, ex, oy, 'rgba(255,255,255,.35)', 2, [6, 6]); line(ex, ey, ox, ey, 'rgba(255,255,255,.35)', 2, [6, 6]);
+      if (Ax > 1) { arrow(ox, oy, ex, oy, BLUE, 6); label('Ax', (ox + ex) / 2, oy + 28, BLUE, 'center', 18); }
+      if (Ay > 1) { arrow(ox, oy, ox, ey, '#32D17A', 6); label('Ay', ox - 12, (oy + ey) / 2, '#32D17A', 'right', 18); }
+      if (A > 0) { arrow(ox, oy, ex, ey, '#FF6B6B', 6); label('A', (ox + ex) / 2 - 10, (oy + ey) / 2 - 12, '#FF6B6B', 'right', 20); }
+      if (thd > 0 && thd < 90) { ctx.strokeStyle = '#FFD84D'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 42, -th, 0); ctx.stroke(); label('θ', ox + 52 * Math.cos(th / 2), oy - 52 * Math.sin(th / 2) + 6, '#FFD84D', 'center', 17); }
+      const px = 470;
+      label(`Ax = A cosθ`, px, 140, BLUE, 'left', 22); label(`= ${A} × cos${thd}° = ${fmt(z(Ax), 2)} N`, px, 172, WHITE, 'left', 17);
+      label(`Ay = A sinθ`, px, 230, '#32D17A', 'left', 22); label(`= ${A} × sin${thd}° = ${fmt(z(Ay), 2)} N`, px, 262, WHITE, 'left', 17);
+      label(`A = √(Ax² + Ay²) = ${fmt(Math.hypot(Ax, Ay), 2)} N`, px, 320, DIM, 'left', 15);
+      const note = thd === 0 ? 'الزاوية صفر: المتجه أفقي، والمركبة الرأسية صفر' : thd === 90 ? 'الزاوية قائمة: المتجه رأسي، والمركبة الأفقية صفر' : thd === 45 ? 'الزاوية 45°: المركبتان متساويتان' : thd < 45 ? 'الزاوية أقل من 45°: المركبة الأفقية أكبر' : 'الزاوية أكبر من 45°: المركبة الرأسية أكبر';
+      label(note, W / 2, H - 20, '#32D17A', 'center', 16);
     },
     vectors() {
       if (cv._ex !== P.ex) {
