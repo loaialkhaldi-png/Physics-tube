@@ -1310,7 +1310,7 @@ const SIMCTL = {
   eqmotion: [
     { id: 'v0', label: 'السرعة الابتدائية v₀', min: 0, max: 20, step: 1, v: 4, unit: 'm/s' },
     { id: 'a', label: 'التسارع a', min: -4, max: 4, step: 0.5, v: 2, unit: 'm/s²' },
-    { id: 'gr', type: 'seg', keep: true, label: 'الرسم البياني', opts: [{ t: 'Δx – t', v: 0 }, { t: 'v – t', v: 1 }, { t: 'Δx – t²', v: 2 }, { t: 'v² – t', v: 3 }] },
+    { id: 'gr', type: 'seg', keep: true, label: 'الرسم البياني', opts: [{ t: 'Δx – t', v: 0 }, { t: 'v – t', v: 1 }, { t: 'Δx – t²', v: 2 }, { t: 'v² – t', v: 3 }, { t: 'v² – Δx', v: 4 }] },
     { type: 'btn', label: 'ابدأ من جديد' },
   ],
   trajectory: [
@@ -1624,12 +1624,17 @@ function startSim(k) {
         { h: q => q, f: q => v0 + a * q, xl: 't (s)', yl: 'v (m/s)', c: TEAL, hmax: T, ticks: [2, 4, 6] },
         { h: q => q * q, f: xAt, xl: 't² (s²)', yl: 'Δx (m)', c: ORANGE, hmax: T * T, ticks: [12, 24, 36] },
         { h: q => q, f: q => (v0 + a * q) ** 2, xl: 't (s)', yl: 'v² (m²/s²)', c: PURPLE, hmax: T, ticks: [2, 4, 6] },
+        { h: xAt, f: q => (v0 + a * q) ** 2, xl: 'Δx (m)', yl: 'v² (m²/s²)', c: PURPLE },
       ][P.gr], f = G4.f;
+      // Horizontal range: fixed for time axes, measured for Δx (it can go negative when the car reverses).
+      let hl = 0, hh = G4.hmax || 1;
+      if (!G4.hmax) { for (let i = 0; i <= 60; i++) { const h = G4.h(T * i / 60); hl = Math.min(hl, h); hh = Math.max(hh, h); } }
+      if (!G4.ticks) G4.ticks = [1, 2, 3].map(k => Math.round(hl + (hh - hl) * k / 3));
       let fl = 0, fh = 1; for (let i = 0; i <= 60; i++) { const y = f(T * i / 60); fl = Math.min(fl, y); fh = Math.max(fh, y); }
-      const GX = q => gx + G4.h(q) / G4.hmax * gw, GY = y => gy - (y - fl) / (fh - fl) * gh;
-      line(gx, gy - gh - 10, gx, gy, DIM, 2); line(gx, GY(0), gx + gw + 10, GY(0), DIM, 2);
+      const HX = h => gx + (h - hl) / (hh - hl) * gw, GX = q => HX(G4.h(q)), GY = y => gy - (y - fl) / (fh - fl) * gh;
+      line(HX(0), gy - gh - 10, HX(0), gy, DIM, 2); line(gx, GY(0), gx + gw + 10, GY(0), DIM, 2);
       label(G4.yl, gx + 6, gy - gh - 14, DIM, 'left', 14); label(G4.xl, gx + gw + 10, GY(0) - 8, DIM, 'right', 14);
-      G4.ticks.forEach(k => label(`${k}`, gx + k / G4.hmax * gw, GY(0) + 20, 'rgba(255,255,255,.35)', 'center', 13));
+      G4.ticks.forEach(k => label(`${k}`, HX(k), GY(0) + 20, 'rgba(255,255,255,.35)', 'center', 13));
       ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2; ctx.setLineDash([5, 7]); ctx.beginPath();
       for (let i = 0; i <= 80; i++) { const q = T * i / 80; i ? ctx.lineTo(GX(q), GY(f(q))) : ctx.moveTo(GX(q), GY(f(q))); } ctx.stroke(); ctx.setLineDash([]);
       ctx.strokeStyle = G4.c; ctx.lineWidth = 4; ctx.beginPath();
@@ -1639,7 +1644,8 @@ function startSim(k) {
       const cap = [[a ? 'منحنى (قطع مكافئ)' : 'خط مستقيم: السرعة ثابتة', ''],
         [a ? 'خط مستقيم ميله يساوي التسارع' : 'خط أفقي: السرعة ثابتة', a ? `a = ${fmt(a, 1)} m/s²` : ''],
         v0 === 0 ? ['خط مستقيم ميله يساوي نصف التسارع', `½a = ${fmt(a / 2, 2)} m/s²`] : ['ليس خطاً مستقيماً، اجعل السرعة الابتدائية صفراً', 'v₀ = 0'],
-        [!a ? 'خط أفقي: السرعة ثابتة' : 'منحنى: مربع السرعة يتغير مع الزمن', !a ? '' : v0 === 0 ? 'v² = a²·t²' : 'v² = (v₀ + a·t)²']][P.gr];
+        [!a ? 'خط أفقي: السرعة ثابتة' : 'منحنى: مربع السرعة يتغير مع الزمن', !a ? '' : v0 === 0 ? 'v² = a²·t²' : 'v² = (v₀ + a·t)²'],
+        [!a ? 'خط أفقي: السرعة ثابتة' : 'خط مستقيم ميله يساوي ضعف التسارع', !a ? '' : `2a = ${fmt(2 * a, 1)} m/s²`]][P.gr];
       ctx.font = '600 14px -apple-system, "SF Arabic", "Noto Sans Arabic", Arial, sans-serif';
       const w1 = ctx.measureText(cap[0]).width, w2 = cap[1] ? ctx.measureText(cap[1]).width + 10 : 0, cx0 = gx + gw / 2 + (w1 + w2) / 2;
       label(cap[0], cx0, gy - gh - 34, DIM, 'right', 14);
