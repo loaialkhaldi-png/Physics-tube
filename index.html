@@ -441,10 +441,10 @@ const GRADES = {
         { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', sim: 'eqmotion', video: '', min: '' },
         { t: 'السقوط الحر', sim: 'freefall', video: '', min: '' },
       ]},
-      { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sims: ['resultant', 'vectors', 'trajectory', 'projectile'], lessons: [
+      { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sims: ['resultant', 'vecprod', 'vectors', 'trajectory', 'projectile'], lessons: [
         { t: 'خصائص المتجهات', video: '', min: '' },
         { t: 'جمع المتجهات وتحليلها', sim: 'resultant', video: '', min: '' },
-        { t: 'ضرب المتجهات', video: '', min: '' },
+        { t: 'ضرب المتجهات', sim: 'vecprod', video: '', min: '' },
         { t: 'حركة المقذوفات', sim: 'trajectory', video: '', min: '' },
         { t: 'أسئلة مراجعة الوحدة', extra: true, video: '', min: '' },
       ]},
@@ -474,9 +474,9 @@ const GRADES = {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vectors', 'trajectory', 'projectile'], lessons: [
+      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vecprod', 'vectors', 'trajectory', 'projectile'], lessons: [
         { t: 'الكميات العددية والكميات المتجهة', sim: 'resultant', video: '', min: '' },
-        { t: 'ضرب المتجهات', video: '', min: '' },
+        { t: 'ضرب المتجهات', sim: 'vecprod', video: '', min: '' },
         { t: 'تحليل المتجهات', video: '', min: '' },
         { t: 'حركة القذيفة', sim: 'trajectory', video: '', min: '' },
       ]},
@@ -583,6 +583,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  vecprod:    { title: 'الضرب العددي والضرب الاتجاهي', sub: 'A·B = AB cosθ و A×B = AB sinθ وقاعدة اليد اليمنى', glyph: 'vectors', theme: 3 },
   speedvel:   { title: 'السرعة العددية والسرعة المتجهة', sub: 'المسافة والإزاحة لسيارة في رحلة', glyph: 'motion', theme: 0 },
   eqmotion:   { title: 'معادلات الحركة', sub: 'سيارة بتسارع منتظم والمعادلات الثلاث بالأرقام', glyph: 'motion', theme: 5 },
   trajectory: { title: 'شكل مسار القذيفة', sub: 'خط رأسي، نصف قطع مكافئ، أو قطع مكافئ حسب زاوية الإطلاق', glyph: 'vectors', theme: 7 },
@@ -1252,6 +1253,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  vecprod: '<b>الضرب العددي</b> ناتجه كمية عددية: <code>A·B = AB cosθ</code>، ويساوي حاصل ضرب B في مسقط A عليه. يكون أكبر ما يمكن عند <code>θ = 0°</code>، وصفراً عند <code>θ = 90°</code>، وسالباً إذا زادت θ عن 90°. <b>الضرب الاتجاهي</b> ناتجه كمية متجهة مقدارها <code>|A×B| = AB sinθ</code> وهو مساحة متوازي الأضلاع، واتجاهها عمودي على المستوى بقاعدة اليد اليمنى. لاحظ أن <code>A×B = −B×A</code>، فالضرب الاتجاهي ليس له خاصية إبدالية.',
   speedvel: 'السرعة العددية <code>v = d / t</code> تعتمد على المسافة الكلية المقطوعة (المسار البرتقالي)، والسرعة المتجهة <code>v⃗ = Δx⃗ / t</code> تعتمد على الإزاحة: الخط المستقيم من البداية إلى النهاية (السهم الأبيض)، ولها اتجاه. جرّب «ذهاب وعودة»: المسافة كبيرة لكن الإزاحة صفر، فالسرعة المتجهة صفر.',
   eqmotion: 'معادلات الحركة بتسارع منتظم: <code>v = v₀ + a·t</code> و<code>Δx = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·Δx</code>. اجعل <code>v₀ = 0</code> لترى العلاقة بين <code>Δx</code> و<code>t²</code> خطاً مستقيماً ميله <code>½a</code>. تتوقف السيارة عند <code>t = 6 s</code> لتقرأ القيم وتتحقق منها بالمعادلات. اجعل التسارع سالباً لترى السيارة تتباطأ.',
   trajectory: 'شكل المسار يعتمد على زاوية الإطلاق: عند <code>θ = 90°</code> يكون المسار <b>خطاً رأسياً</b>، وعند <code>θ = 0°</code> (إطلاق أفقي من مرتفع) يكون <b>نصف قطع مكافئ</b>، وعند زاوية بين <code>0°</code> و<code>90°</code> يكون <b>قطعاً مكافئاً</b>. لاحظ أن المركبة الأفقية للسرعة <code>vx</code> (الأزرق) ثابتة، والمركبة الرأسية <code>vy</code> (البرتقالي) تتغير بسبب الجاذبية.',
@@ -1309,6 +1311,13 @@ const SIMCTL = {
     { id: 'a', label: 'زاوية الإفلات', min: 10, max: 60, step: 5, v: 40, unit: '°' },
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
+  ],
+  vecprod: [
+    { id: 'kind', type: 'seg', label: 'نوع الضرب', opts: [{ t: 'الضرب العددي A·B', v: 0 }, { t: 'الضرب الاتجاهي', v: 1 }] },
+    { id: 'ord', type: 'seg', keep: true, label: 'الترتيب (للضرب الاتجاهي)', opts: [{ t: 'A × B', v: 0 }, { t: 'B × A', v: 1 }] },
+    { id: 'A', label: 'مقدار المتجه A', min: 1, max: 10, step: 1, v: 6, unit: '', keep: true },
+    { id: 'B', label: 'مقدار المتجه B', min: 1, max: 10, step: 1, v: 8, unit: '', keep: true },
+    { id: 'th', label: 'الزاوية θ بينهما', min: 0, max: 180, step: 5, v: 40, unit: '°', keep: true },
   ],
   speedvel: [
     { id: 'ex', type: 'seg', keep: true, label: 'أمثلة', opts: [{ t: 'مثال الكتاب', v: 0 }, { t: 'ذهاب وعودة', v: 1 }, { t: 'خط مستقيم', v: 2 }] },
@@ -1653,6 +1662,51 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    vecprod() {
+      const A = P.A, B = P.B, thd = P.th, th = thd * D, cross = P.kind === 1, val = cross ? A * B * Math.sin(th) : A * B * Math.cos(th);
+      const out = cross && Math.sin(th) > 1e-9 ? (P.ord === 0 ? 'in' : 'out') : '';
+      setRO(cross
+        ? [['مقدار الناتج', fmt(Math.abs(val), 2)], ['الاتجاه', !out ? 'لا يوجد (صفر)' : out === 'out' ? 'خارج الصفحة ⊙' : 'داخل الصفحة ⊗'], ['sinθ', fmt(Math.sin(th), 3)]]
+        : [['الناتج C', fmt(Math.abs(val) < 1e-9 ? 0 : val, 2)], ['نوعه', 'كمية عددية'], ['cosθ', fmt(Math.abs(Math.cos(th)) < 1e-9 ? 0 : Math.cos(th), 3)]]);
+      grid();
+      const sc = 24, ox = thd > 100 ? 270 : 110, oy = 320, X = x => ox + x * sc, Y = y => oy - y * sc;
+      const ax = A * Math.cos(th), ay = A * Math.sin(th);
+      if (cross && ay > .01) { ctx.fillStyle = 'rgba(255,77,122,.16)'; ctx.beginPath(); ctx.moveTo(X(0), Y(0)); ctx.lineTo(X(B), Y(0)); ctx.lineTo(X(B + ax), Y(ay)); ctx.lineTo(X(ax), Y(ay)); ctx.closePath(); ctx.fill();
+        line(X(B), Y(0), X(B + ax), Y(ay), 'rgba(255,77,122,.5)', 2, [5, 6]); line(X(ax), Y(ay), X(B + ax), Y(ay), 'rgba(255,77,122,.5)', 2, [5, 6]);
+        label('المساحة', X((B + ax) / 2), Y(ay / 2) + 6, PINK, 'center', 16); }
+      if (!cross && Math.abs(ax) > .05) { line(X(ax), Y(ay), X(ax), Y(0), 'rgba(255,165,58,.7)', 2, [5, 6]); line(X(0), Y(0) + 16, X(ax), Y(0) + 16, ORANGE, 4);
+        label(`A cosθ = ${fmt(ax, 2)}`, X(ax / 2), Y(0) + 40, ORANGE, 'center', 15); }
+      arrow(X(0), Y(0), X(B), Y(0), BLUE, 5); label('B', X(B) + 12, Y(0) + 6, BLUE, 'left', 20);
+      arrow(X(0), Y(0), X(ax), Y(ay), PURPLE, 5); label('A', X(ax) + (ax >= 0 ? 10 : -10), Y(ay) - 8, PURPLE, ax >= 0 ? 'left' : 'right', 20);
+      if (thd > 0) { ctx.strokeStyle = '#FFD84D'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 34, -th, 0); ctx.stroke(); label('θ', ox + 46 * Math.cos(th / 2), oy - 46 * Math.sin(th / 2) + 6, '#FFD84D', 'center', 17); }
+      if (out) {
+        const sx = X(0), sy = Y(0);
+        ctx.strokeStyle = WHITE; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(sx, sy, 15, 0, 7); ctx.stroke();
+        if (out === 'out') { ctx.fillStyle = WHITE; ctx.beginPath(); ctx.arc(sx, sy, 4.5, 0, 7); ctx.fill(); }
+        else { line(sx - 10, sy - 10, sx + 10, sy + 10, WHITE, 3); line(sx + 10, sy - 10, sx - 10, sy + 10, WHITE, 3); }
+        label(out === 'out' ? 'اتجاه الناتج: خارج الصفحة (نحوك) ⊙' : 'اتجاه الناتج: داخل الصفحة (بعيداً عنك) ⊗', 250, oy + 66, WHITE, 'center', 16);
+        // curl arrow: from the first vector to the second, through the smaller angle
+        const first = P.ord === 0 ? th : 0, sweep = P.ord === 0 ? -th : th, r = 60;
+        ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(sx, sy, r, -first, -(first + sweep), sweep > 0); ctx.stroke();
+        const e = first + sweep; arrow(sx + r * Math.cos(e + (sweep > 0 ? -.25 : .25)), sy - r * Math.sin(e + (sweep > 0 ? -.25 : .25)), sx + r * Math.cos(e), sy - r * Math.sin(e), 'rgba(255,255,255,.75)', 2);
+      }
+      // value as θ goes from 0° to 180°
+      const gx = 520, gy = 210, gw = 250, gh = 70, mx = A * B, GX = d => gx + d / 180 * gw, GY = v => gy - v / mx * gh;
+      line(gx, gy, gx + gw, gy, DIM, 1.5); line(gx, gy - gh - 6, gx, gy + gh + 6, DIM, 1.5);
+      ctx.strokeStyle = cross ? PINK : ORANGE; ctx.lineWidth = 3; ctx.beginPath();
+      for (let d = 0; d <= 180; d += 3) { const v = cross ? mx * Math.sin(d * D) : mx * Math.cos(d * D); d ? ctx.lineTo(GX(d), GY(v)) : ctx.moveTo(GX(d), GY(v)); } ctx.stroke();
+      ball(GX(thd), GY(cross ? Math.abs(val) : val), 6, WHITE, cross ? PINK : ORANGE);
+      [0, 90, 180].forEach(d => label(`${d}°`, GX(d), gy + gh + 24, 'rgba(255,255,255,.4)', 'center', 13));
+      label(cross ? 'AB sinθ' : 'AB cosθ', gx + gw, gy - gh - 12, cross ? PINK : ORANGE, 'right', 15);
+      // worked equation
+      const eq = cross ? `|${P.ord === 0 ? 'A × B' : 'B × A'}| = A·B·sinθ = ${A} × ${B} × sin${thd}° = ${fmt(Math.abs(val), 2)}`
+                       : `A · B = A·B·cosθ = ${A} × ${B} × cos${thd}° = ${fmt(Math.abs(val) < 1e-9 ? 0 : val, 2)}`;
+      label(eq, W / 2, H - 46, WHITE, 'center', 19);
+      const note = cross ? (thd === 0 || thd === 180 ? 'المتجهان على استقامة واحدة: الناتج صفر' : thd === 90 ? 'المتجهان متعامدان: أكبر ناتج' : 'استخدم قاعدة اليد اليمنى لتحديد الاتجاه')
+                         : (thd === 0 ? 'المتجهان في نفس الاتجاه: أكبر ناتج' : thd === 90 ? 'المتجهان متعامدان: الناتج صفر' : thd === 180 ? 'المتجهان متعاكسان: أقل ناتج (سالب)' : thd > 90 ? 'الزاوية منفرجة: الناتج سالب' : 'الزاوية حادة: الناتج موجب');
+      label(note, W / 2, H - 16, '#32D17A', 'center', 16);
+      label(cross ? 'الضرب الاتجاهي' : 'الضرب العددي (النقطي)', W - 30, 40, cross ? PINK : ORANGE, 'right', 22);
     },
     speedvel(t) {
       if (cv._ex !== P.ex) {
