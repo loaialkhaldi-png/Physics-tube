@@ -436,9 +436,9 @@ const GRADES = {
         { t: 'علم الفيزياء', video: '', min: '' },
         { t: 'الكميات الفيزيائية', video: '', min: '' },
       ]},
-      { id: 'g10-m2', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 2, title: 'الحركة في بُعد واحد', glyph: 'motion', theme: 1, pdf: '', sims: ['accel', 'freefall'], lessons: [
+      { id: 'g10-m2', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 2, title: 'الحركة في بُعد واحد', glyph: 'motion', theme: 1, pdf: '', sims: ['eqmotion', 'accel', 'freefall'], lessons: [
         { t: 'الكميات الفيزيائية العددية والمتجهة', video: '', min: '' },
-        { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', sim: 'accel', video: '', min: '' },
+        { t: 'معادلات الحركة المتسارعة بانتظام في خط مستقيم', sim: 'eqmotion', video: '', min: '' },
         { t: 'السقوط الحر', sim: 'freefall', video: '', min: '' },
       ]},
       { id: 'g10-m3', term: 1, unit: 'الوحدة الأولى: الحركة', ch: 3, title: 'الحركة في بُعدين', glyph: 'vectors', theme: 2, pdf: '', sims: ['resultant', 'vectors', 'trajectory', 'projectile'], lessons: [
@@ -583,6 +583,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  eqmotion:   { title: 'معادلات الحركة', sub: 'سيارة بتسارع منتظم والمعادلات الثلاث بالأرقام', glyph: 'motion', theme: 5 },
   trajectory: { title: 'شكل مسار القذيفة', sub: 'خط رأسي، نصف قطع مكافئ، أو قطع مكافئ حسب زاوية الإطلاق', glyph: 'vectors', theme: 7 },
   resultant:  { title: 'محصلة متجهين', sub: 'متوازيان، متعاكسان، متعامدان، أو بينهما زاوية', glyph: 'vectors', theme: 1 },
   spring:     { title: 'الطاقة المرونية في النابض', sub: 'اسحب الكتلة وشاهد الطاقة المختزنة في النابض', glyph: 'coil', theme: 7 },
@@ -1250,6 +1251,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  eqmotion: 'معادلات الحركة بتسارع منتظم: <code>v = v₀ + a·t</code> و<code>x = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·x</code>. تتوقف السيارة عند <code>t = 6 s</code> لتقرأ القيم وتتحقق منها بالمعادلات. اجعل التسارع سالباً لترى السيارة تتباطأ.',
   trajectory: 'شكل المسار يعتمد على زاوية الإطلاق: عند <code>θ = 90°</code> يكون المسار <b>خطاً رأسياً</b>، وعند <code>θ = 0°</code> (إطلاق أفقي من مرتفع) يكون <b>نصف قطع مكافئ</b>، وعند زاوية بين <code>0°</code> و<code>90°</code> يكون <b>قطعاً مكافئاً</b>. لاحظ أن المركبة الأفقية للسرعة <code>vx</code> (الأزرق) ثابتة، والمركبة الرأسية <code>vy</code> (البرتقالي) تتغير بسبب الجاذبية.',
   resultant: 'محصلة متجهين بينهما زاوية θ: <code>R = √(A² + B² + 2AB·cosθ)</code> واتجاهها عن A: <code>tanα = B·sinθ / (A + B·cosθ)</code>. عند θ = 0° تكون <code>R = A + B</code> أكبر ما يمكن، وعند θ = 180° تكون <code>R = |A − B|</code> أقل ما يمكن، وعند θ = 90° تكون <code>R = √(A² + B²)</code> و<code>tanα = B / A</code>.',
   spring: 'قانون هوك <code>F = k·x</code>، والطاقة المرونية المختزنة في النابض <code>PEs = ½·k·x²</code> وهي تساوي المساحة تحت منحنى (القوة–الاستطالة). الخط الأزرق طول النابض الطبيعي، والأخضر موضع الاتزان. اسحب الكتلة لأسفل ثم اتركها.',
@@ -1304,6 +1306,12 @@ const SIMCTL = {
     { id: 'a', label: 'زاوية الإفلات', min: 10, max: 60, step: 5, v: 40, unit: '°' },
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
+  ],
+  eqmotion: [
+    { id: 'v0', label: 'السرعة الابتدائية v₀', min: 0, max: 20, step: 1, v: 4, unit: 'm/s' },
+    { id: 'a', label: 'التسارع a', min: -4, max: 4, step: 0.5, v: 2, unit: 'm/s²' },
+    { id: 'gr', type: 'seg', keep: true, label: 'الرسم البياني', opts: [{ t: 'الموقع – الزمن', v: 0 }, { t: 'السرعة – الزمن', v: 1 }] },
+    { type: 'btn', label: 'ابدأ من جديد' },
   ],
   trajectory: [
     { id: 'case', type: 'seg', keep: true, label: 'زاوية الإطلاق', opts: [{ t: '90°', v: 90 }, { t: '0° من مرتفع', v: 0 }, { t: 'بين 0° و 90°', v: 45 }] },
@@ -1590,6 +1598,51 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    eqmotion(t) {
+      const v0 = P.v0, a = P.a, T = 6, tc = reduce ? T : Math.min(t / 1.4, T);
+      const xAt = q => v0 * q + .5 * a * q * q, x = xAt(tc), v = v0 + a * tc;
+      const t1 = Math.round(tc * 10) / 10;
+      setRO([['الزمن t', `${fmt(t1, 1)} s`], ['السرعة v', `${fmt(v0 + a * t1, 1)} m/s`], ['الموقع x', `${fmt(xAt(t1), 1)} m`]]);
+      grid();
+      let lo = 0, hi = 0; for (let i = 0; i <= 60; i++) { const q = xAt(T * i / 60); lo = Math.min(lo, q); hi = Math.max(hi, q); }
+      const span = Math.max(hi - lo, 10), RX = q => 60 + (q - lo) / span * (W - 150), road = 120;
+      ctx.fillStyle = 'rgba(255,255,255,.06)'; ctx.fillRect(0, road + 4, W, 14); line(0, road + 4, W, road + 4, 'rgba(255,255,255,.35)', 2);
+      line(RX(0), road - 66, RX(0), road + 20, DIM, 2, [4, 6]); label('0', RX(0), road + 40, DIM, 'center', 15); label('x', W - 22, road + 40, DIM, 'center', 15);
+      for (let i = 1; i <= Math.floor(tc); i++) { ctx.fillStyle = 'rgba(255,165,58,.5)'; ctx.beginPath(); ctx.arc(RX(xAt(i)), road + 11, 4, 0, 7); ctx.fill(); }
+      // car
+      const cx = RX(x), dir = v < -.01 ? -1 : 1;
+      ctx.save(); ctx.translate(cx, road); ctx.scale(dir, 1);
+      box(-38, -26, 76, 20, '#C9A27A', 8); box(-20, -42, 40, 20, '#C9A27A', 9); box(-15, -38, 13, 13, '#9FC6E8', 3); box(2, -38, 13, 13, '#9FC6E8', 3);
+      ctx.fillStyle = '#1B1D22'; [-22, 22].forEach(wx => { ctx.beginPath(); ctx.arc(wx, -6, 9, 0, 7); ctx.fill(); }); ctx.fillStyle = '#C9CCD6'; [-22, 22].forEach(wx => { ctx.beginPath(); ctx.arc(wx, -6, 3.5, 0, 7); ctx.fill(); });
+      ctx.restore();
+      if (Math.abs(v) > .05) { arrow(cx, road - 58, cx + v * 5, road - 58, TEAL, 3); label('v', cx + v * 5 + (v > 0 ? 8 : -18), road - 52, TEAL, 'left', 15); }
+      if (a) { arrow(cx, road - 78, cx + a * 12, road - 78, ORANGE, 3); label('a', cx + a * 12 + (a > 0 ? 8 : -18), road - 72, ORANGE, 'left', 15); }
+      // graph
+      const gx = 70, gy = 455, gw = 330, gh = 230, isV = P.gr === 1;
+      const f = isV ? (q => v0 + a * q) : xAt;
+      let fl = 0, fh = 1; for (let i = 0; i <= 60; i++) { const y = f(T * i / 60); fl = Math.min(fl, y); fh = Math.max(fh, y); }
+      const GX = q => gx + q / T * gw, GY = y => gy - (y - fl) / (fh - fl) * gh;
+      line(gx, gy - gh - 10, gx, gy, DIM, 2); line(gx, GY(0), gx + gw + 10, GY(0), DIM, 2);
+      label(isV ? 'v (m/s)' : 'x (m)', gx + 6, gy - gh - 14, DIM, 'left', 14); label('t (s)', gx + gw + 10, GY(0) - 8, DIM, 'right', 14);
+      for (let q = 2; q <= T; q += 2) label(`${q}`, GX(q), GY(0) + 20, 'rgba(255,255,255,.35)', 'center', 13);
+      ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 2; ctx.setLineDash([5, 7]); ctx.beginPath();
+      for (let i = 0; i <= 60; i++) { const q = T * i / 60; i ? ctx.lineTo(GX(q), GY(f(q))) : ctx.moveTo(GX(q), GY(f(q))); } ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle = isV ? TEAL : ORANGE; ctx.lineWidth = 4; ctx.beginPath();
+      for (let i = 0; i <= 60; i++) { const q = tc * i / 60; i ? ctx.lineTo(GX(q), GY(f(q))) : ctx.moveTo(GX(q), GY(f(q))); } ctx.stroke();
+      ball(GX(tc), GY(f(tc)), 6, WHITE, isV ? TEAL : ORANGE);
+      label(isV ? (a ? 'خط مستقيم ميله = التسارع' : 'خط أفقي: السرعة ثابتة') : (a ? 'منحنى (قطع مكافئ)' : 'خط مستقيم: سرعة ثابتة'), gx + gw / 2, gy - gh - 34, DIM, 'center', 14);
+      // equations with numbers
+      // Equations use t rounded to what is shown, so the substituted numbers add up exactly.
+      const tr = Math.round(tc * 10) / 10, vr = v0 + a * tr, xr = xAt(tr), ex = 440, n = q => (q < 0 ? `(${fmt(q, 1)})` : fmt(q, 1)), ts = fmt(tr, 1);
+      box(ex - 14, 186, 360, 290, 'rgba(255,255,255,.04)', 14);
+      const eqs = [
+        ['v = v₀ + a·t', `= ${v0} + ${n(a)}·${ts} = ${fmt(vr, 1)} m/s`, TEAL],
+        ['x = v₀·t + ½·a·t²', `= ${v0}·${ts} + ½·${n(a)}·${ts}² = ${fmt(xr, 2)} m`, ORANGE],
+        ['v² = v₀² + 2·a·x', `= ${v0}² + 2·${n(a)}·${n(xr)} = ${fmt(vr * vr, 1)} m²/s²`, PURPLE],
+      ];
+      eqs.forEach(([e1, e2, c], i) => { const y = 222 + i * 92; label(e1, ex, y, c, 'left', 22); label(e2, ex, y + 32, WHITE, 'left', 16); });
+      if (tc >= T) label('توقفت السيارة بعد 6 ثوانٍ. اضغط «ابدأ من جديد» لتعيدها', W / 2, H - 10, DIM, 'center', 14);
     },
     trajectory(t) {
       // Kept on the canvas, not in st: moving the slider resets st and would otherwise loop.
