@@ -1647,10 +1647,18 @@ function startSim(k) {
                   : [['أقصى ارتفاع', `${fmt(Hm, 2)} m`], ['المدى الأفقي R', `${fmt(R, 2)} m`], ['زمن التحليق', `${fmt(T, 2)} s`]]);
       grid();
       // drawing area: top part of the canvas
-      const top = 40, base = 290, left = horiz ? 120 : 60, sc = Math.min((W - left - 70) / Math.max(R, 5), (base - top - 20) / Math.max(Hm, 3));
+      // Angled launch uses a fixed scale (set by the 45° range), so a bigger range really looks longer.
+      const Rmax = v0 * v0 / g, Hcap = v0 * v0 * Math.sin(80 * D) ** 2 / (2 * g);
+      const top = 40, base = 290, left = horiz ? 120 : 60, sc = horiz ? Math.min((W - left - 70) / Math.max(R, 5), (base - top - 20) / Math.max(Hm, 3)) : Math.min((W - left - 60) / Rmax, (base - top - 20) / Hcap);
       const X = x => left + x * sc, Y = y => base - y * sc, pos = q => [vx * q, h0 + vy0 * q - g * q * q / 2];
       ctx.fillStyle = 'rgba(52,209,122,.07)'; ctx.fillRect(0, base, W, 8); line(0, base, W, base, 'rgba(255,255,255,.35)', 2);
       if (h0) { box(left - 70, Y(h0), 70, base - Y(h0), '#2A2D35', 4); label('Δy', left - 35, (Y(h0) + base) / 2 - 4, WHITE, 'center', 14); label(`${h0} m`, left - 35, (Y(h0) + base) / 2 + 14, WHITE, 'center', 14); }
+      if (!horiz) {
+        // the 45° path and its range, for comparison
+        line(X(Rmax), base - 6, X(Rmax), base + 10, 'rgba(50,209,122,.8)', 2); label('أقصى مدى', X(Rmax) - 6, base + 32, '#32D17A', 'right', 12);
+        if (P.a !== 45) { const c45 = Math.SQRT1_2 * v0, T45 = 2 * c45 / g; ctx.strokeStyle = 'rgba(50,209,122,.28)'; ctx.lineWidth = 2; ctx.setLineDash([3, 6]); ctx.beginPath();
+          for (let i = 0; i <= 60; i++) { const q = T45 * i / 60, x = c45 * q, y = c45 * q - g * q * q / 2; i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y)); } ctx.stroke(); ctx.setLineDash([]); }
+      }
       ctx.strokeStyle = 'rgba(225,92,245,.3)'; ctx.lineWidth = 2; ctx.setLineDash([6, 7]); ctx.beginPath();
       for (let i = 0; i <= 80; i++) { const [x, y] = pos(T * i / 80); i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y)); } ctx.stroke(); ctx.setLineDash([]);
       if (!horiz) { line(X(vx * tUp), Y(Hm), X(vx * tUp), base, 'rgba(255,216,77,.5)', 1.5, [4, 5]); label(`h_max = ${fmt(Hm, 2)} m`, X(vx * tUp) + 8, (Y(Hm) + base) / 2, '#FFD84D', 'left', 13); }
@@ -1662,25 +1670,37 @@ function startSim(k) {
       ball(X(bx), Y(by), 9, WHITE, '#E15CF5');
       arrow(X(bx), Y(by), X(bx) + vx * k, Y(by), BLUE, 3); label('vx', X(bx) + vx * k + 5, Y(by) + 5, BLUE, 'left', 13);
       if (Math.abs(vyNow) > .3) { arrow(X(bx), Y(by), X(bx), Y(by) - vyNow * k, ORANGE, 3); label('vy', X(bx) + 6, Y(by) - vyNow * k / 2, ORANGE, 'left', 13); }
-      if (tt >= T) { arrow(X(bx), Y(by), X(bx) + vx * k, Y(by) - vyT * k, WHITE, 3); label(`v = ${fmt(vT, 2)} m/s`, X(bx) + vx * k + 6, Y(by) - vyT * k, WHITE, 'left', 13); }
+      if (tt >= T) {
+        arrow(X(bx), Y(by), X(bx) + vx * k, Y(by) - vyT * k, WHITE, 3); label(`v = ${fmt(vT, 2)} m/s`, X(bx) + vx * k + 6, Y(by) - vyT * k, WHITE, 'left', 13);
+        // impact angle below the horizontal
+        line(X(bx), Y(by), X(bx) + 46, Y(by), 'rgba(255,255,255,.4)', 1.5, [3, 4]);
+        ctx.strokeStyle = '#FFD84D'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(bx), Y(by), 30, 0, angT * D); ctx.stroke();
+        label(`${fmt(angT, 1)}°`, X(bx) + 34, Y(by) + 22, '#FFD84D', 'left', 13);
+      }
       if (!horiz) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(0), base, 30, -th, 0); ctx.stroke(); label(`${P.a}°`, X(0) + 36, base - 8, WHITE, 'left', 13); }
       // worked solution, like the textbook
-      box(16, 336, W - 32, 156, 'rgba(255,255,255,.04)', 12);
+      box(16, 332, W - 32, 164, 'rgba(255,255,255,.04)', 12);
       // Arabic tag on the right, formula left-to-right, so the two directions never mix.
-      const L = (txt, i, c = WHITE, tag = '') => { label(txt, 32, 362 + i * 25, c, 'left', 15); if (tag) label(tag, W - 32, 362 + i * 25, c, 'right', 15); };
+      const L = (txt, i, c = WHITE, tag = '') => { label(txt, 32, 354 + i * 23, c, 'left', 15); if (tag) label(tag, W - 32, 354 + i * 23, c, 'right', 15); };
       if (horiz) {
         L(`vx = v = ${fmt(v0, 2)} m/s ,  vy₀ = 0 ,  a = g = ${g} m/s²`, 0, DIM, 'المعلوم');
         L(`Δy = ½·g·t²  ⇒  ${h0} = ${fmt(g / 2, 1)}·t²  ⇒  t = ${fmt(T, 2)} s`, 1);
         L(`Δx = v·t = ${fmt(v0, 2)} × ${fmt(T, 2)} = ${fmt(R, 2)} m`, 2);
         L(`v = Δx / t = ${fmt(R, 2)} / ${fmt(T, 2)} = ${fmt(v0, 2)} m/s`, 3, '#E15CF5');
         L(`vy = −g·t = ${fmt(vyT, 2)} m/s ,  v = √(vx² + vy²) = ${fmt(vT, 2)} m/s`, 4, DIM, 'عند الاصطدام');
+        L(`tanθ = |vy| / vx = ${fmt(Math.abs(vyT) / vx, 2)}  ⇒  θ = ${fmt(angT, 1)}°`, 5, '#FFD84D', 'زاوية الاصطدام تحت الأفق');
       } else {
         const A2 = -g / (2 * v0 * v0 * Math.cos(th) ** 2);
         L(`y = (−g / 2v₀²cos²θ)·x² + tanθ·x  ⇒  y = ${fmt(A2, 3)}x² + ${fmt(Math.tan(th), 2)}x`, 0, WHITE, '(أ) معادلة المسار');
         L(`t = v₀·sinθ / g = ${v0}·sin${P.a}° / ${g} = ${fmt(tUp, 2)} s`, 1, WHITE, '(ب) زمن أقصى ارتفاع');
         L(`h_max = v₀²·sin²θ / 2g = ${fmt(Hm, 2)} m`, 2, WHITE, '(ج) أقصى ارتفاع');
         L(`R = v₀²·sin2θ / g = ${v0}²·sin${2 * P.a}° / ${g} = ${fmt(R, 2)} m`, 3, WHITE, '(د) المدى الأفقي');
-        L(`t = ${fmt(T, 2)} s , vx = ${fmt(vx, 2)} , vy = ${fmt(vyT, 2)} , v = ${fmt(vT, 2)} m/s , tanθ = ${fmt(vyT / vx, 2)}`, 4, '#E15CF5', '(هـ) الاصطدام');
+        L(`t = ${fmt(T, 2)} s , vx = ${fmt(vx, 2)} , vy = ${fmt(vyT, 2)} , v = ${fmt(vT, 2)} m/s`, 4, '#E15CF5', '(هـ) الاصطدام');
+        L(`tanθ = vy / vx = ${fmt(vyT / vx, 2)}  ⇒  θ = ${fmt(angT, 1)}° تحت الأفق`.replace(' تحت الأفق', ''), 5, '#FFD84D', 'زاوية الاصطدام تحت الأفق');
+        if (P.a === 45) {
+          label('ملاحظة: عند الزاوية 45° يكون المدى الأفقي أكبر ما يمكن', W / 2, 22, '#32D17A', 'center', 16);
+          label(`R_max = v₀² / g = ${v0}² / ${g} = ${fmt(Rmax, 2)} m`, W / 2, 44, '#32D17A', 'center', 15);
+        } else label(`الزاويتان ${P.a}° و ${90 - P.a}° تعطيان نفس المدى، وأكبر مدى عند الزاوية 45°`, W / 2, 22, DIM, 'center', 14);
       }
     },
     circular(t) {
