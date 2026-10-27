@@ -577,7 +577,7 @@ const SIMS = {
   accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
   freefall:   { title: 'السقوط الحر', sub: 'أنبوبة الريشة والعملة، والسقوط على الأرض والقمر والمريخ', glyph: 'drop', theme: 6 },
   vectors:    { title: 'جمع المتجهات وتحليلها', sub: 'محصلة عدة قوى بطريقة تحليل المتجهات', glyph: 'vectors', theme: 2 },
-  projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 7 },
+  projectile: { title: 'حركة المقذوفات', sub: 'أمثلة الكتاب محلولة خطوة بخطوة: إطلاق أفقي وإطلاق بزاوية', glyph: 'vectors', theme: 7 },
   circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
   com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'box', theme: 0 },
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
@@ -1248,7 +1248,7 @@ const LAWS = {
   accel: 'معادلات الحركة المتسارعة بانتظام: <code>v = v₀ + a·t</code> و<code>Δx = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·Δx</code>. اجعل التسارع سالباً وشاهد الجسم يتباطأ ثم يعود.',
   freefall: 'في السقوط الحر من السكون: <code>v = g·t</code> و<code>h = ½·g·t²</code>. في «الريشة والعملة»: في الأنبوبة التي بها هواء تصل العملة أولاً لأن مقاومة الهواء تؤثر في الريشة أكثر، وفي الأنبوبة المفرغة من الهواء تصلان معاً. <b>الاستنتاج:</b> في غياب الهواء تسقط جميع الأجسام بنفس التسارع <code>g</code> مهما اختلفت كتلها وأشكالها.',
   vectors: 'طريقة تحليل المتجهات: نحلّل كل قوة إلى مركبتين <code>Fx = F cosθ</code> و<code>Fy = F sinθ</code>، ثم نجمع المركبات: <code>ΣFx</code> و<code>ΣFy</code>، فتكون المحصلة <code>F<sub>R</sub> = √(ΣFx² + ΣFy²)</code> واتجاهها <code>tanθ = ΣFy / ΣFx</code>. الزوايا مقيسة من محور x الموجب عكس عقارب الساعة، فالقوة التي تصنع 40° مع محور x السالب زاويتها 140°.',
-  projectile: 'المدى <code>R = v₀² sin2θ / g</code> وأقصى ارتفاع <code>H = v₀² sin²θ / 2g</code>. السهم البرتقالي هو متجه السرعة. لاحظ أن الزاويتين 30° و60° تعطيان المدى نفسه.',
+  projectile: 'بإهمال مقاومة الهواء تكون السرعة الأفقية <code>vx</code> ثابتة (السهم الأزرق)، والحركة الرأسية منتظمة العجلة <code>g</code> (السهم البرتقالي <code>vy</code>). <b>إطلاق أفقي:</b> <code>Δy = ½gt²</code> و<code>Δx = v·t</code>. <b>إطلاق بزاوية:</b> معادلة المسار <code>y = (−g / 2v₀²cos²θ)x² + tanθ·x</code>، وزمن الوصول لأقصى ارتفاع <code>t = v₀sinθ / g</code>، و<code>h<sub>max</sub> = v₀²sin²θ / 2g</code>، و<code>R = v₀²sin2θ / g</code>. زمن الصعود يساوي زمن الهبوط، ومقدار السرعة عند الاصطدام يساوي السرعة الابتدائية.',
   circular: 'القوة الجاذبة المركزية <code>Fc = m·v² / r</code> والتسارع المركزي <code>ac = v² / r</code>. القوة (الوردي) تتجه دائماً نحو المركز والسرعة (الأزرق) مماسة للمسار. اقطع الخيط وشاهد ماذا يحدث.',
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
@@ -1287,8 +1287,11 @@ const SIMCTL = {
     { id: 't3', label: 'زاوية F₃ مع محور x الموجب', min: 0, max: 355, step: 5, v: 270, unit: '°' },
   ],
   projectile: [
-    { id: 'v', label: 'السرعة الابتدائية', min: 5, max: 30, step: 1, v: 20, unit: 'm/s' },
-    { id: 'a', label: 'زاوية الإطلاق', min: 10, max: 80, step: 1, v: 45, unit: '°' },
+    { id: 'ex', type: 'seg', keep: true, label: 'المثال', opts: [{ t: 'مثال (2): إطلاق بزاوية', v: 2 }, { t: 'مثال (1): إطلاق أفقي', v: 1 }] },
+    { id: 'v', label: 'السرعة الابتدائية v₀', min: 5, max: 30, step: 0.5, v: 20, unit: 'm/s' },
+    { id: 'a', label: 'زاوية الإطلاق θ (للإطلاق بزاوية)', min: 10, max: 80, step: 5, v: 60, unit: '°' },
+    { id: 'h', label: 'الارتفاع Δy (للإطلاق الأفقي)', min: 5, max: 60, step: 5, v: 20, unit: 'm' },
+    { id: 'g', type: 'seg', keep: true, label: 'عجلة الجاذبية g', opts: [{ t: '10 m/s² (كما في الكتاب)', v: 10 }, { t: '9.8 m/s²', v: 9.8 }] },
     { type: 'btn', label: 'أطلق من جديد' },
   ],
   circular: [
@@ -1575,27 +1578,54 @@ function startSim(k) {
       } else label('المحصلة صفر: القوى متزنة', tx + tw, by + 54, '#32D17A', 'right', 16);
     },
     projectile(t) {
-      const g = 9.8, v = P.v, th = P.a * D, vx = v * Math.cos(th), vy = v * Math.sin(th);
-      const T = 2 * vy / g, R = vx * T, Hm = vy * vy / (2 * g);
-      setRO([['المدى', `${fmt(R, 1)} m`], ['أقصى ارتفاع', `${fmt(Hm, 1)} m`], ['زمن التحليق', `${fmt(T, 2)} s`]]);
-      const ox = 50, oy = H - 50, sc = (W - 90) / 95;
+      if (cv._ex !== P.ex) {
+        cv._ex = P.ex;
+        const pre = P.ex === 2 ? { v: 20, a: 60 } : { v: 12.5, h: 20 };
+        Object.entries(pre).forEach(([id, v]) => { const el = document.getElementById(id); if (el) { el.value = v; el.oninput(); } });
+      }
+      const g = P.g, horiz = P.ex === 1, v0 = P.v, th = horiz ? 0 : P.a * D, h0 = horiz ? P.h : 0;
+      const vx = v0 * Math.cos(th), vy0 = v0 * Math.sin(th);
+      const T = (vy0 + Math.sqrt(vy0 * vy0 + 2 * g * h0)) / g, R = vx * T, tUp = vy0 / g, Hm = h0 + vy0 * vy0 / (2 * g);
+      const vyT = vy0 - g * T, vT = Math.hypot(vx, vyT), angT = Math.atan2(-vyT, vx) / D;
+      setRO(horiz ? [['زمن السقوط t', `${fmt(T, 2)} s`], ['الإزاحة الأفقية Δx', `${fmt(R, 2)} m`], ['السرعة عند الاصطدام', `${fmt(vT, 2)} m/s`]]
+                  : [['أقصى ارتفاع', `${fmt(Hm, 2)} m`], ['المدى الأفقي R', `${fmt(R, 2)} m`], ['زمن التحليق', `${fmt(T, 2)} s`]]);
       grid();
-      line(0, oy, W, oy, 'rgba(255,255,255,.25)', 2);
-      for (let m = 0; m <= 90; m += 10) { const x = ox + m * sc; line(x, oy, x, oy + 8, 'rgba(255,255,255,.25)'); label(m + '', x, oy + 30, 'rgba(255,255,255,.4)', 'center'); }
-      label('m', W - 20, oy + 30, 'rgba(255,255,255,.4)', 'center');
-      const tt = reduce ? T : Math.min(t * 1.2, T);
-      ctx.strokeStyle = 'rgba(76,134,255,.35)'; ctx.lineWidth = 2; ctx.setLineDash([6, 8]); ctx.beginPath();
-      for (let s = 0; s <= 60; s++) { const q = T * s / 60, x = ox + vx * q * sc, y = oy - (vy * q - g * q * q / 2) * sc; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-      ctx.stroke(); ctx.setLineDash([]);
-      ctx.strokeStyle = BLUE; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath();
-      for (let s = 0; s <= 80; s++) { const q = tt * s / 80, x = ox + vx * q * sc, y = oy - (vy * q - g * q * q / 2) * sc; s ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-      ctx.stroke();
-      const bx = ox + vx * tt * sc, by = oy - (vy * tt - g * tt * tt / 2) * sc, vyn = vy - g * tt;
-      ball(bx, by, 11, WHITE, BLUE);
-      arrow(bx, by, bx + vx * 2.2, by - vyn * 2.2, ORANGE, 3);
-      ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 46, -th, 0); ctx.stroke();
-      label(P.a + '°', ox + 54, oy - 12, WHITE);
-      if (tt >= T) { ctx.fillStyle = 'rgba(51,194,255,.25)'; ctx.beginPath(); ctx.arc(ox + R * sc, oy, 14, 0, 7); ctx.fill(); }
+      // drawing area: top part of the canvas
+      const top = 40, base = 290, left = horiz ? 120 : 60, sc = Math.min((W - left - 70) / Math.max(R, 5), (base - top - 20) / Math.max(Hm, 3));
+      const X = x => left + x * sc, Y = y => base - y * sc, pos = q => [vx * q, h0 + vy0 * q - g * q * q / 2];
+      ctx.fillStyle = 'rgba(52,209,122,.07)'; ctx.fillRect(0, base, W, 8); line(0, base, W, base, 'rgba(255,255,255,.35)', 2);
+      if (h0) { box(left - 70, Y(h0), 70, base - Y(h0), '#2A2D35', 4); label('Δy', left - 35, (Y(h0) + base) / 2 - 4, WHITE, 'center', 14); label(`${h0} m`, left - 35, (Y(h0) + base) / 2 + 14, WHITE, 'center', 14); }
+      ctx.strokeStyle = 'rgba(225,92,245,.3)'; ctx.lineWidth = 2; ctx.setLineDash([6, 7]); ctx.beginPath();
+      for (let i = 0; i <= 80; i++) { const [x, y] = pos(T * i / 80); i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y)); } ctx.stroke(); ctx.setLineDash([]);
+      if (!horiz) { line(X(vx * tUp), Y(Hm), X(vx * tUp), base, 'rgba(255,216,77,.5)', 1.5, [4, 5]); label(`h_max = ${fmt(Hm, 2)} m`, X(vx * tUp) + 8, (Y(Hm) + base) / 2, '#FFD84D', 'left', 13); }
+      line(X(0), base + 18, X(R), base + 18, 'rgba(255,255,255,.5)', 1.5); label(`${horiz ? 'Δx' : 'R'} = ${fmt(R, 2)} m`, X(R / 2), base + 36, WHITE, 'center', 14);
+      const cyc = T + 2.2, tt = reduce ? T : Math.min((t % cyc) * (T > 4 ? T / 4 : 1), T);
+      ctx.strokeStyle = '#E15CF5'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath();
+      for (let i = 0; i <= 80; i++) { const [x, y] = pos(tt * i / 80); i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y)); } ctx.stroke();
+      const [bx, by] = pos(tt), vyNow = vy0 - g * tt, k = 2.4;
+      ball(X(bx), Y(by), 9, WHITE, '#E15CF5');
+      arrow(X(bx), Y(by), X(bx) + vx * k, Y(by), BLUE, 3); label('vx', X(bx) + vx * k + 5, Y(by) + 5, BLUE, 'left', 13);
+      if (Math.abs(vyNow) > .3) { arrow(X(bx), Y(by), X(bx), Y(by) - vyNow * k, ORANGE, 3); label('vy', X(bx) + 6, Y(by) - vyNow * k / 2, ORANGE, 'left', 13); }
+      if (tt >= T) { arrow(X(bx), Y(by), X(bx) + vx * k, Y(by) - vyT * k, WHITE, 3); label(`v = ${fmt(vT, 2)} m/s`, X(bx) + vx * k + 6, Y(by) - vyT * k, WHITE, 'left', 13); }
+      if (!horiz) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(X(0), base, 30, -th, 0); ctx.stroke(); label(`${P.a}°`, X(0) + 36, base - 8, WHITE, 'left', 13); }
+      // worked solution, like the textbook
+      box(16, 336, W - 32, 156, 'rgba(255,255,255,.04)', 12);
+      // Arabic tag on the right, formula left-to-right, so the two directions never mix.
+      const L = (txt, i, c = WHITE, tag = '') => { label(txt, 32, 362 + i * 25, c, 'left', 15); if (tag) label(tag, W - 32, 362 + i * 25, c, 'right', 15); };
+      if (horiz) {
+        L(`vx = v = ${fmt(v0, 2)} m/s ,  vy₀ = 0 ,  a = g = ${g} m/s²`, 0, DIM, 'المعلوم');
+        L(`Δy = ½·g·t²  ⇒  ${h0} = ${fmt(g / 2, 1)}·t²  ⇒  t = ${fmt(T, 2)} s`, 1);
+        L(`Δx = v·t = ${fmt(v0, 2)} × ${fmt(T, 2)} = ${fmt(R, 2)} m`, 2);
+        L(`v = Δx / t = ${fmt(R, 2)} / ${fmt(T, 2)} = ${fmt(v0, 2)} m/s`, 3, '#E15CF5');
+        L(`vy = −g·t = ${fmt(vyT, 2)} m/s ,  v = √(vx² + vy²) = ${fmt(vT, 2)} m/s`, 4, DIM, 'عند الاصطدام');
+      } else {
+        const A2 = -g / (2 * v0 * v0 * Math.cos(th) ** 2);
+        L(`y = (−g / 2v₀²cos²θ)·x² + tanθ·x  ⇒  y = ${fmt(A2, 3)}x² + ${fmt(Math.tan(th), 2)}x`, 0, WHITE, '(أ) معادلة المسار');
+        L(`t = v₀·sinθ / g = ${v0}·sin${P.a}° / ${g} = ${fmt(tUp, 2)} s`, 1, WHITE, '(ب) زمن أقصى ارتفاع');
+        L(`h_max = v₀²·sin²θ / 2g = ${fmt(Hm, 2)} m`, 2, WHITE, '(ج) أقصى ارتفاع');
+        L(`R = v₀²·sin2θ / g = ${v0}²·sin${2 * P.a}° / ${g} = ${fmt(R, 2)} m`, 3, WHITE, '(د) المدى الأفقي');
+        L(`t = ${fmt(T, 2)} s , vx = ${fmt(vx, 2)} , vy = ${fmt(vyT, 2)} , v = ${fmt(vT, 2)} m/s , tanθ = ${fmt(vyT / vx, 2)}`, 4, '#E15CF5', '(هـ) الاصطدام');
+      }
     },
     circular(t) {
       const m = P.m, r = P.r, v = P.v, w = v / r, Fc = m * v * v / r, ac = v * v / r, Tp = 2 * Math.PI * r / v;
