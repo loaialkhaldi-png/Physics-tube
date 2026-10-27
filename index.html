@@ -1273,7 +1273,7 @@ const SIMCTL = {
     { id: 'mode', type: 'seg', label: 'التجربة', opts: [{ t: 'الريشة والعملة', v: 1 }, { t: 'السقوط من ارتفاع', v: 0 }] },
     { id: 'h', label: 'الارتفاع (للسقوط من ارتفاع)', min: 5, max: 100, step: 5, v: 45, unit: 'm' },
     { id: 'g', type: 'seg', label: 'المكان', opts: [{ t: 'الأرض', v: 9.8 }, { t: 'المريخ', v: 3.71 }, { t: 'القمر', v: 1.62 }] },
-    { type: 'btn', label: 'أسقط من جديد' },
+    { type: 'btn', label: 'أسقط الأجسام', act: 'drop', icon: 'down' },
   ],
   vectors: [
     { id: 'A', label: 'مقدار المتجه A', min: 1, max: 10, step: 0.5, v: 6, unit: '' },
@@ -1397,7 +1397,10 @@ function startSim(k) {
     const sync = () => { P[c.id] = +el.value; out.textContent = `${fmt(el.value, dec)} ${c.unit}`.trim(); el.style.setProperty('--p', ((el.value - c.min) / (c.max - c.min) * 100) + '%'); };
     el.oninput = () => { sync(); if (!c.keep) reset(); }; sync();
   });
-  document.querySelectorAll('[data-simbtn]').forEach(b => b.onclick = () => { if (b.dataset.simbtn === 'cut') st.cutReq = true; else reset(); });
+  document.querySelectorAll('[data-simbtn]').forEach(b => b.onclick = () => {
+    if (b.dataset.simbtn === 'cut') st.cutReq = true;
+    else { reset(); if (b.dataset.simbtn === 'drop') st.drop = true; }
+  });
 
   const setRO = items => { const h = items.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join(''); if (ro.innerHTML !== h) ro.innerHTML = h; };
   const grid = () => {
@@ -1422,7 +1425,8 @@ function startSim(k) {
 
   // Feather and coin in two glass tubes: one with air, one emptied of air (shown in slow motion).
   const tubes = t => {
-    const g = P.g, L = 1.2, slow = .2, q = reduce ? 3 : t * slow;
+    // Feather and coin wait at the top until the student presses «أسقط الأجسام».
+    const g = P.g, L = 1.2, slow = .2, q = !st.drop ? 0 : reduce ? 3 : t * slow;
     const fall = (k, q) => k ? Math.min(L, (g / k) * q - (g / (k * k)) * (1 - Math.exp(-k * q))) : Math.min(L, .5 * g * q * q);
     const tVac = Math.sqrt(2 * L / g);
     const air = { coin: fall(.25, q), feather: fall(g / .45, q) }, vac = fall(0, q);
@@ -1446,13 +1450,14 @@ function startSim(k) {
     };
     const ax = 250, vx = 560;
     tube(ax, false); tube(vx, true);
-    coin(ax - 12, Yp(air.coin)); const fl = featherDone ? 0 : Math.sin(t * 5) * 10; feather(ax + 12 + fl, Yp(air.feather) - 2, -.5 + Math.sin(t * 4) * .4);
+    coin(ax - 12, Yp(air.coin)); const still = featherDone || !st.drop, fl = still ? 0 : Math.sin(t * 5) * 10; feather(ax + 12 + fl, Yp(air.feather) - 2, -.5 + (still ? 0 : Math.sin(t * 4) * .4));
     coin(vx - 12, Yp(vac)); feather(vx + 12, Yp(vac) - 2, -.5);
     label('أنبوبة بها هواء', ax, bot + 38, WHITE, 'center', 17);
     label('أنبوبة مفرغة من الهواء', vx, bot + 38, BLUE, 'center', 17);
     label('✓', vx + 100, bot + 38, '#32D17A', 'center', 20);
     label('حركة بطيئة', W - 20, 62, DIM, 'right', 14);
     label('ما الذي يصل إلى الطرف الثاني أولاً؟', W / 2, 30, WHITE, 'center', 18);
+    if (!st.drop) { box(W / 2 - 170, H - 34, 340, 30, 'rgba(47,140,255,.18)', 15); label('اضغط «أسقط الأجسام» أسفل الشاشة لتبدأ', W / 2, H - 13, '#7FB2FF', 'center', 15); }
     if (coinDone) label(featherDone ? 'العملة وصلت أولاً' : 'العملة وصلت، والريشة ما زالت تسقط', ax + 44, bot - 12, ORANGE, 'left', 14);
     if (vacDone) label('وصلتا معاً', vx + 44, bot - 12, '#32D17A', 'left', 15);
     if (featherDone && vacDone) label('الاستنتاج: في الفراغ تسقط الأجسام بنفس التسارع g', W / 2, H - 6, '#32D17A', 'center', 16);
