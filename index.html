@@ -1321,7 +1321,7 @@ const SIMCTL = {
   eqmotion: [
     { id: 'v0', label: 'السرعة الابتدائية v₀', min: 0, max: 20, step: 1, v: 4, unit: 'm/s' },
     { id: 'a', label: 'التسارع a', min: -4, max: 4, step: 0.5, v: 2, unit: 'm/s²' },
-    { id: 'gr', type: 'seg', keep: true, label: 'الرسم البياني', opts: [{ t: 'Δx – t', v: 0 }, { t: 'v – t', v: 1 }, { t: 'Δx – t²', v: 2 }, { t: 'v² – t', v: 3 }, { t: 'v² – Δx', v: 4 }] },
+    { id: 'gr', type: 'seg', keep: true, label: 'الرسم البياني', opts: [{ t: 'Δx – t', v: 0 }, { t: 'v – t', v: 1 }, { t: 'Δx – t²', v: 2 }, { t: 'v² – Δx', v: 3 }] },
     { type: 'btn', label: 'ابدأ من جديد' },
   ],
   trajectory: [
@@ -1724,12 +1724,11 @@ function startSim(k) {
       ctx.restore();
       if (Math.abs(v) > .05) { arrow(cx, road - 58, cx + v * 5, road - 58, TEAL, 3); label('v', cx + v * 5 + (v > 0 ? 8 : -18), road - 52, TEAL, 'left', 15); }
       if (a) { arrow(cx, road - 78, cx + a * 12, road - 78, ORANGE, 3); label('a', cx + a * 12 + (a > 0 ? 8 : -18), road - 72, ORANGE, 'left', 15); }
-      // graph: Δx–t, v–t, Δx–t² or v²–t
+      // graph: Δx–t, v–t, Δx–t² or v²–Δx
       const gx = 70, gy = 455, gw = 330, gh = 230, G4 = [
         { h: q => q, f: xAt, xl: 't (s)', yl: 'Δx (m)', c: ORANGE, hmax: T, ticks: [2, 4, 6] },
         { h: q => q, f: q => v0 + a * q, xl: 't (s)', yl: 'v (m/s)', c: TEAL, hmax: T, ticks: [2, 4, 6] },
         { h: q => q * q, f: xAt, xl: 't² (s²)', yl: 'Δx (m)', c: ORANGE, hmax: T * T, ticks: [12, 24, 36] },
-        { h: q => q, f: q => (v0 + a * q) ** 2, xl: 't (s)', yl: 'v² (m²/s²)', c: PURPLE, hmax: T, ticks: [2, 4, 6] },
         { h: xAt, f: q => (v0 + a * q) ** 2, xl: 'Δx (m)', yl: 'v² (m²/s²)', c: PURPLE },
       ][P.gr], f = G4.f;
       // Horizontal range: fixed for time axes, measured for Δx (it can go negative when the car reverses).
@@ -1750,7 +1749,6 @@ function startSim(k) {
       const cap = [[a ? 'منحنى (قطع مكافئ)' : 'خط مستقيم: السرعة ثابتة', ''],
         [a ? 'خط مستقيم ميله يساوي التسارع' : 'خط أفقي: السرعة ثابتة', a ? `a = ${fmt(a, 1)} m/s²` : ''],
         v0 === 0 ? ['خط مستقيم ميله يساوي نصف التسارع', `½a = ${fmt(a / 2, 2)} m/s²`] : ['ليس خطاً مستقيماً، اجعل السرعة الابتدائية صفراً', 'v₀ = 0'],
-        [!a ? 'خط أفقي: السرعة ثابتة' : 'منحنى: مربع السرعة يتغير مع الزمن', !a ? '' : v0 === 0 ? 'v² = a²·t²' : 'v² = (v₀ + a·t)²'],
         [!a ? 'خط أفقي: السرعة ثابتة' : 'خط مستقيم ميله يساوي ضعف التسارع', !a ? '' : `2a = ${fmt(2 * a, 1)} m/s²`]][P.gr];
       ctx.font = '600 14px -apple-system, "SF Arabic", "Noto Sans Arabic", Arial, sans-serif';
       const w1 = ctx.measureText(cap[0]).width, w2 = cap[1] ? ctx.measureText(cap[1]).width + 10 : 0, cx0 = gx + gw / 2 + (w1 + w2) / 2;
