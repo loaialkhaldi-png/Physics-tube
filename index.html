@@ -317,6 +317,76 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .count { min-width: 26px; height: 26px; padding: 0 8px; border-radius: 13px; display: grid; place-items: center; background: rgba(47,140,255,.18); color: var(--accent); font-weight: 700; font-size: 13px; }
 .editor .ed-row .field { min-width: 0; }
 .editor select { width: 100%; min-height: 48px; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--surface-2); color: var(--fg); font: inherit; font-size: 15px; }
+.qbanner { position: relative; display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 18px; padding: 16px; border-radius: var(--r-md); text-align: right; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 100%, rgba(168,102,255,.55), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(47,140,255,.5), transparent 60%), #141A33; border: 1px solid rgba(140,150,255,.3); }
+.qbanner:active { transform: scale(.98); }
+.qb-ic { width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.14); flex: none; }
+.qb-ic .ico { width: 26px; height: 26px; }
+.qbanner .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .qbanner .t b { font-size: 18px; } .qbanner .t small { color: rgba(255,255,255,.75); font-size: 13px; }
+.qb-go { display: flex; align-items: center; gap: 2px; padding: 8px 12px; border-radius: 999px; background: #fff; color: #141A33; font-weight: 700; font-size: 14px; flex: none; }
+.qb-go .ico { width: 16px; height: 16px; transform: scaleX(-1); }
+.qhero { position: relative; overflow: hidden; border-radius: var(--r-lg); padding: 26px 22px; background: radial-gradient(90% 120% at 10% 110%, #6A1FD1 0%, transparent 60%), radial-gradient(90% 100% at 100% 0%, #1546D6 0%, transparent 65%), #0D1230; display: grid; gap: 6px; }
+.qhero-orb { position: absolute; left: -40px; top: -40px; width: 180px; height: 180px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.12); box-shadow: 0 0 0 30px rgba(255,255,255,.03), 0 0 0 60px rgba(255,255,255,.02); }
+.qhero small { color: rgba(255,255,255,.7); font-weight: 600; font-size: 13px; position: relative; }
+.qhero h1 { font-size: 32px; font-weight: 800; position: relative; }
+.qhero p { color: rgba(255,255,255,.8); font-size: 15px; position: relative; max-width: 34ch; }
+.qmodels { display: grid; gap: 12px; margin-top: 16px; }
+.qmodel { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); text-align: right; width: 100%; position: relative; overflow: hidden; transition: transform .2s; }
+.qmodel::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--qc); display: none; }
+.qmodel:active { transform: scale(.98); }
+.qm-ring { position: relative; width: 64px; height: 64px; flex: none; display: grid; place-items: center; }
+.qm-ring .ring { position: absolute; inset: 0; } .qm-ring b { font-size: 16px; color: var(--qc); font-variant-numeric: tabular-nums; }
+.qmodel .t { flex: 1; min-width: 0; display: grid; gap: 3px; } .qmodel .t b { font-size: 18px; } .qmodel .t small { color: var(--muted); font-size: 13px; }
+.qm-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.qm-go { flex: none; padding: 8px 14px; border-radius: 999px; background: color-mix(in srgb, var(--qc) 22%, transparent); color: var(--qc); font-weight: 700; font-size: 14px; }
+.stars { display: inline-flex; gap: 2px; } .stars i { font-style: normal; color: rgba(255,255,255,.18); } .stars i.on { color: #FFC83D; text-shadow: 0 0 10px rgba(255,200,61,.5); }
+.qhead { display: grid; text-align: center; } .qhead b { font-size: 15px; } .qhead small { color: var(--muted); font-size: 12px; }
+.qstreak { min-width: 42px; height: 42px; padding: 0 10px; border-radius: 21px; display: flex; align-items: center; justify-content: center; gap: 2px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-weight: 700; font-variant-numeric: tabular-nums; }
+.qstreak .ico { width: 16px; height: 16px; } .qstreak.hot { color: #FFB020; border-color: rgba(255,176,32,.5); box-shadow: 0 0 16px rgba(255,176,32,.25); }
+.qbar { display: flex; gap: 4px; margin-top: 4px; } .qbar i { flex: 1; height: 6px; border-radius: 3px; background: var(--surface-2); }
+.qbar i.cur { background: var(--qc); } .qbar i.ok { background: #32D17A; } .qbar i.no { background: #FF6B6B; }
+.qcard { margin-top: 16px; padding: 20px 18px; border-radius: var(--r-lg); background: linear-gradient(160deg, color-mix(in srgb, var(--qc) 14%, var(--surface)), var(--surface)); border: 1px solid color-mix(in srgb, var(--qc) 30%, var(--line)); animation: rise .35s cubic-bezier(.2,.8,.2,1); }
+.qtype { display: inline-block; padding: 4px 10px; border-radius: 999px; background: color-mix(in srgb, var(--qc) 22%, transparent); color: var(--qc); font-size: 12px; font-weight: 700; }
+.qq { margin-top: 12px; font-size: 19px; line-height: 1.6; font-weight: 700; }
+.qopts { display: grid; gap: 10px; margin-top: 16px; }
+.qopt { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid transparent; text-align: right; font-size: 16px; transition: transform .15s, background .2s, border-color .2s; }
+.qopt:not([disabled]):active { transform: scale(.98); }
+.qopt .ql { width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; background: rgba(255,255,255,.08); font-weight: 700; flex: none; }
+.qopt .qt { flex: 1; min-width: 0; line-height: 1.5; }
+.qopt.right { background: rgba(50,209,122,.14); border-color: #32D17A; } .qopt.right .ql { background: #32D17A; color: #062B16; } .qopt.right .ico { color: #32D17A; }
+.qopt.wrong { background: rgba(255,107,107,.13); border-color: #FF6B6B; animation: shake .4s; } .qopt.wrong .ql { background: #FF6B6B; color: #2B0606; }
+.qopt.dim { opacity: .5; }
+@keyframes shake { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+.qnum { display: flex; align-items: center; gap: 10px; margin-top: 16px; padding: 6px 14px; border-radius: 16px; background: var(--surface-2); border: 1.5px solid var(--line); }
+.qnum:focus-within { border-color: var(--qc); }
+.qnum input { flex: 1; min-width: 0; height: 50px; border: 0; background: transparent; color: var(--fg); font: inherit; font-size: 22px; font-weight: 700; outline: none; text-align: left; }
+.qnum .qu { color: var(--muted); font-weight: 700; } .qnum.right { border-color: #32D17A; background: rgba(50,209,122,.12); } .qnum.wrong { border-color: #FF6B6B; background: rgba(255,107,107,.1); }
+.qcheck { margin-top: 12px; width: 100%; }
+.qfb { margin-top: 14px; padding: 16px; border-radius: var(--r-md); display: grid; gap: 10px; animation: rise .3s; }
+.qfb.ok { background: rgba(50,209,122,.1); border: 1px solid rgba(50,209,122,.35); } .qfb.no { background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.3); }
+.qfb > b { font-size: 18px; } .qfb.ok > b { color: #32D17A; } .qfb.no > b { color: #FF8A8A; }
+.qwhy { padding: 12px 14px; border-radius: 14px; background: rgba(0,0,0,.25); font-size: 15px; line-height: 1.8; color: var(--fg); }
+.qwhy small { display: block; color: var(--muted); font-weight: 700; font-size: 12px; margin-bottom: 4px; }
+.qwhy code { font-family: ui-monospace, "SF Mono", Menlo, monospace; direction: ltr; unicode-bidi: isolate; color: #9EC2FF; }
+.qfb .btn { width: 100%; } .qfb .btn .ico { width: 18px; height: 18px; }
+.qscore { margin-top: 14px; text-align: center; color: var(--muted); font-size: 14px; } .qscore b { color: var(--fg); }
+.qres { position: relative; overflow: hidden; display: grid; justify-items: center; gap: 8px; text-align: center; padding: 26px 18px; border-radius: var(--r-lg); background: radial-gradient(80% 70% at 50% 0%, color-mix(in srgb, var(--qc) 35%, transparent), transparent 70%), var(--surface); border: 1px solid var(--line); }
+.qr-ring { position: relative; width: 150px; height: 150px; display: grid; place-items: center; align-content: center; }
+.qr-ring .ring { position: absolute; inset: 0; } .qr-ring b { font-size: 38px; font-weight: 800; font-variant-numeric: tabular-nums; } .qr-ring small { color: var(--muted); font-size: 13px; }
+.qres .stars { font-size: 30px; } .qres h1 { font-size: 26px; font-weight: 800; } .qres p { color: var(--muted); max-width: 32ch; }
+.qr-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; margin-top: 8px; }
+.qr-stats div { background: rgba(255,255,255,.05); border-radius: 14px; padding: 10px 4px; display: grid; } .qr-stats b { font-size: 18px; font-variant-numeric: tabular-nums; } .qr-stats small { color: var(--muted); font-size: 11px; }
+.qr-badge { margin-top: 6px; padding: 6px 12px; border-radius: 999px; background: rgba(255,200,61,.15); color: #FFC83D; font-weight: 700; font-size: 13px; }
+.confetti { position: absolute; inset: 0; pointer-events: none; }
+.confetti i { position: absolute; top: -12px; left: var(--x); width: 8px; height: 12px; border-radius: 2px; background: var(--c); animation: fall 1.8s var(--d) ease-in forwards; opacity: 0; }
+@keyframes fall { 0% { opacity: 1; transform: translateY(0) rotate(0); } 100% { opacity: 0; transform: translateY(420px) rotate(540deg); } }
+.qlist { display: grid; gap: 8px; }
+.qli { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.qli summary { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; cursor: pointer; list-style: none; } .qli summary::-webkit-details-marker { display: none; }
+.qli .n { width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center; flex: none; font-weight: 800; } .qli .n .ico { width: 16px; height: 16px; }
+.qli.ok .n { background: rgba(50,209,122,.16); color: #32D17A; } .qli.no .n { background: rgba(255,107,107,.16); color: #FF6B6B; }
+.qli .t { flex: 1; font-size: 14px; line-height: 1.6; }
+.qli-b { padding: 0 14px 14px; display: grid; gap: 8px; font-size: 14px; } .qli-b .lbl { color: var(--muted); } .qli-b .bad { color: #FF8A8A; }
 .install { margin-top: 12px; padding: 16px; border-radius: var(--r-md); background: linear-gradient(135deg, #10203F, #0B1226); border: 1px solid rgba(47, 140, 255, .25); display: grid; gap: 6px; }
 .install b { font-size: 16px; }
 .install p { color: rgba(255, 255, 255, .78); font-size: 14px; }
@@ -434,6 +504,7 @@ body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; 
 <nav class="tabbar" id="tabbar" aria-label="الأقسام"></nav>
 <div id="layer"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+<script src="quiz-bank.js"></script>
 <script>
 /* =====================================================================
    ربط لوحة المعلم بـ Supabase
@@ -690,6 +761,7 @@ const ICONS = {
   sigma: '<path d="M18 4H6l6 8-6 8h12"/>',
   exam: '<path d="M9 3h6l1 2h2.5A1.5 1.5 0 0 1 20 6.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 4 19.5v-13A1.5 1.5 0 0 1 5.5 5H8zM8.5 12.5l2 2 4.5-4.5M8.5 17.5h7"/>',
   pencil: '<path d="M4 20l4.5-1 10-10a2.1 2.1 0 0 0-3-3l-10 10zM13.5 7.5l3 3"/>',
+  bolt2: '<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>',
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   grip: '<path d="M5 8h14M5 12h14M5 16h14"/>',
   up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
@@ -1083,6 +1155,7 @@ function vHome() {
       </button>
     </div>
     ${cont}
+    ${quizBanner()}
     <h2 class="sec">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
     ${termSeg()}
     ${groups.map(([name, items]) => `${name ? `<div class="label unit-name">${esc(name)}</div>` : ''}
@@ -1325,6 +1398,128 @@ function vAdmin() {
     <div class="list" id="st-list">${studentRows()}</div>
     <p class="hint" style="margin-top:10px">لحذف حساب طالب أو إعادة تعيين كلمة مروره: Supabase ← Authentication ← Users.</p>
   </div>`;
+}
+
+/* ---------------- اختبر نفسك (Quiz) ---------------- */
+const QBANK = () => (window.QUIZ_BANK || {})[S.grade] || [];
+const QCOL = ['#4C86FF', '#A866FF', '#2BD4B0', '#FF8A3D', '#FF4D7A', '#32D17A'];
+const Q = { m: 0, i: 0, order: [], perm: [], ans: [], start: 0, streak: 0, best: 0, done: false, review: false };
+const qBest = () => store.get('quiz', {});
+const qKey = m => `${S.grade}.${m}`;
+const shuffle = a => { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; };
+const ring = (pct, size, col, w = 8) => { const r = size / 2 - w, c = 2 * Math.PI * r; return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="${w}"/><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${c * pct / 100} ${c}" transform="rotate(-90 ${size / 2} ${size / 2})"/></svg>`; };
+const stars = pct => pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
+const starRow = n => `<span class="stars">${[0, 1, 2].map(i => `<i class="${i < n ? 'on' : ''}">★</i>`).join('')}</span>`;
+function quizBanner() {
+  const bank = QBANK(); if (!bank.length) return '';
+  const b = qBest(), done = bank.filter((_, m) => b[qKey(m)]).length;
+  return `<button class="qbanner" data-go="quiz">
+    <span class="qb-ic">${icon('exam')}</span>
+    <span class="t"><b>اختبر نفسك</b><small>الاختبار القصير · ${ar(bank.length)} نماذج${done ? ` · أنجزت ${ar(done)}` : ''}</small></span>
+    <span class="qb-go">ابدأ ${icon('chev')}</span></button>`;
+}
+function vQuizHub() {
+  const bank = QBANK(), b = qBest();
+  return `<div class="view push">
+    ${navBar()}
+    <section class="qhero">
+      <div class="qhero-orb" aria-hidden="true"></div>
+      <small>${esc(G().name)} · الفصل الدراسي الأول</small>
+      <h1>اختبر نفسك</h1>
+      <p>نماذج الاختبار القصير. أجب عن الأسئلة وشاهد التصحيح والحل فوراً بعد كل سؤال.</p>
+    </section>
+    ${bank.length ? `<div class="qmodels">${bank.map((md, m) => { const r = b[qKey(m)], c = QCOL[m % QCOL.length]; return `<button class="qmodel" data-go="qrun:${m}" style="--qc:${c}">
+      <span class="qm-ring">${ring(r ? r.best : 0, 64, c, 6)}<b>${r ? r.best + '%' : ar(m + 1)}</b></span>
+      <span class="t"><b>${esc(md.t)}</b><small>${esc(md.topics)}</small><small class="qm-meta">${ar(md.qs.length)} سؤالاً${r ? ` · أفضل نتيجة ${r.best}% ${starRow(stars(r.best))}` : ' · لم تجربه بعد'}</small></span>
+      <span class="qm-go">${r ? 'أعد' : 'ابدأ'}</span></button>`; }).join('')}</div>`
+      : '<p class="law">لا توجد نماذج لهذا الصف بعد.</p>'}
+    <p class="hint" style="margin-top:14px">الأسئلة مأخوذة من نماذج الاختبار القصير ومراجعة القصير. اعتبر g = 10 m/s² ما لم يذكر غير ذلك.</p>
+  </div>`;
+}
+function startQuiz(m) {
+  const md = QBANK()[m]; if (!md) return;
+  Object.assign(Q, { m, i: 0, order: md.qs.map((_, k) => k), ans: [], start: Date.now(), streak: 0, best: 0, done: false, review: false, picked: null });
+  Q.perm = md.qs.map(q => q.o ? shuffle(q.o.map((_, k) => k)) : null);
+}
+// Keep Latin/maths runs (e.g. "Fx = 5 N", "[L/T²]") left-to-right inside Arabic sentences.
+const qtext = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×÷./²³°·()\[\]|,√₀₁₂₃₄αθκπ⁻²]*[A-Za-z0-9²³°)\]|]|[A-Za-z0-9]/g, m => /[A-Za-z=\/\[]/.test(m) && m.includes(' ') || /[A-Za-z]/.test(m) && /[0-9=\/]/.test(m) ? `<bdi dir="ltr">${m}</bdi>` : m);
+const qNumOk = (q, v) => { const tol = q.tol != null ? q.tol : Math.max(Math.abs(q.n) * 0.015, 0.011); return Math.abs(v - q.n) <= tol; };
+const qFmt = v => String(+(+v).toFixed(3));
+function vQuizRun() {
+  const md = QBANK()[Q.m], q = md.qs[Q.i], n = md.qs.length, a = Q.ans[Q.i], c = QCOL[Q.m % QCOL.length];
+  const L = ['أ', 'ب', 'ج', 'د'];
+  const body = q.o
+    ? `<div class="qopts">${Q.perm[Q.i].map((k, j) => { const st = a ? (k === 0 ? 'right' : a.pick === k ? 'wrong' : 'dim') : ''; return `<button class="qopt ${st}" data-act="q-pick" data-k="${k}" ${a ? 'disabled' : ''}>
+        <span class="ql">${L[j]}</span><span class="qt">${qtext(q.o[k])}</span>${st === 'right' ? icon('checkc') : ''}</button>`; }).join('')}</div>`
+    : `<div class="qnum ${a ? (a.ok ? 'right' : 'wrong') : ''}">
+        <input id="q-in" inputmode="decimal" dir="ltr" autocomplete="off" placeholder="اكتب الناتج" value="${a ? esc(a.val) : ''}" ${a ? 'disabled' : ''} aria-label="الإجابة">
+        <span class="qu" dir="ltr">${esc(q.u || '')}</span>
+      </div>
+      ${a ? '' : '<button class="btn primary qcheck" data-act="q-check">تحقّق من الإجابة</button>'}`;
+  const fb = a ? `<div class="qfb ${a.ok ? 'ok' : 'no'}">
+      <b>${a.ok ? ['إجابة صحيحة! 👏', 'أحسنت!', 'ممتاز!', 'رائع!'][Q.i % 4] : 'إجابة غير صحيحة'}</b>
+      ${!a.ok && !q.o ? `<span>الإجابة الصحيحة: <bdi dir="ltr">${qFmt(q.n)} ${esc(q.u || '')}</bdi></span>` : ''}
+      <div class="qwhy"><small>الحل</small>${q.w}</div>
+      <button class="btn primary" data-act="q-next">${Q.i + 1 < n ? 'السؤال التالي' : 'شاهد النتيجة'} ${icon('chev', 'style="transform:scaleX(-1)"')}</button>
+    </div>` : '';
+  const score = Q.ans.filter(x => x && x.ok).length;
+  return `<div class="view push qrun" style="--qc:${c}">
+    <div class="nav"><button class="circle" data-act="back" aria-label="خروج من الاختبار">${icon('back')}</button>
+      <span class="qhead"><b>${esc(md.t)}</b><small>سؤال ${ar(Q.i + 1)} من ${ar(n)}</small></span>
+      <span class="qstreak ${Q.streak >= 2 ? 'hot' : ''}" title="إجابات صحيحة متتالية">${icon('bolt2')}${ar(Q.streak)}</span></div>
+    <div class="qbar">${md.qs.map((_, k) => `<i class="${Q.ans[k] ? (Q.ans[k].ok ? 'ok' : 'no') : k === Q.i ? 'cur' : ''}"></i>`).join('')}</div>
+    <div class="qcard">
+      <span class="qtype">${q.o ? 'اختر الإجابة الصحيحة' : 'احسب'}</span>
+      <h2 class="qq">${qtext(q.q)}</h2>
+      ${body}
+    </div>
+    ${fb}
+    <p class="qscore">نتيجتك حتى الآن: <b>${ar(score)}</b> من ${ar(Q.ans.filter(Boolean).length)}</p>
+  </div>`;
+}
+function vQuizResult() {
+  const md = QBANK()[Q.m], n = md.qs.length, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / n * 100), c = QCOL[Q.m % QCOL.length];
+  const secs = Math.round((Q.end - Q.start) / 1000), mins = Math.floor(secs / 60);
+  const msg = pct >= 90 ? ['ممتاز! 🏆', 'أداء رائع، أنت جاهز للاختبار القصير.'] : pct >= 70 ? ['جيد جداً! 🌟', 'راجع الأسئلة التي أخطأت فيها لتصل إلى الامتياز.'] : pct >= 50 ? ['جيد 👍', 'أنت على الطريق الصحيح، راجع الحلول وأعد المحاولة.'] : ['تحتاج إلى مراجعة 💪', 'شاهد فيديوهات الدروس وراجع الحلول، ثم أعد الاختبار.'];
+  const list = md.qs.map((q, k) => ({ q, k, a: Q.ans[k] })).filter(x => !Q.review || !x.a.ok);
+  return `<div class="view push qrun" style="--qc:${c}">
+    ${navBar()}
+    <section class="qres">
+      ${pct >= 70 ? '<div class="confetti" aria-hidden="true">' + Array.from({ length: 28 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${(i % 7) * .12}s;--c:${QCOL[i % QCOL.length]}"></i>`).join('') + '</div>' : ''}
+      <span class="qr-ring">${ring(pct, 150, pct >= 70 ? '#32D17A' : pct >= 50 ? '#FFB020' : '#FF6B6B', 12)}<b>${pct}%</b><small>${ar(ok)} من ${ar(n)}</small></span>
+      ${starRow(stars(pct))}
+      <h1>${msg[0]}</h1><p>${msg[1]}</p>
+      <div class="qr-stats"><div><b>${ar(ok)}</b><small>صحيحة</small></div><div><b>${ar(n - ok)}</b><small>خاطئة</small></div><div><b>${mins ? ar(mins) + ':' + String(secs % 60).padStart(2, '0') : ar(secs) + ' ث'}</b><small>الوقت</small></div><div><b>${ar(Q.best)}</b><small>أطول سلسلة</small></div></div>
+      ${Q.newBest ? '<span class="qr-badge">🎉 أفضل نتيجة جديدة لك في هذا النموذج</span>' : ''}
+    </section>
+    <div class="actions">
+      <button class="btn primary" data-act="q-retry">${icon('replay')}أعد الاختبار</button>
+      <button class="btn" data-act="q-other">${icon('exam')}نموذج آخر</button>
+      ${n - ok ? `<button class="btn wide" data-act="q-review">${Q.review ? 'اعرض كل الأسئلة' : `راجع أخطائي (${ar(n - ok)})`}</button>` : ''}
+    </div>
+    <h2 class="sec">${Q.review ? 'الأسئلة التي أخطأت فيها' : 'مراجعة الإجابات'}</h2>
+    <div class="qlist">${list.map(({ q, k, a }) => `<details class="qli ${a.ok ? 'ok' : 'no'}" ${!a.ok && Q.review ? 'open' : ''}>
+      <summary><span class="n">${a.ok ? icon('check') : '✕'}</span><span class="t">${ar(k + 1)}. ${qtext(q.q)}</span></summary>
+      <div class="qli-b">${q.o ? `<p><span class="lbl">الإجابة الصحيحة:</span> ${qtext(q.o[0])}</p>${a.ok ? '' : `<p class="bad"><span class="lbl">إجابتك:</span> ${qtext(q.o[a.pick])}</p>`}`
+        : `<p><span class="lbl">الإجابة الصحيحة:</span> <bdi dir="ltr">${qFmt(q.n)} ${esc(q.u || '')}</bdi></p>${a.ok ? '' : `<p class="bad"><span class="lbl">إجابتك:</span> <bdi dir="ltr">${esc(a.val)}</bdi></p>`}`}
+        <div class="qwhy"><small>الحل</small>${q.w}</div></div></details>`).join('')}</div>
+  </div>`;
+}
+function quizAnswer(rec) {
+  Q.ans[Q.i] = rec;
+  Q.streak = rec.ok ? Q.streak + 1 : 0; Q.best = Math.max(Q.best, Q.streak);
+  if (navigator.vibrate) navigator.vibrate(rec.ok ? 15 : [30, 40, 30]);
+  render(false);
+  const fb = document.querySelector('.qfb'); if (fb) fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function quizFinish() {
+  const md = QBANK()[Q.m], ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / md.qs.length * 100);
+  Q.done = true; Q.end = Date.now();
+  const b = qBest(), k = qKey(Q.m), prev = b[k];
+  Q.newBest = !prev || pct > prev.best;
+  b[k] = { best: Math.max(pct, prev ? prev.best : 0), last: pct, at: Date.now(), tries: (prev ? prev.tries : 0) + 1 };
+  store.set('quiz', b);
+  render();
 }
 
 function vSim(k) {
@@ -2416,6 +2611,8 @@ function render(scroll = true) {
   else if (top.type === 'lesson') html = vLesson(top.u, top.i);
   else if (top.type === 'sim') html = vSim(top.k);
   else if (top.type === 'admin') html = ADMIN ? vAdmin() : vProfile();
+  else if (top.type === 'quiz') html = vQuizHub();
+  else if (top.type === 'qrun') html = Q.done ? vQuizResult() : vQuizRun();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
@@ -2433,6 +2630,7 @@ function go(spec, replace) {
     logEvent('lesson', lid(S.grade, +a, +b));
   }
   if (type === 'admin') ADMIN_DATA.at = 0;
+  if (type === 'qrun') { if (!needLogin(() => go(spec, replace))) return; startQuiz(+a); }
   if (replace) S.stack.pop();
   S.stack.push(entry);
   render();
@@ -2517,6 +2715,16 @@ document.addEventListener('click', e => {
   else if (act === 'signup') authSheet('signup');
   else if (act === 'logout') { db && db.auth.signOut(); USER = ADMIN = PROFILE = null; S.stack = S.stack.filter(x => x.type !== 'admin' && x.type !== 'lesson'); render(false); toast('تم تسجيل الخروج'); }
   else if (act === 'admin-refresh') { ADMIN_DATA.at = 0; loadAdmin(); }
+  else if (act === 'q-pick') { if (!Q.ans[Q.i]) quizAnswer({ pick: +el.dataset.k, ok: +el.dataset.k === 0 }); }
+  else if (act === 'q-check') {
+    const inp = document.getElementById('q-in'), raw = (inp.value || '').trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('٫', '.').replace(',', '.').replace('−', '-');
+    if (raw === '' || isNaN(+raw)) { inp.focus(); return toast('اكتب الناتج رقماً، مثل 12.5'); }
+    quizAnswer({ val: raw, ok: qNumOk(QBANK()[Q.m].qs[Q.i], +raw) });
+  }
+  else if (act === 'q-next') { if (Q.i + 1 < QBANK()[Q.m].qs.length) { Q.i++; render(); } else quizFinish(); }
+  else if (act === 'q-retry') { startQuiz(Q.m); render(); }
+  else if (act === 'q-other') { S.stack.pop(); render(); }
+  else if (act === 'q-review') { Q.review = !Q.review; render(false); }
   else if (act === 'play-part') { S.vi = +el.dataset.j; render(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   else if (act === 'add-video') {
     const url = document.getElementById('ed-video').value.trim(), title = document.getElementById('ed-title').value.trim(), min = document.getElementById('ed-min').value.trim().replace(/[^0-9]/g, '');
@@ -2578,7 +2786,10 @@ document.addEventListener('change', e => {
     saveVideos(ttl.dataset.vidTitle, list).then(ok => ok && toast('تم حفظ العنوان'));
   }
 });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSheet(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Enter' && e.target.id === 'q-in') { e.preventDefault(); const b = document.querySelector('[data-act="q-check"]'); if (b) b.click(); }
+});
 // Notes (PDF links) need an account too.
 document.addEventListener('click', e => {
   const a = e.target.closest('a[data-gate]'); if (!a) return;
