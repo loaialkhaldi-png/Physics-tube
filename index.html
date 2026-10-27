@@ -474,11 +474,11 @@ const GRADES = {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vectors', 'projectile'], lessons: [
+      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vectors', 'trajectory', 'projectile'], lessons: [
         { t: 'الكميات العددية والكميات المتجهة', sim: 'resultant', video: '', min: '' },
         { t: 'ضرب المتجهات', video: '', min: '' },
         { t: 'تحليل المتجهات', video: '', min: '' },
-        { t: 'حركة القذيفة', sim: 'projectile', video: '', min: '' },
+        { t: 'حركة القذيفة', sim: 'trajectory', video: '', min: '' },
       ]},
       { id: 'g11-circular', term: 1, title: 'الحركة الدائرية', glyph: 'orbit', theme: 2, pdf: '', sims: ['circular'], lessons: [
         { t: 'وصف الحركة الدائرية', video: '', min: '' },
@@ -583,6 +583,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  trajectory: { title: 'شكل مسار القذيفة', sub: 'خط رأسي، نصف قطع مكافئ، أو قطع مكافئ حسب زاوية الإطلاق', glyph: 'vectors', theme: 7 },
   resultant:  { title: 'محصلة متجهين', sub: 'متوازيان، متعاكسان، متعامدان، أو بينهما زاوية', glyph: 'vectors', theme: 1 },
   spring:     { title: 'الطاقة المرونية في النابض', sub: 'اسحب الكتلة وشاهد الطاقة المختزنة في النابض', glyph: 'coil', theme: 7 },
   skate:      { title: 'حفظ الطاقة الميكانيكية', sub: 'متزلج على مسار: طاقة الوضع والحركية والحرارية', glyph: 'bolt', theme: 6 },
@@ -1249,6 +1250,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  trajectory: 'شكل المسار يعتمد على زاوية الإطلاق: عند <code>θ = 90°</code> يكون المسار <b>خطاً رأسياً</b>، وعند <code>θ = 0°</code> (إطلاق أفقي من مرتفع) يكون <b>نصف قطع مكافئ</b>، وعند زاوية بين <code>0°</code> و<code>90°</code> يكون <b>قطعاً مكافئاً</b>. لاحظ أن المركبة الأفقية للسرعة <code>vx</code> (الأزرق) ثابتة، والمركبة الرأسية <code>vy</code> (البرتقالي) تتغير بسبب الجاذبية.',
   resultant: 'محصلة متجهين بينهما زاوية θ: <code>R = √(A² + B² + 2AB·cosθ)</code> واتجاهها عن A: <code>tanα = B·sinθ / (A + B·cosθ)</code>. عند θ = 0° تكون <code>R = A + B</code> أكبر ما يمكن، وعند θ = 180° تكون <code>R = |A − B|</code> أقل ما يمكن، وعند θ = 90° تكون <code>R = √(A² + B²)</code> و<code>tanα = B / A</code>.',
   spring: 'قانون هوك <code>F = k·x</code>، والطاقة المرونية المختزنة في النابض <code>PEs = ½·k·x²</code> وهي تساوي المساحة تحت منحنى (القوة–الاستطالة). الخط الأزرق طول النابض الطبيعي، والأخضر موضع الاتزان. اسحب الكتلة لأسفل ثم اتركها.',
   skate: 'الطاقة الميكانيكية <code>ME = PE + KE = m·g·h + ½·m·v²</code>. بدون احتكاك تبقى ثابتة: كلما نزل المتزلج تحولت طاقة الوضع إلى حركية والعكس. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية فلا يعود إلى نفس الارتفاع. اسحب المتزلج إلى أي ارتفاع لتبدأ من هناك، ولاحظ أن الكتلة لا تغيّر السرعة.',
@@ -1302,6 +1304,13 @@ const SIMCTL = {
     { id: 'a', label: 'زاوية الإفلات', min: 10, max: 60, step: 5, v: 40, unit: '°' },
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
+  ],
+  trajectory: [
+    { id: 'case', type: 'seg', keep: true, label: 'زاوية الإطلاق', opts: [{ t: '90°', v: 90 }, { t: '0° من مرتفع', v: 0 }, { t: 'بين 0° و 90°', v: 45 }] },
+    { id: 'a', label: 'زاوية الإطلاق θ', min: 0, max: 90, step: 5, v: 90, unit: '°' },
+    { id: 'v', label: 'السرعة الابتدائية', min: 5, max: 30, step: 1, v: 20, unit: 'm/s' },
+    { id: 'h', label: 'ارتفاع المرتفع (عند 0°)', min: 10, max: 60, step: 5, v: 40, unit: 'm' },
+    { type: 'btn', label: 'أطلق من جديد' },
   ],
   resultant: [
     { id: 'case', type: 'seg', keep: true, label: 'الحالة', opts: [{ t: 'متوازيان', v: 0 }, { t: 'متعاكسان', v: 180 }, { t: 'متعامدان', v: 90 }, { t: 'زاوية حادة', v: 50 }] },
@@ -1581,6 +1590,32 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    trajectory(t) {
+      // Kept on the canvas, not in st: moving the slider resets st and would otherwise loop.
+      if (cv._case !== P.case) { cv._case = P.case; const el = document.getElementById('a'); if (el) { el.value = P.case; el.oninput(); } }
+      const g = 9.8, th = P.a * D, v = P.v, vx0 = Math.abs(P.a - 90) < 1e-9 ? 0 : v * Math.cos(th), vy0 = v * Math.sin(th), h0 = P.a === 0 ? P.h : 0;
+      const T = (vy0 + Math.sqrt(vy0 * vy0 + 2 * g * h0)) / g, R = vx0 * T, Hm = h0 + vy0 * vy0 / (2 * g);
+      const shape = P.a === 90 ? 'خط رأسي' : P.a === 0 ? 'نصف قطع مكافئ' : 'قطع مكافئ';
+      setRO([['شكل المسار', shape], ['المدى الأفقي', `${fmt(R, 1)} m`], ['أقصى ارتفاع', `${fmt(Hm, 1)} m`]]);
+      grid();
+      const sc = Math.min((W - 170) / Math.max(R, 8), (H - 130) / Math.max(Hm, 8)), ox = 90, oy = H - 50, X = x => ox + x * sc, Y = y => oy - y * sc;
+      const pos = q => [vx0 * q, h0 + vy0 * q - g * q * q / 2];
+      ctx.fillStyle = 'rgba(162,86,11,.18)'; ctx.fillRect(0, oy, W, H - oy); line(0, oy, W, oy, 'rgba(255,255,255,.35)', 2);
+      if (h0) { box(ox - 70, Y(h0), 70, oy - Y(h0), '#2A2D35', 4); label(`${h0} m`, ox - 35, (Y(h0) + oy) / 2 + 6, DIM, 'center', 15); }
+      line(ox, oy, ox, 30, 'rgba(255,255,255,.25)', 2); label('y', ox + 8, 42, DIM, 'left', 15);
+      ctx.strokeStyle = 'rgba(225,92,245,.35)'; ctx.lineWidth = 2; ctx.setLineDash([7, 8]); ctx.beginPath();
+      for (let i = 0; i <= 80; i++) { const [x, y] = pos(T * i / 80); i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y)); } ctx.stroke(); ctx.setLineDash([]);
+      const cyc = T * 1.15 + 1.2, tt = reduce ? T : Math.min((t % cyc) * 1.15, T);
+      ctx.strokeStyle = '#E15CF5'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.beginPath();
+      for (let i = 0; i <= 80; i++) { const [x, y] = pos(tt * i / 80); i ? ctx.lineTo(X(x), Y(y)) : ctx.moveTo(X(x), Y(y)); } ctx.stroke();
+      const [bx, by] = pos(tt), vy = vy0 - g * tt, k = 3.2;
+      ball(X(bx), Y(by), 11, WHITE, '#E15CF5');
+      if (vx0 > .1) { arrow(X(bx), Y(by), X(bx) + vx0 * k, Y(by), BLUE, 3); label('vx', X(bx) + vx0 * k + 6, Y(by) + 6, BLUE, 'left', 15); }
+      if (Math.abs(vy) > .3) { arrow(X(bx), Y(by), X(bx), Y(by) - vy * k, ORANGE, 3); label('vy', X(bx) + 8, Y(by) - vy * k / 2, ORANGE, 'left', 15); }
+      if (P.a > 0 && P.a < 90) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 40, -th, 0); ctx.stroke(); label(`${P.a}°`, ox + 46, oy - 10, WHITE, 'left', 16); }
+      label(`المسار: ${shape}`, W / 2, 40, '#E15CF5', 'center', 24);
+      label(`θ = ${P.a}°`, W / 2, 70, DIM, 'center', 17);
     },
     resultant(t) {
       // A case button moves the angle slider to that case; the slider can then be moved freely.
