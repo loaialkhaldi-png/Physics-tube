@@ -477,7 +477,7 @@ const GRADES = {
       { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vecprod', 'vectors', 'trajectory', 'projectile'], lessons: [
         { t: 'الكميات العددية والكميات المتجهة', sim: 'resultant', video: '', min: '' },
         { t: 'ضرب المتجهات', sim: 'vecprod', video: '', min: '' },
-        { t: 'تحليل المتجهات', video: '', min: '' },
+        { t: 'تحليل المتجهات', sim: 'vectors', video: '', min: '' },
         { t: 'حركة القذيفة', sim: 'trajectory', video: '', min: '' },
       ]},
       { id: 'g11-circular', term: 1, title: 'الحركة الدائرية', glyph: 'orbit', theme: 2, pdf: '', sims: ['circular'], lessons: [
@@ -576,7 +576,7 @@ GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g
 const SIMS = {
   accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
   freefall:   { title: 'السقوط الحر', sub: 'أنبوبة الريشة والعملة، والسقوط على الأرض والقمر والمريخ', glyph: 'drop', theme: 6 },
-  vectors:    { title: 'جمع المتجهات وتحليلها', sub: 'متجهان ومحصلتهما ومركبتاها', glyph: 'vectors', theme: 2 },
+  vectors:    { title: 'جمع المتجهات وتحليلها', sub: 'محصلة عدة قوى بطريقة تحليل المتجهات', glyph: 'vectors', theme: 2 },
   projectile: { title: 'حركة المقذوفات', sub: 'غيّر السرعة والزاوية وشاهد المسار', glyph: 'vectors', theme: 7 },
   circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
   com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'box', theme: 0 },
@@ -1247,7 +1247,7 @@ function vSim(k) {
 const LAWS = {
   accel: 'معادلات الحركة المتسارعة بانتظام: <code>v = v₀ + a·t</code> و<code>Δx = v₀·t + ½·a·t²</code> و<code>v² = v₀² + 2·a·Δx</code>. اجعل التسارع سالباً وشاهد الجسم يتباطأ ثم يعود.',
   freefall: 'في السقوط الحر من السكون: <code>v = g·t</code> و<code>h = ½·g·t²</code>. في «الريشة والعملة»: في الأنبوبة التي بها هواء تصل العملة أولاً لأن مقاومة الهواء تؤثر في الريشة أكثر، وفي الأنبوبة المفرغة من الهواء تصلان معاً. <b>الاستنتاج:</b> في غياب الهواء تسقط جميع الأجسام بنفس التسارع <code>g</code> مهما اختلفت كتلها وأشكالها.',
-  vectors: 'المحصلة: <code>Rx = Ax + Bx</code> و<code>Ry = Ay + By</code> و<code>R = √(Rx² + Ry²)</code> و<code>tanθ = Ry / Rx</code>. الخطان المتقطعان هما مركبتا المحصلة.',
+  vectors: 'طريقة تحليل المتجهات: نحلّل كل قوة إلى مركبتين <code>Fx = F cosθ</code> و<code>Fy = F sinθ</code>، ثم نجمع المركبات: <code>ΣFx</code> و<code>ΣFy</code>، فتكون المحصلة <code>F<sub>R</sub> = √(ΣFx² + ΣFy²)</code> واتجاهها <code>tanθ = ΣFy / ΣFx</code>. الزوايا مقيسة من محور x الموجب عكس عقارب الساعة، فالقوة التي تصنع 40° مع محور x السالب زاويتها 140°.',
   projectile: 'المدى <code>R = v₀² sin2θ / g</code> وأقصى ارتفاع <code>H = v₀² sin²θ / 2g</code>. السهم البرتقالي هو متجه السرعة. لاحظ أن الزاويتين 30° و60° تعطيان المدى نفسه.',
   circular: 'القوة الجاذبة المركزية <code>Fc = m·v² / r</code> والتسارع المركزي <code>ac = v² / r</code>. القوة (الوردي) تتجه دائماً نحو المركز والسرعة (الأزرق) مماسة للمسار. اقطع الخيط وشاهد ماذا يحدث.',
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
@@ -1278,10 +1278,13 @@ const SIMCTL = {
     { type: 'btn', label: 'أسقط الأجسام', act: 'drop', icon: 'down' },
   ],
   vectors: [
-    { id: 'A', label: 'مقدار المتجه A', min: 1, max: 10, step: 0.5, v: 6, unit: '' },
-    { id: 'ta', label: 'زاوية A', min: 0, max: 180, step: 5, v: 30, unit: '°' },
-    { id: 'B', label: 'مقدار المتجه B', min: 1, max: 10, step: 0.5, v: 5, unit: '' },
-    { id: 'tb', label: 'زاوية B', min: 0, max: 180, step: 5, v: 110, unit: '°' },
+    { id: 'ex', type: 'seg', keep: true, label: 'أمثلة', opts: [{ t: 'مثال الكتاب', v: 0 }, { t: 'متجهان', v: 1 }, { t: 'ثلاثة متجهات', v: 2 }] },
+    { id: 'F1', label: 'مقدار F₁', min: 0, max: 1000, step: 50, v: 400, unit: 'N' },
+    { id: 't1', label: 'زاوية F₁ مع محور x الموجب', min: 0, max: 355, step: 5, v: 50, unit: '°' },
+    { id: 'F2', label: 'مقدار F₂', min: 0, max: 1000, step: 50, v: 600, unit: 'N' },
+    { id: 't2', label: 'زاوية F₂ مع محور x الموجب', min: 0, max: 355, step: 5, v: 140, unit: '°' },
+    { id: 'F3', label: 'مقدار F₃ (صفر لإلغائها)', min: 0, max: 1000, step: 50, v: 0, unit: 'N' },
+    { id: 't3', label: 'زاوية F₃ مع محور x الموجب', min: 0, max: 355, step: 5, v: 270, unit: '°' },
   ],
   projectile: [
     { id: 'v', label: 'السرعة الابتدائية', min: 5, max: 30, step: 1, v: 20, unit: 'm/s' },
@@ -1518,20 +1521,58 @@ function startSim(k) {
       if (tt >= T) { ctx.fillStyle = 'rgba(51,194,255,.22)'; ctx.beginPath(); ctx.ellipse(bx, bot, 40, 8, 0, 0, 7); ctx.fill(); }
     },
     vectors() {
-      const ax = P.A * Math.cos(P.ta * D), ay = P.A * Math.sin(P.ta * D), bx = P.B * Math.cos(P.tb * D), by = P.B * Math.sin(P.tb * D);
-      const rx = ax + bx, ry = ay + by, R = Math.hypot(rx, ry), th = Math.atan2(ry, rx) / D;
-      setRO([['مقدار المحصلة R', fmt(R, 2)], ['اتجاه المحصلة', `${fmt(th, 1)}°`], ['المركبتان Rx , Ry', `${fmt(rx, 1)} , ${fmt(ry, 1)}`]]);
+      if (cv._ex !== P.ex) {
+        cv._ex = P.ex;
+        const pre = [{ F1: 400, t1: 50, F2: 600, t2: 140, F3: 0, t3: 270 }, { F1: 500, t1: 30, F2: 300, t2: 120, F3: 0, t3: 270 }, { F1: 400, t1: 0, F2: 300, t2: 90, F3: 200, t3: 225 }][P.ex];
+        Object.entries(pre).forEach(([id, v]) => { const el = document.getElementById(id); if (el) { el.value = v; el.oninput(); } });
+      }
+      const COL = [BLUE, ORANGE, TEAL], z = v => Math.abs(v) < .005 ? 0 : v;
+      const F = [[P.F1, P.t1], [P.F2, P.t2], [P.F3, P.t3]].map(([m, a], i) => ({ i, m, a, x: z(m * Math.cos(a * D)), y: z(m * Math.sin(a * D)) })).filter(f => f.m > 0);
+      const Sx = z(F.reduce((n, f) => n + f.x, 0)), Sy = z(F.reduce((n, f) => n + f.y, 0)), R = Math.hypot(Sx, Sy);
+      const acute = Sx === 0 ? 90 : Math.atan(Math.abs(Sy / Sx)) / D, full = ((Math.atan2(Sy, Sx) / D) + 360) % 360;
+      setRO([['ΣFx', `${fmt(Sx, 2)} N`], ['ΣFy', `${fmt(Sy, 2)} N`], ['المحصلة F_R', `${fmt(R, 2)} N`]]);
       grid();
-      const s = 19, ox = 400, oy = 440, X = x => ox + x * s, Y = y => oy - y * s;
-      line(20, oy, W - 20, oy, DIM, 2); line(ox, oy + 30, ox, 20, DIM, 2);
-      label('x', W - 24, oy - 10, DIM, 'right', 16); label('y', ox + 10, 34, DIM, 'left', 16);
-      line(X(0), Y(0), X(rx), Y(0), 'rgba(255,255,255,.55)', 2, [6, 6]); line(X(rx), Y(0), X(rx), Y(ry), 'rgba(255,255,255,.55)', 2, [6, 6]);
-      label('Rx', X(rx / 2), Y(0) + 26, DIM, 'center', 16); label('Ry', X(rx) + (rx >= 0 ? 10 : -10), Y(ry / 2), DIM, rx >= 0 ? 'left' : 'right', 16);
-      arrow(X(0), Y(0), X(ax), Y(ay), BLUE); label('A', X(ax / 2) - 14, Y(ay / 2) - 10, BLUE, 'right');
-      arrow(X(ax), Y(ay), X(rx), Y(ry), ORANGE); label('B', X(ax + bx / 2) + 12, Y(ay + by / 2) - 10, ORANGE);
-      arrow(X(0), Y(0), X(rx), Y(ry), WHITE, 5); label('R', X(rx * .6) + 14, Y(ry * .6) + 18, WHITE);
-      ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 40, -Math.max(0, th) * D, 0, false); ctx.stroke();
-      label(`${fmt(th, 0)}°`, ox + 48, oy - 12, WHITE, 'left', 16);
+      // diagram
+      const cx = 195, cy = 250, mx = Math.max(R, ...F.map(f => f.m), 1), sc = 150 / mx;
+      line(cx - 180, cy, cx + 180, cy, DIM, 2); line(cx, cy + 180, cx, cy - 190, DIM, 2);
+      label('+x', cx + 178, cy + 20, DIM, 'right', 14); label('−x', cx - 178, cy + 20, DIM, 'left', 14); label('+y', cx + 8, cy - 176, DIM, 'left', 14);
+      F.forEach(f => {
+        const ex = cx + f.x * sc, ey = cy - f.y * sc;
+        if (f.x && f.y) { line(ex, ey, ex, cy, 'rgba(255,255,255,.18)', 1.5, [4, 5]); line(ex, ey, cx, ey, 'rgba(255,255,255,.18)', 1.5, [4, 5]); }
+        arrow(cx, cy, ex, ey, COL[f.i], 4);
+        const txt = `F${'₁₂₃'[f.i]} = ${f.m} N`, al = f.x >= 0 ? 'left' : 'right';
+        ctx.font = '600 15px -apple-system, Arial, sans-serif'; const tw0 = ctx.measureText(txt).width;
+        let lx = cx + f.x * sc * 1.05 + (f.x >= 0 ? 6 : -6), ly = cy - f.y * sc * 1.05 + (Math.abs(f.y) < 1 ? -12 : f.y > 0 ? -6 : 18);
+        lx = al === 'left' ? Math.min(lx, 380 - tw0) : Math.max(lx, 8 + tw0);   // keep the label inside the diagram
+        label(txt, lx, ly, COL[f.i], al, 15);
+      });
+      if (R > .5) {
+        const rx = cx + Sx * sc, ry = cy - Sy * sc;
+        line(cx, ry, rx, ry, 'rgba(225,92,245,.6)', 2, [6, 5]); line(rx, cy, rx, ry, 'rgba(225,92,245,.6)', 2, [6, 5]);
+        arrow(cx, cy, rx, ry, '#E15CF5', 6); label('F_R', rx + (Sx >= 0 ? 10 : -10), ry + (Sy >= 0 ? -10 : 20), '#E15CF5', Sx >= 0 ? 'left' : 'right', 18);
+        const ref = Sx >= 0 ? 0 : Math.PI, end = Math.atan2(Sy, Sx);
+        ctx.strokeStyle = '#FFD84D'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, 30, -ref, -end, Sx >= 0 ? Sy > 0 : Sy < 0); ctx.stroke();
+      }
+      ball(cx, cy, 6, WHITE, WHITE);
+      // components table, like the book
+      const tx = 395, tw = 385, c1 = 64, c2 = 160, rh = 34, ty = 34, rows = F.length + 2;
+      ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.lineWidth = 1.5;
+      for (let r = 0; r <= rows; r++) line(tx, ty + r * rh, tx + tw, ty + r * rh, 'rgba(255,255,255,.25)', 1.5);
+      [0, c1, c1 + c2, tw].forEach(x => line(tx + x, ty, tx + x, ty + rows * rh, 'rgba(255,255,255,.25)', 1.5));
+      const cell = (txt, col, r, c = WHITE, size = 14) => label(txt, tx + [c1 / 2, c1 + c2 / 2, c1 + c2 + (tw - c1 - c2) / 2][col], ty + r * rh + 23, c, 'center', size);
+      cell('F', 0, 0, DIM, 15); cell('Fx = F cosθ', 1, 0, DIM); cell('Fy = F sinθ', 2, 0, DIM);
+      F.forEach((f, k) => { cell(`F${'₁₂₃'[f.i]}`, 0, k + 1, COL[f.i], 15); cell(`${f.m} cos${f.a}° = ${fmt(f.x, 2)}`, 1, k + 1, WHITE, 13); cell(`${f.m} sin${f.a}° = ${fmt(f.y, 2)}`, 2, k + 1, WHITE, 13); });
+      cell('F_R', 0, rows - 1, '#E15CF5', 15); cell(`ΣFx = ${fmt(Sx, 2)} N`, 1, rows - 1, '#E15CF5', 14); cell(`ΣFy = ${fmt(Sy, 2)} N`, 2, rows - 1, '#E15CF5', 14);
+      // magnitude and direction
+      const by = ty + rows * rh + 40;
+      label('F_R = √(ΣFx² + ΣFy²)', tx, by - 4, WHITE, 'left', 15);
+      label(`= √(${fmt(Sx, 2)}² + ${fmt(Sy, 2)}²) = ${fmt(R, 2)} N`, tx + 14, by + 20, WHITE, 'left', 15);
+      if (R > .5) {
+        label(`tanθ = |ΣFy / ΣFx| = ${Sx ? fmt(Math.abs(Sy / Sx), 2) : '∞'}  →  θ = ${fmt(acute, 1)}°`, tx, by + 50, WHITE, 'left', 15);
+        const side = Sx === 0 ? (Sy > 0 ? 'باتجاه محور y الموجب' : 'باتجاه محور y السالب') : `مع محور x ${Sx > 0 ? 'الموجب' : 'السالب'}${Sy > 0 ? '، أعلى المحور' : Sy < 0 ? '، أسفل المحور' : ''}`;
+        label(side, tx + tw, by + 80, '#FFD84D', 'right', 15);
+        label(`أي ${fmt(full, 1)}° مع محور x الموجب`, tx + tw, by + 104, DIM, 'right', 14);
+      } else label('المحصلة صفر: القوى متزنة', tx + tw, by + 54, '#32D17A', 'right', 16);
     },
     projectile(t) {
       const g = 9.8, v = P.v, th = P.a * D, vx = v * Math.cos(th), vy = v * Math.sin(th);
