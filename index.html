@@ -474,8 +474,8 @@ const GRADES = {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['vectors', 'projectile'], lessons: [
-        { t: 'الكميات العددية والكميات المتجهة', video: '', min: '' },
+      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vectors', 'projectile'], lessons: [
+        { t: 'الكميات العددية والكميات المتجهة', sim: 'resultant', video: '', min: '' },
         { t: 'ضرب المتجهات', video: '', min: '' },
         { t: 'تحليل المتجهات', video: '', min: '' },
         { t: 'حركة القذيفة', sim: 'projectile', video: '', min: '' },
@@ -583,6 +583,7 @@ const SIMS = {
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  resultant:  { title: 'محصلة متجهين', sub: 'متوازيان، متعاكسان، متعامدان، أو بينهما زاوية', glyph: 'vectors', theme: 1 },
   spring:     { title: 'الطاقة المرونية في النابض', sub: 'اسحب الكتلة وشاهد الطاقة المختزنة في النابض', glyph: 'coil', theme: 7 },
   skate:      { title: 'حفظ الطاقة الميكانيكية', sub: 'متزلج على مسار: طاقة الوضع والحركية والحرارية', glyph: 'bolt', theme: 6 },
   balance:    { title: 'اتزان العزوم', sub: 'ضع الكتل على اللوح وحقق الاتزان', glyph: 'ruler', theme: 5 },
@@ -1248,6 +1249,7 @@ const LAWS = {
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
+  resultant: 'محصلة متجهين بينهما زاوية θ: <code>R = √(A² + B² + 2AB·cosθ)</code> واتجاهها عن A: <code>tanα = B·sinθ / (A + B·cosθ)</code>. عند θ = 0° تكون <code>R = A + B</code> أكبر ما يمكن، وعند θ = 180° تكون <code>R = |A − B|</code> أقل ما يمكن، وعند θ = 90° تكون <code>R = √(A² + B²)</code> و<code>tanα = B / A</code>.',
   spring: 'قانون هوك <code>F = k·x</code>، والطاقة المرونية المختزنة في النابض <code>PEs = ½·k·x²</code> وهي تساوي المساحة تحت منحنى (القوة–الاستطالة). الخط الأزرق طول النابض الطبيعي، والأخضر موضع الاتزان. اسحب الكتلة لأسفل ثم اتركها.',
   skate: 'الطاقة الميكانيكية <code>ME = PE + KE = m·g·h + ½·m·v²</code>. بدون احتكاك تبقى ثابتة: كلما نزل المتزلج تحولت طاقة الوضع إلى حركية والعكس. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية فلا يعود إلى نفس الارتفاع. اسحب المتزلج إلى أي ارتفاع لتبدأ من هناك، ولاحظ أن الكتلة لا تغيّر السرعة.',
   balance: 'شرط الاتزان الدوراني: مجموع العزوم حول محور الدوران يساوي صفراً، أي <code>Σ m·g·d (يسار) = Σ m·g·d (يمين)</code>. مثلاً كتلة 20 kg على بعد 1 m تتزن مع كتلة 10 kg على بعد 2 m. اسحب الكتل إلى اللوح، ثم أزل الدعامات لترى هل يتزن.',
@@ -1300,6 +1302,12 @@ const SIMCTL = {
     { id: 'a', label: 'زاوية الإفلات', min: 10, max: 60, step: 5, v: 40, unit: '°' },
     { id: 'f', type: 'seg', label: 'الاحتكاك', opts: [{ t: 'بدون احتكاك', v: 0 }, { t: 'مع احتكاك', v: 1 }] },
     REPLAY,
+  ],
+  resultant: [
+    { id: 'case', type: 'seg', keep: true, label: 'الحالة', opts: [{ t: 'متوازيان', v: 0 }, { t: 'متعاكسان', v: 180 }, { t: 'متعامدان', v: 90 }, { t: 'زاوية حادة', v: 50 }] },
+    { id: 'A', label: 'مقدار المتجه A', min: 1, max: 10, step: 1, v: 6, unit: 'N', keep: true },
+    { id: 'B', label: 'مقدار المتجه B', min: 1, max: 10, step: 1, v: 4, unit: 'N', keep: true },
+    { id: 'th', label: 'الزاوية θ بين المتجهين', min: 0, max: 180, step: 5, v: 0, unit: '°', keep: true },
   ],
   spring: [
     { id: 'k', label: 'ثابت النابض k', min: 5, max: 60, step: 1, v: 10, unit: 'N/m', keep: true },
@@ -1370,7 +1378,7 @@ function startSim(k) {
     for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
     for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
   };
-  const label = (t, x, y, c = 'rgba(255,255,255,.55)', al = 'left', size = 20) => { ctx.fillStyle = c; ctx.font = `600 ${size}px -apple-system, "SF Arabic", "SF Pro Text", "Noto Sans Arabic", Arial, sans-serif`; ctx.textAlign = al; ctx.fillText(t, x, y); };
+  const label = (t, x, y, c = 'rgba(255,255,255,.55)', al = 'left', size = 20) => { ctx.direction = /[\u0600-\u06FF]/.test(t) ? 'rtl' : 'ltr'; ctx.fillStyle = c; ctx.font = `600 ${size}px -apple-system, "SF Arabic", "SF Pro Text", "Noto Sans Arabic", Arial, sans-serif`; ctx.textAlign = al; ctx.fillText(t, x, y); };
   const line = (x1, y1, x2, y2, c = 'rgba(255,255,255,.3)', w = 2, dash) => { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.setLineDash(dash || []); ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); ctx.setLineDash([]); };
   const arrow = (x1, y1, x2, y2, c, w = 4) => {
     const a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1); if (L < 3) return;
@@ -1573,6 +1581,41 @@ function startSim(k) {
         if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ex, oy, 30, -th, 0); ctx.stroke(); label('θ', ex + 36, oy - 30, WHITE, 'left', 16); }
       }
       ball(ex, oy, 7, ORANGE, ORANGE);
+    },
+    resultant(t) {
+      // A case button moves the angle slider to that case; the slider can then be moved freely.
+      if (st.c !== P.case) {
+        st.c = P.case; const el = document.getElementById('th');
+        if (el) { el.value = P.case; el.oninput(); }
+      }
+      const A = P.A, B = P.B, th = P.th * D;
+      const Rx = A + B * Math.cos(th), Ry = B * Math.sin(th), R = Math.hypot(Rx, Ry), al = Math.atan2(Ry, Rx) / D;
+      const caseTxt = P.th === 0 ? 'متوازيان في نفس الاتجاه: أكبر محصلة ممكنة' : P.th === 180 ? 'متعاكسان في الاتجاه: أقل محصلة ممكنة' : P.th === 90 ? 'متعامدان: الزاوية بينهما قائمة' : P.th < 90 ? 'بينهما زاوية حادة' : 'بينهما زاوية منفرجة';
+      setRO([['المحصلة R', `${fmt(R, 2)} N`], ['اتجاهها عن A', `${fmt(Math.abs(al) < 1e-9 ? 0 : al, 1)}°`], ['الزاوية θ', `${P.th}°`]]);
+      grid();
+      const sc = 34, ox = P.th > 120 ? 470 : 140, oy = 360, X = x => ox + x * sc, Y = y => oy - y * sc;
+      line(30, oy, W - 30, oy, 'rgba(255,255,255,.18)', 2);
+      // cart being pulled, like a tug of war: it moves along R
+      const pull = reduce ? 0 : Math.min(1, (t % 4) / 2.5) * Math.min(R, 8) * 6, ux = R ? Rx / R : 0, uy = R ? Ry / R : 0;
+      const cx = ox + ux * pull, cy = oy - uy * pull;
+      ctx.globalAlpha = .55; box(cx - 20, cy - 14, 40, 28, '#3A3D46', 7); ctx.globalAlpha = 1;
+      if (P.th > 0 && P.th < 180) {
+        line(X(A), Y(0), X(Rx), Y(Ry), 'rgba(255,165,58,.45)', 2, [6, 6]);
+        line(X(B * Math.cos(th)), Y(Ry), X(Rx), Y(Ry), 'rgba(76,134,255,.45)', 2, [6, 6]);
+      }
+      const off = P.th === 0 || P.th === 180 ? 26 : 0;
+      arrow(X(0), Y(0) - off, X(A), Y(0) - off, BLUE, 6); label(`A = ${A} N`, X(A / 2), off ? Y(0) - off - 16 : Y(0) + 30, BLUE, 'center', 18);
+      arrow(X(0), Y(0) + off, X(B * Math.cos(th)), Y(Ry) + off, ORANGE, 6);
+      if (off) label(`B = ${B} N`, X(B * Math.cos(th) / 2), Y(0) + off + 30, ORANGE, 'center', 18);
+      else label(`B = ${B} N`, X(B * Math.cos(th)) - 12, Y(Ry) - 8, ORANGE, 'right', 18);
+      if (R > .01) { arrow(X(0), Y(0), X(Rx), Y(Ry), WHITE, 7); label(`R = ${fmt(R, 2)} N`, X(Rx) + (Rx >= 0 ? 12 : -12), off ? Y(0) + 6 : Y(Ry) - 12, WHITE, Rx >= 0 ? 'left' : 'right', 19); }
+      else label('R = 0 : الجسم في حالة اتزان', ox, oy - 60, '#32D17A', 'center', 18);
+      if (P.th > 0 && P.th < 180) { ctx.strokeStyle = 'rgba(255,165,58,.7)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 46, -th, 0); ctx.stroke(); label('θ', ox + 54 * Math.cos(th / 2), oy - 54 * Math.sin(th / 2) + 6, ORANGE, 'center', 17); }
+      if (Math.abs(al) > .5 && R > .01 && P.th < 180) { ctx.strokeStyle = 'rgba(255,255,255,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(ox, oy, 72, -al * D, 0); ctx.stroke(); label('α', ox + 82 * Math.cos(al * D / 2), oy - 82 * Math.sin(al * D / 2) + 6, WHITE, 'center', 17); }
+      label(caseTxt, W / 2, 44, '#32D17A', 'center', 20);
+      const eq = P.th === 0 ? `R = ${A} + ${B} = ${fmt(R, 2)} N` : P.th === 180 ? `R = |${A} − ${B}| = ${fmt(R, 2)} N` : P.th === 90 ? `R = √(${A}² + ${B}²) = ${fmt(R, 2)} N` : `R = √(${A}² + ${B}² + 2·${A}·${B}·cos${P.th}°) = ${fmt(R, 2)} N`;
+      label(eq, W / 2, H - 50, WHITE, 'center', 19);
+      if (P.th > 0 && P.th < 180) label(P.th === 90 ? `tanα = B / A = ${fmt(B / A, 2)}  →  α = ${fmt(al, 1)}°` : `tanα = B·sinθ / (A + B·cosθ)  →  α = ${fmt(al, 1)}°`, W / 2, H - 20, DIM, 'center', 16);
     },
     spring(t) {
       const k = P.k, m = P.m / 1000, g = P.g, b = P.b * 3, seq = m * g / k, sc = 500, top = 34, sx = 230, L0 = 130, SMIN = -.2, SMAX = .5;
