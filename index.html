@@ -1133,7 +1133,7 @@ function vHome() {
     ${ADMIN ? `<button class="admin-bar" data-go="admin">${icon('chart')}<span>وضع المعلم: لوحة الإحصائيات والطلاب</span>${icon('chev')}</button>` : ''}
     <div class="promos" aria-label="العروض">
       <button class="promo" data-act="plan" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
-        <h2>باقة ${esc(g.short)}</h2>
+        <h2>${esc(g.name)}</h2>
         <p>كل دروس الفيزياء لصفك في مكان واحد</p>
         <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
         <span class="foot">${ar(lessons)} درساً في الفصلين</span>
@@ -2673,7 +2673,7 @@ function gradeSheet() {
 }
 function planSheet() {
   const g = G();
-  sheet(`<h2>باقة ${esc(g.short)}</h2><p>كل ما تحتاجه لمادة الفيزياء في صفك.</p>
+  sheet(`<h2>${esc(g.name)}</h2><p>كل ما تحتاجه لمادة الفيزياء في صفك.</p>
     <ul class="perks">
       <li>${icon('checkc')}شرح فيديو لكل دروس المنهج</li>
       <li>${icon('checkc')}مذكرة PDF لكل وحدة</li>
