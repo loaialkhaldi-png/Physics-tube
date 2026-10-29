@@ -575,29 +575,7 @@ body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; 
 .mi.done .ck { background: var(--good); border-color: var(--good); color: #062B16; }
 .mi.flash { animation: pop .5s cubic-bezier(.2, .8, .2, 1.4); }
 .sim-stars { display: inline-block; margin-top: 4px; color: #FFC83D; font-size: 13px; letter-spacing: 1px; }
-/* Graph-matching game */
-.game-card { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 16px; padding: 16px; border-radius: var(--r-md); text-align: right; overflow: hidden;
-  background: radial-gradient(120% 140% at 0% 100%, rgba(43,212,176,.45), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(76,134,255,.45), transparent 60%), #0B1A24; border: 1px solid rgba(43,212,176,.35); }
-.game-card:active { transform: scale(.98); }
-.game-card .gi { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.14); font-size: 28px; flex: none; }
-.game-card .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .game-card .t b { font-size: 18px; } .game-card .t small { color: rgba(255,255,255,.78); font-size: 13px; }
-.gm-levels { display: grid; gap: 10px; margin-top: 16px; }
-.gm-lv { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); text-align: right; width: 100%; }
-.gm-lv:active { transform: scale(.98); }
-.gm-lv .n { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(43,212,176,.16); color: #2BD4B0; font-weight: 800; flex: none; }
-.gm-lv .t { flex: 1; display: grid; } .gm-lv .t small { color: var(--muted); font-size: 13px; }
-.gm-lv .st { color: #FFC83D; letter-spacing: 1px; }
-.gm-lv.lock { opacity: .45; }
-#gm { touch-action: none; }
-.gm-bar { display: flex; gap: 10px; margin-top: 14px; } .gm-bar .btn { flex: 1; margin: 0; }
-.gm-hint { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; line-height: 1.7; color: #D6DAE3; }
-/* Phone sensors lab */
-.game-card.sens { background: radial-gradient(120% 140% at 0% 100%, rgba(255,165,58,.45), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(255,77,122,.4), transparent 60%), #24130B; border-color: rgba(255,165,58,.35); margin-top: 10px; }
-.sn-steps { margin: 14px 0 0; padding: 14px 16px 14px 14px; padding-inline-start: 34px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); font-size: 14px; line-height: 1.8; color: #D6DAE3; }
-.sn-big { text-align: center; font-size: 72px; font-weight: 800; font-variant-numeric: tabular-nums; direction: ltr; line-height: 1.1; margin-top: 10px; }
-.sn-res { margin-top: 12px; padding: 14px 16px; border-radius: 16px; background: rgba(50,209,122,.1); border: 1px solid rgba(50,209,122,.35); font-size: 15px; line-height: 1.8; }
-.sn-res code, .law code { direction: ltr; unicode-bidi: isolate; }
-.sn-res code, .sn-law code { white-space: nowrap; }
+.law code { direction: ltr; unicode-bidi: isolate; }
 /* Live class quiz */
 .wide #app { max-width: 1100px; }
 .wide .tabbar { display: none; }
@@ -1885,242 +1863,6 @@ function missionWatch(k, P) {
   }, 350);
 }
 
-/* ---------- لعبة «طابق الرسم البياني»: move the car with your finger to draw the target graph ---------- */
-const GM = [
-  { t: 'قف ساكناً', g: 'x', f: () => 4, hint: 'الخط الأفقي في منحنى (الموقع–الزمن) يعني أن الجسم ساكن: موقعه لا يتغير.' },
-  { t: 'ابتعد بسرعة ثابتة', g: 'x', f: t => 1 + .8 * t, hint: 'الخط المستقيم المائل يعني سرعة ثابتة، وميله هو السرعة: 0.8 m/s.' },
-  { t: 'اقترب بسرعة ثابتة', g: 'x', f: t => 9 - .7 * t, hint: 'الميل السالب يعني أن الجسم يتحرك نحو نقطة الأصل.' },
-  { t: 'تحرّك ثم توقّف', g: 'x', f: t => t < 5 ? 2 + 1.2 * t : 8, hint: 'جزء مائل (حركة بسرعة ثابتة) ثم جزء أفقي (سكون).' },
-  { t: 'ذهاب وعودة', g: 'x', f: t => t < 5 ? 2 + 1.2 * t : 8 - 1.2 * (t - 5), hint: 'الميل يتغير من موجب إلى سالب: الجسم يعكس اتجاه حركته عند القمة.' },
-  { t: 'تسارع من السكون', g: 'x', f: t => 1 + .08 * t * t, hint: 'منحنى يزداد ميله تدريجياً: السرعة تزداد، أي أن الجسم يتسارع.' },
-  { t: 'سرعة ثابتة على منحنى (v–t)', g: 'v', f: t => t < 8 ? 1 : 0, hint: 'في منحنى (السرعة–الزمن) الخط الأفقي يعني سرعة ثابتة، والمساحة تحته هي الإزاحة: 8 m.' },
-  { t: 'سرعة تزداد بانتظام (v–t)', g: 'v', f: t => t <= 6 ? t / 3 : 0, hint: 'الخط المائل في منحنى (v–t) يعني تسارعاً ثابتاً، والميل هو التسارع: ⅓ m/s².' },
-];
-const gmBest = () => store.get('gmatch', {});
-const gmStars = pct => pct >= 85 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
-const gameCard = () => `<button class="game-card" data-go="gmatch"><span class="gi">📈</span><span class="t"><b>لعبة «طابق الرسم البياني»</b><small>حرّك السيارة بإصبعك لترسم المنحنى المطلوب · ${GM.length} مستويات</small></span><span class="qb-go" style="color:#0B1A24">العب ${icon('chev')}</span></button>`;
-function vGMatch() {
-  const b = gmBest(), open = i => i === 0 || (b[i - 1] || 0) >= 50;
-  return `<div class="view push">${navBar()}
-    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">طابق الرسم البياني</h1><p>يظهر منحنى (موقع–زمن) أو (سرعة–زمن). حرّك السيارة بإصبعك خلال 10 ثوانٍ ليطابق منحناك المنحنى المطلوب.</p></div>
-    <div class="gm-levels">${GM.map((L, i) => { const p = b[i]; return `<button class="gm-lv ${open(i) ? '' : 'lock'}" ${open(i) ? `data-go="gplay:${i}"` : 'aria-disabled="true"'}>
-      <span class="n">${open(i) ? i + 1 : '🔒'}</span><span class="t"><b>${L.t}</b><small>${L.g === 'x' ? 'منحنى الموقع – الزمن' : 'منحنى السرعة – الزمن'}${p != null ? ` · أفضل تطابق ${p}%` : ''}</small></span>
-      <span class="st">${p != null ? starStr(gmStars(p)) : ''}</span></button>`; }).join('')}</div>
-    <p class="hint" style="margin-top:12px">يُفتح المستوى التالي عندما تحصل على نجمة واحدة على الأقل.</p></div>`;
-}
-function vGPlay(i) {
-  const L = GM[i];
-  return `<div class="view push">${navBar()}
-    <div class="page-h" style="padding-top:4px"><h1 style="font-size:26px">${i + 1}. ${L.t}</h1><p>ضع السيارة عند العلامة الخضراء، ثم اضغط «ابدأ» وحرّكها بإصبعك يميناً ويساراً على الشاشة.</p></div>
-    <div class="stage" style="margin-top:14px"><canvas id="gm" width="800" height="520" aria-label="لعبة طابق الرسم البياني"></canvas></div>
-    <div class="gm-bar" id="gm-bar"><button class="btn primary" data-act="gm-start">${icon('play', 'style="fill:currentColor;stroke:none"')}ابدأ</button></div>
-    <div class="gm-hint">💡 ${L.hint}</div></div>`;
-}
-function startGPlay(i) {
-  const cv = document.getElementById('gm'); if (!cv) return;
-  const L = GM[i], W = 800, H = 520, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cv.width = W * dpr; cv.height = H * dpr;
-  const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
-  const G0 = { x: 70, y: 40, w: 690, h: 290 }, TR = { x: 70, w: 690, y: 450 };
-  const ymax = L.g === 'x' ? 10 : 2.5;
-  const PX = t => G0.x + t / 10 * G0.w, PY = v => G0.y + G0.h - Math.max(0, Math.min(ymax, v)) / ymax * G0.h, TX = m => TR.x + m / 10 * TR.w;
-  const st = { phase: 'ready', car: L.g === 'x' ? L.f(0) : 1, pts: [], t0: 0, down: false, score: null };
-  const toM = e => { const r = cv.getBoundingClientRect(); return Math.max(0, Math.min(10, ((e.clientX - r.left) / r.width * W - TR.x) / TR.w * 10)); };
-  cv.onpointerdown = e => { st.down = true; cv.setPointerCapture(e.pointerId); st.car = toM(e); };
-  cv.onpointermove = e => { if (st.down) st.car = toM(e); };
-  cv.onpointerup = cv.onpointercancel = () => { st.down = false; };
-  // Velocity from the last 0.4 s of positions, placed at the middle of that window.
-  const vAt = k => { const p = st.pts, a = p[k], j = p.findIndex(q => q[0] >= a[0] - .4); const b = p[Math.max(0, Math.min(j, k - 1))]; return k && a[0] > b[0] ? [(a[0] + b[0]) / 2, (a[1] - b[1]) / (a[0] - b[0])] : [a[0], 0]; };
-  const series = () => L.g === 'x' ? st.pts : st.pts.map((q, k) => vAt(k));
-  const txt = (t, x, y, c, al = 'center', size = 18, w = 600) => { ctx.direction = /[؀-ۿ]/.test(t) ? 'rtl' : 'ltr'; ctx.fillStyle = c; ctx.font = `${w} ${size}px -apple-system, "SF Arabic", Arial, sans-serif`; ctx.textAlign = al; ctx.fillText(t, x, y); };
-  function finish() {
-    const s = series().filter(q => q[0] >= .5); let err = 0;
-    s.forEach(([t, y]) => { err += Math.abs(Math.max(0, Math.min(ymax, y)) - L.f(t)) / ymax; });
-    const pct = Math.max(0, Math.round(100 * (1 - (s.length ? err / s.length : 1) / .25)));
-    st.score = pct; st.phase = 'done';
-    const b = gmBest(), prev = b[i]; if (prev == null || pct > prev) { const gain = gmStars(pct) - gmStars(prev || 0); b[i] = pct; store.set('gmatch', b); if (gain > 0) addXP(gain * 10); }
-    const bar = document.getElementById('gm-bar');
-    if (bar) bar.innerHTML = `<button class="btn primary" data-act="gm-start">${icon('replay')}حاول مرة أخرى</button>${i + 1 < GM.length && gmStars(pct) ? `<button class="btn" data-go="gplay:${i + 1}" data-replace="1">المستوى التالي</button>` : ''}`;
-    toast(pct >= 85 ? `🎉 رائع! تطابق ${pct}%` : pct >= 50 ? `أحسنت! تطابق ${pct}%` : `تطابق ${pct}% — حاول مرة أخرى`);
-  }
-  st.go = () => { st.phase = 'count'; st.t0 = performance.now(); st.pts = []; st.score = null; const bar = document.getElementById('gm-bar'); if (bar) bar.innerHTML = '<button class="btn" disabled>…</button>'; };
-  GMPLAY = st;
-  let raf;
-  const frame = now => {
-    const el = (now - st.t0) / 1000;
-    if (st.phase === 'count' && el >= 3) { st.phase = 'run'; st.t0 = now; }
-    if (st.phase === 'run') { const t = Math.min(10, (now - st.t0) / 1000); const last = st.pts[st.pts.length - 1]; if (!last || t - last[0] >= .05) st.pts.push([t, st.car]); if (t >= 10) finish(); }
-    ctx.fillStyle = '#07080B'; ctx.fillRect(0, 0, W, H);
-    // axes and grid
-    ctx.strokeStyle = 'rgba(255,255,255,.07)'; ctx.lineWidth = 1;
-    for (let t = 0; t <= 10; t++) { ctx.beginPath(); ctx.moveTo(PX(t), G0.y); ctx.lineTo(PX(t), G0.y + G0.h); ctx.stroke(); txt(String(t), PX(t), G0.y + G0.h + 22, 'rgba(255,255,255,.45)', 'center', 14); }
-    const step = L.g === 'x' ? 2 : .5;
-    for (let v = 0; v <= ymax + 1e-9; v += step) { ctx.beginPath(); ctx.moveTo(G0.x, PY(v)); ctx.lineTo(G0.x + G0.w, PY(v)); ctx.stroke(); txt(String(+v.toFixed(1)), G0.x - 10, PY(v) + 5, 'rgba(255,255,255,.45)', 'right', 14); }
-    ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(G0.x, G0.y); ctx.lineTo(G0.x, G0.y + G0.h); ctx.lineTo(G0.x + G0.w, G0.y + G0.h); ctx.stroke();
-    txt('t (s)', G0.x + G0.w, G0.y + G0.h + 44, 'rgba(255,255,255,.6)', 'right', 14);
-    txt(L.g === 'x' ? 'x (m)' : 'v (m/s)', G0.x - 6, G0.y - 14, 'rgba(255,255,255,.6)', 'center', 14);
-    // target
-    ctx.strokeStyle = 'rgba(43,212,176,.9)'; ctx.lineWidth = 6; ctx.setLineDash([12, 10]); ctx.lineCap = 'round'; ctx.beginPath();
-    for (let t = 0; t <= 10.001; t += .05) { const y = PY(L.f(t)); t ? ctx.lineTo(PX(t), y) : ctx.moveTo(PX(t), y); } ctx.stroke(); ctx.setLineDash([]);
-    // student
-    const ser = series();
-    if (ser.length > 1) { ctx.strokeStyle = '#FF4D7A'; ctx.lineWidth = 5; ctx.shadowColor = '#FF4D7A'; ctx.shadowBlur = 12; ctx.beginPath(); ser.forEach(([t, y], k) => k ? ctx.lineTo(PX(t), PY(y)) : ctx.moveTo(PX(t), PY(y))); ctx.stroke(); ctx.shadowBlur = 0; }
-    // track and car
-    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(TR.x, TR.y); ctx.lineTo(TR.x + TR.w, TR.y); ctx.stroke();
-    for (let m = 0; m <= 10; m++) { ctx.beginPath(); ctx.moveTo(TX(m), TR.y); ctx.lineTo(TX(m), TR.y + 8); ctx.stroke(); txt(String(m), TX(m), TR.y + 28, 'rgba(255,255,255,.45)', 'center', 13); }
-    txt('m', TR.x + TR.w + 18, TR.y + 28, 'rgba(255,255,255,.45)', 'center', 13);
-    const start = L.g === 'x' ? L.f(0) : 1;
-    if (st.phase !== 'run' && st.phase !== 'done') { ctx.fillStyle = 'rgba(50,209,122,.25)'; ctx.fillRect(TX(start) - 22, TR.y - 52, 44, 52); ctx.fillStyle = '#32D17A'; ctx.fillRect(TX(start) - 2, TR.y - 58, 4, 58); }
-    const cx = TX(st.car);
-    ctx.fillStyle = '#4C86FF'; ctx.beginPath(); ctx.roundRect ? ctx.roundRect(cx - 28, TR.y - 38, 56, 24, 7) : ctx.rect(cx - 28, TR.y - 38, 56, 24); ctx.fill();
-    ctx.beginPath(); ctx.roundRect ? ctx.roundRect(cx - 15, TR.y - 50, 30, 14, 6) : ctx.rect(cx - 15, TR.y - 50, 30, 14); ctx.fill();
-    ctx.fillStyle = '#F5F5F7'; [cx - 16, cx + 16].forEach(x => { ctx.beginPath(); ctx.arc(x, TR.y - 10, 8, 0, 7); ctx.fill(); });
-    // status
-    if (st.phase === 'ready') txt('ضع السيارة عند العلامة الخضراء ثم اضغط «ابدأ»', W / 2, 26, '#7FB2FF', 'center', 16);
-    if (st.phase === 'count') txt(String(3 - Math.floor(el)), W / 2, 200, '#FFFFFF', 'center', 120, 800);
-    if (st.phase === 'run') txt(`${(10 - (now - st.t0) / 1000).toFixed(1)} s`, G0.x + G0.w, 26, '#FFC83D', 'right', 18, 800);
-    if (st.phase === 'done') { txt(`تطابق ${st.score}%  ${starStr(gmStars(st.score))}`, W / 2, 28, st.score >= 70 ? '#32D17A' : st.score >= 50 ? '#FFC83D' : '#FF8A8A', 'center', 22, 800); }
-    raf = requestAnimationFrame(frame);
-  };
-  raf = requestAnimationFrame(frame);
-  simStop = () => { cancelAnimationFrame(raf); GMPLAY = null; };
-}
-let GMPLAY = null;
-
-/* ---------- مختبر حساسات الجوال: real measurements with the accelerometer and gyroscope ---------- */
-const SENS = { tool: 'pend', L: 60, res: null };
-const PEND_SECS = 15;
-function sensBody() {
-  const t = SENS.tool;
-  if (t === 'pend') return `
-    <ol class="sn-steps"><li>اربط الجوال جيداً بخيط أو ضعه في كيس قماشي واربطه، وعلّقه من نقطة ثابتة.</li><li>قِس الطول من نقطة التعليق إلى منتصف الجوال واختره بالأسفل.</li><li>اضغط «ابدأ القياس»، ثم أزِح الجوال قليلاً (زاوية صغيرة) واتركه يتأرجح ${PEND_SECS} ثانية.</li></ol>
-    <div class="controls" style="margin-top:12px"><div class="ctl"><label for="sn-L">طول البندول L<output id="sn-L-o">${SENS.L} cm</output></label><input type="range" id="sn-L" min="20" max="200" step="5" value="${SENS.L}" style="--p:${(SENS.L - 20) / 180 * 100}%"></div></div>
-    <div class="stage" style="margin-top:12px"><canvas id="sn-cv" width="800" height="500" aria-label="منحنى تأرجح البندول"></canvas></div>
-    <div class="readout" id="sn-ro"></div>
-    ${SENS.res ? `<div class="sn-res">${SENS.res}</div>` : ''}
-    <button class="btn primary wide" data-act="sens-go" style="width:100%;margin-top:14px">${icon('play', 'style="fill:currentColor;stroke:none"')}ابدأ القياس (${PEND_SECS} ثانية)</button>
-    <p class="law sn-law">الزمن الدوري للبندول البسيط عند زوايا صغيرة <code>T = 2π√(L / g)</code>، ومنه <code>g = 4π²L / T²</code>. يقيس الجيروسكوب سرعة دوران الجوال، فنحسب الزمن الدوري من تكرار الموجة.</p>`;
-  if (t === 'tilt') return `
-    <ol class="sn-steps"><li>ضع الجوال على ظهره فوق كتاب أو لوح، ثم ارفع طرف اللوح ليصبح مستوى مائلاً.</li><li>شاهد زاوية الميل ومركبتي الجاذبية على المستوى.</li></ol>
-    <div class="sn-big" id="sn-deg">—°</div>
-    <div class="stage" style="margin-top:12px"><canvas id="sn-cv" width="800" height="500" aria-label="مقياس الميل"></canvas></div>
-    <div class="readout" id="sn-ro"></div>
-    <button class="btn primary wide" data-act="sens-go" style="width:100%;margin-top:14px">شغّل مقياس الميل</button>
-    <p class="law sn-law">على مستوى مائل بزاوية θ تتحلل الجاذبية إلى مركبة موازية للمستوى <code>g sinθ</code> تسحب الجسم للأسفل، ومركبة عمودية عليه <code>g cosθ</code>.</p>`;
-  return `
-    <ol class="sn-steps"><li>اضغط «شغّل» وراقب مقدار التسارع الذي يقيسه الجوال.</li><li>جرّب: اتركه ساكناً، ثم امشِ به، ثم اركب المصعد، أو اقذفه برفق للأعلى فوق سرير والتقطه.</li></ol>
-    <div class="stage" style="margin-top:12px"><canvas id="sn-cv" width="800" height="500" aria-label="منحنى التسارع"></canvas></div>
-    <div class="readout" id="sn-ro"></div>
-    <button class="btn primary wide" data-act="sens-go" style="width:100%;margin-top:14px">شغّل مقياس التسارع</button>
-    <p class="law sn-law">الجوال الساكن يقيس <code>9.8 m/s²</code> تقريباً بسبب الجاذبية. يزداد عند بدء صعود المصعد، ويقترب من الصفر أثناء السقوط الحر (انعدام الوزن الظاهري).</p>`;
-}
-function vSensors() {
-  return `<div class="view push">${navBar()}
-    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">مختبر حساسات الجوال</h1><p>في جوالك مقياس تسارع وجيروسكوب حقيقيان. استخدمهما لتقيس الفيزياء بنفسك.</p></div>
-    <div class="seg" role="group" aria-label="الأداة" style="margin-top:14px">${[['pend', 'البندول'], ['tilt', 'مقياس الميل'], ['acc', 'مقياس التسارع']].map(([k, t]) => `<button data-act="sens-tool" data-k="${k}" aria-pressed="${SENS.tool === k}">${t}</button>`).join('')}</div>
-    ${sensBody()}</div>`;
-}
-const sensCard = () => `<button class="game-card sens" data-go="sensors"><span class="gi">📱</span><span class="t"><b>مختبر حساسات الجوال</b><small>قِس g ببندول حقيقي، وزاوية الميل، والتسارع</small></span><span class="qb-go" style="color:#24130B">جرّب ${icon('chev')}</span></button>`;
-// iOS asks for motion permission, and only from a tap.
-function sensPermission(then) {
-  const D = window.DeviceMotionEvent;
-  if (D && typeof D.requestPermission === 'function') D.requestPermission().then(r => r === 'granted' ? then() : toast('اسمح للتطبيق باستخدام حساسات الحركة لتعمل التجربة')).catch(() => toast('تعذّر تشغيل الحساسات'));
-  else then();
-}
-// Period from upward zero crossings of the smoothed signal.
-function pendPeriod(data) {
-  const axes = ['rb', 'rg', 'ra'].filter(k => data.length && data.every(d => d[k] != null && isFinite(d[k])));
-  const varOf = k => { const v = data.map(d => d[k]), m = v.reduce((a, b) => a + b, 0) / v.length; return v.reduce((a, x) => a + (x - m) ** 2, 0) / v.length; };
-  const pool = axes.length ? axes : ['ax', 'ay', 'az'];
-  const key = pool.reduce((b, k) => varOf(k) > varOf(b) ? k : b, pool[0]);
-  const raw = data.map(d => d[key]), m = raw.reduce((a, b) => a + b, 0) / raw.length;
-  const sm = raw.map((_, i) => { let s = 0, n = 0; for (let j = Math.max(0, i - 3); j <= Math.min(raw.length - 1, i + 3); j++) { s += raw[j] - m; n++; } return s / n; });
-  const amp = Math.max(...sm.map(Math.abs)), up = [];
-  for (let i = 1; i < sm.length; i++) if (sm[i - 1] < 0 && sm[i] >= 0) {
-    const t = data[i - 1].t + (data[i].t - data[i - 1].t) * (-sm[i - 1] / (sm[i] - sm[i - 1]));
-    if (!up.length || t - up[up.length - 1] > .3) up.push(t);
-  }
-  const P = up.slice(1).map((t, i) => t - up[i]).sort((a, b) => a - b);
-  return { key, amp, T: P.length >= 3 ? P[Math.floor(P.length / 2)] : null, n: P.length };
-}
-let SN = null;
-function sensStop() { if (SN) { window.removeEventListener('devicemotion', SN.on); cancelAnimationFrame(SN.raf); clearTimeout(SN.warn); SN = null; } }
-function sensStart() {
-  sensStop();
-  const cv = document.getElementById('sn-cv'), ro = document.getElementById('sn-ro'); if (!cv) return;
-  const tool = SENS.tool, W = 800, H = 500, dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cv.width = W * dpr; cv.height = H * dpr; const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
-  const st = { t0: performance.now(), data: [], got: false, lp: null, done: false };
-  st.on = e => {
-    const a = e.accelerationIncludingGravity || {}, r = e.rotationRate || {};
-    if (a.x == null && r.beta == null) return;
-    st.got = true;
-    st.data.push({ t: (performance.now() - st.t0) / 1000, ax: a.x || 0, ay: a.y || 0, az: a.z || 0, ra: r.alpha, rb: r.beta, rg: r.gamma });
-    if (st.data.length > 4000) st.data.shift();
-  };
-  window.addEventListener('devicemotion', st.on);
-  st.warn = setTimeout(() => { if (!st.got) { ro.innerHTML = '<div style="grid-column:1/-1"><small>تنبيه</small><b style="direction:rtl;white-space:normal">لا تصل بيانات من الحساسات. افتح الصفحة من جوال.</b></div>'; } }, 1500);
-  const txt = (t, x, y, c, al = 'center', size = 16) => { ctx.direction = /[؀-ۿ]/.test(t) ? 'rtl' : 'ltr'; ctx.fillStyle = c; ctx.font = `600 ${size}px -apple-system, "SF Arabic", Arial, sans-serif`; ctx.textAlign = al; ctx.fillText(t, x, y); };
-  const plot = (pts, x0, x1, lo, hi, color) => {
-    if (pts.length < 2) return; ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.beginPath();
-    pts.forEach(([t, v], i) => { const X = 40 + (t - x0) / (x1 - x0) * (W - 60), Y = 40 + (1 - (v - lo) / (hi - lo)) * (H - 90); i ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); }); ctx.stroke();
-  };
-  const bg = () => { ctx.fillStyle = '#07080B'; ctx.fillRect(0, 0, W, H); ctx.strokeStyle = 'rgba(255,255,255,.06)'; for (let x = 0; x <= W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); } for (let y = 0; y <= H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); } };
-  const setRO = items => { const h = items.map(([a, b]) => `<div><small>${a}</small><b>${b}</b></div>`).join(''); if (ro.innerHTML !== h && st.got) ro.innerHTML = h; };
-  const frame = () => {
-    const now = (performance.now() - st.t0) / 1000, d = st.data;
-    bg();
-    if (tool === 'pend') {
-      const left = Math.max(0, PEND_SECS - now);
-      if (d.length > 20) {
-        const { key } = pendPeriod(d.slice(-400)), win = d.filter(q => q.t > now - 6), vals = win.map(q => q[key]);
-        const lo = Math.min(...vals, -1), hi = Math.max(...vals, 1);
-        ctx.strokeStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); const y0 = 40 + (1 - (0 - lo) / (hi - lo)) * (H - 90); ctx.moveTo(40, y0); ctx.lineTo(W - 20, y0); ctx.stroke();
-        plot(win.map(q => [q.t, q[key]]), Math.max(0, now - 6), Math.max(6, now), lo, hi, '#FFA53A');
-      }
-      txt(st.done ? 'انتهى القياس' : `${left.toFixed(1)} s`, W - 24, 30, st.done ? '#32D17A' : '#FFC83D', 'right', 20);
-      txt('سرعة دوران الجوال مع الزمن', 24, 30, 'rgba(255,255,255,.55)', 'left', 15);
-      if (!st.done && now >= PEND_SECS) {
-        st.done = true;
-        const r = pendPeriod(d.filter(q => q.t > 1)), L = SENS.L / 100;
-        if (!r.T || r.T < .3 || r.T > 6) SENS.res = '⚠️ لم أستطع تحديد الزمن الدوري. تأكد أن الجوال يتأرجح بحرية بزاوية صغيرة، ثم أعد القياس.';
-        else {
-          const g = 4 * Math.PI ** 2 * L / r.T ** 2, Te = 2 * Math.PI * Math.sqrt(L / 9.8), err = Math.abs(g - 9.8) / 9.8 * 100;
-          SENS.res = `✅ الزمن الدوري المقيس <code>T = ${r.T.toFixed(2)} s</code> (من ${r.n} ذبذبات)<br>عجلة الجاذبية <code>g = 4π²L / T² = ${g.toFixed(2)} m/s²</code><br>المتوقع نظرياً <code>T = ${Te.toFixed(2)} s</code><br>الفرق عن القيمة المعروفة <code>9.8 m/s²</code>: <code>${err.toFixed(0)}%</code>${err < 10 ? ' — قياس ممتاز! 🎉' : ''}`;
-          if (!store.get('sensXP', false)) { store.set('sensXP', true); addXP(20); }
-        }
-        // Keep the recorded wave on screen and add the result under it.
-        sensStop(); const go = document.querySelector('[data-act="sens-go"]'); if (go) go.insertAdjacentHTML('beforebegin', `<div class="sn-res">${SENS.res}</div>`); return;
-      }
-      setRO([['الزمن المتبقي', `${left.toFixed(0)} s`], ['الطول L', `${(SENS.L / 100).toFixed(2)} m`], ['القراءات', `${d.length}`]]);
-    } else if (tool === 'tilt') {
-      const a = d[d.length - 1];
-      if (a) {
-        st.lp = st.lp ? { x: st.lp.x * .85 + a.ax * .15, y: st.lp.y * .85 + a.ay * .15, z: st.lp.z * .85 + a.az * .15 } : { x: a.ax, y: a.ay, z: a.az };
-        const gm = Math.hypot(st.lp.x, st.lp.y, st.lp.z) || 9.8, th = Math.acos(Math.min(1, Math.abs(st.lp.z) / gm)) * 180 / Math.PI;
-        const deg = document.getElementById('sn-deg'); if (deg) deg.textContent = `${th.toFixed(1)}°`;
-        const cx = W / 2, cy = H / 2 - 10, R = 170;
-        ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.stroke(); ctx.beginPath(); ctx.arc(cx, cy, 40, 0, 7); ctx.stroke();
-        line2(ctx, cx - R, cy, cx + R, cy); line2(ctx, cx, cy - R, cx, cy + R);
-        const bx = cx - Math.max(-1, Math.min(1, st.lp.x / 9.8)) * (R - 30), by = cy + Math.max(-1, Math.min(1, st.lp.y / 9.8)) * (R - 30);
-        ctx.fillStyle = th < 1 ? '#32D17A' : '#2BD4B0'; ctx.shadowColor = '#2BD4B0'; ctx.shadowBlur = 20; ctx.beginPath(); ctx.arc(bx, by, 30, 0, 7); ctx.fill(); ctx.shadowBlur = 0;
-        txt(th < 1 ? 'مستوٍ تماماً ✓' : 'مستوى مائل', cx, H - 20, th < 1 ? '#32D17A' : 'rgba(255,255,255,.6)', 'center', 18);
-        setRO([['زاوية الميل θ', `${th.toFixed(1)}°`], ['g sinθ (موازية)', `${(9.8 * Math.sin(th * Math.PI / 180)).toFixed(2)} m/s²`], ['g cosθ (عمودية)', `${(9.8 * Math.cos(th * Math.PI / 180)).toFixed(2)} m/s²`]]);
-      }
-    } else {
-      const win = d.filter(q => q.t > now - 10).map(q => [q.t, Math.hypot(q.ax, q.ay, q.az)]);
-      [0, 9.8, 20].forEach(v => { const Y = 40 + (1 - v / 25) * (H - 90); ctx.strokeStyle = v === 9.8 ? 'rgba(50,209,122,.5)' : 'rgba(255,255,255,.2)'; ctx.setLineDash(v === 9.8 ? [8, 8] : []); ctx.beginPath(); ctx.moveTo(40, Y); ctx.lineTo(W - 20, Y); ctx.stroke(); ctx.setLineDash([]); txt(String(v), 30, Y + 5, 'rgba(255,255,255,.5)', 'right', 13); });
-      plot(win, Math.max(0, now - 10), Math.max(10, now), 0, 25, '#4C86FF');
-      txt('مقدار التسارع (m/s²) خلال آخر 10 ثوانٍ', 24, 26, 'rgba(255,255,255,.55)', 'left', 15);
-      if (win.length) { const v = win.map(q => q[1]); setRO([['الآن', `${v[v.length - 1].toFixed(2)} m/s²`], ['أقل قيمة', `${Math.min(...v).toFixed(2)}`], ['أكبر قيمة', `${Math.max(...v).toFixed(2)}`]]); }
-    }
-    st.raf = requestAnimationFrame(frame);
-  };
-  SN = st; st.raf = requestAnimationFrame(frame);
-  simStop = sensStop;
-}
-function line2(ctx, x1, y1, x2, y2) { ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
-
 /* ---------------- Views ---------------- */
 function vHome() {
   const g = G();
@@ -2277,8 +2019,6 @@ function vLab() {
   g.units.forEach(u => { const ks = (u.sims || []).filter(k => SIMS[k] && !seen.has(k)); ks.forEach(k => seen.add(k)); if (ks.length) groups.push([u, ks]); });
   return `<div class="view">
     <div class="page-h"><h1>المختبر</h1><p>تجارب ${esc(g.name)} مرتبة حسب الوحدات. حرّك المؤشرات وشاهد النتائج مباشرة.</p></div>
-    ${gameCard()}
-    ${sensCard()}
     ${groups.length ? groups.map(([u, ks]) => `<div class="label unit-name" style="padding-top:20px">${esc(u.title)}</div>
     <div class="sims" style="margin-top:0">${ks.map(k => { const s = SIMS[k]; return `<button class="sim-card" data-go="sim:${k}" style="${tileStyle(s.theme)}">
       ${glyph(s.glyph, s.theme)}
@@ -3657,14 +3397,10 @@ function render(scroll = true) {
   else if (top.type === 'quiz') html = vQuizHub();
   else if (top.type === 'mistakes') html = vMistakes();
   else if (top.type === 'live') html = vLive();
-  else if (top.type === 'gmatch') html = vGMatch();
-  else if (top.type === 'sensors') html = vSensors();
-  else if (top.type === 'gplay') html = vGPlay(+top.k);
   else if (top.type === 'qrun') html = Q.done ? vQuizResult() : vQuizRun();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
-  if (top && top.type === 'gplay') startGPlay(+top.k);
   if (ADMIN) setupReorder();
   if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at) loadAdmin();
   if (scroll) window.scrollTo(0, 0);
@@ -3833,9 +3569,6 @@ document.addEventListener('click', e => {
   }
   else if (act === 'rings') ringsSheet();
   else if (act === 'rank') rankSheet();
-  else if (act === 'gm-start') { if (GMPLAY) GMPLAY.go(); }
-  else if (act === 'sens-tool') { sensStop(); SENS.tool = el.dataset.k; SENS.res = null; render(false); }
-  else if (act === 'sens-go') { SENS.res = null; const r = document.querySelector('.sn-res'); if (r) r.remove(); sensPermission(sensStart); }
   else if (act === 'pred-pick' || act === 'pred-show' || act === 'pred-again') { const t = S.stack[S.stack.length - 1]; if (t && t.type === 'sim') predictAct(t.k, act, el); }
   else if (act === 'live-new') liveModelSheet();
   else if (act === 'live-host') liveHost(+el.dataset.m);
@@ -3939,7 +3672,6 @@ document.addEventListener('click', e => {
   logEvent('pdf', a.dataset.gate);
 }, true);
 document.addEventListener('input', e => {
-  if (e.target.id === 'sn-L') { SENS.L = +e.target.value; e.target.style.setProperty('--p', (SENS.L - 20) / 180 * 100 + '%'); const o = document.getElementById('sn-L-o'); if (o) o.textContent = `${SENS.L} cm`; return; }
   if (e.target.id !== 'st-search') return;
   ADMIN_DATA.q = e.target.value; const box = document.getElementById('st-list'); if (box) box.innerHTML = studentRows();
 });
