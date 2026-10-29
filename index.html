@@ -550,6 +550,46 @@ body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; 
 @keyframes medal { 0% { transform: scale(.2) rotate(-30deg); opacity: 0; } 60% { transform: scale(1.15) rotate(8deg); } }
 .celebrate h1 { font-size: 30px; } .celebrate p { color: var(--muted); } .celebrate .btn { min-width: 220px; }
 .card-prev { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 18px; margin-top: 14px; background: #000; }
+/* Live class quiz */
+.wide #app { max-width: 1100px; }
+.wide .tabbar { display: none; }
+.live-hero { text-align: center; padding: 26px 18px; border-radius: var(--r-lg); display: grid; gap: 6px;
+  background: radial-gradient(90% 120% at 10% 110%, #6A1FD1 0%, transparent 60%), radial-gradient(90% 100% at 100% 0%, #D61F6A 0%, transparent 65%), #120E2A; }
+.live-hero small { color: rgba(255,255,255,.75); font-size: 14px; }
+.live-code { font-family: var(--font-mark); font-size: 88px; font-weight: 800; letter-spacing: .14em; direction: ltr; line-height: 1.1; }
+.wide .live-code { font-size: 150px; }
+.live-players { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 16px; }
+.live-players span { padding: 8px 14px; border-radius: 999px; background: var(--surface-2); font-weight: 600; animation: pop .4s; }
+.wide .live-players span { font-size: 20px; padding: 10px 18px; }
+.live-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px; }
+.live-top b { font-size: 15px; color: var(--muted); }
+.live-timer { width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; font-size: 26px; font-weight: 800; background: var(--surface-2); border: 3px solid var(--accent); flex: none; }
+.live-timer.low { border-color: #FF4D7A; color: #FF4D7A; }
+.live-q { font-size: 24px; font-weight: 700; line-height: 1.55; margin: 18px 0; text-align: center; }
+.wide .live-q { font-size: 40px; }
+.live-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.live-opt { display: flex; align-items: center; gap: 12px; min-height: 92px; padding: 14px 16px; border-radius: 18px; background: var(--lc); color: #fff; font-weight: 700; font-size: 17px; text-align: right;
+  box-shadow: 0 6px 0 color-mix(in srgb, var(--lc) 55%, #000); transition: transform .12s, box-shadow .12s, opacity .3s; }
+.live-opt:not([disabled]):active { transform: translateY(4px); box-shadow: 0 2px 0 color-mix(in srgb, var(--lc) 55%, #000); }
+.wide .live-opt { min-height: 130px; font-size: 28px; }
+.live-opt .sh { font-size: 26px; opacity: .9; flex: none; }
+.live-opt.dim { opacity: .28; } .live-opt.right { outline: 4px solid #fff; outline-offset: 2px; }
+.live-opt .cnt { margin-inline-start: auto; background: rgba(0,0,0,.28); padding: 2px 10px; border-radius: 999px; font-size: 15px; }
+.live-board { display: grid; gap: 8px; margin-top: 14px; }
+.live-board div { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 14px; background: var(--surface); animation: rise .4s both; }
+.wide .live-board div { font-size: 22px; padding: 14px 20px; }
+.live-board .n { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--surface-2); font-weight: 800; flex: none; }
+.live-board .p { margin-inline-start: auto; font-weight: 800; color: #FFC83D; }
+.live-board .me { outline: 2px solid var(--accent); }
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; margin-top: 22px; }
+.podium > div { flex: 1; max-width: 170px; text-align: center; display: grid; gap: 6px; animation: rise .6s both; }
+.podium .col { border-radius: 16px 16px 0 0; display: grid; place-items: center; font-size: 40px; }
+.podium b { font-size: 17px; } .podium small { color: #FFC83D; font-weight: 700; }
+.live-msg { text-align: center; padding: 34px 12px; display: grid; gap: 10px; justify-items: center; }
+.live-msg .em { font-size: 76px; line-height: 1.2; animation: medal .7s cubic-bezier(.2, .8, .2, 1.3); }
+.live-msg h1 { font-size: 28px; } .live-msg p { color: var(--muted); }
+.live-row { border-color: rgba(168,102,255,.4); } .live-row .n { background: rgba(168,102,255,.18); color: #C79BFF; font-size: 20px; }
+.live-pick { display: grid; gap: 10px; margin-top: 16px; }
 /* Screen-to-screen motion (View Transitions). RTL: a pushed screen enters from the left like iOS in Arabic. */
 .vt .view { animation: none; }
 .tabbar { view-transition-name: tabbar; }
@@ -1477,6 +1517,177 @@ async function shareCard(o) {
     <div class="ed-row" style="margin-top:14px">${canFile ? `<button class="btn primary" data-act="card-share" style="margin-top:0">${icon('share')}مشاركة</button>` : `<a class="btn primary" href="${CARD.url}" download="physics-tube.png" style="margin-top:0">حفظ الصورة</a>`}<button class="btn" data-act="close" style="margin-top:0">إغلاق</button></div>`);
 }
 
+/* ---------- مسابقة الحصة المباشرة: the teacher runs it, students answer from their phones ---------- */
+const LIVE_COL = ['#E8326B', '#2F7BEF', '#E89A10', '#22A85A'];
+const LIVE_SHAPE = ['▲', '◆', '●', '■'];
+const LIVE_SECS = 20;
+const LIVE = { code: '', role: '', room: null, players: [], answers: [], my: null, qSeen: 0, poll: null, tick: null, err: '', awarded: false, busy: false };
+const liveQs = room => ((((window.QUIZ_BANK || {})[room.grade] || [])[room.model] || { qs: [] }).qs).filter(q => q.o);
+// Same option order on the board and on every phone.
+function livePerm(q, n) {
+  let h = 9; for (const ch of LIVE.code + ':' + q) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const a = Array.from({ length: n }, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) { h = (Math.imul(h, 1103515245) + 12345) >>> 0; const j = h % (i + 1); [a[i], a[j]] = [a[j], a[i]]; }
+  return a;
+}
+const liveLeft = () => Math.max(0, LIVE_SECS - Math.floor((Date.now() - LIVE.qSeen) / 1000));
+function liveBoard() {
+  const names = Object.fromEntries(LIVE.players.map(p => [p.user_id, p.name])), t = {};
+  LIVE.players.forEach(p => { t[p.user_id] = 0; });
+  LIVE.answers.forEach(a => { t[a.user_id] = (t[a.user_id] || 0) + a.points; });
+  return Object.entries(t).map(([id, pts]) => ({ id, name: names[id] || 'طالب', pts })).sort((a, b) => b.pts - a.pts);
+}
+async function liveFetch() {
+  const { data: room, error } = await db.from('live_rooms').select('*').eq('code', LIVE.code).maybeSingle();
+  if (error || !room) { LIVE.err = 'انتهت المسابقة أو أغلقها المعلم.'; LIVE.room = null; return; }
+  if (!LIVE.room || room.q !== LIVE.room.q || room.phase !== LIVE.room.phase) {
+    if (room.phase === 'question') { LIVE.qSeen = Date.now(); LIVE.autoRev = false; }
+    if (LIVE.my && LIVE.my.q !== room.q) LIVE.my = null;
+  }
+  LIVE.room = room; LIVE.err = '';
+  const all = room.phase === 'reveal' || room.phase === 'end', host = LIVE.role === 'host';
+  if (host || all) {
+    let aq = db.from('live_answers').select('user_id,q,pick,ok,points').eq('room', LIVE.code);
+    if (!all) aq = aq.eq('q', room.q);
+    const [pl, an] = await Promise.all([db.from('live_players').select('user_id,name').eq('room', LIVE.code), aq]);
+    LIVE.players = pl.data || []; LIVE.answers = an.data || [];
+  }
+  if (room.phase === 'end' && LIVE.role === 'player' && !LIVE.awarded) {
+    LIVE.awarded = true; const me = liveBoard().find(x => x.id === (USER && USER.id));
+    if (me) addXP(Math.round(me.pts / 200));
+  }
+}
+const liveSig = () => JSON.stringify([LIVE.room && [LIVE.room.q, LIVE.room.phase], LIVE.players.length, LIVE.answers.length, LIVE.err, !!LIVE.my]);
+const isLiveTop = () => { const t = S.stack[S.stack.length - 1]; return !!t && t.type === 'live'; };
+function liveStart() {
+  liveStop();
+  const step = async () => {
+    if (!LIVE.code || LIVE.busy) return;
+    const before = liveSig();
+    try { await liveFetch(); } catch (e) {}
+    // The screen may still be animating in; render() stops polling once the user leaves.
+    if (!isLiveTop()) return;
+    if (liveSig() !== before) render(false);
+    // Reveal by itself once everyone has answered.
+    const r = LIVE.room;
+    if (LIVE.role === 'host' && r && r.phase === 'question' && LIVE.players.length && LIVE.answers.filter(a => a.q === r.q).length >= LIVE.players.length) liveSet({ phase: 'reveal' });
+  };
+  step(); LIVE.poll = setInterval(step, 1500);
+  LIVE.tick = setInterval(() => {
+    const r = LIVE.room, el = document.getElementById('live-t'); if (!r || r.phase !== 'question') return;
+    const left = liveLeft();
+    if (el) { el.textContent = left; el.classList.toggle('low', left <= 5); }
+    if (left === 0 && LIVE.role === 'host' && !LIVE.autoRev) { LIVE.autoRev = true; liveSet({ phase: 'reveal' }); }
+    if (left === 0 && LIVE.role === 'player' && !LIVE.my && !document.querySelector('.live-late')) render(false);
+  }, 250);
+}
+function liveStop() { clearInterval(LIVE.poll); clearInterval(LIVE.tick); LIVE.poll = LIVE.tick = null; }
+async function liveSet(patch) {
+  if (LIVE.busy) return; LIVE.busy = true;
+  const { error } = await db.from('live_rooms').update(patch).eq('code', LIVE.code);
+  LIVE.busy = false;
+  if (error) return toast(dbError(error));
+  await liveFetch(); render(false);
+}
+const LIVE_SQL_MSG = 'ميزة المسابقة تحتاج تشغيل ملف supabase-live.sql مرة واحدة في Supabase.';
+async function liveHost(m) {
+  closeSheet();
+  if (!db || !ADMIN) return toast('سجّل الدخول بحساب المعلم أولاً');
+  await db.from('live_rooms').delete().lt('created_at', new Date(Date.now() - 6 * 36e5).toISOString());
+  for (let i = 0; i < 6; i++) {
+    const code = String(1000 + Math.floor(Math.random() * 9000));
+    const { error } = await db.from('live_rooms').insert({ code, grade: S.grade, model: m, q: -1, phase: 'lobby' });
+    if (!error) { Object.assign(LIVE, { code, role: 'host', room: null, players: [], answers: [], my: null, err: '' }); go('live'); return liveStart(); }
+    if (!/duplicate|23505/.test(error.message + error.code)) return toast(/relation|does not exist|42P01/.test(error.message + error.code) ? LIVE_SQL_MSG : dbError(error));
+  }
+  toast('تعذّر إنشاء المسابقة، حاول مرة أخرى');
+}
+async function liveJoin(code) {
+  code = (code || '').replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/\D/g, '');
+  if (code.length !== 4) return toast('الرمز 4 أرقام يعرضه المعلم على الشاشة');
+  if (!db || !USER) return authSheet('login', () => liveJoin(code));
+  const { data: room } = await db.from('live_rooms').select('*').eq('code', code).maybeSingle();
+  if (!room || room.phase === 'end') return toast('لا توجد مسابقة بهذا الرمز');
+  const name = (firstName() || (PROFILE && PROFILE.username) || 'طالب').slice(0, 40);
+  const { error } = await db.from('live_players').upsert({ room: code, user_id: USER.id, name }, { onConflict: 'room,user_id', ignoreDuplicates: true });
+  if (error) return toast('تعذّر الانضمام، تأكد من الرمز');
+  closeSheet();
+  Object.assign(LIVE, { code, role: 'player', room: null, players: [], answers: [], my: null, err: '', awarded: false });
+  go('live'); liveStart();
+}
+async function liveAnswer(pick) {
+  const r = LIVE.room; if (!r || r.phase !== 'question' || LIVE.my || !liveLeft()) return;
+  const q = liveQs(r)[r.q], ok = pick === 0, ms = Date.now() - LIVE.qSeen;
+  const points = ok ? Math.round(1000 - 500 * Math.min(ms, LIVE_SECS * 1000) / (LIVE_SECS * 1000)) : 0;
+  LIVE.my = { q: r.q, pick, ok, points }; render(false);
+  const { error } = await db.from('live_answers').insert({ room: LIVE.code, q: r.q, user_id: USER.id, pick, ok, points });
+  if (error && !/duplicate|23505/.test(error.message + error.code)) { LIVE.my = null; render(false); toast('انتهى وقت هذا السؤال'); }
+  if (!q) return;
+}
+function liveJoinSheet() {
+  sheet(`<h2>انضم إلى مسابقة الحصة</h2><p>اكتب الرمز المكوّن من 4 أرقام الظاهر على شاشة المعلم.</p>
+    <div class="live-pick"><div class="field"><input id="live-code" inputmode="numeric" maxlength="4" dir="ltr" placeholder="0000" style="font-size:32px;text-align:center;letter-spacing:.3em" aria-label="رمز المسابقة"></div>
+    <button class="btn primary wide" data-act="live-join">انضم الآن</button></div>`);
+  setTimeout(() => { const i = document.getElementById('live-code'); if (i) i.focus(); }, 300);
+}
+function liveModelSheet() {
+  sheet(`<h2>مسابقة مباشرة في الحصة</h2><p>اختر النموذج. اعرض شاشتك على السبورة، وسيدخل الطلاب برمز من جوالاتهم. تُستخدم أسئلة الاختيار من متعدد فقط، ولكل سؤال ${LIVE_SECS} ثانية.</p>
+    <div class="live-pick">${QBANK().map((md, m) => `<button class="opt" data-act="live-host" data-m="${m}"><span class="t"><b>${esc(md.t)}</b><small>${esc(md.topics)} · ${md.qs.filter(q => q.o).length} سؤالاً</small></span></button>`).join('')}</div>`);
+}
+const liveRow = () => db && ACCOUNTS ? (ADMIN
+  ? `<button class="mx-row live-row" data-act="live-new"><span class="n">🎮</span><span class="t"><b>ابدأ مسابقة مباشرة في الحصة</b><small>يجيب الطلاب من جوالاتهم وتظهر النتائج حيّة</small></span>${icon('chev')}</button>`
+  : `<button class="mx-row live-row" data-act="live-joinsheet"><span class="n">🎮</span><span class="t"><b>انضم إلى مسابقة الحصة</b><small>أدخل الرمز الذي يعرضه المعلم</small></span>${icon('chev')}</button>`) : '';
+function liveOpts(q, qi, mode) {
+  const perm = livePerm(qi, q.o.length), r = LIVE.room;
+  const counts = {}; LIVE.answers.filter(a => a.q === qi).forEach(a => { counts[a.pick] = (counts[a.pick] || 0) + 1; });
+  return `<div class="live-opts">${perm.map((k, j) => {
+    const cls = mode === 'reveal' ? (k === 0 ? 'right' : 'dim') : mode === 'mine' ? (LIVE.my && LIVE.my.pick === k ? '' : 'dim') : '';
+    return `<button class="live-opt ${cls}" style="--lc:${LIVE_COL[j % 4]}" ${mode === 'play' ? `data-act="live-pick" data-k="${k}"` : 'disabled'}><span class="sh">${LIVE_SHAPE[j % 4]}</span><span>${qtext(q.o[k])}</span>${mode === 'reveal' && LIVE.role === 'host' ? `<span class="cnt">${counts[k] || 0}</span>` : ''}</button>`;
+  }).join('')}</div>`;
+}
+function boardRows(list, n) {
+  const me = USER && USER.id;
+  return `<div class="live-board">${list.slice(0, n).map((x, i) => `<div class="${x.id === me ? 'me' : ''}" style="animation-delay:${i * .06}s"><span class="n">${i + 1}</span><b>${esc(x.name)}</b><span class="p">${x.pts}</span></div>`).join('')}</div>`;
+}
+function vLive() {
+  const r = LIVE.room, host = LIVE.role === 'host';
+  const top = `<div class="nav"><button class="circle" data-act="live-leave" aria-label="خروج">${icon('back')}</button><span style="font-weight:700">مسابقة الحصة</span><span style="width:42px"></span></div>`;
+  if (LIVE.err) return `<div class="view push">${top}<div class="live-msg"><div class="em">🏁</div><h1>${esc(LIVE.err)}</h1><button class="btn primary" data-act="live-leave">رجوع</button></div></div>`;
+  if (!r) return `<div class="view push">${top}<div class="live-msg"><div class="em">⏳</div><p>جارٍ الاتصال…</p></div></div>`;
+  const qs = liveQs(r), q = qs[r.q], board = liveBoard();
+  if (r.phase === 'lobby') return `<div class="view push">${top}
+    <section class="live-hero"><small>${host ? 'افتحوا physics-tube.com ← اختبر نفسك ← «انضم إلى مسابقة الحصة» واكتبوا الرمز' : 'أنت في المسابقة 🎉'}</small>
+      ${host ? `<div class="live-code">${r.code}</div>` : `<h1 style="font-size:30px;margin:10px 0">${esc(firstName() || 'أهلاً')}</h1>`}
+      <small>${host ? `${board.length} طالب انضمّ` : 'انتظر حتى يبدأ المعلم المسابقة…'}</small></section>
+    <div class="live-players">${board.map(x => `<span>${esc(x.name)}</span>`).join('')}</div>
+    ${host ? `<button class="btn primary wide" data-act="live-go" style="width:100%;margin-top:20px" ${qs.length ? '' : 'disabled'}>ابدأ المسابقة (${qs.length} سؤالاً)</button>` : ''}
+  </div>`;
+  if (r.phase === 'question' && q) {
+    const head = `<div class="live-top"><b>سؤال ${r.q + 1} من ${qs.length}</b><span class="live-timer ${liveLeft() <= 5 ? 'low' : ''}" id="live-t">${liveLeft()}</span>${host ? `<b>${LIVE.answers.filter(a => a.q === r.q).length} / ${board.length} أجابوا</b>` : '<b></b>'}</div>`;
+    if (host) return `<div class="view push">${top}${head}<h2 class="live-q">${qtext(q.q)}</h2>${liveOpts(q, r.q, 'show')}
+      <button class="btn wide" data-act="live-reveal" style="width:100%;margin-top:18px">اعرض الإجابة الآن</button></div>`;
+    if (LIVE.my) return `<div class="view push">${top}<div class="live-msg"><div class="em">📨</div><h1>تم إرسال إجابتك</h1><p>انتظر حتى يعرض المعلم الإجابة…</p></div>${liveOpts(q, r.q, 'mine')}</div>`;
+    if (!liveLeft()) return `<div class="view push">${top}<div class="live-msg live-late"><div class="em">⌛</div><h1>انتهى الوقت</h1><p>استعد للسؤال التالي!</p></div></div>`;
+    return `<div class="view push">${top}${head}<h2 class="live-q" style="font-size:20px">${qtext(q.q)}</h2>${liveOpts(q, r.q, 'play')}</div>`;
+  }
+  if (r.phase === 'reveal' && q) {
+    if (host) return `<div class="view push">${top}<div class="live-top"><b>سؤال ${r.q + 1} من ${qs.length}</b></div><h2 class="live-q">${qtext(q.q)}</h2>${liveOpts(q, r.q, 'reveal')}
+      <h2 class="sec">المتصدرون</h2>${boardRows(board, 5)}
+      <button class="btn primary wide" data-act="live-next" style="width:100%;margin-top:18px">${r.q + 1 < qs.length ? 'السؤال التالي' : 'النتيجة النهائية 🏆'}</button></div>`;
+    const mine = LIVE.answers.find(a => a.q === r.q && USER && a.user_id === USER.id), rank = board.findIndex(x => USER && x.id === USER.id) + 1, pts = (board[rank - 1] || {}).pts || 0;
+    return `<div class="view push">${top}<div class="live-msg"><div class="em">${mine ? (mine.ok ? '✅' : '❌') : '⌛'}</div>
+      <h1>${mine ? (mine.ok ? `إجابة صحيحة! +${mine.points}` : 'إجابة غير صحيحة') : 'لم تُجب هذه المرة'}</h1>
+      <p>مجموعك ${pts} نقطة${rank ? ` · ترتيبك ${rank} من ${board.length}` : ''}</p></div>${liveOpts(q, r.q, 'reveal')}</div>`;
+  }
+  // end
+  const p3 = [board[1], board[0], board[2]], hs = [120, 170, 90], md = ['🥈', '🥇', '🥉'];
+  const rank = board.findIndex(x => USER && x.id === USER.id) + 1;
+  return `<div class="view push">${top}<div class="live-msg" style="padding-bottom:0"><div class="em">🏆</div><h1>النتيجة النهائية</h1>${!host && rank ? `<p>ترتيبك ${rank} من ${board.length} · ${board[rank - 1].pts} نقطة</p>` : ''}</div>
+    <div class="podium">${p3.map((x, i) => x ? `<div style="animation-delay:${[.3, .6, 0][i]}s"><b>${esc(x.name)}</b><small>${x.pts}</small><span class="col" style="height:${hs[i]}px;background:${['#8E9BB5', '#FFC83D', '#C98546'][i]}">${md[i]}</span></div>` : '<div></div>').join('')}</div>
+    ${boardRows(board, 30)}
+    ${host ? `<button class="btn primary wide" data-act="live-close" style="width:100%;margin-top:18px">إنهاء المسابقة</button>` : `<button class="btn primary wide" data-act="live-leave" style="width:100%;margin-top:18px">رجوع</button>`}</div>`;
+}
+
 /* ---------------- Views ---------------- */
 function vHome() {
   const g = G();
@@ -1531,6 +1742,7 @@ function vHome() {
     ${cont}
     ${quizBanner()}
     ${mxRow()}
+    ${liveRow()}
     <h2 class="sec">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
     ${termSeg()}
     ${groups.map(([name, items]) => `${name ? `<div class="label unit-name">${esc(name)}</div>` : ''}
@@ -1806,6 +2018,7 @@ function vQuizHub() {
       <p>نماذج الاختبار القصير. أجب عن الأسئلة وشاهد التصحيح والحل فوراً بعد كل سؤال.</p>
     </section>
     ${mxRow()}
+    ${liveRow()}
     ${bank.length ? `<div class="qmodels">${bank.map((md, m) => { const r = b[qKey(m)], c = QCOL[m % QCOL.length]; return `<button class="qmodel" data-go="qrun:${m}" style="--qc:${c}">
       <span class="qm-ring">${ring(r ? r.best : 0, 64, c, 6)}<b>${r ? r.best + '%' : ar(m + 1)}</b></span>
       <span class="t"><b>${esc(md.t)}</b><small>${esc(md.topics)}</small><small class="qm-meta">${ar(md.qs.length)} سؤالاً${r ? ` · أفضل نتيجة ${r.best}% ${starRow(stars(r.best))}` : ' · لم تجربه بعد'}</small></span>
@@ -2995,6 +3208,8 @@ document.addEventListener('contextmenu', e => { if (e.target.closest('.sortable'
 function render(scroll = true) {
   if (simStop) { simStop(); simStop = null; }
   const top = S.stack[S.stack.length - 1];
+  if (!(top && top.type === 'live') && LIVE.poll) liveStop();
+  document.body.classList.toggle('wide', !!top && top.type === 'live' && LIVE.role === 'host');
   let html;
   if (!top) html = { home: vHome, lab: vLab, notes: vNotes, profile: vProfile }[S.tab]();
   else if (top.type === 'unit') html = vUnit(top.u);
@@ -3003,6 +3218,7 @@ function render(scroll = true) {
   else if (top.type === 'admin') html = ADMIN ? vAdmin() : vProfile();
   else if (top.type === 'quiz') html = vQuizHub();
   else if (top.type === 'mistakes') html = vMistakes();
+  else if (top.type === 'live') html = vLive();
   else if (top.type === 'qrun') html = Q.done ? vQuizResult() : vQuizRun();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
@@ -3175,6 +3391,16 @@ document.addEventListener('click', e => {
   }
   else if (act === 'rings') ringsSheet();
   else if (act === 'rank') rankSheet();
+  else if (act === 'live-new') liveModelSheet();
+  else if (act === 'live-host') liveHost(+el.dataset.m);
+  else if (act === 'live-joinsheet') { if (!USER) authSheet('login', liveJoinSheet); else liveJoinSheet(); }
+  else if (act === 'live-join') liveJoin(document.getElementById('live-code').value);
+  else if (act === 'live-pick') liveAnswer(+el.dataset.k);
+  else if (act === 'live-go') liveSet({ phase: 'question', q: 0 });
+  else if (act === 'live-reveal') liveSet({ phase: 'reveal' });
+  else if (act === 'live-next') { const r = LIVE.room, n = liveQs(r).length; liveSet(r.q + 1 < n ? { phase: 'question', q: r.q + 1 } : { phase: 'end' }); }
+  else if (act === 'live-close') { if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.textContent = 'اضغط مرة أخرى لإنهاء المسابقة وحذفها'; return; } db.from('live_rooms').delete().eq('code', LIVE.code).then(() => {}); liveStop(); LIVE.code = ''; transition('back', () => { S.stack.pop(); render(); }); }
+  else if (act === 'live-leave') { liveStop(); if (LIVE.role === 'player') LIVE.code = ''; transition('back', () => { S.stack.pop(); render(); }); }
   else if (act === 'share-rank') { closeSheet(); shareRank(); }
   else if (act === 'share-result') {
     const n = Q.md.qs.length, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / n * 100);
@@ -3257,6 +3483,7 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeSheet();
+  if (e.key === 'Enter' && e.target.id === 'live-code') { e.preventDefault(); liveJoin(e.target.value); }
   if (e.key === 'Enter' && e.target.id === 'q-in') { e.preventDefault(); const b = document.querySelector('[data-act="q-check"]'); if (b) b.click(); }
 });
 // Notes (PDF links) need an account too.
