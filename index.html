@@ -576,6 +576,40 @@ body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; 
 .mi.flash { animation: pop .5s cubic-bezier(.2, .8, .2, 1.4); }
 .sim-stars { display: inline-block; margin-top: 4px; color: #FFC83D; font-size: 13px; letter-spacing: 1px; }
 .law code { direction: ltr; unicode-bidi: isolate; }
+/* Physics games */
+.games-card { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 16px; padding: 16px; border-radius: var(--r-md); text-align: right; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 100%, rgba(255,77,122,.5), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(76,134,255,.5), transparent 60%), #160E2E; border: 1px solid rgba(160,140,255,.35); }
+.games-card:active { transform: scale(.98); }
+.games-card .gi { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.14); font-size: 28px; flex: none; }
+.games-card .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .games-card .t b { font-size: 18px; } .games-card .t small { color: rgba(255,255,255,.78); font-size: 13px; }
+.games-card .qb-go { color: #160E2E; }
+.g-list { display: grid; gap: 14px; margin-top: 18px; }
+.g-tile { display: flex; align-items: center; gap: 16px; padding: 20px 18px; border-radius: var(--r-lg); text-align: right; width: 100%; position: relative; overflow: hidden;
+  background: radial-gradient(120% 130% at 0% 100%, var(--g1), transparent 65%), linear-gradient(160deg, var(--g2), #0A0B0F); border: 1px solid rgba(255,255,255,.12); }
+.g-tile:active { transform: scale(.98); }
+.g-tile .g-ic, .g-hero .g-ic { font-size: 54px; line-height: 1; filter: drop-shadow(0 8px 18px rgba(0,0,0,.45)); flex: none; }
+.g-tile .t { flex: 1; display: grid; gap: 3px; } .g-tile small { color: rgba(255,255,255,.7); font-size: 12px; font-weight: 700; } .g-tile b { font-size: 21px; } .g-tile .t > span { color: rgba(255,255,255,.82); font-size: 14px; }
+.g-prog { margin-top: 6px; color: #FFC83D !important; font-weight: 700; font-size: 13px !important; }
+.g-hero { position: relative; overflow: hidden; border-radius: var(--r-lg); padding: 24px 20px; display: grid; gap: 4px; justify-items: start;
+  background: radial-gradient(120% 130% at 0% 100%, var(--g1), transparent 65%), linear-gradient(160deg, var(--g2), #0A0B0F); }
+.g-hero small { color: rgba(255,255,255,.7); font-weight: 700; } .g-hero h1 { font-size: 28px; } .g-hero p { color: rgba(255,255,255,.82); }
+.g-levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 16px; }
+.g-lv { display: grid; justify-items: center; gap: 4px; padding: 14px 6px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); text-align: center; }
+.g-lv:active { transform: scale(.96); }
+.g-lv b { font-size: 26px; } .g-lv small { color: var(--muted); font-size: 12px; min-height: 2.6em; } .g-lv span { color: #FFC83D; letter-spacing: 1px; }
+.g-lv.lock { opacity: .4; }
+.g-head { display: grid; gap: 4px; padding-top: 4px; } .g-head small { color: var(--muted); font-weight: 700; font-size: 13px; } .g-head h1 { font-size: 26px; }
+.g-head p { color: #D6DAE3; font-size: 15px; line-height: 1.8; margin-top: 4px; }
+.g-stage { margin-top: 14px; border-radius: var(--r-md); overflow: hidden; border: 1px solid var(--line); background: #000; }
+.g-stage canvas { display: block; width: 100%; height: auto; aspect-ratio: 8 / 5; }
+.g-bar { display: flex; gap: 10px; margin-top: 14px; } .g-bar .btn { margin: 0; } .g-bar .btn.primary { flex: 1; }
+.g-res { margin-top: 16px; padding: 18px; border-radius: var(--r-md); display: grid; gap: 8px; text-align: center; animation: rise .4s; }
+.g-res.ok { background: linear-gradient(160deg, rgba(50,209,122,.18), var(--surface)); border: 1px solid rgba(50,209,122,.4); }
+.g-res.no { background: linear-gradient(160deg, rgba(255,107,107,.16), var(--surface)); border: 1px solid rgba(255,107,107,.4); }
+.g-res h2 { font-size: 21px; } .g-res p { font-size: 14px; line-height: 1.9; color: #D6DAE3; text-align: right; }
+.g-res code { display: block; direction: ltr; unicode-bidi: isolate; text-align: center; background: rgba(0,0,0,.28); padding: 8px 10px; border-radius: 10px; margin: 6px 0; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.g-stars { font-size: 40px; color: #FFC83D; letter-spacing: 6px; animation: pop .6s cubic-bezier(.2, .8, .2, 1.4); } .g-stars span { color: rgba(255,255,255,.18); }
+.g-res .g-bar { flex-wrap: wrap; } .g-res .g-bar .btn { flex: 1; min-width: 120px; }
 /* Live class quiz */
 .wide #app { max-width: 1100px; }
 .wide .tabbar { display: none; }
@@ -1914,6 +1948,7 @@ function vHome() {
     </div>
     ${ringsCard()}
     ${rankCard()}
+    ${typeof gamesCard === 'function' ? gamesCard() : ''}
     ${cont}
     ${quizBanner()}
     ${mxRow()}
@@ -2019,6 +2054,7 @@ function vLab() {
   g.units.forEach(u => { const ks = (u.sims || []).filter(k => SIMS[k] && !seen.has(k)); ks.forEach(k => seen.add(k)); if (ks.length) groups.push([u, ks]); });
   return `<div class="view">
     <div class="page-h"><h1>المختبر</h1><p>تجارب ${esc(g.name)} مرتبة حسب الوحدات. حرّك المؤشرات وشاهد النتائج مباشرة.</p></div>
+    ${typeof gamesCard === 'function' ? gamesCard() : ''}
     ${groups.length ? groups.map(([u, ks]) => `<div class="label unit-name" style="padding-top:20px">${esc(u.title)}</div>
     <div class="sims" style="margin-top:0">${ks.map(k => { const s = SIMS[k]; return `<button class="sim-card" data-go="sim:${k}" style="${tileStyle(s.theme)}">
       ${glyph(s.glyph, s.theme)}
@@ -3397,10 +3433,14 @@ function render(scroll = true) {
   else if (top.type === 'quiz') html = vQuizHub();
   else if (top.type === 'mistakes') html = vMistakes();
   else if (top.type === 'live') html = vLive();
+  else if (top.type === 'games') html = vGames();
+  else if (top.type === 'game') html = vGameLevels(top.k);
+  else if (top.type === 'glevel') html = vGamePlay(top.k, +top.i);
   else if (top.type === 'qrun') html = Q.done ? vQuizResult() : vQuizRun();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
+  if (top && top.type === 'glevel') startGame(top.k, +top.i);
   if (ADMIN) setupReorder();
   if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at) loadAdmin();
   if (scroll) window.scrollTo(0, 0);
@@ -3459,7 +3499,7 @@ function onboarding() {
 
 function go(spec, replace) {
   const [type, a, b] = spec.split(':');
-  const entry = type === 'unit' ? { type, u: +a } : type === 'lesson' ? { type, u: +a, i: +b } : { type, k: a };
+  const entry = type === 'unit' ? { type, u: +a } : type === 'lesson' ? { type, u: +a, i: +b } : { type, k: a, i: b };
   if (type === 'lesson') {
     if (!needLogin(() => go(spec, replace))) return;
     S.vi = 0; S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last);
@@ -3569,6 +3609,7 @@ document.addEventListener('click', e => {
   }
   else if (act === 'rings') ringsSheet();
   else if (act === 'rank') rankSheet();
+  else if (act && act.startsWith('g-') && typeof gameAct === 'function') gameAct(act);
   else if (act === 'pred-pick' || act === 'pred-show' || act === 'pred-again') { const t = S.stack[S.stack.length - 1]; if (t && t.type === 'sim') predictAct(t.k, act, el); }
   else if (act === 'live-new') liveModelSheet();
   else if (act === 'live-host') liveHost(+el.dataset.m);
@@ -3701,5 +3742,6 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
   } catch (e) {}
 }
 </script>
+<script src="games.js"></script>
 </body>
 </html>
