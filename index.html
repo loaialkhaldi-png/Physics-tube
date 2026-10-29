@@ -325,6 +325,39 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .qbanner .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .qbanner .t b { font-size: 18px; } .qbanner .t small { color: rgba(255,255,255,.75); font-size: 13px; }
 .qb-go { display: flex; align-items: center; gap: 2px; padding: 8px 12px; border-radius: 999px; background: #fff; color: #141A33; font-weight: 700; font-size: 14px; flex: none; }
 .qb-go .ico { width: 16px; height: 16px; transform: scaleX(-1); }
+/* Teacher notice with countdown */
+.notice { display: grid; gap: 12px; margin-top: 18px; padding: 16px; border-radius: var(--r-md); position: relative; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 100%, rgba(255,77,122,.42), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(255,165,58,.38), transparent 60%), #24131C; border: 1px solid rgba(255,140,120,.3); }
+.notice .top { display: flex; align-items: center; gap: 14px; }
+.notice .cd { flex: none; width: 64px; height: 64px; border-radius: 18px; background: rgba(255,255,255,.14); display: grid; place-items: center; align-content: center; line-height: 1.1; text-align: center; }
+.notice .cd b { font-size: 26px; font-weight: 700; } .notice .cd small { font-size: 12px; color: rgba(255,255,255,.8); }
+.notice .t { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.notice .t small { color: rgba(255,255,255,.78); font-size: 13px; } .notice .t b { font-size: 18px; } .notice .t span { font-size: 14px; color: rgba(255,255,255,.9); }
+.notice .ed { position: absolute; top: 10px; left: 10px; padding: 4px 12px; border-radius: 999px; background: rgba(0,0,0,.35); font-size: 12px; font-weight: 600; }
+.notice .nbtn { justify-self: start; display: flex; align-items: center; gap: 4px; padding: 8px 14px; border-radius: 999px; background: #fff; color: #24131C; font-weight: 700; font-size: 14px; }
+.notice .nbtn .ico { width: 16px; height: 16px; transform: scaleX(-1); }
+.notice-add { width: 100%; margin-top: 18px; padding: 14px; border-radius: var(--r-md); border: 1.5px dashed rgba(255,255,255,.2); color: var(--muted); font-weight: 600; }
+/* Weekly activity rings */
+.rings { display: flex; align-items: center; gap: 18px; width: 100%; margin-top: 18px; padding: 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); text-align: right; }
+.rings:active { transform: scale(.98); }
+.rings .rs { flex: none; display: grid; }
+.rings .t { flex: 1; min-width: 0; display: grid; gap: 5px; }
+.rings .t > b { font-size: 17px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rl { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--muted); }
+.rl i { width: 10px; height: 10px; border-radius: 50%; background: var(--c); flex: none; } .rl b { color: var(--fg); font-weight: 600; margin-inline-start: auto; }
+.streak { display: inline-flex; align-items: center; gap: 2px; font-size: 13px; color: #FFB020; font-weight: 700; }
+.rings-big { display: grid; place-items: center; margin: 18px 0 8px; }
+.week { display: flex; gap: 6px; margin: 18px 0 6px; }
+.week div { flex: 1; display: grid; justify-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.week i { width: 34px; height: 34px; border-radius: 50%; background: var(--surface-2); display: grid; place-items: center; font-style: normal; font-weight: 700; }
+.week i.on { background: var(--good); color: #062B16; } .week .today i { outline: 2px solid var(--accent); outline-offset: 2px; }
+.goal-list { display: grid; gap: 10px; margin-top: 14px; }
+.goal-list .rl { font-size: 15px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); }
+/* أخطائي */
+.mx-row { display: flex; align-items: center; gap: 12px; width: 100%; margin-top: 10px; padding: 12px 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid rgba(255,107,107,.3); text-align: right; }
+.mx-row .n { width: 36px; height: 36px; border-radius: 12px; background: rgba(255,107,107,.16); color: #FF6B6B; display: grid; place-items: center; font-weight: 700; flex: none; }
+.mx-row .t { flex: 1; min-width: 0; display: grid; } .mx-row .t small { color: var(--muted); font-size: 13px; }
+.mx-row > .ico { transform: scaleX(-1); color: var(--muted); }
 .qhero { position: relative; overflow: hidden; border-radius: var(--r-lg); padding: 26px 22px; background: radial-gradient(90% 120% at 10% 110%, #6A1FD1 0%, transparent 60%), radial-gradient(90% 100% at 100% 0%, #1546D6 0%, transparent 65%), #0D1230; display: grid; gap: 6px; }
 .qhero-orb { position: absolute; left: -40px; top: -40px; width: 180px; height: 180px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.12); box-shadow: 0 0 0 30px rgba(255,255,255,.03), 0 0 0 60px rgba(255,255,255,.02); }
 .qhero small { color: rgba(255,255,255,.7); font-weight: 600; font-size: 13px; position: relative; }
@@ -1105,6 +1138,139 @@ const unitNo = (g, i) => { const u = GRADES[g].units[i]; return termUnits(g, u.t
 const termSeg = () => `<div class="seg term-seg" role="group" aria-label="الفصل الدراسي">${[1, 2].map(t => `<button data-term="${t}" aria-pressed="${S.term === t}">${TERMS[t]}</button>`).join('')}</div>`;
 const totalWatched = () => Object.keys(S.watched).filter(k => S.watched[k]).length;
 
+/* ---------- Weekly activity rings (saved on this device) ---------- */
+const GOALS = {
+  l: { n: 5, c: '#FF375F', label: 'شاهد الدروس' },
+  s: { n: 3, c: '#32D17A', label: 'جرّب في المختبر' },
+  q: { n: 2, c: '#2FB5FF', label: 'حلّ اختباراً' },
+};
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+const noon = (d = new Date()) => { const x = new Date(d); x.setHours(12, 0, 0, 0); return x; };
+let ACT = store.get('act', {});
+// Kuwait's school week starts on Sunday.
+const weekDays = () => { const t = noon(); return Array.from({ length: 7 }, (_, i) => { const d = new Date(t); d.setDate(t.getDate() - t.getDay() + i); return d; }); };
+const dayCount = (d, k) => { const x = ACT[dayKey(d)]; return x ? (k === 'q' ? x.q : x[k].length) : 0; };
+const activeDay = d => Object.keys(GOALS).some(k => dayCount(d, k));
+const weekTotals = () => { const w = weekDays(); return Object.fromEntries(Object.keys(GOALS).map(k => [k, w.reduce((n, d) => n + dayCount(d, k), 0)])); };
+function streakDays() {
+  const d = noon(); if (!activeDay(d)) d.setDate(d.getDate() - 1);
+  let n = 0; while (activeDay(d) && n < 400) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+const dayWord = n => n === 1 ? 'يوم واحد' : n === 2 ? 'يومان' : n <= 10 ? `${n} أيام` : `${n} يوماً`;
+function track(kind, ref) {
+  const k = dayKey(), d = ACT[k] || (ACT[k] = { l: [], s: [], q: 0 });
+  if (kind === 'q') d.q++;
+  else if (d[kind].includes(ref)) return;
+  else d[kind].push(ref);
+  ACT = Object.fromEntries(Object.keys(ACT).sort().slice(-70).map(x => [x, ACT[x]]));
+  store.set('act', ACT);
+  const tot = weekTotals(), wk = dayKey(weekDays()[0]);
+  if (Object.keys(GOALS).every(g => tot[g] >= GOALS[g].n) && store.get('ringsDone') !== wk) {
+    store.set('ringsDone', wk);
+    setTimeout(() => toast('🎉 أكملت حلقاتك الثلاث هذا الأسبوع!'), 400);
+  }
+}
+function ringsSvg(size) {
+  const tot = weekTotals(), w = Math.round(size * .105), c0 = size / 2;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">${Object.keys(GOALS).map((k, i) => {
+    const g = GOALS[k], r = c0 - w / 2 - i * (w + 3), c = 2 * Math.PI * r, p = Math.min(tot[k] / g.n, 1);
+    return `<circle cx="${c0}" cy="${c0}" r="${r}" fill="none" stroke="${g.c}" stroke-opacity=".2" stroke-width="${w}"/>
+      <circle cx="${c0}" cy="${c0}" r="${r}" fill="none" stroke="${g.c}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${Math.max(c * p, .01)} ${c}" transform="rotate(-90 ${c0} ${c0})"/>`;
+  }).join('')}</svg>`;
+}
+const ringLines = () => { const tot = weekTotals(); return Object.entries(GOALS).map(([k, g]) => `<span class="rl" style="--c:${g.c}"><i></i>${g.label}<b><bdi dir="ltr">${Math.min(tot[k], 99)}/${g.n}</bdi></b></span>`).join(''); };
+function ringsCard() {
+  const st = streakDays();
+  return `<button class="rings" data-act="rings" aria-label="إنجازك هذا الأسبوع">
+    <span class="rs">${ringsSvg(96)}</span>
+    <span class="t"><b>إنجازك هذا الأسبوع${st > 1 ? `<span class="streak">🔥 ${dayWord(st)} متتالية</span>` : ''}</b>${ringLines()}</span></button>`;
+}
+function ringsSheet() {
+  const st = streakDays(), today = dayKey(), names = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'];
+  sheet(`<h2>إنجازك هذا الأسبوع</h2><p>أكمل الحلقات الثلاث قبل نهاية الأسبوع. تبدأ الحلقات من جديد كل يوم أحد.</p>
+    <div class="rings-big">${ringsSvg(170)}</div>
+    <div class="goal-list">${ringLines()}</div>
+    <div class="week" aria-label="أيام نشاطك هذا الأسبوع">${weekDays().map((d, i) => `<div class="${dayKey(d) === today ? 'today' : ''}"><i class="${activeDay(d) ? 'on' : ''}">${activeDay(d) ? '✓' : ''}</i>${names[i]}</div>`).join('')}</div>
+    <p class="hint" style="margin-top:10px">${st ? `🔥 أيام نشاطك المتتالية: ${dayWord(st)}. ` : ''}يُحفظ تقدّمك على هذا الجهاز.</p>
+    <button class="btn primary wide" data-act="close" style="margin-top:14px">حسناً</button>`);
+}
+
+/* ---------- إعلان المعلم وموعد الاختبار القادم (row "notice.<grade>" in the content table) ---------- */
+const noticeKey = () => `notice.${S.grade}`;
+function getNotice() {
+  const r = REMOTE[noticeKey()]; if (!r || !r.video) return null;
+  try { const n = JSON.parse(r.video); return n && n.title ? n : null; } catch (e) { return null; }
+}
+const parseDay = s => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(s || ''); return m ? new Date(+m[1], +m[2] - 1, +m[3], 12) : null; };
+const daysLeft = s => { const d = parseDay(s); return d ? Math.round((d - noon()) / 864e5) : null; };
+function noticeCard() {
+  const n = getNotice();
+  if (!n) return ADMIN ? `<button class="notice-add" data-act="notice-edit">+ أضف إعلاناً أو موعد اختبار لطلاب ${esc(G().name)}</button>` : '';
+  const left = daysLeft(n.date), d = parseDay(n.date);
+  if (left != null && left < 0 && !ADMIN) return '';
+  const when = left == null ? 'إعلان من المعلم' : left < 0 ? 'انتهى الموعد' : left === 0 ? 'اليوم' : left === 1 ? 'غداً' : left === 2 ? 'بعد غد' : `بعد ${dayWord(left)}`;
+  const date = d ? ' · ' + d.toLocaleDateString('ar-KW-u-nu-latn', { weekday: 'long', day: 'numeric', month: 'long' }) : '';
+  const cd = left == null ? '<b>📣</b>' : left < 0 ? '<b style="font-size:15px">انتهى</b>' : left === 0 ? '<b style="font-size:17px">اليوم</b>' : `<b>${left}</b><small>${left === 1 ? 'يوم' : left === 2 ? 'يومان' : left <= 10 ? 'أيام' : 'يوماً'}</small>`;
+  const u = n.unit !== '' && n.unit != null ? G().units[+n.unit] : null;
+  const btn = u ? `<button class="nbtn" data-go="unit:${+n.unit}">راجع ${esc(u.title)} ${icon('chev')}</button>` : QBANK().length ? `<button class="nbtn" data-go="quiz">اختبر نفسك ${icon('chev')}</button>` : '';
+  return `<div class="notice" role="status">
+    <div class="top"><span class="cd">${cd}</span>
+      <span class="t"><small>${when}${date}</small><b>${esc(n.title)}</b>${n.note ? `<span>${esc(n.note)}</span>` : ''}</span></div>
+    ${btn}
+    ${ADMIN ? '<button class="ed" data-act="notice-edit">تعديل</button>' : ''}
+  </div>`;
+}
+function noticeSheet() {
+  const cur = getNotice(), n = cur || { title: 'الاختبار القصير', date: '', unit: '', note: '' };
+  sheet(`<h2>إعلان لطلاب ${esc(G().name)}</h2><p>يظهر أعلى الصفحة الرئيسية لطلاب هذا الصف فقط، مع عدّ تنازلي إن حددت موعداً، ويختفي بعد انتهاء الموعد.</p>
+    <div style="display:grid;gap:12px;margin-top:16px">
+      <div class="field"><label for="nt-title">العنوان</label><input id="nt-title" maxlength="60" value="${esc(n.title)}" placeholder="مثال: الاختبار القصير الثاني"></div>
+      <div class="field"><label for="nt-date">الموعد (اختياري)</label><input id="nt-date" type="date" value="${esc(n.date || '')}"></div>
+      <div class="field"><label for="nt-unit">الوحدة المطلوبة (اختياري)</label><select id="nt-unit"><option value="">بدون</option>${G().units.map((u, i) => `<option value="${i}" ${String(n.unit) === String(i) ? 'selected' : ''}>${esc(u.title)}</option>`).join('')}</select></div>
+      <div class="field"><label for="nt-note">ملاحظة (اختياري)</label><input id="nt-note" maxlength="120" value="${esc(n.note || '')}" placeholder="مثال: من درس الشغل حتى نهاية الوحدة"></div>
+      <button class="btn primary wide" data-act="notice-save">حفظ ونشر للطلاب</button>
+      ${cur ? '<button class="btn wide" data-act="notice-del">حذف الإعلان</button>' : ''}
+    </div>`);
+}
+
+/* ---------- أخطائي: wrong quiz answers kept for review until answered right ---------- */
+let MX = store.get('mistakes', {});
+const qWord = n => n === 1 ? 'سؤال واحد' : n === 2 ? 'سؤالان' : n <= 10 ? `${n} أسئلة` : `${n} سؤالاً`;
+function mxList() {
+  const bank = QBANK();
+  return Object.keys(MX).filter(k => k.startsWith(S.grade + '.')).map(k => {
+    const [, m, i] = k.split('.'), md = bank[+m], q = md && md.qs[+i];
+    return q ? { k, q, md, at: MX[k].at, n: MX[k].n } : null;
+  }).filter(Boolean).sort((a, b) => b.at - a.at);
+}
+function mxNote(i, ok) {
+  const k = Q.refs ? Q.refs[i] : `${S.grade}.${Q.m}.${i}`;
+  if (ok) delete MX[k]; else MX[k] = { at: Date.now(), n: ((MX[k] || {}).n || 0) + 1 };
+  store.set('mistakes', MX);
+}
+const mxRow = () => { const n = mxList().length; return n ? `<button class="mx-row" data-go="mistakes"><span class="n">${n}</span><span class="t"><b>أخطائي</b><small>${qWord(n)} للمراجعة قبل الاختبار</small></span>${icon('chev')}</button>` : ''; };
+function vMistakes() {
+  const L = mxList();
+  return `<div class="view push">
+    ${navBar()}
+    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">أخطائي</h1><p>${L.length ? `${qWord(L.length)} أخطأت فيها سابقاً. عندما تجيب عن السؤال إجابة صحيحة يخرج من القائمة.` : 'لا توجد أخطاء محفوظة. كل سؤال تخطئ فيه في «اختبر نفسك» يظهر هنا لتراجعه.'}</p></div>
+    ${L.length ? `<button class="btn primary wide" data-go="qrun:mx" style="width:100%;margin-top:16px">${icon('replay')}ابدأ مراجعة أخطائي</button>
+    <h2 class="sec">الأسئلة وحلولها</h2>
+    <div class="qlist">${L.map(({ q, md, n }) => `<details class="qli no">
+      <summary><span class="n">✕</span><span class="t">${qtext(q.q)}<small style="display:block;color:var(--muted);font-size:12px;margin-top:4px">${esc(md.t)}${n > 1 ? ` · أخطأت فيه ${n} مرات` : ''}</small></span></summary>
+      <div class="qli-b"><p><span class="lbl">الإجابة الصحيحة:</span> ${q.o ? qtext(q.o[0]) : `<bdi dir="ltr">${qFmt(q.n)} ${esc(q.u || '')}</bdi>`}</p><div class="qwhy"><small>الحل</small>${q.w}</div></div></details>`).join('')}</div>`
+    : `<button class="btn primary wide" data-go="quiz" data-replace="1" style="width:100%;margin-top:16px">${icon('exam')}اذهب إلى اختبر نفسك</button>`}
+  </div>`;
+}
+function startMistakes() {
+  const L = mxList(); if (!L.length) return false;
+  const md = { t: 'مراجعة أخطائي', topics: '', qs: L.map(x => x.q) };
+  Object.assign(Q, { m: -1, md, refs: L.map(x => x.k), i: 0, ans: [], start: Date.now(), streak: 0, best: 0, done: false, review: false, picked: null });
+  Q.perm = md.qs.map(q => q.o ? shuffle(q.o.map((_, k) => k)) : null);
+  return true;
+}
+
 /* ---------------- Views ---------------- */
 function vHome() {
   const g = G();
@@ -1131,6 +1297,7 @@ function vHome() {
     </header>
     <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
     ${ADMIN ? `<button class="admin-bar" data-go="admin">${icon('chart')}<span>وضع المعلم: لوحة الإحصائيات والطلاب</span>${icon('chev')}</button>` : ''}
+    ${noticeCard()}
     <div class="promos" aria-label="العروض">
       <button class="promo" data-act="plan" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
         <h2>${esc(g.name)}</h2>
@@ -1152,8 +1319,10 @@ function vHome() {
         <span class="foot">يعمل بدون إنترنت</span>
       </button>
     </div>
+    ${ringsCard()}
     ${cont}
     ${quizBanner()}
+    ${mxRow()}
     <h2 class="sec">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
     ${termSeg()}
     ${groups.map(([name, items]) => `${name ? `<div class="label unit-name">${esc(name)}</div>` : ''}
@@ -1403,6 +1572,7 @@ const QBANK = () => (window.QUIZ_BANK || {})[S.grade] || [];
 const QCOL = ['#4C86FF', '#A866FF', '#2BD4B0', '#FF8A3D', '#FF4D7A', '#32D17A'];
 const Q = { m: 0, i: 0, order: [], perm: [], ans: [], start: 0, streak: 0, best: 0, done: false, review: false };
 const qBest = () => store.get('quiz', {});
+const qColor = () => Q.m < 0 ? '#FF6B6B' : QCOL[Q.m % QCOL.length];
 const qKey = m => `${S.grade}.${m}`;
 const shuffle = a => { const r = a.slice(); for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; } return r; };
 const ring = (pct, size, col, w = 8) => { const r = size / 2 - w, c = 2 * Math.PI * r; return `<svg class="ring" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true"><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="${w}"/><circle cx="${size / 2}" cy="${size / 2}" r="${r}" fill="none" stroke="${col}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${c * pct / 100} ${c}" transform="rotate(-90 ${size / 2} ${size / 2})"/></svg>`; };
@@ -1426,6 +1596,7 @@ function vQuizHub() {
       <h1>اختبر نفسك</h1>
       <p>نماذج الاختبار القصير. أجب عن الأسئلة وشاهد التصحيح والحل فوراً بعد كل سؤال.</p>
     </section>
+    ${mxRow()}
     ${bank.length ? `<div class="qmodels">${bank.map((md, m) => { const r = b[qKey(m)], c = QCOL[m % QCOL.length]; return `<button class="qmodel" data-go="qrun:${m}" style="--qc:${c}">
       <span class="qm-ring">${ring(r ? r.best : 0, 64, c, 6)}<b>${r ? r.best + '%' : ar(m + 1)}</b></span>
       <span class="t"><b>${esc(md.t)}</b><small>${esc(md.topics)}</small><small class="qm-meta">${ar(md.qs.length)} سؤالاً${r ? ` · أفضل نتيجة ${r.best}% ${starRow(stars(r.best))}` : ' · لم تجربه بعد'}</small></span>
@@ -1436,7 +1607,7 @@ function vQuizHub() {
 }
 function startQuiz(m) {
   const md = QBANK()[m]; if (!md) return;
-  Object.assign(Q, { m, i: 0, order: md.qs.map((_, k) => k), ans: [], start: Date.now(), streak: 0, best: 0, done: false, review: false, picked: null });
+  Object.assign(Q, { m, md, refs: null, i: 0, order: md.qs.map((_, k) => k), ans: [], start: Date.now(), streak: 0, best: 0, done: false, review: false, picked: null });
   Q.perm = md.qs.map(q => q.o ? shuffle(q.o.map((_, k) => k)) : null);
 }
 // Keep Latin/maths runs (e.g. "Fx = 5 N", "[L/T²]") left-to-right inside Arabic sentences.
@@ -1444,7 +1615,7 @@ const qtext = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×
 const qNumOk = (q, v) => { const tol = q.tol != null ? q.tol : Math.max(Math.abs(q.n) * 0.015, 0.011); return Math.abs(v - q.n) <= tol; };
 const qFmt = v => String(+(+v).toFixed(3));
 function vQuizRun() {
-  const md = QBANK()[Q.m], q = md.qs[Q.i], n = md.qs.length, a = Q.ans[Q.i], c = QCOL[Q.m % QCOL.length];
+  const md = Q.md, q = md.qs[Q.i], n = md.qs.length, a = Q.ans[Q.i], c = qColor();
   const L = ['أ', 'ب', 'ج', 'د'];
   const body = q.o
     ? `<div class="qopts">${Q.perm[Q.i].map((k, j) => { const st = a ? (k === 0 ? 'right' : a.pick === k ? 'wrong' : 'dim') : ''; return `<button class="qopt ${st}" data-act="q-pick" data-k="${k}" ${a ? 'disabled' : ''}>
@@ -1476,7 +1647,7 @@ function vQuizRun() {
   </div>`;
 }
 function vQuizResult() {
-  const md = QBANK()[Q.m], n = md.qs.length, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / n * 100), c = QCOL[Q.m % QCOL.length];
+  const md = Q.md, n = md.qs.length, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / n * 100), c = qColor();
   const secs = Math.round((Q.end - Q.start) / 1000), mins = Math.floor(secs / 60);
   const msg = pct >= 90 ? ['ممتاز! 🏆', 'أداء رائع، أنت جاهز للاختبار القصير.'] : pct >= 70 ? ['جيد جداً! 🌟', 'راجع الأسئلة التي أخطأت فيها لتصل إلى الامتياز.'] : pct >= 50 ? ['جيد 👍', 'أنت على الطريق الصحيح، راجع الحلول وأعد المحاولة.'] : ['تحتاج إلى مراجعة 💪', 'شاهد فيديوهات الدروس وراجع الحلول، ثم أعد الاختبار.'];
   const list = md.qs.map((q, k) => ({ q, k, a: Q.ans[k] })).filter(x => !Q.review || !x.a.ok);
@@ -1492,7 +1663,7 @@ function vQuizResult() {
     </section>
     <div class="actions">
       <button class="btn primary" data-act="q-retry">${icon('replay')}أعد الاختبار</button>
-      <button class="btn" data-act="q-other">${icon('exam')}نموذج آخر</button>
+      <button class="btn" data-act="q-other">${icon('exam')}${Q.m < 0 ? 'رجوع' : 'نموذج آخر'}</button>
       ${n - ok ? `<button class="btn wide" data-act="q-review">${Q.review ? 'اعرض كل الأسئلة' : `راجع أخطائي (${ar(n - ok)})`}</button>` : ''}
     </div>
     <h2 class="sec">${Q.review ? 'الأسئلة التي أخطأت فيها' : 'مراجعة الإجابات'}</h2>
@@ -1505,18 +1676,22 @@ function vQuizResult() {
 }
 function quizAnswer(rec) {
   Q.ans[Q.i] = rec;
+  mxNote(Q.i, rec.ok);
   Q.streak = rec.ok ? Q.streak + 1 : 0; Q.best = Math.max(Q.best, Q.streak);
   if (navigator.vibrate) navigator.vibrate(rec.ok ? 15 : [30, 40, 30]);
   render(false);
   const fb = document.querySelector('.qfb'); if (fb) fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 function quizFinish() {
-  const md = QBANK()[Q.m], ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / md.qs.length * 100);
-  Q.done = true; Q.end = Date.now();
-  const b = qBest(), k = qKey(Q.m), prev = b[k];
-  Q.newBest = !prev || pct > prev.best;
-  b[k] = { best: Math.max(pct, prev ? prev.best : 0), last: pct, at: Date.now(), tries: (prev ? prev.tries : 0) + 1 };
-  store.set('quiz', b);
+  const md = Q.md, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / md.qs.length * 100);
+  Q.done = true; Q.end = Date.now(); Q.newBest = false;
+  track('q');
+  if (Q.m >= 0) {
+    const b = qBest(), k = qKey(Q.m), prev = b[k];
+    Q.newBest = !prev || pct > prev.best;
+    b[k] = { best: Math.max(pct, prev ? prev.best : 0), last: pct, at: Date.now(), tries: (prev ? prev.tries : 0) + 1 };
+    store.set('quiz', b);
+  }
   render();
 }
 
@@ -1690,6 +1865,7 @@ const SIMCTL = {
 let simStop = null;
 function startSim(k) {
   const cv = document.getElementById('cv'); if (!cv) return;
+  track('s', `${S.grade}.${k}`);
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const W = 800, H = 500; cv.width = W * dpr; cv.height = H * dpr;
   const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr); ctx.direction = 'ltr';
@@ -2610,6 +2786,7 @@ function render(scroll = true) {
   else if (top.type === 'sim') html = vSim(top.k);
   else if (top.type === 'admin') html = ADMIN ? vAdmin() : vProfile();
   else if (top.type === 'quiz') html = vQuizHub();
+  else if (top.type === 'mistakes') html = vMistakes();
   else if (top.type === 'qrun') html = Q.done ? vQuizResult() : vQuizRun();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
@@ -2626,9 +2803,14 @@ function go(spec, replace) {
     if (!needLogin(() => go(spec, replace))) return;
     S.vi = 0; S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last);
     logEvent('lesson', lid(S.grade, +a, +b));
+    track('l', lid(S.grade, +a, +b));
   }
   if (type === 'admin') ADMIN_DATA.at = 0;
-  if (type === 'qrun') { if (!needLogin(() => go(spec, replace))) return; startQuiz(+a); }
+  if (type === 'qrun') {
+    if (!needLogin(() => go(spec, replace))) return;
+    if (a === 'mx') { if (!startMistakes()) return toast('لا توجد أخطاء للمراجعة'); }
+    else startQuiz(+a);
+  }
   if (replace) S.stack.pop();
   S.stack.push(entry);
   render();
@@ -2717,10 +2899,26 @@ document.addEventListener('click', e => {
   else if (act === 'q-check') {
     const inp = document.getElementById('q-in'), raw = (inp.value || '').trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('٫', '.').replace(',', '.').replace('−', '-');
     if (raw === '' || isNaN(+raw)) { inp.focus(); return toast('اكتب الناتج رقماً، مثل 12.5'); }
-    quizAnswer({ val: raw, ok: qNumOk(QBANK()[Q.m].qs[Q.i], +raw) });
+    quizAnswer({ val: raw, ok: qNumOk(Q.md.qs[Q.i], +raw) });
   }
-  else if (act === 'q-next') { if (Q.i + 1 < QBANK()[Q.m].qs.length) { Q.i++; render(); } else quizFinish(); }
-  else if (act === 'q-retry') { startQuiz(Q.m); render(); }
+  else if (act === 'q-next') { if (Q.i + 1 < Q.md.qs.length) { Q.i++; render(); } else quizFinish(); }
+  else if (act === 'q-retry') {
+    if (Q.m >= 0) startQuiz(Q.m);
+    else if (!startMistakes()) { S.stack.pop(); render(); return toast('أحسنت! لم يتبقَّ أخطاء للمراجعة 🎉'); }
+    render();
+  }
+  else if (act === 'rings') ringsSheet();
+  else if (act === 'notice-edit') noticeSheet();
+  else if (act === 'notice-save') {
+    const v = id => (document.getElementById(id).value || '').trim(), title = v('nt-title');
+    if (!title) return toast('اكتب عنوان الإعلان');
+    const n = { title, date: v('nt-date'), unit: v('nt-unit'), note: v('nt-note') };
+    saveRow(noticeKey(), { video: JSON.stringify(n) }).then(ok => { if (ok) { closeSheet(); toast('تم نشر الإعلان للطلاب'); } });
+  }
+  else if (act === 'notice-del') {
+    if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.textContent = 'اضغط مرة أخرى للتأكيد'; return; }
+    saveRow(noticeKey(), { video: '' }).then(ok => { if (ok) { closeSheet(); toast('تم حذف الإعلان'); } });
+  }
   else if (act === 'q-other') { S.stack.pop(); render(); }
   else if (act === 'q-review') { Q.review = !Q.review; render(false); }
   else if (act === 'play-part') { S.vi = +el.dataset.j; render(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
