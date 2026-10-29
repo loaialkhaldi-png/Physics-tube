@@ -521,6 +521,35 @@ body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; 
 .btn.danger { color: #FF7A7A; }
 .btn.busy { opacity: .6; pointer-events: none; }
 
+/* Daily challenge */
+.daily { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 18px; padding: 16px; border-radius: var(--r-md); text-align: right; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 100%, rgba(255,176,32,.5), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(255,77,122,.4), transparent 60%), #2A170B; border: 1px solid rgba(255,176,32,.35); }
+.daily:not(.done):active { transform: scale(.98); }
+.daily .dic { width: 50px; height: 50px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.14); font-size: 26px; flex: none; }
+.daily .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .daily .t b { font-size: 18px; } .daily .t small { color: rgba(255,255,255,.78); font-size: 13px; }
+.daily .qb-go { color: #2A170B; }
+.daily.done { background: var(--surface); border-color: var(--line); } .daily.done .t b { font-size: 16px; } .daily.done .t small { color: var(--muted); }
+/* Scientist ranks */
+.rank { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 12px; padding: 14px 16px; border-radius: var(--r-md); text-align: right;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--rc) 22%, var(--surface)), var(--surface) 70%); border: 1px solid color-mix(in srgb, var(--rc) 35%, var(--line)); }
+.rank:active { transform: scale(.98); }
+.rank .medal { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; flex: none; background: color-mix(in srgb, var(--rc) 25%, transparent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--rc) 55%, transparent); }
+.rank .t { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.rank .t b { font-size: 18px; display: flex; align-items: baseline; gap: 8px; } .rank .xp { font-size: 13px; color: var(--rc); font-weight: 700; }
+.rank small { color: var(--muted); font-size: 12.5px; }
+.rank .bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,.1); overflow: hidden; } .rank .bar i { display: block; height: 100%; background: var(--rc); border-radius: 3px; }
+.ranks { display: grid; gap: 10px; margin-top: 16px; }
+.rk { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: var(--surface-2); }
+.rk .m { font-size: 24px; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: color-mix(in srgb, var(--rc) 22%, transparent); flex: none; }
+.rk .t { flex: 1; display: grid; } .rk small { color: var(--muted); font-size: 13px; }
+.rk.lock { opacity: .45; } .rk.lock .m { filter: grayscale(1); } .rk.cur { outline: 2px solid var(--rc); }
+.earn { margin-top: 16px; display: grid; gap: 6px; font-size: 14px; color: var(--muted); } .earn b { color: var(--fg); }
+.celebrate { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; align-content: center; gap: 12px; text-align: center; padding: 24px; overflow: hidden; animation: fade .3s;
+  background: radial-gradient(60% 40% at 50% 40%, color-mix(in srgb, var(--rc) 45%, transparent), transparent 70%), rgba(5,7,12,.94); }
+.celebrate .big { font-size: 110px; line-height: 1.25; margin-bottom: 6px; animation: medal .9s cubic-bezier(.2, .8, .2, 1.3); }
+@keyframes medal { 0% { transform: scale(.2) rotate(-30deg); opacity: 0; } 60% { transform: scale(1.15) rotate(8deg); } }
+.celebrate h1 { font-size: 30px; } .celebrate p { color: var(--muted); } .celebrate .btn { min-width: 220px; }
+.card-prev { width: 100%; max-height: 52vh; object-fit: contain; border-radius: 18px; margin-top: 14px; background: #000; }
 /* Screen-to-screen motion (View Transitions). RTL: a pushed screen enters from the left like iOS in Arabic. */
 .vt .view { animation: none; }
 .tabbar { view-transition-name: tabbar; }
@@ -1215,7 +1244,7 @@ function track(kind, ref) {
   const k = dayKey(), d = ACT[k] || (ACT[k] = { l: [], s: [], q: 0 });
   if (kind === 'q') d.q++;
   else if (d[kind].includes(ref)) return;
-  else d[kind].push(ref);
+  else { d[kind].push(ref); addXP(10); }
   ACT = Object.fromEntries(Object.keys(ACT).sort().slice(-70).map(x => [x, ACT[x]]));
   store.set('act', ACT);
   const tot = weekTotals(), wk = dayKey(weekDays()[0]);
@@ -1324,6 +1353,130 @@ function startMistakes() {
   return true;
 }
 
+/* ---------- رتب العلماء: points for learning, saved on this device ---------- */
+const RANKS = [
+  { n: 'غاليليو', e: '🔭', xp: 0, c: '#4C86FF' },
+  { n: 'نيوتن', e: '🍎', xp: 200, c: '#32D17A' },
+  { n: 'فاراداي', e: '🧲', xp: 600, c: '#FFA53A' },
+  { n: 'ماكسويل', e: '⚡', xp: 1200, c: '#A866FF' },
+  { n: 'أينشتاين', e: '🌌', xp: 2500, c: '#FF4D7A' },
+];
+const rankOf = xp => RANKS.reduce((i, r, k) => xp >= r.xp ? k : i, 0);
+function addXP(n) {
+  if (!(n > 0)) return;
+  const old = store.get('xp', 0), xp = old + n;
+  store.set('xp', xp);
+  if (rankOf(xp) > rankOf(old)) setTimeout(() => rankUp(rankOf(xp)), 600);
+}
+function rankCard() {
+  const xp = store.get('xp', 0), i = rankOf(xp), r = RANKS[i], nx = RANKS[i + 1];
+  const pct = nx ? Math.round((xp - r.xp) / (nx.xp - r.xp) * 100) : 100;
+  return `<button class="rank" data-act="rank" style="--rc:${r.c}"><span class="medal">${r.e}</span>
+    <span class="t"><small>رتبتك العلمية</small><b>${r.n}<span class="xp">${xp} نقطة</span></b>
+      <span class="bar"><i style="width:${pct}%"></i></span>
+      <small>${nx ? `${nx.xp - xp} نقطة للوصول إلى ${nx.n} ${nx.e}` : 'وصلت إلى أعلى رتبة! 🏆'}</small></span></button>`;
+}
+function rankSheet() {
+  const xp = store.get('xp', 0), cur = rankOf(xp);
+  sheet(`<h2>رتب العلماء</h2><p>اجمع النقاط وترقَّ من غاليليو حتى أينشتاين.</p>
+    <div class="ranks">${RANKS.map((r, i) => `<div class="rk ${i > cur ? 'lock' : ''} ${i === cur ? 'cur' : ''}" style="--rc:${r.c}"><span class="m">${r.e}</span><span class="t"><b>${r.n}</b><small>${i === cur ? 'رتبتك الآن' : i < cur ? 'أنجزتها ✓' : `تُفتح عند ${r.xp} نقطة`}</small></span></div>`).join('')}</div>
+    <div class="earn"><b>كيف تجمع النقاط؟</b><span>📺 درس جديد: 10 نقاط</span><span>🧪 تجربة في المختبر: 10 نقاط</span><span>✅ كل إجابة صحيحة في الاختبار: 5 نقاط، و20 إضافية عند 100%</span><span>⚡ تحدّي اليوم: 30 نقطة</span></div>
+    <div class="ed-row" style="margin-top:16px"><button class="btn primary" data-act="share-rank" style="margin-top:0">${icon('share')}شارك رتبتك</button><button class="btn" data-act="close" style="margin-top:0">حسناً</button></div>
+    <p class="hint" style="margin-top:10px">نقاطك محفوظة على هذا الجهاز.</p>`);
+}
+function rankUp(i) {
+  const r = RANKS[i], el = document.createElement('div');
+  el.className = 'celebrate'; el.style.setProperty('--rc', r.c); el.setAttribute('role', 'dialog'); el.setAttribute('aria-label', `رتبة جديدة: ${r.n}`);
+  el.innerHTML = `<div class="confetti" aria-hidden="true">${Array.from({ length: 36 }, (_, k) => `<i style="--x:${(k * 29) % 100}%;--d:${(k % 9) * .1}s;--c:${QCOL[k % QCOL.length]}"></i>`).join('')}</div>
+    <div class="big">${r.e}</div><small style="color:var(--muted)">رتبة جديدة</small><h1>أصبحت ${r.n}!</h1><p>واصل التعلّم لتصل إلى الرتبة التالية.</p>
+    <button class="btn primary" data-cel="share">${icon('share')}شارك رتبتك</button><button class="btn" data-cel="close">رائع</button>`;
+  el.addEventListener('click', e => { const b = e.target.closest('[data-cel]'); if (!b) return; el.remove(); render(false); if (b.dataset.cel === 'share') shareRank(); });
+  document.body.appendChild(el);
+}
+const firstName = () => PROFILE && PROFILE.full_name ? PROFILE.full_name.trim().split(/\s+/)[0] : '';
+function shareRank() {
+  const xp = store.get('xp', 0), r = RANKS[rankOf(xp)];
+  shareCard({ big: r.e, title: `رتبتي العلمية: ${r.n}`, sub: `${xp} نقطة · ${G().name}`, text: `وصلت إلى رتبة ${r.n} في Physics Tube! هل تسبقني؟ https://physics-tube.com/` });
+}
+
+/* ---------- تحدّي اليوم: one question per day per grade ---------- */
+const dailyAll = () => QBANK().flatMap((md, m) => md.qs.map((q, i) => ({ q, md, k: `${S.grade}.${m}.${i}` })));
+function dailyPick() {
+  const all = dailyAll(); if (!all.length) return null;
+  let h = 7; for (const ch of dayKey() + S.grade) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return all[h % all.length];
+}
+const dailyLog = () => (store.get('daily', {})[S.grade] || {});
+const dailyDone = () => dailyLog()[dayKey()];
+// One missed day a week does not break the streak.
+function dailyStreak() {
+  const d = dailyLog(), t = noon(); if (d[dayKey(t)] == null) t.setDate(t.getDate() - 1);
+  let n = 0, shield = -99;
+  for (let i = 0; i < 400; i++, t.setDate(t.getDate() - 1)) {
+    if (d[dayKey(t)] != null) { n++; continue; }
+    const prev = new Date(t); prev.setDate(prev.getDate() - 1);
+    if (n && i - shield >= 7 && d[dayKey(prev)] != null) { shield = i; continue; }
+    break;
+  }
+  return n;
+}
+function dailyCard() {
+  if (!dailyPick()) return '';
+  const done = dailyDone(), st = dailyStreak();
+  if (done != null) return `<div class="daily done"><span class="dic">${done ? '✅' : '💡'}</span><span class="t"><b>${done ? 'أحسنت! حللت تحدّي اليوم' : 'حاولت في تحدّي اليوم، راجع الحل في «أخطائي»'}</b><small>تحدٍّ جديد غداً${st > 1 ? ` · 🔥 ${dayWord(st)} متتالية` : ''}</small></span></div>`;
+  const left = Math.max(1, Math.ceil((new Date().setHours(24, 0, 0, 0) - Date.now()) / 36e5));
+  return `<button class="daily" data-go="qrun:daily"><span class="dic">⚡</span>
+    <span class="t"><small>تحدّي اليوم · ينتهي بعد ${left === 1 ? 'ساعة' : left === 2 ? 'ساعتين' : left <= 10 ? left + ' ساعات' : left + ' ساعة'}</small><b>سؤال واحد = 30 نقطة</b>${st > 1 ? `<small>🔥 حافظ على سلسلتك: ${dayWord(st)}</small>` : ''}</span>
+    <span class="qb-go">ابدأ ${icon('chev')}</span></button>`;
+}
+function startDaily() {
+  const p = dailyPick(); if (!p) return false;
+  const md = { t: 'تحدّي اليوم', topics: '', qs: [p.q] };
+  Object.assign(Q, { m: -2, md, refs: [p.k], i: 0, ans: [], start: Date.now(), streak: 0, best: 0, done: false, review: false, picked: null });
+  Q.perm = md.qs.map(q => q.o ? shuffle(q.o.map((_, k) => k)) : null);
+  return true;
+}
+
+/* ---------- بطاقة إنجاز للمشاركة في القصص (1080×1920) ---------- */
+let CARD = null;
+const loadImg = src => new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = src; });
+async function drawCard(o, withLogo) {
+  const W = 1080, H = 1920, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const x = cv.getContext('2d'), F = '-apple-system, "SF Arabic", "IBM Plex Sans Arabic", "Segoe UI", Tahoma, sans-serif';
+  x.fillStyle = '#0A0B14'; x.fillRect(0, 0, W, H);
+  [[200, 300, 'rgba(47,140,255,.55)'], [900, 1500, 'rgba(168,102,255,.5)'], [950, 250, 'rgba(255,77,122,.3)']].forEach(([cx, cy, c]) => {
+    const g = x.createRadialGradient(cx, cy, 0, cx, cy, 750); g.addColorStop(0, c); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, W, H);
+  });
+  x.textAlign = 'center'; x.direction = 'rtl'; x.fillStyle = '#F5F5F7';
+  if (withLogo) {
+    const im = await loadImg('icons/icon-512.png?v=4');
+    x.save(); x.beginPath(); x.roundRect ? x.roundRect(390, 190, 300, 300, 70) : x.rect(390, 190, 300, 300); x.clip(); x.drawImage(im, 390, 190, 300, 300); x.restore();
+  }
+  const name = firstName();
+  x.font = `600 52px ${F}`; x.fillStyle = 'rgba(245,245,247,.75)'; x.fillText(name ? `إنجاز ${name}` : 'إنجازي', W / 2, 620);
+  x.font = `800 260px ${F}`; x.fillStyle = '#FFFFFF'; x.fillText(o.big, W / 2, 960);
+  x.font = `800 76px ${F}`; x.fillText(o.title, W / 2, 1140, W - 120);
+  x.font = `500 50px ${F}`; x.fillStyle = 'rgba(245,245,247,.75)'; x.fillText(o.sub, W / 2, 1230, W - 120);
+  x.font = `700 54px ${F}`; x.fillStyle = '#FFC83D'; x.fillText('هل تستطيع أن تتغلب عليّ؟ 🔥', W / 2, 1420);
+  x.direction = 'ltr'; x.font = `700 64px ${F}`; x.fillStyle = '#FFFFFF';
+  if ('letterSpacing' in x) x.letterSpacing = '14px';
+  x.fillText('PHYSICS TUBE', W / 2, 1700);
+  if ('letterSpacing' in x) x.letterSpacing = '0px';
+  x.font = `500 42px ${F}`; x.fillStyle = 'rgba(245,245,247,.7)'; x.fillText('physics-tube.com', W / 2, 1775);
+  return new Promise((ok, no) => cv.toBlob(b => b ? ok(b) : no(new Error('blob')), 'image/png'));
+}
+async function shareCard(o) {
+  toast('جارٍ تجهيز البطاقة…');
+  let blob;
+  try { blob = await drawCard(o, true); } catch (e) { try { blob = await drawCard(o, false); } catch (e2) { return toast('تعذّر تجهيز البطاقة'); } }
+  if (CARD && CARD.url) URL.revokeObjectURL(CARD.url);
+  CARD = { file: new File([blob], 'physics-tube.png', { type: 'image/png' }), url: URL.createObjectURL(blob), text: o.text };
+  const canFile = navigator.canShare && navigator.canShare({ files: [CARD.file] });
+  sheet(`<h2>بطاقة إنجازك</h2><p>${canFile ? 'شاركها في قصتك أو أرسلها لأصدقائك.' : 'اضغط مطولاً على الصورة واحفظها، ثم شاركها في قصتك.'}</p>
+    <img class="card-prev" src="${CARD.url}" alt="بطاقة الإنجاز">
+    <div class="ed-row" style="margin-top:14px">${canFile ? `<button class="btn primary" data-act="card-share" style="margin-top:0">${icon('share')}مشاركة</button>` : `<a class="btn primary" href="${CARD.url}" download="physics-tube.png" style="margin-top:0">حفظ الصورة</a>`}<button class="btn" data-act="close" style="margin-top:0">إغلاق</button></div>`);
+}
+
 /* ---------------- Views ---------------- */
 function vHome() {
   const g = G();
@@ -1351,6 +1504,7 @@ function vHome() {
     <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
     ${ADMIN ? `<button class="admin-bar" data-go="admin">${icon('chart')}<span>وضع المعلم: لوحة الإحصائيات والطلاب</span>${icon('chev')}</button>` : ''}
     ${noticeCard()}
+    ${dailyCard()}
     <div class="promos" aria-label="العروض">
       <button class="promo" data-act="plan" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
         <h2>${esc(g.name)}</h2>
@@ -1373,6 +1527,7 @@ function vHome() {
       </button>
     </div>
     ${ringsCard()}
+    ${rankCard()}
     ${cont}
     ${quizBanner()}
     ${mxRow()}
@@ -1525,6 +1680,7 @@ function vProfile() {
       <button class="btn primary" data-act="signup" style="min-height:44px">تسجيل</button>
     </div>` : ''}
     ${ADMIN ? `<button class="btn primary wide dash-btn" data-go="admin">${icon('chart')}لوحة المعلم والإحصائيات</button>` : ''}
+    ${rankCard()}
     <div class="stats">
       <div><b>${ar(doneHere)}</b><small>درس مكتمل</small></div>
       <div><b>${ar(all ? Math.round(doneHere / all * 100) : 0)}%</b><small>من المنهج</small></div>
@@ -1713,10 +1869,12 @@ function vQuizResult() {
       <h1>${msg[0]}</h1><p>${msg[1]}</p>
       <div class="qr-stats"><div><b>${ar(ok)}</b><small>صحيحة</small></div><div><b>${ar(n - ok)}</b><small>خاطئة</small></div><div><b>${mins ? ar(mins) + ':' + String(secs % 60).padStart(2, '0') : ar(secs) + ' ث'}</b><small>الوقت</small></div><div><b>${ar(Q.best)}</b><small>أطول سلسلة</small></div></div>
       ${Q.newBest ? '<span class="qr-badge">🎉 أفضل نتيجة جديدة لك في هذا النموذج</span>' : ''}
+      ${Q.xp ? `<span class="qr-badge" style="background:rgba(47,140,255,.15);color:#6FB0FF">⭐ +${Q.xp} نقطة</span>` : ''}
     </section>
     <div class="actions">
-      <button class="btn primary" data-act="q-retry">${icon('replay')}أعد الاختبار</button>
+      ${Q.m === -2 ? `<button class="btn primary" data-act="share-result">${icon('share')}شارك نتيجتك</button>` : `<button class="btn primary" data-act="q-retry">${icon('replay')}أعد الاختبار</button>`}
       <button class="btn" data-act="q-other">${icon('exam')}${Q.m < 0 ? 'رجوع' : 'نموذج آخر'}</button>
+      ${Q.m === -2 ? '' : `<button class="btn wide" data-act="share-result">${icon('share')}شارك نتيجتك وتحدَّ أصدقاءك</button>`}
       ${n - ok ? `<button class="btn wide" data-act="q-review">${Q.review ? 'اعرض كل الأسئلة' : `راجع أخطائي (${ar(n - ok)})`}</button>` : ''}
     </div>
     <h2 class="sec">${Q.review ? 'الأسئلة التي أخطأت فيها' : 'مراجعة الإجابات'}</h2>
@@ -1739,6 +1897,11 @@ function quizFinish() {
   const md = Q.md, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / md.qs.length * 100);
   Q.done = true; Q.end = Date.now(); Q.newBest = false;
   track('q');
+  if (Q.m === -2) {
+    const all = store.get('daily', {}); (all[S.grade] = all[S.grade] || {})[dayKey()] = ok ? 1 : 0; store.set('daily', all);
+    Q.xp = ok ? 30 : 5;
+  } else Q.xp = ok * 5 + (Q.m >= 0 && pct === 100 ? 20 : 0);
+  addXP(Q.xp);
   if (Q.m >= 0) {
     const b = qBest(), k = qKey(Q.m), prev = b[k];
     Q.newBest = !prev || pct > prev.best;
@@ -2913,6 +3076,7 @@ function go(spec, replace) {
   if (type === 'qrun') {
     if (!needLogin(() => go(spec, replace))) return;
     if (a === 'mx') { if (!startMistakes()) return toast('لا توجد أخطاء للمراجعة'); }
+    else if (a === 'daily') { if (dailyDone() != null) return toast('أنجزت تحدّي اليوم، عد غداً لتحدٍّ جديد'); if (!startDaily()) return; }
     else startQuiz(+a);
   }
   transition('fwd', () => { if (replace) S.stack.pop(); S.stack.push(entry); render(); });
@@ -3010,6 +3174,13 @@ document.addEventListener('click', e => {
     render();
   }
   else if (act === 'rings') ringsSheet();
+  else if (act === 'rank') rankSheet();
+  else if (act === 'share-rank') { closeSheet(); shareRank(); }
+  else if (act === 'share-result') {
+    const n = Q.md.qs.length, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / n * 100);
+    shareCard({ big: Q.m === -2 ? '⚡' : `${pct}%`, title: Q.m === -2 ? (ok ? 'حللت تحدّي اليوم!' : 'شاركت في تحدّي اليوم') : Q.md.t, sub: Q.m === -2 ? `${G().name} · 🔥 ${dayWord(Math.max(dailyStreak(), 1))}` : `${ok} من ${n} إجابات صحيحة · ${G().name}`, text: `حصلت على ${pct}% في «${Q.md.t}» على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/` });
+  }
+  else if (act === 'card-share') { if (CARD) navigator.share({ files: [CARD.file], text: CARD.text }).catch(() => {}); }
   else if (act === 'notice-edit') noticeSheet();
   else if (act === 'notice-save') {
     const v = id => (document.getElementById(id).value || '').trim(), title = v('nt-title');
