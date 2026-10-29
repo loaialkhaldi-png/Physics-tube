@@ -2855,7 +2855,8 @@ if (VT) document.documentElement.classList.add('vt');
 function transition(dir, fn) {
   if (!VT) return fn();
   document.documentElement.dataset.nav = dir;
-  try { document.startViewTransition(fn); } catch (e) { fn(); }
+  // A newer tap can skip a running transition; the update still runs, so the rejection is expected.
+  try { const t = document.startViewTransition(fn); [t.ready, t.finished, t.updateCallbackDone].forEach(pr => pr.catch(() => {})); } catch (e) { fn(); }
 }
 
 /* ---------- First-run welcome ---------- */
