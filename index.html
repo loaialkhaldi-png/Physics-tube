@@ -521,6 +521,59 @@ body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; 
 .btn.danger { color: #FF7A7A; }
 .btn.busy { opacity: .6; pointer-events: none; }
 
+/* Screen-to-screen motion (View Transitions). RTL: a pushed screen enters from the left like iOS in Arabic. */
+.vt .view { animation: none; }
+.tabbar { view-transition-name: tabbar; }
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .42s; animation-timing-function: cubic-bezier(.2, .8, .2, 1); mix-blend-mode: normal; }
+html[data-nav="fwd"]::view-transition-old(root) { animation-name: vt-old-fwd; }
+html[data-nav="fwd"]::view-transition-new(root) { animation-name: vt-new-fwd; box-shadow: 0 0 40px rgba(0,0,0,.6); }
+html[data-nav="back"]::view-transition-old(root) { animation-name: vt-old-back; z-index: 1; box-shadow: 0 0 40px rgba(0,0,0,.6); }
+html[data-nav="back"]::view-transition-new(root) { animation-name: vt-new-back; }
+html[data-nav="tab"]::view-transition-old(root) { animation: vt-fade-out .18s both; }
+html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes vt-new-fwd { from { transform: translateX(-100%); } }
+@keyframes vt-old-fwd { to { transform: translateX(30%); opacity: .5; } }
+@keyframes vt-new-back { from { transform: translateX(30%); opacity: .5; } }
+@keyframes vt-old-back { to { transform: translateX(-100%); } }
+@keyframes vt-fade-out { to { opacity: 0; } }
+@keyframes vt-fade-in { from { opacity: 0; transform: translateY(8px); } }
+/* Small moments of delight */
+.rings .arc, .rings-big .arc { animation: ringdraw 1.1s cubic-bezier(.2, .8, .2, 1); }
+@keyframes ringdraw { from { stroke-dasharray: 0 999; } }
+.qopt.right { animation: pop .42s cubic-bezier(.2, .8, .2, 1.4); }
+@keyframes pop { 45% { transform: scale(1.035); } }
+.qfb.ok b { animation: pop .5s .05s cubic-bezier(.2, .8, .2, 1.4); display: inline-block; }
+.tab .ico { transition: transform .25s cubic-bezier(.2, .8, .2, 1.4); } .tab[aria-current="page"] .ico { transform: translateY(-2px) scale(1.08); }
+.btn:active, .opt:active, .mx-row:active, .notice .nbtn:active, .cont:active { transform: scale(.97); }
+.btn, .opt, .mx-row, .cont { transition: transform .18s, background .2s, border-color .2s; }
+/* First-run welcome */
+.onb { position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column; direction: rtl; animation: fade .3s;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) 0 calc(env(safe-area-inset-bottom, 0px) + 20px);
+  background: radial-gradient(90% 55% at 50% 0%, rgba(47,140,255,.28), transparent 70%), radial-gradient(80% 45% at 0% 100%, rgba(168,102,255,.24), transparent 70%), var(--bg); }
+.onb.out { opacity: 0; transform: scale(1.05); transition: opacity .35s, transform .35s; pointer-events: none; }
+.onb-skip { align-self: flex-end; margin: 0 20px; padding: 8px 14px; border-radius: 999px; color: var(--muted); font-weight: 600; background: rgba(255,255,255,.06); }
+.onb-view { flex: 1; overflow: hidden; width: 100%; max-width: 520px; margin: 0 auto; touch-action: pan-y; }
+.onb-track { display: flex; height: 100%; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+.onb-page { flex: 0 0 100%; padding: 20px 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; text-align: center; overflow-y: auto; }
+.onb-page > * { opacity: 0; transform: translateY(16px); transition: opacity .55s, transform .55s cubic-bezier(.2, .8, .2, 1); }
+.onb-page.on > * { opacity: 1; transform: none; }
+.onb-page.on > :nth-child(2) { transition-delay: .08s; } .onb-page.on > :nth-child(3) { transition-delay: .16s; } .onb-page.on > :nth-child(4) { transition-delay: .24s; }
+.onb-logo { width: 128px; height: 128px; border-radius: 30px; margin: 0 auto 10px; box-shadow: 0 24px 70px rgba(47,140,255,.35); }
+.onb h1 { font-size: 32px; line-height: 1.3; }
+.onb h1 .mark { display: inline-block; margin-top: 8px; font-size: 24px; direction: ltr; }
+.onb p { color: var(--muted); font-size: 17px; }
+.onb-feats { display: grid; gap: 10px; text-align: right; margin-top: 6px; }
+.onb-feat { display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
+.onb-feat .fi { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, var(--fc) 18%, transparent); color: var(--fc); flex: none; }
+.onb-feat b { display: block; font-size: 16px; } .onb-feat small { color: var(--muted); font-size: 13px; }
+.onb .opts { text-align: right; margin-top: 4px; }
+.onb-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 24px; width: 100%; max-width: 520px; margin: 0 auto; min-height: 56px; }
+.onb-dots { display: flex; gap: 6px; }
+.onb-dots i { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,.25); transition: width .3s, background .3s; }
+.onb-dots i.on { width: 24px; background: var(--accent); }
+.onb-foot .btn { min-width: 140px; margin: 0; }
+.onb-foot .btn[hidden] { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
@@ -1176,7 +1229,7 @@ function ringsSvg(size) {
   return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">${Object.keys(GOALS).map((k, i) => {
     const g = GOALS[k], r = c0 - w / 2 - i * (w + 3), c = 2 * Math.PI * r, p = Math.min(tot[k] / g.n, 1);
     return `<circle cx="${c0}" cy="${c0}" r="${r}" fill="none" stroke="${g.c}" stroke-opacity=".2" stroke-width="${w}"/>
-      <circle cx="${c0}" cy="${c0}" r="${r}" fill="none" stroke="${g.c}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${Math.max(c * p, .01)} ${c}" transform="rotate(-90 ${c0} ${c0})"/>`;
+      <circle class="arc" cx="${c0}" cy="${c0}" r="${r}" fill="none" stroke="${g.c}" stroke-width="${w}" stroke-linecap="round" stroke-dasharray="${Math.max(c * p, .01)} ${c}" transform="rotate(-90 ${c0} ${c0})"/>`;
   }).join('')}</svg>`;
 }
 const ringLines = () => { const tot = weekTotals(); return Object.entries(GOALS).map(([k, g]) => `<span class="rl" style="--c:${g.c}"><i></i>${g.label}<b><bdi dir="ltr">${Math.min(tot[k], 99)}/${g.n}</bdi></b></span>`).join(''); };
@@ -2796,6 +2849,56 @@ function render(scroll = true) {
   if (scroll) window.scrollTo(0, 0);
 }
 
+const VT = !!document.startViewTransition && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+if (VT) document.documentElement.classList.add('vt');
+// dir: 'fwd' when opening a screen, 'back' when returning, 'tab' when switching tabs
+function transition(dir, fn) {
+  if (!VT) return fn();
+  document.documentElement.dataset.nav = dir;
+  try { document.startViewTransition(fn); } catch (e) { fn(); }
+}
+
+/* ---------- First-run welcome ---------- */
+function onboarding() {
+  const feats = [['play', '#FF375F', 'شرح فيديو لكل درس', 'دروس المنهج مرتبة حسب الوحدات'], ['lab', '#32D17A', 'مختبر تفاعلي', 'جرّب القوانين بنفسك وشاهد النتيجة مباشرة'], ['exam', '#A866FF', 'اختبر نفسك', 'نماذج الاختبار القصير مع الحلول ومراجعة أخطائك'], ['chart', '#2FB5FF', 'حلقات الإنجاز', 'تابع تقدّمك وأكمل أهدافك كل أسبوع']];
+  const el = document.createElement('div');
+  el.className = 'onb'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'مرحباً بك في Physics Tube');
+  el.innerHTML = `<button class="onb-skip" data-onb="skip">تخطَّ</button>
+    <div class="onb-view"><div class="onb-track">
+      <section class="onb-page"><img class="onb-logo" src="icons/icon-512.png?v=4" alt=""><h1>أهلاً بك في<br><span class="mark">PHYSICS <b>TUBE</b></span></h1><p>الفيزياء للمرحلة الثانوية بطريقة واضحة وممتعة، في جيبك.</p></section>
+      <section class="onb-page"><h1>كل ما تحتاجه<br>في مكان واحد</h1><div class="onb-feats">${feats.map(([ic, c, t, sm]) => `<div class="onb-feat" style="--fc:${c}"><span class="fi">${icon(ic)}</span><span><b>${t}</b><small>${sm}</small></span></div>`).join('')}</div></section>
+      <section class="onb-page"><h1>اختر صفك</h1><p>نعرض لك دروس صفك ومذكراته واختباراته، وتستطيع تغييره لاحقاً.</p>
+        <div class="opts">${GRADE_ORDER.map(k => { const g = GRADES[k], n = g.units.reduce((t, u) => t + u.lessons.length, 0); return `<button class="opt" data-onb-grade="${k}"><span class="thumb" style="${tileStyle(g.theme)}">${glyph(g.units[1].glyph, g.theme)}</span><span class="t"><b>${g.name}</b><small>${ar(n)} درساً</small></span></button>`; }).join('')}</div></section>
+    </div></div>
+    <div class="onb-foot"><div class="onb-dots" aria-hidden="true"><i></i><i></i><i></i></div><button class="btn primary" data-onb="next">التالي</button></div>`;
+  document.body.appendChild(el);
+  const pages = el.querySelectorAll('.onb-page'), dots = el.querySelectorAll('.onb-dots i'), next = el.querySelector('[data-onb="next"]');
+  let step = 0;
+  const show = n => {
+    step = Math.max(0, Math.min(pages.length - 1, n));
+    el.querySelector('.onb-track').style.transform = `translateX(${step * 100}%)`;
+    pages.forEach((p, i) => { p.classList.toggle('on', i === step); p.inert = i !== step; });
+    dots.forEach((d, i) => d.classList.toggle('on', i === step));
+    next.hidden = step === pages.length - 1;
+  };
+  const finish = grade => {
+    if (grade) { S.grade = grade; store.set('grade', grade); store.set('gradePicked', true); }
+    store.set('onboarded', true); S.tab = 'home'; S.stack = []; render();
+    el.classList.add('out'); setTimeout(() => el.remove(), 380);
+  };
+  el.addEventListener('click', e => {
+    const b = e.target.closest('[data-onb],[data-onb-grade]'); if (!b) return;
+    if (b.dataset.onbGrade) finish(b.dataset.onbGrade);
+    else if (b.dataset.onb === 'skip') finish(null);
+    else show(step + 1);
+  });
+  // In Arabic the next page sits to the left, so a rightward swipe moves forward.
+  let x0 = null;
+  el.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
+  el.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) show(step + (dx > 0 ? 1 : -1)); });
+  requestAnimationFrame(() => show(0));
+}
+
 function go(spec, replace) {
   const [type, a, b] = spec.split(':');
   const entry = type === 'unit' ? { type, u: +a } : type === 'lesson' ? { type, u: +a, i: +b } : { type, k: a };
@@ -2811,9 +2914,7 @@ function go(spec, replace) {
     if (a === 'mx') { if (!startMistakes()) return toast('لا توجد أخطاء للمراجعة'); }
     else startQuiz(+a);
   }
-  if (replace) S.stack.pop();
-  S.stack.push(entry);
-  render();
+  transition('fwd', () => { if (replace) S.stack.pop(); S.stack.push(entry); render(); });
 }
 
 function toast(msg) {
@@ -2872,13 +2973,13 @@ document.addEventListener('click', e => {
   if (el.dataset.fkind) { S.fileKind = el.dataset.fkind; return render(false); }
   if (el.dataset.term) { S.term = +el.dataset.term; store.set('term', S.term); return render(false); }
   if (el.dataset.go) { closeSheet(); return go(el.dataset.go, el.dataset.replace); }
-  if (el.dataset.tab) { closeSheet(); S.tab = el.dataset.tab; S.stack = []; return render(); }
+  if (el.dataset.tab) { closeSheet(); if (S.tab === el.dataset.tab && !S.stack.length) return window.scrollTo({ top: 0, behavior: 'smooth' }); return transition('tab', () => { S.tab = el.dataset.tab; S.stack = []; render(); }); }
   if (el.dataset.grade) {
     S.grade = el.dataset.grade; store.set('grade', S.grade); store.set('gradePicked', true); closeSheet(); S.stack = []; render();
     return toast(`تم التغيير إلى ${GRADES[S.grade].name}`);
   }
   const act = el.dataset.act;
-  if (act === 'back') { S.stack.pop(); render(); }
+  if (act === 'back') transition('back', () => { S.stack.pop(); render(); });
   else if (act === 'grade') gradeSheet();
   else if (act === 'plan') planSheet();
   else if (act === 'close') closeSheet();
@@ -2919,7 +3020,7 @@ document.addEventListener('click', e => {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.textContent = 'اضغط مرة أخرى للتأكيد'; return; }
     saveRow(noticeKey(), { video: '' }).then(ok => { if (ok) { closeSheet(); toast('تم حذف الإعلان'); } });
   }
-  else if (act === 'q-other') { S.stack.pop(); render(); }
+  else if (act === 'q-other') transition('back', () => { S.stack.pop(); render(); });
   else if (act === 'q-review') { Q.review = !Q.review; render(false); }
   else if (act === 'play-part') { S.vi = +el.dataset.j; render(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }
   else if (act === 'add-video') {
@@ -3007,6 +3108,8 @@ if (db) {
   loadRemote();
 }
 if (start === 'admin') { S.tab = 'profile'; render(); authSheet('login'); }
+else if (!store.get('onboarded', false) && !store.get('gradePicked', false) && !totalWatched() && !S.last) onboarding();
+else store.set('onboarded', true);
 
 if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:') {
   try {
