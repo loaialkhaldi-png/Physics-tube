@@ -1,5 +1,5 @@
 // يحفظ ملفات التطبيق على الجهاز ليفتح بسرعة ويعمل بدون إنترنت
-const CACHE = 'physics-tube-v60';
+const CACHE = 'physics-tube-v61';
 const SHELL = ['./', 'index.html', 'quiz-bank.js', 'games.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {

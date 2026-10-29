@@ -316,7 +316,17 @@ const EGG = {
     c.restore();
     st.bounce *= .9;
     // egg
-    if (!st.splat) { const ex = st.landed ? cx : X(0), ey = st.landed ? 420 - 34 : Y(st.ey) - 10; c.fillStyle = '#FFF8EC'; c.strokeStyle = '#E6D6BC'; c.lineWidth = 1.5; c.beginPath(); c.ellipse(ex, ey, 8, 11, 0, 0, 7); c.fill(); c.stroke(); c.fillStyle = 'rgba(255,255,255,.8)'; c.beginPath(); c.ellipse(ex - 3, ey - 4, 2, 3, 0, 0, 7); c.fill(); }
+    if (!st.splat) {
+      const ex = st.landed ? cx : X(0), ey = st.landed ? 420 - 38 : Y(st.ey) - 16;
+      // A bigger egg with a dark outline and a motion trail, so it reads clearly against the sky.
+      if (st.dropped && !st.landed) for (let k = 1; k <= 4; k++) { const t2 = Math.max(0, st.tDrop - k * .06), y2 = Y(Math.max(0, L.h - 5 * t2 * t2)) - 16; c.fillStyle = `rgba(255,236,190,${.35 - k * .07})`; c.beginPath(); c.ellipse(ex, y2, 12, 16, 0, 0, 7); c.fill(); }
+      c.save(); c.shadowColor = 'rgba(0,0,0,.45)'; c.shadowBlur = 10; c.shadowOffsetY = 3;
+      const eg = c.createRadialGradient(ex - 4, ey - 6, 2, ex, ey, 18); eg.addColorStop(0, '#FFFFFF'); eg.addColorStop(1, '#F1DDB4');
+      c.fillStyle = eg; c.beginPath(); c.ellipse(ex, ey, 12, 16, 0, 0, 7); c.fill(); c.restore();
+      c.strokeStyle = '#A9824B'; c.lineWidth = 2.5; c.beginPath(); c.ellipse(ex, ey, 12, 16, 0, 0, 7); c.stroke();
+      c.fillStyle = 'rgba(255,255,255,.9)'; c.beginPath(); c.ellipse(ex - 4, ey - 6, 3, 4.5, -.3, 0, 7); c.fill();
+      if (st.dropped && !st.landed) pill(c, 'g ↓', ex - 40, ey + 6, 'rgba(0,0,0,.45)', '#FFD23F', 13);
+    }
     else { c.fillStyle = '#FFF6E0'; c.beginPath(); c.ellipse(X(0), 421, 22, 5, 0, 0, 7); c.fill(); c.fillStyle = '#FFC21A'; c.beginPath(); c.arc(X(0), 419, 6, 0, 7); c.fill(); }
     pill(c, `h = ${L.h} m`, 70, 34, 'rgba(0,0,0,.4)'); pill(c, `v = ${L.v} m/s`, 190, 34, 'rgba(0,0,0,.4)');
     if (st.dropped && !st.landed) pill(c, `t = ${st.tDrop.toFixed(2)} s`, 320, 34, 'rgba(0,0,0,.4)', '#FFD23F');
