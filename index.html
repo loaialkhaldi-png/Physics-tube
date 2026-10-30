@@ -387,6 +387,15 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .xcd .ed { position: absolute; top: 12px; left: 12px; padding: 4px 12px; border-radius: 999px; background: rgba(0,0,0,.4); font-size: 12px; font-weight: 600; }
 .chk { display: flex; align-items: center; gap: 10px; font-size: 15px; font-weight: 600; }
 .chk input { width: 22px; height: 22px; accent-color: var(--accent); }
+.qgraph { margin: 14px 0 4px; padding: 8px 6px 4px; border-radius: 16px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); }
+.qgraph svg { display: block; width: 100%; max-width: 380px; margin: 0 auto; height: auto; font-family: inherit; }
+.qgraph .gr line { stroke: rgba(255,255,255,.06); }
+.qgraph .gd line { stroke: rgba(255,255,255,.4); stroke-dasharray: 4 4; }
+.qgraph .ax, .qgraph .ah { fill: none; stroke: rgba(255,255,255,.75); stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.qgraph .ln { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+.qgraph circle { fill: #fff; stroke: var(--accent); stroke-width: 2.5; }
+.qgraph text { fill: rgba(255,255,255,.85); font-size: 12px; font-weight: 600; }
+.qgraph .lb { fill: #fff; font-size: 13px; font-weight: 700; }
 .notice-add { width: 100%; margin-top: 18px; padding: 14px; border-radius: var(--r-md); border: 1.5px dashed rgba(255,255,255,.2); color: var(--muted); font-weight: 600; }
 /* Weekly activity rings */
 .rings { display: flex; align-items: center; gap: 18px; width: 100%; margin-top: 18px; padding: 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); text-align: right; }
@@ -1564,7 +1573,7 @@ function vMistakes() {
     <h2 class="sec">الأسئلة وحلولها</h2>
     <div class="qlist">${L.map(({ q, md, n }) => `<details class="qli no">
       <summary><span class="n">✕</span><span class="t">${qtext(q.q)}<small style="display:block;color:var(--muted);font-size:12px;margin-top:4px">${esc(md.t)}${n > 1 ? ` · أخطأت فيه ${n} مرات` : ''}</small></span></summary>
-      <div class="qli-b"><p><span class="lbl">الإجابة الصحيحة:</span> ${q.o ? qtext(q.o[0]) : `<bdi dir="ltr">${qFmt(q.n)} ${esc(q.u || '')}</bdi>`}</p><div class="qwhy"><small>الحل</small>${q.w}</div></div></details>`).join('')}</div>`
+      <div class="qli-b">${qGraph(q.g)}<p><span class="lbl">الإجابة الصحيحة:</span> ${q.o ? qtext(q.o[0]) : `<bdi dir="ltr">${qFmt(q.n)} ${esc(q.u || '')}</bdi>`}</p><div class="qwhy"><small>الحل</small>${q.w}</div></div></details>`).join('')}</div>`
     : `<button class="btn primary wide" data-go="quiz" data-replace="1" style="width:100%;margin-top:16px">${icon('exam')}اذهب إلى اختبر نفسك</button>`}
   </div>`;
 }
@@ -1847,14 +1856,14 @@ function vLive() {
   </div>`;
   if (r.phase === 'question' && q) {
     const head = `<div class="live-top"><b>سؤال ${r.q + 1} من ${qs.length}</b><span class="live-timer ${liveLeft() <= 5 ? 'low' : ''}" id="live-t">${liveLeft()}</span>${host ? `<b>${LIVE.answers.filter(a => a.q === r.q).length} / ${board.length} أجابوا</b>` : '<b></b>'}</div>`;
-    if (host) return `<div class="view push">${top}${head}<h2 class="live-q">${qtext(q.q)}</h2>${liveOpts(q, r.q, 'show')}
+    if (host) return `<div class="view push">${top}${head}<h2 class="live-q">${qtext(q.q)}</h2>${qGraph(q.g)}${liveOpts(q, r.q, 'show')}
       <button class="btn wide" data-act="live-reveal" style="width:100%;margin-top:18px">اعرض الإجابة الآن</button></div>`;
     if (LIVE.my) return `<div class="view push">${top}<div class="live-msg"><div class="em">📨</div><h1>تم إرسال إجابتك</h1><p>انتظر حتى يعرض المعلم الإجابة…</p></div>${liveOpts(q, r.q, 'mine')}</div>`;
     if (!liveLeft()) return `<div class="view push">${top}<div class="live-msg live-late"><div class="em">⌛</div><h1>انتهى الوقت</h1><p>استعد للسؤال التالي!</p></div></div>`;
-    return `<div class="view push">${top}${head}<h2 class="live-q" style="font-size:20px">${qtext(q.q)}</h2>${liveOpts(q, r.q, 'play')}</div>`;
+    return `<div class="view push">${top}${head}<h2 class="live-q" style="font-size:20px">${qtext(q.q)}</h2>${qGraph(q.g)}${liveOpts(q, r.q, 'play')}</div>`;
   }
   if (r.phase === 'reveal' && q) {
-    if (host) return `<div class="view push">${top}<div class="live-top"><b>سؤال ${r.q + 1} من ${qs.length}</b></div><h2 class="live-q">${qtext(q.q)}</h2>${liveOpts(q, r.q, 'reveal')}
+    if (host) return `<div class="view push">${top}<div class="live-top"><b>سؤال ${r.q + 1} من ${qs.length}</b></div><h2 class="live-q">${qtext(q.q)}</h2>${qGraph(q.g)}${liveOpts(q, r.q, 'reveal')}
       <h2 class="sec">المتصدرون</h2>${boardRows(board, 5)}
       <button class="btn primary wide" data-act="live-next" style="width:100%;margin-top:18px">${r.q + 1 < qs.length ? 'السؤال التالي' : 'النتيجة النهائية 🏆'}</button></div>`;
     const mine = LIVE.answers.find(a => a.q === r.q && USER && a.user_id === USER.id), rank = board.findIndex(x => USER && x.id === USER.id) + 1, pts = (board[rank - 1] || {}).pts || 0;
@@ -2367,6 +2376,25 @@ function startQuiz(m) {
   Q.perm = md.qs.map(q => q.o ? shuffle(q.o.map((_, k) => k)) : null);
 }
 // Keep Latin/maths runs (e.g. "Fx = 5 N", "[L/T²]") left-to-right inside Arabic sentences.
+/* Graph drawn from the question's own data points (q.g = { x, y, pts }) — only the given values are labelled */
+function qGraph(g) {
+  if (!g || !g.pts) return '';
+  const W = 320, H = 210, L = 46, R = 22, T = 30, B = 40, pw = W - L - R, ph = H - T - B;
+  const xm = Math.max(...g.pts.map(p => p[0])) * 1.18 || 1, ym = Math.max(...g.pts.map(p => p[1])) * 1.18 || 1;
+  const X = v => L + v / xm * pw, Y = v => T + ph - v / ym * ph, f = v => +v.toFixed(1);
+  const grid = [...Array(6)].map((_, i) => `<line x1="${f(L + pw * i / 6)}" y1="${T}" x2="${f(L + pw * i / 6)}" y2="${T + ph}"/><line x1="${L}" y1="${f(T + ph * i / 6)}" x2="${L + pw}" y2="${f(T + ph * i / 6)}"/>`).join('');
+  const guides = g.pts.map(([x, y]) => (x ? `<line x1="${f(X(x))}" y1="${f(Y(y))}" x2="${f(X(x))}" y2="${T + ph}"/>` : '') + (y ? `<line x1="${f(X(x))}" y1="${f(Y(y))}" x2="${L}" y2="${f(Y(y))}"/>` : '')).join('');
+  const ticks = [...new Set(g.pts.map(p => p[0]))].filter(Boolean).map(x => `<text x="${f(X(x))}" y="${T + ph + 16}" text-anchor="middle">${x}</text>`).join('')
+    + [...new Set(g.pts.map(p => p[1]))].filter(Boolean).map(y => `<text x="${L - 9}" y="${f(Y(y) + 4)}" text-anchor="end">${y}</text>`).join('');
+  return `<figure class="qgraph"><svg viewBox="0 0 ${W} ${H}" direction="ltr" role="img" aria-label="رسم بياني ${esc(g.y)} مع ${esc(g.x)}">
+    <g class="gr">${grid}</g><g class="gd">${guides}</g>
+    <path class="ax" d="M${L} ${T - 14}V${T + ph}H${L + pw + 14}"/><path class="ah" d="M${L - 4} ${T - 8}L${L} ${T - 16}L${L + 4} ${T - 8}M${L + pw + 8} ${T + ph - 4}L${L + pw + 16} ${T + ph}L${L + pw + 8} ${T + ph + 4}"/>
+    <polyline class="ln" points="${g.pts.map(([x, y]) => `${f(X(x))},${f(Y(y))}`).join(' ')}"/>
+    ${g.pts.map(([x, y]) => `<circle cx="${f(X(x))}" cy="${f(Y(y))}" r="4.5"/>`).join('')}
+    <g class="tk">${ticks}<text x="${L - 6}" y="${T + ph + 16}" text-anchor="end">0</text></g>
+    <text class="lb" x="${L + 6}" y="${T - 12}">${esc(g.y)}</text><text class="lb" x="${L + pw + 4}" y="${T + ph + 32}" text-anchor="end">${esc(g.x)}</text>
+  </svg></figure>`;
+}
 const qtext = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×÷./²³°·()\[\]|,√₀₁₂₃₄αθκπ⁻²]*[A-Za-z0-9²³°)\]|]|[A-Za-z0-9]/g, m => /[A-Za-z=\/\[]/.test(m) && m.includes(' ') || /[A-Za-z]/.test(m) && /[0-9=\/]/.test(m) ? `<bdi dir="ltr">${m}</bdi>` : m);
 const qNumOk = (q, v) => { const tol = q.tol != null ? q.tol : Math.max(Math.abs(q.n) * 0.015, 0.011); return Math.abs(v - q.n) <= tol; };
 const qFmt = v => String(+(+v).toFixed(3));
@@ -2395,7 +2423,7 @@ function vQuizRun() {
     <div class="qbar">${md.qs.map((_, k) => `<i class="${Q.ans[k] ? (Q.ans[k].ok ? 'ok' : 'no') : k === Q.i ? 'cur' : ''}"></i>`).join('')}</div>
     <div class="qcard">
       <span class="qtype">${q.o ? 'اختر الإجابة الصحيحة' : 'احسب'}</span>
-      <h2 class="qq">${qtext(q.q)}</h2>
+      <h2 class="qq">${qtext(q.q)}</h2>${qGraph(q.g)}
       ${body}
     </div>
     ${fb}
@@ -2427,7 +2455,7 @@ function vQuizResult() {
     <h2 class="sec">${Q.review ? 'الأسئلة التي أخطأت فيها' : 'مراجعة الإجابات'}</h2>
     <div class="qlist">${list.map(({ q, k, a }) => `<details class="qli ${a.ok ? 'ok' : 'no'}" ${!a.ok && Q.review ? 'open' : ''}>
       <summary><span class="n">${a.ok ? icon('check') : '✕'}</span><span class="t">${ar(k + 1)}. ${qtext(q.q)}</span></summary>
-      <div class="qli-b">${q.o ? `<p><span class="lbl">الإجابة الصحيحة:</span> ${qtext(q.o[0])}</p>${a.ok ? '' : `<p class="bad"><span class="lbl">إجابتك:</span> ${qtext(q.o[a.pick])}</p>`}`
+      <div class="qli-b">${qGraph(q.g)}${q.o ? `<p><span class="lbl">الإجابة الصحيحة:</span> ${qtext(q.o[0])}</p>${a.ok ? '' : `<p class="bad"><span class="lbl">إجابتك:</span> ${qtext(q.o[a.pick])}</p>`}`
         : `<p><span class="lbl">الإجابة الصحيحة:</span> <bdi dir="ltr">${qFmt(q.n)} ${esc(q.u || '')}</bdi></p>${a.ok ? '' : `<p class="bad"><span class="lbl">إجابتك:</span> <bdi dir="ltr">${esc(a.val)}</bdi></p>`}`}
         <div class="qwhy"><small>الحل</small>${q.w}</div></div></details>`).join('')}</div>
   </div>`;
