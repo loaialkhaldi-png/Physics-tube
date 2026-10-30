@@ -264,8 +264,8 @@ const EGG = {
   hint: () => 'زمن سقوط البيضة من السكون <code>t = √(2h / g)</code>، وخلال هذا الزمن تقطع العربة <code>x = v·t</code>.',
   controls: () => [{ id: 'x', label: 'مسافة العربة لحظة الإفلات x', min: 0, max: 20, step: .1, v: 5, unit: 'm', dec: 1 }],
   go: '🥚 أفلت البيضة',
-  init(st, P, L) { st.cx = -Math.max(P.x || 5, 5) - L.v * 1.5; st.ey = L.h; st.ev = 0; st.dropped = false; st.landed = false; st.bounce = 0; st.cam = 0; },
-  launch(st, P, L) { st.cx = -P.x - L.v * 1.5; st.ey = L.h; st.ev = 0; st.dropped = false; st.landed = false; },
+  init(st, P, L) { st.cx = -Math.max(P.x || 5, 5) - L.v * 1.5; st.ey = L.h; st.ev = 0; st.dropped = false; st.landed = false; st.splat = false; st.tDrop = 0; st.bounce = 0; st.cam = 0; },
+  launch(st, P, L) { st.cx = -P.x - L.v * 1.5; st.ey = L.h; st.ev = 0; st.dropped = false; st.landed = false; st.splat = false; st.tDrop = 0; },
   sxF: (x) => 640 + x * 24,
   sy(st, L, y) { return 420 - y * (330 / L.h); },
   update(st, dt, P, L) {
