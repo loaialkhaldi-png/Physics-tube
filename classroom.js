@@ -100,7 +100,7 @@ function clsRejoinBoard() {
     .on('broadcast', { event: 'b' }, ({ payload }) => clsOnBoard(payload)).subscribe(st => clsStatus(st));
 }
 function clsLeave() {
-  clsDisconnect(); CLS.code = ''; CLS.role = ''; CLS.found = null; CLS.foundAt = 0;
+  clsDisconnect(); const yb = document.getElementById('cls-yt'); if (yb) yb.remove(); CLS.code = ''; CLS.role = ''; CLS.found = null; CLS.foundAt = 0;
   S.stack = S.stack.filter(t => t.type !== 'class'); render();
 }
 async function clsEnd() {
@@ -130,7 +130,8 @@ function clsOnBoard(m) {
   else if (m.t === 'pg') { while (B.pages.length < m.n) B.pages.push({ s: [] }); B.cur = m.cur; clsBar(); }
   else if (m.t === 'g') B.grid = m.on;
   else if (m.t === 'v') pg.v = m.v;
-  else if (m.t === 'st') { CLS.board = m.board; clsBar(); }
+  else if (m.t === 'st') { const had = CLS.board.yt || ''; CLS.board = m.board; clsBar(); if ((m.board.yt || '') !== had && clsTop()) return render(false); }
+  else if (m.t === 'yt') { B.yt = m.id || ''; return clsTop() ? render(false) : clsYt(); }
   else if (m.t === 'z') { CLS.laser.push({ x: m.x, y: m.y, at: Date.now() }); clsAnimate(); return; }
   else if (m.t === 'pen') return clsPenCheck();
   else if (m.t === 'poll') { CLS.poll = m.poll; return clsSide(); }
@@ -332,7 +333,9 @@ function vClass() {
   if (CLS.ended) return `<div class="view push">${top}<div class="live-msg"><div class="em">👋</div><h1>انتهى الفصل</h1><p>شكراً لمشاركتك! يمكنك حفظ صورة السبورة قبل الخروج.</p>
     <div class="cls-board"><canvas id="cls-cv"></canvas><canvas id="cls-ov"></canvas></div>
     <div class="ed-row" style="margin-top:14px"><button class="btn" data-act="cls-png" style="margin-top:0">⤓ احفظ السبورة</button><button class="btn primary" data-act="cls-leave" style="margin-top:0">رجوع</button></div></div></div>`;
+  const yt = !host && CLS.board.yt;
   return `<div class="view push cls">${top}
+    ${yt && !CLS.ytMini ? '<div class="cls-ytph" id="cls-ytph"></div>' : ''}
     <div class="cls-stage ${CLS.full ? 'full' : ''}">
       <div class="cls-board"><canvas id="cls-cv" ${clsCanDraw() ? 'style="touch-action:none"' : ''}></canvas><canvas id="cls-ov"></canvas><div class="cls-fx" id="cls-fx" aria-hidden="true"></div>
         <div class="cls-bar" id="cls-bar"></div>
@@ -377,7 +380,7 @@ function clsSide() {
     return;
   }
   const hands = CLS.members.filter(m => m.hand).sort((a, b) => a.hand - b.hand), qn = CLS.questions.length;
-  const tabs = [['people', `الطلاب (${CLS.members.length})${hands.length ? ` · ✋${hands.length}` : ''}`], ['qs', `الأسئلة${qn ? ` (${qn})` : ''}`], ['poll', 'تصويت']];
+  const tabs = [['people', `الطلاب (${CLS.members.length})${hands.length ? ` · ✋${hands.length}` : ''}`], ['qs', `الأسئلة${qn ? ` (${qn})` : ''}`], ['poll', 'تصويت'], ['yt', CLS.board.yt ? '📺 البث ●' : '📺 البث']];
   let body = '';
   if (CLS.tab === 'people') {
     const list = [...hands, ...CLS.members.filter(m => !m.hand).sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'))];
@@ -387,6 +390,18 @@ function clsSide() {
       : `<div class="cls-empty">اطلب من طلاب ${esc(G().name)} فتح التطبيق، وسيظهر لهم زر «الفصل المباشر مفتوح الآن» في الصفحة الرئيسية. أو يكتبوا الرمز <b>${CLS.code}</b>.</div>`;
   } else if (CLS.tab === 'qs') {
     body = qn ? `<div class="cls-qs">${CLS.questions.map(q => `<div><b>${esc(q.name)}</b><p>${esc(q.text)}</p><button data-act="cls-qdone" data-id="${esc(q.id)}" aria-label="تمت الإجابة">✓</button></div>`).join('')}</div>` : '<div class="cls-empty">أسئلة الطلاب تظهر هنا، ولا يراها إلا أنت.</div>';
+  } else if (CLS.tab === 'yt') {
+    body = CLS.board.yt
+      ? `<div class="cls-poll"><b>✅ البث المباشر ظاهر للطلاب الآن فوق السبورة</b><span class="cls-ytid" dir="ltr">youtu.be/${esc(CLS.board.yt)}</span>
+          <div class="ed-row"><button class="btn" data-act="cls-ytoff" style="margin-top:0">إيقاف عرض البث</button></div></div>`
+      : `<div class="field"><label for="cls-ytin">رابط البث المباشر من يوتيوب</label><input id="cls-ytin" type="url" inputmode="url" placeholder="https://youtube.com/live/..."></div>
+        <button class="btn primary wide" data-act="cls-yton" style="margin-top:0">📺 اعرض البث للطلاب</button>
+        <div class="cls-help">
+          <div><b>١. ابدأ البث في يوتيوب</b><span>من تطبيق YouTube: زر «+» ← «بث مباشر». أو من الكمبيوتر: YouTube Studio ← «بث مباشر».</span></div>
+          <div><b>٢. اجعله «غير مدرج»</b><span>حتى لا يظهر البث للعامة، ويراه طلابك فقط من داخل التطبيق.</span></div>
+          <div><b>٣. انسخ الرابط والصقه هنا</b><span>من «مشاركة» ← «نسخ الرابط». يظهر الفيديو للطلاب فوق السبورة مباشرة.</span></div>
+          <div><b>💡 ملاحظات</b><span>أول مرة قد يطلب يوتيوب تفعيل البث المباشر للقناة، وقد يأخذ التفعيل حتى 24 ساعة، والبث من الجوال قد يحتاج شروطاً إضافية للقناة. لتقليل التأخير اختر «زمن انتقال منخفض جداً» في إعدادات البث. يمكنك تصوير نفسك بالجوال والكتابة على السبورة من الآيباد.</span></div>
+        </div>`;
   } else {
     body = CLS.poll ? clsPollCard(true) : `<div class="cls-empty">اكتب السؤال على السبورة أو اسأله شفهياً، ثم افتح التصويت ليجيب الطلاب من جوالاتهم.</div>
       <div class="ed-row"><button class="btn primary" data-act="cls-poll" data-k="abcd" style="margin-top:0">أ / ب / ج / د</button><button class="btn primary" data-act="cls-poll" data-k="tf" style="margin-top:0">صح / خطأ</button></div>
@@ -394,7 +409,7 @@ function clsSide() {
   }
   el.innerHTML = `<div class="seg cls-tabs">${tabs.map(([k, t]) => `<button aria-pressed="${CLS.tab === k}" data-act="cls-tab" data-k="${k}">${t}</button>`).join('')}</div>${body}`;
 }
-function clsAfterRender() { clsMount(); clsSide(); }
+function clsAfterRender() { clsMount(); clsSide(); clsYt(); }
 
 /* ---------- Actions ---------- */
 function clsAct(act, el) {
@@ -427,6 +442,12 @@ function clsAct(act, el) {
   else if (act === 'cls-full') { CLS.full = !CLS.full; document.body.classList.toggle('cls-lock', CLS.full); render(false); }
   else if (act === 'cls-png') clsPng();
   else if (act === 'cls-import') clsImport();
+  else if (act === 'cls-yton') {
+    const id = ytId(document.getElementById('cls-ytin').value); if (!id) return toast('الصق رابط بث يوتيوب صحيحاً');
+    CLS.board.yt = id; clsSend({ t: 'yt', id }); clsSave(); clsSide(); toast('ظهر البث للطلاب 📺');
+  }
+  else if (act === 'cls-ytoff') { CLS.board.yt = ''; clsSend({ t: 'yt', id: '' }); clsSave(); clsSide(); }
+  else if (act === 'cls-ytmini') { CLS.ytMini = !CLS.ytMini; render(false); }
   else if (act === 'cls-zoom') { const v = clsV();
     if (+d.d === 0) { Object.assign(v, { z: 1, x: 0, y: 0 }); clsDraw(); clsViewSend(true); }
     else clsZoomAt(BW / 2, BH / 2, v.z * (+d.d > 0 ? 1.4 : 1 / 1.4)); }
@@ -563,3 +584,31 @@ function clsPdfFromJpegs(imgs) {
   put(`xref\n0 ${n}\n0000000000 65535 f \n${offs.slice(1).map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('')}trailer\n<< /Size ${n} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
   return new Blob(parts, { type: 'application/pdf' });
 }
+
+/* ---------- YouTube live inside the class. The player lives outside #app, so re-rendering the page never restarts it;
+   it sits over a placeholder in the page, or floats small in a corner. ---------- */
+function clsYt() {
+  const id = CLS.code && !CLS.ended && CLS.board && !clsHost() ? CLS.board.yt : '';
+  let box = document.getElementById('cls-yt');
+  if (!id) { if (box) box.remove(); return; }
+  if (!box || box.dataset.id !== id) {
+    if (box) box.remove();
+    box = document.createElement('div'); box.id = 'cls-yt'; box.dataset.id = id;
+    box.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&playsinline=1&rel=0&modestbranding=1" title="بث الحصة المباشر" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>
+      <button class="cls-ytbtn" data-act="cls-ytmini" aria-label="تكبير أو تصغير الفيديو"></button>`;
+    document.body.appendChild(box);
+  }
+  box.hidden = !clsTop();
+  box.classList.toggle('mini', !!(CLS.ytMini || CLS.full || !document.getElementById('cls-ytph')));
+  box.querySelector('.cls-ytbtn').textContent = box.classList.contains('mini') ? '⤢' : '⤡';
+  clsYtPlace();
+}
+function clsYtPlace() {
+  const box = document.getElementById('cls-yt'); if (!box || box.hidden) return;
+  const ph = document.getElementById('cls-ytph');
+  if (box.classList.contains('mini') || !ph) { box.style.cssText = ''; return; }
+  const r = ph.getBoundingClientRect();
+  box.style.cssText = `top:${r.top}px;left:${r.left}px;width:${r.width}px;height:${r.height}px`;
+}
+addEventListener('scroll', () => requestAnimationFrame(clsYtPlace), { passive: true });
+addEventListener('resize', () => requestAnimationFrame(clsYtPlace));

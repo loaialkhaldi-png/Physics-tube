@@ -416,6 +416,14 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .cls-zoom { position: absolute; top: 8px; right: 8px; display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: rgba(0,0,0,.45); backdrop-filter: blur(8px); }
 .cls-zoom button { min-width: 32px; height: 30px; padding: 0 6px; border-radius: 9px; color: #fff; font-size: 18px; font-weight: 700; }
 .cls-zoom #cls-zl { font-size: 12px; min-width: 46px; background: rgba(255,255,255,.1); }
+#cls-yt { position: fixed; z-index: 35; overflow: hidden; border-radius: 18px; background: #000; box-shadow: 0 12px 40px rgba(0,0,0,.5); }
+#cls-yt[hidden] { display: none; }
+#cls-yt iframe { width: 100%; height: 100%; border: 0; display: block; }
+#cls-yt.mini { right: 12px; bottom: calc(env(safe-area-inset-bottom, 0px) + 96px); width: min(46vw, 300px); aspect-ratio: 16 / 9; border-radius: 14px; border: 1px solid rgba(255,255,255,.2); }
+.cls-ytbtn { position: absolute; top: 6px; left: 6px; width: 30px; height: 30px; border-radius: 9px; background: rgba(0,0,0,.55); color: #fff; font-size: 16px; }
+.cls-ytph { width: 100%; aspect-ratio: 16 / 9; margin-top: 6px; border-radius: 18px; background: #000; }
+.wide .cls-ytph { width: min(100%, calc(60vh * 16 / 9)); margin-inline: auto; }
+.cls-ytid { font-size: 13px; color: var(--muted); }
 .cls-fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .cls-fx span { position: absolute; bottom: 4%; font-size: 34px; animation: clsFloat 2.2s ease-out forwards; }
 @keyframes clsFloat { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: 1; transform: translateY(-20px) scale(1.15); } 100% { transform: translateY(-260px) scale(1); opacity: 0; } }
@@ -3677,7 +3685,7 @@ function render(scroll = true) {
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
   if (top && top.type === 'glevel') startGame(top.k, +top.i);
-  if (top && top.type === 'class') clsAfterRender();
+  if (top && top.type === 'class') clsAfterRender(); else if (typeof clsYt === 'function') clsYt();
   if (ADMIN) setupReorder();
   if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at) loadAdmin();
   if (scroll) window.scrollTo(0, 0);
