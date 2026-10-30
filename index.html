@@ -863,6 +863,77 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
   .unit h3 { font-size: 16px; }
   .mark { font-size: 16px; letter-spacing: .22em; }
 }
+
+/* ---------- Laptop & large screens: sidebar navigation and wider, multi-column pages (phones are unchanged) ---------- */
+@media (min-width: 1024px) {
+  body { padding-right: 248px; }
+  body.wide { padding-right: 0; }
+  #app { max-width: 1120px; padding-left: 40px; padding-right: 40px; padding-bottom: 60px; }
+  .tabbar {
+    top: 0; bottom: 0; right: 0; left: auto; transform: none; width: 248px; border-radius: 0;
+    display: flex; flex-direction: column; gap: 6px; padding: 96px 18px 24px;
+    border-width: 0 0 0 1px; background: #0E1015; box-shadow: none;
+  }
+  .tabbar::before { content: "PHYSICS TUBE"; position: absolute; top: 34px; right: 26px; direction: ltr; font: 700 16px/1 var(--font-mark); letter-spacing: .22em; color: var(--fg); }
+  .tab { display: flex; align-items: center; justify-items: start; gap: 14px; padding: 13px 16px; border-radius: 14px; font-size: 16px; }
+  .tab:hover { background: #1A1C23; color: var(--fg); }
+  .tab .ico { width: 22px; height: 22px; }
+  .tab[aria-current="page"] .ico { transform: none; }
+  .top .mark { visibility: hidden; }
+  button, [data-go], [data-act] { cursor: pointer; }
+
+  /* Home: two cards side by side, wide carousel, four columns of units */
+  .view:has(> .grade-row) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 20px; align-items: start; }
+  .view:has(> .grade-row) > * { grid-column: 1 / -1; }
+  .view:has(> .grade-row) > :is(.rings, .rank, .games-card, .qbanner) { grid-column: auto; height: calc(100% - 16px); }
+  .view:has(> .grade-row) > .rank { margin-top: 18px; }
+  .grade-row h1 { font-size: 40px; }
+  .promos { margin-inline: 0; padding-inline: 0; margin-top: 18px; }
+  .promo { flex: 0 0 calc((100% - 28px) / 3); min-height: 380px; }
+  .units { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+
+  /* Unit: hero beside the lesson lists */
+  .view:has(> .hero) { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: 28px; align-items: start; }
+  .view:has(> .hero) > * { grid-column: 2; }
+  .view:has(> .hero) > .nav { grid-column: 1 / -1; }
+  .view:has(> .hero) > .hero { grid-column: 1; grid-row: 2 / span 20; position: sticky; top: 24px; min-height: 420px; margin-top: 18px; }
+  .view:has(> .hero) > .sec:first-of-type { margin-top: 0; }
+
+  /* Lesson: big video, details beside it */
+  .view:has(> .player) { display: grid; grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr); column-gap: 28px; align-items: start; }
+  .view:has(> .player) > * { grid-column: 2; }
+  .view:has(> .player) > .nav { grid-column: 1 / -1; }
+  .view:has(> .player) > .player { grid-column: 1; grid-row: 2 / span 10; }
+  .view:has(> .player) > .lesson-h { padding-top: 0; }
+
+  /* Lab, games and notes in columns */
+  .sims { grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .g-list { grid-template-columns: repeat(2, 1fr); gap: 18px; }
+  .view:has(> .unitgroup) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; align-items: start; }
+  .view:has(> .unitgroup) > .page-h { grid-column: 1 / -1; }
+
+  /* Experiment and game level: stage on one side, controls on the other */
+  .view:has(> .stage), .view:has(> .g-stage) { display: grid; grid-template-columns: minmax(0, 3fr) minmax(330px, 2fr); column-gap: 24px; align-items: start; grid-auto-flow: row dense; }
+  .view:has(> .stage) > *, .view:has(> .g-stage) > * { grid-column: 2; }
+  .view:has(> .stage) > :is(.nav, .page-h), .view:has(> .g-stage) > :is(.nav, .g-head) { grid-column: 1 / -1; }
+  .view:has(> .stage) > .stage, .view:has(> .g-stage) > .g-stage { grid-column: 1; grid-row: span 4; margin-top: 12px; }
+  .view:has(> .stage) > .readout { grid-column: 1; }
+
+  /* Self-test: wide header, models in a grid, questions at a comfortable width */
+  .qmodels { grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .qmodels .qmodel { flex-direction: column; align-items: flex-start; }
+  .view:has(.qcard) { max-width: 780px; margin-inline: auto; }
+
+  /* Profile: rank and statistics side by side, settings in two columns */
+  .view:has(> .stats) { display: grid; grid-template-columns: 1fr 1fr; column-gap: 24px; align-items: start; }
+  .view:has(> .stats) > * { grid-column: 1 / -1; }
+  .view:has(> .stats) > .rank { grid-column: 1; margin-top: 12px; height: calc(100% - 12px); }
+  .view:has(> .stats) > .stats { grid-column: 2; }
+
+  .sheet { bottom: auto; top: 50%; transform: translate(-50%, -50%); border-radius: 28px; border-bottom: 1px solid var(--line); max-height: 80vh; animation: fade .25s; }
+  .sheet .grab { display: none; }
+  .toast { bottom: 40px; }
+}
 </style>
 </head>
 <body>
