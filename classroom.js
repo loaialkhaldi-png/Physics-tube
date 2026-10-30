@@ -5,7 +5,7 @@
    class:<code> carries the board (teacher or pen holder), classin:<code> carries the students' hands, questions, votes and reactions.
    The teacher's device also saves the board to class_rooms.board so late joiners and reloads start from it. */
 const BW = 1600, BH = 1000;
-const CLS_COLORS = ['#F5F7FA', '#FFD84D', '#4FD1FF', '#FF6B9A', '#6BE38A', '#FFA53A'];
+const CLS_COLORS = ['#F5F7FA', '#14161C', '#FF3B30', '#FFD84D', '#4FD1FF', '#6BE38A', '#FF6B9A'];
 const CLS_WIDTHS = [4, 8, 16];
 const CLS_REACTS = ['👍', '👏', '❤️', '😮', '🤔'];
 const CLS_SQL_MSG = 'الفصل المباشر يحتاج تشغيل ملف supabase-class.sql مرة واحدة في Supabase.';
@@ -181,7 +181,14 @@ function clsDraw() {
   const c = cv.getContext('2d'), k = cv.width / BW;
   c.setTransform(k, 0, 0, k, 0, 0);
   c.fillStyle = '#10211B'; c.fillRect(0, 0, BW, BH);
-  if (CLS.board.grid) {
+  const bg = clsPage().bg;
+  if (bg) {
+    const im = clsBg(bg);
+    if (im) { const k2 = Math.min(BW / im.width, BH / im.height), w = im.width * k2, h = im.height * k2;
+      c.fillStyle = '#fff'; c.fillRect((BW - w) / 2, (BH - h) / 2, w, h); c.drawImage(im, (BW - w) / 2, (BH - h) / 2, w, h); }
+    else { c.fillStyle = 'rgba(255,255,255,.6)'; c.font = '600 40px system-ui, sans-serif'; c.textAlign = 'center'; c.fillText(CLS_BG[bg.u + '#' + bg.n] && CLS_BG[bg.u + '#' + bg.n].err ? 'تعذّر تحميل الصفحة' : 'جارٍ تحميل الصفحة…', BW / 2, BH / 2); }
+    const nx = CLS.board.pages[CLS.board.cur + 1]; if (nx && nx.bg) clsBg(nx.bg);
+  } else if (CLS.board.grid) {
     for (let x = 50; x < BW; x += 50) { c.fillStyle = x % 250 ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.1)'; c.fillRect(x - .75, 0, 1.5, BH); }
     for (let y = 50; y < BH; y += 50) { c.fillStyle = y % 250 ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.1)'; c.fillRect(0, y - .75, BW, 1.5); }
   }
@@ -261,6 +268,7 @@ function clsToolbar() {
   const t = (k, ic, lbl) => `<button class="${CLS.tool === k ? 'on' : ''}" data-act="cls-tool" data-k="${k}" aria-label="${lbl}" title="${lbl}">${ic}</button>`;
   const host = clsHost(), B = CLS.board;
   return `<div class="cls-tools" role="toolbar" aria-label="أدوات السبورة">
+    ${host ? '<div class="grp"><button class="doc" data-act="cls-import" aria-label="أضف ملف PDF أو صوراً للشرح عليها">📄 <span>ملف</span></button></div>' : ''}
     <div class="grp">${t('pen', '✏️', 'قلم')}${t('line', '<i class="ln"></i>', 'خط مستقيم')}${t('arrow', '<i class="ar"></i>', 'سهم (متجه)')}${t('erase', '🧽', 'ممحاة')}${host ? t('laser', '<i class="lz"></i>', 'مؤشر ليزر') : ''}</div>
     <div class="grp">${CLS_COLORS.map(c => `<button class="sw ${CLS.color === c ? 'on' : ''}" data-act="cls-color" data-c="${c}" style="--c:${c}" aria-label="لون"></button>`).join('')}</div>
     <div class="grp">${CLS_WIDTHS.map(w => `<button class="wd ${CLS.width === w ? 'on' : ''}" data-act="cls-width" data-w="${w}" aria-label="سماكة ${w}"><i style="width:${w / 2 + 3}px;height:${w / 2 + 3}px"></i></button>`).join('')}</div>
@@ -369,6 +377,7 @@ function clsAct(act, el) {
   }
   else if (act === 'cls-full') { CLS.full = !CLS.full; document.body.classList.toggle('cls-lock', CLS.full); render(false); }
   else if (act === 'cls-png') clsPng();
+  else if (act === 'cls-import') clsImport();
   else if (act === 'cls-tab') { CLS.tab = d.k; clsSide(); }
   else if (act === 'cls-pen') clsGivePen(d.u || null);
   else if (act === 'cls-lower') clsIn({ t: 'lower', uid: d.u });
@@ -410,4 +419,94 @@ function clsPng() {
     const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 4000);
   }, 'image/png');
+}
+
+/* ---------- Files on the board: PDF pages become board pages; photos are wrapped into a PDF first ---------- */
+let PDFJS = null; const CLS_DOCS = {}, CLS_BG = {};
+function clsPdfLib() {
+  return PDFJS || (PDFJS = new Promise((ok, no) => {
+    const sc = document.createElement('script'); sc.src = 'vendor/pdfjs/pdf.min.js';
+    sc.onload = () => { pdfjsLib.GlobalWorkerOptions.workerSrc = 'vendor/pdfjs/pdf.worker.min.js'; ok(pdfjsLib); };
+    sc.onerror = () => { PDFJS = null; no(new Error('pdf.js')); }; document.head.appendChild(sc);
+  }));
+}
+const clsDoc = (u, data) => CLS_DOCS[u] || (CLS_DOCS[u] = clsPdfLib().then(L => L.getDocument(data ? { data } : { url: u }).promise).catch(e => { delete CLS_DOCS[u]; throw e; }));
+/* Rendered page images, kept for the few pages around the current one */
+function clsBg(bg) {
+  const k = bg.u + '#' + bg.n, e = CLS_BG[k];
+  if (e) { e.at = Date.now(); return e.cv || null; }
+  const ent = CLS_BG[k] = { at: Date.now() };
+  clsDoc(bg.u).then(d => d.getPage(bg.n)).then(pg => {
+    const v = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: Math.min(2200 / v.width, 1400 / v.height) });
+    const cv = document.createElement('canvas'); cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
+    return pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(() => {
+      ent.cv = cv; const ks = Object.keys(CLS_BG).sort((a, b) => CLS_BG[a].at - CLS_BG[b].at);
+      while (ks.length > 6) delete CLS_BG[ks.shift()];
+      clsDraw();
+    });
+  }).catch(() => { ent.err = true; setTimeout(() => { if (CLS_BG[k] === ent) delete CLS_BG[k]; }, 8000); clsDraw(); });
+  return null;
+}
+function clsImport() {
+  const i = document.createElement('input'); i.type = 'file'; i.multiple = true;
+  i.accept = 'application/pdf,.pdf,image/*,.ppt,.pptx,.pps,.ppsx,.key,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation';
+  i.onchange = () => clsImportFiles([...i.files]); i.click();
+}
+function clsPptHelp() {
+  sheet(`<h2>عرض PowerPoint</h2><p>المتصفح لا يستطيع فتح ملفات العروض مباشرة، فاحفظ العرض كملف PDF أولاً ثم أضفه. ستظهر كل شريحة صفحةً على السبورة.</p>
+    <div class="cls-help">
+      <div><b>📱 PowerPoint على الآيفون أو الآيباد</b><span>افتح العرض ← زر «…» أو «ملف» ← «تصدير» ← PDF ← احفظه في «الملفات».</span></div>
+      <div><b>💻 PowerPoint على الكمبيوتر</b><span>ملف ← حفظ باسم ← اختر نوع الملف PDF.</span></div>
+      <div><b>🍎 Keynote</b><span>زر المشاركة ← تصدير ← PDF.</span></div>
+    </div>
+    <button class="btn primary wide" data-act="cls-import">اختر ملف PDF</button>`);
+}
+async function clsImportFiles(files) {
+  closeSheet(); if (!files.length) return;
+  if (files.some(f => /\.(pptx?|ppsx?|key)$/i.test(f.name) || /presentation|powerpoint|keynote/i.test(f.type))) return clsPptHelp();
+  const pdf = files.find(f => f.type === 'application/pdf' || /\.pdf$/i.test(f.name)), imgs = files.filter(f => /^image\//.test(f.type));
+  if (!pdf && !imgs.length) return toast('اختر ملف PDF أو صوراً');
+  if (pdf && pdf.size > 50 * 1024 * 1024) return toast('حجم الملف أكبر من 50 ميغابايت');
+  toast('جارٍ تجهيز الملف…');
+  let blob; try { blob = pdf || await clsImagesPdf(imgs.slice(0, 30)); } catch (e) { return toast('تعذّر قراءة الصورة'); }
+  const data = new Uint8Array(await blob.arrayBuffer()), path = `board/${CLS.code}-${Date.now()}.pdf`;
+  const { error } = await db.storage.from('notes').upload(path, blob, { contentType: 'application/pdf', upsert: false });
+  if (error) return toast(dbError(error));
+  const u = db.storage.from('notes').getPublicUrl(path).data.publicUrl;
+  let n; try { n = Math.min(60, (await clsDoc(u, data.slice())).numPages); } catch (e) { return toast('تعذّر فتح ملف PDF'); }
+  const B = CLS.board, keep = clsPage().s.length || clsPage().bg, at = B.cur + (keep ? 1 : 0);
+  B.pages.splice(at, keep ? 0 : 1, ...[...Array(n)].map((_, i) => ({ s: [], bg: { u, n: i + 1 } })));
+  B.cur = at; CLS.mine = []; if (CLS.color === CLS_COLORS[0]) CLS.color = '#FF3B30'; if (CLS.tool === 'erase') CLS.tool = 'pen';
+  clsSend({ t: 'st', board: clsBoardJson() }); clsSave(); render(false);
+  toast(n === 1 ? 'أُضيفت صفحة إلى السبورة' : `أُضيفت ${n} صفحات إلى السبورة`);
+}
+async function clsImagesPdf(files) {
+  const out = [];
+  for (const f of files) {
+    const im = await new Promise((ok, no) => { const x = new Image(); x.onload = () => ok(x); x.onerror = no; x.src = URL.createObjectURL(f); });
+    const k = Math.min(1, 2000 / Math.max(im.naturalWidth, im.naturalHeight)), w = Math.max(1, Math.round(im.naturalWidth * k)), h = Math.max(1, Math.round(im.naturalHeight * k));
+    const cv = document.createElement('canvas'); cv.width = w; cv.height = h; const c = cv.getContext('2d');
+    c.fillStyle = '#fff'; c.fillRect(0, 0, w, h); c.drawImage(im, 0, 0, w, h); URL.revokeObjectURL(im.src);
+    const jpg = new Uint8Array(await (await new Promise(ok => cv.toBlob(ok, 'image/jpeg', .85))).arrayBuffer());
+    out.push({ w, h, jpg });
+  }
+  return clsPdfFromJpegs(out);
+}
+/* A minimal PDF with one full-page JPEG per page */
+function clsPdfFromJpegs(imgs) {
+  const enc = new TextEncoder(), parts = [], offs = []; let len = 0;
+  const put = x => { const b = typeof x === 'string' ? enc.encode(x) : x; parts.push(b); len += b.length; };
+  const obj = (n, body) => { offs[n] = len; put(`${n} 0 obj\n`); body(); put('\nendobj\n'); };
+  put('%PDF-1.4\n');
+  obj(1, () => put('<< /Type /Catalog /Pages 2 0 R >>'));
+  obj(2, () => put(`<< /Type /Pages /Kids [${imgs.map((_, i) => `${3 + 3 * i} 0 R`).join(' ')}] /Count ${imgs.length} >>`));
+  imgs.forEach((m, i) => {
+    const p = 3 + 3 * i, cs = `q ${m.w} 0 0 ${m.h} 0 0 cm /Im0 Do Q`;
+    obj(p, () => put(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${m.w} ${m.h}] /Resources << /XObject << /Im0 ${p + 1} 0 R >> >> /Contents ${p + 2} 0 R >>`));
+    obj(p + 1, () => { put(`<< /Type /XObject /Subtype /Image /Width ${m.w} /Height ${m.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${m.jpg.length} >>\nstream\n`); put(m.jpg); put('\nendstream'); });
+    obj(p + 2, () => put(`<< /Length ${cs.length} >>\nstream\n${cs}\nendstream`));
+  });
+  const xref = len, n = 3 + 3 * imgs.length;
+  put(`xref\n0 ${n}\n0000000000 65535 f \n${offs.slice(1).map(o => String(o).padStart(10, '0') + ' 00000 n \n').join('')}trailer\n<< /Size ${n} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`);
+  return new Blob(parts, { type: 'application/pdf' });
 }

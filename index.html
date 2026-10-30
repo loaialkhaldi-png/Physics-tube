@@ -423,6 +423,12 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .cls-tools button { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; font-size: 18px; color: var(--fg); flex: none; }
 .cls-tools button.on { background: #2E323C; box-shadow: inset 0 0 0 1.5px var(--accent); }
 .cls-tools .sw i, .cls-tools .sw::after { content: ""; width: 22px; height: 22px; border-radius: 50%; background: var(--c); }
+.cls-tools .sw::after { box-shadow: inset 0 0 0 1px rgba(255,255,255,.25); }
+.cls-tools .doc { width: auto; padding: 0 12px; gap: 6px; display: flex; background: #4C86FF; color: #fff; font-size: 15px; font-weight: 700; }
+.cls-tools .doc span { font-size: 14px; }
+.cls-help { display: grid; gap: 10px; margin-top: 14px; }
+.cls-help div { display: grid; gap: 4px; padding: 12px 14px; border-radius: 14px; background: var(--surface-2); }
+.cls-help span { color: var(--muted); font-size: 14px; line-height: 1.7; }
 .cls-tools .sw.on { background: transparent; box-shadow: inset 0 0 0 2px var(--c); }
 .cls-tools .wd i { display: block; border-radius: 50%; background: var(--fg); }
 .cls-tools .ln { display: block; width: 20px; height: 2.5px; background: var(--fg); transform: rotate(-35deg); border-radius: 2px; }
