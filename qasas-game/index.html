@@ -2,8 +2,10 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>رحلة موسى عليه السلام</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#F6EEDC">
 <style>
 :root{
   --sand:#F6EEDC; --sand-2:#EADBBB; --card:#FFFDF7;
@@ -12,7 +14,7 @@
   --ink:#1B2630; --muted:#5A6670;
   --ok:#1E7F4C; --ok-soft:#DFF3E7;
   --bad:#B3261E; --bad-soft:#FBE3E0;
-  --radius:18px;
+  --radius:18px; color-scheme:light;
   --ui:"Segoe UI","Noto Sans Arabic","Geeza Pro",Tahoma,Arial,sans-serif;
   --quran:"Amiri Quran","Amiri","KFGQPC Uthmanic Script HAFS","Traditional Arabic","Noto Naskh Arabic","Scheherazade New","Geeza Pro",serif;
 }
@@ -26,10 +28,12 @@ body{
     radial-gradient(circle at 90% 95%, rgba(29,92,136,.10), transparent 45%);
   background-attachment:fixed;
   font-size:clamp(18px,1.6vw,24px); line-height:1.7;
+  -webkit-tap-highlight-color:transparent; -webkit-text-size-adjust:100%;
 }
-button{font-family:inherit;cursor:pointer}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--sand)}
+button{font-family:inherit;cursor:pointer;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 .hidden{display:none !important}
-.screen{min-height:100vh;padding:16px;display:flex;flex-direction:column;align-items:center}
+.screen{min-height:100vh;padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;align-items:center}
 .wrap{width:100%;max-width:1200px}
 
 /* ---------- Buttons ---------- */
@@ -37,7 +41,6 @@ button{font-family:inherit;cursor:pointer}
   border:none;border-radius:14px;padding:.55em 1.3em;font-size:clamp(20px,2vw,30px);font-weight:700;
   background:var(--nile);color:#fff;box-shadow:0 4px 0 var(--nile-dark);transition:transform .1s, filter .15s;
 }
-.btn:hover{filter:brightness(1.08)}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--nile-dark)}
 .btn.gold{background:var(--gold);box-shadow:0 4px 0 #8a6318}
 .btn.light{background:#fff;color:var(--nile-dark);box-shadow:0 4px 0 var(--sand-2);border:2px solid var(--sand-2)}
@@ -46,7 +49,6 @@ button{font-family:inherit;cursor:pointer}
   border:2px solid var(--sand-2);background:#fff;color:var(--nile-dark);border-radius:12px;
   font-size:clamp(16px,1.4vw,22px);font-weight:700;padding:.3em .7em;white-space:nowrap;
 }
-.icon-btn:hover{background:var(--nile-soft)}
 
 /* ---------- Start screen ---------- */
 #start{justify-content:center}
@@ -70,7 +72,8 @@ button{font-family:inherit;cursor:pointer}
 
 /* ---------- Quiz top bar ---------- */
 .topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);border-radius:var(--radius);
-  padding:10px 16px;box-shadow:0 4px 18px rgba(18,58,87,.10);margin-bottom:14px}
+  padding:10px 16px;box-shadow:0 4px 18px rgba(18,58,87,.10);margin-bottom:14px;
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20}
 .player{font-weight:800;color:var(--nile-dark);font-size:clamp(18px,1.7vw,26px)}
 .progress-box{flex:1;min-width:180px}
 .progress-label{font-weight:700;color:var(--muted);font-size:clamp(16px,1.4vw,22px)}
@@ -104,7 +107,6 @@ button{font-family:inherit;cursor:pointer}
   display:flex;align-items:center;gap:.6em;text-align:right;background:#fff;border:3px solid var(--sand-2);border-radius:16px;
   padding:.5em .8em;font-size:clamp(22px,2.4vw,34px);font-weight:700;color:var(--ink);transition:border-color .15s, background .15s, transform .1s;
 }
-.opt:hover:not(:disabled){border-color:var(--nile);background:var(--nile-soft)}
 .opt .letter{flex:none;width:1.6em;height:1.6em;border-radius:50%;background:var(--nile);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8em}
 .opt .txt{flex:1}
 .opt.quran .txt{font-family:var(--quran);font-weight:400;line-height:1.8}
@@ -124,7 +126,6 @@ button{font-family:inherit;cursor:pointer}
   position:relative;background:#fff;border:3px solid var(--sand-2);border-radius:16px;padding:.4em .8em;
   font-size:clamp(22px,2.4vw,34px);font-weight:800;color:var(--ink);text-align:center;transition:all .15s;
 }
-.chip:hover:not(:disabled){border-color:var(--nile)}
 .chip.word{color:var(--nile-dark)}
 .chip.sel{border-color:var(--nile);background:var(--nile-soft);box-shadow:0 0 0 4px rgba(29,92,136,.25)}
 .chip.done{border-color:var(--ok);background:var(--ok-soft);cursor:default}
@@ -160,6 +161,7 @@ button{font-family:inherit;cursor:pointer}
 .feedback p{margin:.2em 0}
 .feedback ol{margin:.2em 0;padding-right:1.4em}
 .next-row{display:flex;justify-content:flex-start;margin-top:14px}
+#fbArea{scroll-margin-top:150px}
 @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
 .points-fly{font-weight:900;color:var(--gold)}
 
@@ -205,11 +207,78 @@ button{font-family:inherit;cursor:pointer}
 .rv .re{color:var(--muted)}
 .result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:1em}
 
-@media (max-width:760px){
-  .options,.match,.order{grid-template-columns:1fr}
-  .order .pool{order:-1}
-  .topbar{gap:8px}
+@media (hover:hover){
+  .btn:hover{filter:brightness(1.08)}
+  .icon-btn:hover{background:var(--nile-soft)}
+  .opt:hover:not(:disabled){border-color:var(--nile);background:var(--nile-soft)}
+  .chip:hover:not(:disabled){border-color:var(--nile)}
 }
+@media (hover:none){ .fs-toggle,.kbd-hint{display:none !important} }
+@media (prefers-reduced-motion:reduce){ *{animation:none !important;transition:none !important} }
+
+/* ---------- الجوال ---------- */
+@media (max-width:760px){
+  .options,.order{grid-template-columns:1fr}
+  .order .pool{order:-1}
+  .pool .chip.used{display:none}
+}
+@media (max-width:600px){
+  body{font-size:17px}
+  .screen{padding-block:10px}
+  .hero{padding:22px 16px;border-radius:22px}
+  .hero h1{font-size:34px}
+  .hero .ayah-line{font-size:22px}
+  .scene{font-size:15px;padding:.3em .7em}
+  .rules{font-size:15px}
+  .topbar{display:grid;grid-template-columns:1fr auto auto;grid-template-areas:"player tools tools" "prog score timer";
+    gap:6px 10px;padding:8px 12px;margin-bottom:10px;border-radius:16px}
+  .player{grid-area:player;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:17px}
+  .tools{grid-area:tools;justify-self:end;gap:6px;flex-wrap:nowrap}
+  .icon-btn{font-size:15px;padding:.15em .5em;border-radius:10px}
+  .progress-box{grid-area:prog;min-width:0;align-self:center}
+  .progress-label{font-size:14px}
+  .bar{height:10px}
+  .score{grid-area:score;font-size:20px;align-self:center;padding:.05em .55em}
+  .timer{grid-area:timer;width:50px;height:50px}
+  .timer .t{font-size:19px}
+  .card{padding:16px 14px;border-radius:18px}
+  .badge{font-size:14px}
+  .q-text{font-size:21px;line-height:1.6;margin:.3em 0}
+  .hint{font-size:14px}
+  .ayah{font-size:23px;padding:.25em .6em;line-height:1.9}
+  .options{gap:10px}
+  .opt{font-size:19px;padding:.45em .6em;border-radius:14px;min-height:54px}
+  .opt.quran .txt{font-size:21px}
+  .match{gap:10px}
+  .mcol{gap:9px}
+  .col-title{font-size:14px}
+  .chip{font-size:17px;padding:.45em .4em;border-radius:12px;min-height:52px;line-height:1.4}
+  .slots,.pool{gap:8px}
+  .slot .num{font-size:16px}
+  .slot .place{font-size:16px;min-height:46px;padding:.3em .55em}
+  .pool .chip{font-size:16px}
+  .feedback{font-size:17px;padding:.6em .8em;margin-top:14px}
+  .btn{font-size:20px;width:100%}
+  .next-row{position:sticky;bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .station-card .big{font-size:56px}
+  .station-card h2{font-size:30px}
+  .verses{font-size:23px;line-height:2.1}
+  .modal-head h2{font-size:18px}
+  .board{font-size:16px}
+  .stars{font-size:46px}
+  .stat{min-width:0;flex:1;padding:.3em .5em}
+  .stat b{font-size:26px}
+  .stat span{font-size:13px}
+  .big-score{gap:8px;flex-wrap:nowrap}
+  .msg{font-size:19px}
+  .result-card h2{font-size:28px}
+  .rv{font-size:16px}
+  .result-actions .btn{width:100%}
+}
+.confirm-card{background:var(--card);border-radius:22px;padding:24px;max-width:460px;width:100%;text-align:center;animation:pop .25s}
+.confirm-card p{font-size:clamp(20px,2vw,26px);font-weight:700;margin:0 0 18px}
+.confirm-card .row{display:flex;gap:10px;justify-content:center}
+.confirm-card .row .btn{width:auto;flex:1}
 </style>
 </head>
 <body>
@@ -226,7 +295,7 @@ button{font-family:inherit;cursor:pointer}
       <div class="scene"><span>💛</span>الوفاء</div>
     </div>
     <div class="name-row">
-      <input id="nameInput" type="text" maxlength="30" placeholder="اكتب اسمك هنا" autocomplete="off">
+      <input id="nameInput" type="text" maxlength="30" placeholder="اكتب اسمك هنا" autocomplete="off" enterkeyhint="go">
     </div>
     <div class="err" id="nameErr"></div>
     <button class="btn gold" id="startBtn">ابدأ الرحلة ◀</button>
@@ -236,7 +305,7 @@ button{font-family:inherit;cursor:pointer}
       <button class="icon-btn sound-toggle">🔊 الصوت</button>
       <button class="icon-btn fs-toggle">⛶ ملء الشاشة</button>
     </div>
-    <p class="rules">٢٠ سؤالاً في ٤ محطات · ٣٠ ثانية لكل سؤال (٦٠ ثانية للمطابقة والترتيب)<br>
+    <p class="rules">٢٠ سؤالًا في ٤ محطات · ٣٠ ثانية لكل سؤال (٦٠ ثانية للمطابقة والترتيب)<br>
       ١٠ نقاط لكل إجابة صحيحة + حتى ٥ نقاط إضافية للسرعة</p>
   </div>
 </section>
@@ -285,6 +354,13 @@ button{font-family:inherit;cursor:pointer}
   <div class="modal">
     <div class="modal-head"><h2>📖 آيات من سورة القصص (١–١٣)</h2><button data-close>إغلاق ✕</button></div>
     <div class="modal-body"><div class="verses" id="versesBody"></div></div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="confirmModal">
+  <div class="confirm-card">
+    <p id="confirmMsg"></p>
+    <div class="row"><button class="btn" id="confirmYes">نعم</button><button class="btn light" id="confirmNo">إلغاء</button></div>
   </div>
 </div>
 
@@ -495,6 +571,7 @@ function startGame(){
   $("#playerName").textContent = "👤 " + name;
   updateScore(false);
   show("quiz");
+  keepAwake();
   loadQuestion();
 }
 
@@ -535,7 +612,7 @@ function renderQuestion(q){
   if (q.type === "mcq") {
     q._opts = shuffle(q.options.map((t,i) => ({t, ok: i === q.answer})));
     const long = q.quranOpts || q._opts.some(o => o.t.length > 26);
-    html += `<p class="hint">اختر الإجابة الصحيحة (أو اضغط الرقم ١–٤ على لوحة المفاتيح)</p>
+    html += `<p class="hint">اختر الإجابة الصحيحة<span class="kbd-hint"> (أو اضغط الرقم ١–٤ على لوحة المفاتيح)</span></p>
       <div class="options ${long ? "single" : ""}">` +
       q._opts.map((o,i) => `<button class="opt ${q.quranOpts ? "quran" : ""}" data-i="${i}"><span class="letter">${LETTERS[i]}</span><span class="txt">${esc(o.t)}</span><span class="mark"></span></button>`).join("") +
       `</div>`;
@@ -612,7 +689,7 @@ function matchClick(b){
     if (st.matched === q.pairs.length) finishMatch(false);
   } else {
     st.mistakes++;
-    sfx.wrong();
+    sfx.wrong(); buzz(120);
     [a,b].forEach(x => { x.classList.remove("shake"); void x.offsetWidth; x.classList.add("shake"); setTimeout(() => x.classList.remove("shake"), 500); });
   }
 }
@@ -683,7 +760,7 @@ function finish(r){
   S.score += r.points;
   S.results.push({ q, ...r });
   updateScore(r.points > 0);
-  r.ok ? sfx.correct() : sfx.wrong();
+  if (r.ok) sfx.correct(); else { sfx.wrong(); buzz(180); }
 
   const praise = ["أحسنت! 🌟","إجابة رائعة! 👏","ممتاز! ✔","بارك الله فيك! 🌟"];
   let title;
@@ -708,7 +785,7 @@ function finish(r){
     <div class="next-row"><button class="btn gold" id="nextBtn">${last ? "عرض النتيجة 🏁" : "السؤال التالي ◀"}</button></div>`;
   $("#nextBtn").onclick = next;
   $("#nextBtn").focus({preventScroll:true});
-  $("#fbArea").scrollIntoView({behavior:"smooth", block:"nearest"});
+  $("#fbArea").scrollIntoView({behavior:"smooth", block: window.innerWidth <= 600 ? "start" : "nearest"});
 }
 function revealMatch(){
   // إظهار الأزواج غير المطابقة بإطار متقطع ورقم
@@ -813,6 +890,7 @@ function showResult(){
   $("#againBtn").onclick = () => { $("#nameInput").value = S.name; startGame(); };
   $("#newPlayerBtn").onclick = () => { $("#nameInput").value = ""; show("start"); $("#nameInput").focus(); };
   bindOpeners($("#resultCard"));
+  releaseWake();
   saveScore({ name:S.name, score:S.score, correct, total });
   show("result");
   sfx.finish();
@@ -850,11 +928,27 @@ $("#versesBody").innerHTML = `<p class="basmala">بِسْمِ اللَّهِ ا�
 bindOpeners(document);
 $("#startBtn").onclick = startGame;
 $("#nameInput").addEventListener("keydown", e => { if (e.key === "Enter") startGame(); });
-$("#homeBtn").onclick = () => { if (confirm("هل تريد الخروج من اللعبة والعودة إلى البداية؟")) { stopTimer(); S.answered = true; show("start"); } };
-$("#clearBoard").onclick = () => { if (confirm("مسح جميع النتائج المحفوظة؟")) { store.set("qasas-top5", []); renderBoard(); } };
+$("#homeBtn").onclick = () => askConfirm("هل تريد الخروج من اللعبة والعودة إلى البداية؟", () => { stopTimer(); S.answered = true; releaseWake(); show("start"); });
+$("#clearBoard").onclick = () => askConfirm("مسح جميع النتائج المحفوظة؟", () => { store.set("qasas-top5", []); renderBoard(); openModal("board"); });
+
+/* نافذة تأكيد داخل الصفحة (تعمل على الجوال وداخل أي متصفح) */
+function askConfirm(msg, onYes){
+  document.querySelectorAll(".overlay").forEach(o => { if (o.id !== "stationOverlay") o.classList.add("hidden"); });
+  $("#confirmMsg").textContent = msg;
+  $("#confirmModal").classList.remove("hidden");
+  $("#confirmYes").onclick = () => { $("#confirmModal").classList.add("hidden"); onYes(); };
+  $("#confirmNo").onclick = () => $("#confirmModal").classList.add("hidden");
+}
+
+/* إبقاء شاشة الجوال مضاءة أثناء اللعب */
+let wake = null;
+async function keepAwake(){ try { if (navigator.wakeLock && !wake) { wake = await navigator.wakeLock.request("screen"); wake.addEventListener("release", () => wake = null); } } catch(e){} }
+function releaseWake(){ try { wake && wake.release(); } catch(e){} wake = null; }
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && !$("#quiz").classList.contains("hidden")) keepAwake(); });
+function buzz(ms){ try { navigator.vibrate && navigator.vibrate(ms); } catch(e){} }
 document.querySelectorAll(".sound-toggle").forEach(b => b.onclick = () => { soundOn = !soundOn; store.set("qasas-sound", soundOn); refreshSoundButtons(); if (soundOn) sfx.click(); });
 document.querySelectorAll(".fs-toggle").forEach(b => b.onclick = () => {
-  try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); } catch(e){}
+  try { const p = document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); p && p.catch && p.catch(() => {}); } catch(e){}
 });
 refreshSoundButtons();
 
