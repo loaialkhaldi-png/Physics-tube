@@ -2414,6 +2414,8 @@ function vProfile() {
       ${!db ? '' : USER
         ? `<button class="row" data-act="logout"><span class="t"><b>تسجيل الخروج</b><small>${ADMIN ? 'وضع المعلم' : esc(PROFILE ? '@' + PROFILE.username : '')}</small></span></button>`
         : `<button class="row" data-act="login"><span class="t"><b>تسجيل الدخول</b><small>للطلاب والمعلم</small></span><span class="end">${icon('chev')}</span></button>`}
+      <a class="row" href="privacy.html" target="_blank" rel="noopener"><span class="t"><b>سياسة الخصوصية</b><small>ما البيانات التي نحفظها وكيف نستخدمها</small></span><span class="end">${icon('chev')}</span></a>
+      ${USER && !ADMIN ? `<button class="row" data-act="delacc"><span class="t"><b style="color:#FF6B6B">حذف حسابي</b><small>يحذف حسابك وبياناتك نهائياً</small></span></button>` : ''}
       <button class="row" data-act="reset"><span class="t"><b style="color:#FF6B6B">مسح تقدّمي</b><small>يحذف علامات الدروس المكتملة من هذا الجهاز</small></span></button>
     </div>
     ${standalone ? '' : `<div class="install"><b>ثبّت التطبيق على جوالك</b><p>في سفاري اضغط زر المشاركة ${icon('share', 'style="width:16px;height:16px;vertical-align:-3px"')} ثم اختر «إضافة إلى الشاشة الرئيسية». سيفتح بعدها بملء الشاشة مثل أي تطبيق.</p></div>`}
@@ -3927,6 +3929,15 @@ document.addEventListener('click', e => {
   else if (act === 'share-copy') shareCopy();
   else if (act === 'login') authSheet('login');
   else if (act === 'signup') authSheet('signup');
+  else if (act === 'delacc') sheet(`<h2>حذف حسابي</h2><p>سيُحذف حسابك نهائياً مع اسمك ورقم جوالك وسجل نشاطك ومشاركاتك في المسابقات، ولا يمكن استرجاعه. تقدّمك المحفوظ على هذا الجهاز يبقى كما هو.</p>
+      <button class="btn wide" data-act="close">تراجع</button><button class="btn wide" data-act="delacc-go" style="color:#FF6B6B">نعم، احذف حسابي نهائياً</button>`);
+  else if (act === 'delacc-go') {
+    if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.textContent = 'اضغط مرة أخرى للتأكيد'; return; }
+    db.rpc('delete_my_account').then(({ error }) => {
+      if (error) return toast(/function|does not exist|42883|PGRST202/.test(error.message + error.code) ? 'تعذّر الحذف الآن. تواصل مع المعلم لحذف حسابك.' : dbError(error));
+      db.auth.signOut(); USER = ADMIN = PROFILE = null; closeSheet(); S.stack = []; render(false); toast('تم حذف حسابك');
+    });
+  }
   else if (act === 'logout') { db && db.auth.signOut(); USER = ADMIN = PROFILE = null; S.stack = S.stack.filter(x => x.type !== 'admin' && x.type !== 'lesson'); render(false); toast('تم تسجيل الخروج'); }
   else if (act === 'admin-refresh') { ADMIN_DATA.at = 0; loadAdmin(); }
   else if (act === 'q-pick') { if (!Q.ans[Q.i]) quizAnswer({ pick: +el.dataset.k, ok: +el.dataset.k === 0 }); }
