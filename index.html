@@ -396,6 +396,78 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .qgraph circle { fill: #fff; stroke: var(--accent); stroke-width: 2.5; }
 .qgraph text { fill: rgba(255,255,255,.85); font-size: 12px; font-weight: 600; }
 .qgraph .lb { fill: #fff; font-size: 13px; font-weight: 700; }
+/* Live classroom & whiteboard */
+.cls-row.on { border-color: rgba(50,209,122,.45); background: linear-gradient(90deg, rgba(50,209,122,.16), transparent 70%), var(--surface); }
+.cls-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #FF3B5C; box-shadow: 0 0 0 0 rgba(255,59,92,.6); animation: clsBeat 1.6s infinite; vertical-align: middle; }
+@keyframes clsBeat { 70% { box-shadow: 0 0 0 9px rgba(255,59,92,0); } 100% { box-shadow: 0 0 0 0 rgba(255,59,92,0); } }
+.cls-h { display: grid; justify-items: center; line-height: 1.2; } .cls-h small { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.cls-h small .cls-dot { width: 7px; height: 7px; }
+.cls-code { min-width: 42px; padding: 6px 12px; border-radius: 12px; background: #fff; color: #10132A; font-weight: 800; font-size: 18px; letter-spacing: .12em; direction: ltr; }
+.cls-stage { display: grid; gap: 10px; margin-top: 6px; }
+.cls-board { position: relative; width: 100%; aspect-ratio: 16 / 10; border-radius: 18px; overflow: hidden; background: #10211B; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+.cls-board canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.cls-board #cls-ov { pointer-events: none; }
+.cls-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 4px; padding: 3px; border-radius: 999px; background: rgba(0,0,0,.45); backdrop-filter: blur(8px); font-size: 13px; font-weight: 700; color: #fff; }
+.cls-bar span { padding: 0 8px; direction: ltr; } .cls-bar button { width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,.12); color: #fff; font-size: 18px; font-weight: 700; }
+.cls-bar button:disabled { opacity: .3; }
+.cls-fs { position: absolute; top: 8px; left: 8px; width: 34px; height: 34px; border-radius: 10px; background: rgba(0,0,0,.4); color: #fff; font-size: 17px; }
+.cls-fs.sv { left: 48px; }
+.cls-fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.cls-fx span { position: absolute; bottom: 4%; font-size: 34px; animation: clsFloat 2.2s ease-out forwards; }
+@keyframes clsFloat { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: 1; transform: translateY(-20px) scale(1.15); } 100% { transform: translateY(-260px) scale(1); opacity: 0; } }
+.cls-tools { display: flex; gap: 8px; overflow-x: auto; padding: 6px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); scrollbar-width: none; }
+.cls-tools::-webkit-scrollbar { display: none; }
+.cls-tools .grp { display: flex; gap: 3px; padding-inline-end: 8px; border-inline-end: 1px solid var(--line); flex: none; }
+.cls-tools .grp:last-child { border: 0; padding: 0; }
+.cls-tools button { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; font-size: 18px; color: var(--fg); flex: none; }
+.cls-tools button.on { background: #2E323C; box-shadow: inset 0 0 0 1.5px var(--accent); }
+.cls-tools .sw i, .cls-tools .sw::after { content: ""; width: 22px; height: 22px; border-radius: 50%; background: var(--c); }
+.cls-tools .sw.on { background: transparent; box-shadow: inset 0 0 0 2px var(--c); }
+.cls-tools .wd i { display: block; border-radius: 50%; background: var(--fg); }
+.cls-tools .ln { display: block; width: 20px; height: 2.5px; background: var(--fg); transform: rotate(-35deg); border-radius: 2px; }
+.cls-tools .ar { position: relative; display: block; width: 20px; height: 2.5px; background: var(--fg); transform: rotate(-35deg); border-radius: 2px; }
+.cls-tools .ar::after { content: ""; position: absolute; right: -2px; top: -4px; border: 5px solid transparent; border-left: 8px solid var(--fg); border-right: 0; }
+.cls-tools .lz { display: block; width: 14px; height: 14px; border-radius: 50%; background: #FF3B5C; box-shadow: 0 0 10px #FF3B5C; }
+.cls-stage.full { position: fixed; inset: 0; z-index: 30; margin: 0; padding: max(10px, env(safe-area-inset-top)) max(10px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left));
+  background: #05080A; align-content: center; justify-items: center; }
+.cls-stage.full .cls-board { width: min(100%, calc((100dvh - 90px) * 1.6)); }
+.cls-stage.full .cls-tools { max-width: 100%; }
+body.cls-lock { overflow: hidden; } body.cls-lock .tabbar { display: none; }
+.cls-pen { margin-top: 10px; padding: 10px 14px; border-radius: 14px; background: rgba(255,216,77,.14); border: 1px solid rgba(255,216,77,.35); color: #FFE48A; font-weight: 700; text-align: center; }
+#cls-side { display: grid; gap: 12px; margin-top: 14px; }
+.cls-tabs button { font-size: 13px; }
+.cls-empty { padding: 16px; border-radius: 16px; background: var(--surface); color: var(--muted); font-size: 14px; line-height: 1.7; text-align: center; }
+.cls-empty b { color: var(--fg); letter-spacing: .1em; }
+.cls-err { padding: 14px; border-radius: 14px; background: rgba(255,77,122,.12); border: 1px solid rgba(255,77,122,.35); font-weight: 600; }
+.cls-people { display: grid; gap: 6px; }
+.cls-people > div { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 14px; background: var(--surface); }
+.cls-people > div.hand { background: rgba(255,216,77,.12); box-shadow: inset 0 0 0 1px rgba(255,216,77,.35); }
+.cls-people .nm { flex: 1; min-width: 0; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cls-people .pen { padding: 6px 12px; border-radius: 999px; background: var(--surface-2); font-size: 13px; font-weight: 700; color: var(--fg); }
+.cls-people .pen.on { background: #FFD84D; color: #241C00; }
+.cls-people .dn { width: 32px; height: 32px; border-radius: 50%; background: rgba(50,209,122,.18); color: #4BE08F; font-weight: 800; }
+.cls-qs { display: grid; gap: 8px; }
+.cls-qs > div { position: relative; padding: 12px 14px 12px 50px; border-radius: 14px; background: var(--surface); }
+.cls-qs b { font-size: 13px; color: var(--accent); } .cls-qs p { margin-top: 2px; line-height: 1.6; }
+.cls-qs button { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(50,209,122,.18); color: #4BE08F; font-weight: 800; }
+.cls-poll { display: grid; gap: 10px; padding: 14px; border-radius: 18px; background: linear-gradient(160deg, rgba(76,134,255,.18), transparent 70%), var(--surface); border: 1px solid rgba(76,134,255,.3); }
+.cls-poll .ed-row .btn { flex: 1; }
+.cls-bars { display: grid; gap: 6px; }
+.cls-bars > div { display: grid; grid-template-columns: 34px 1fr 30px; align-items: center; gap: 8px; }
+.cls-bars span { height: 14px; border-radius: 7px; background: rgba(255,255,255,.08); overflow: hidden; }
+.cls-bars i { display: block; height: 100%; border-radius: 7px; background: linear-gradient(90deg, #4C86FF, #A866FF); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.cls-bars small { font-weight: 700; text-align: center; }
+.cls-vote { display: grid; grid-template-columns: repeat(auto-fit, minmax(60px, 1fr)); gap: 8px; }
+.cls-vote button { min-height: 58px; border-radius: 16px; background: var(--surface-2); font-size: 22px; font-weight: 800; color: var(--fg); }
+.cls-vote button.on { background: #4C86FF; color: #fff; box-shadow: 0 0 0 3px rgba(76,134,255,.35); }
+.cls-me { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.cls-me button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 56px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); font-weight: 700; font-size: 16px; color: var(--fg); }
+.cls-me .cls-hand.on { background: #FFD84D; color: #241C00; border-color: #FFD84D; animation: clsWave 1.2s ease-in-out infinite; }
+@keyframes clsWave { 50% { transform: rotate(-2deg) scale(1.02); } }
+.cls-reacts { display: flex; justify-content: space-between; gap: 6px; padding: 6px; border-radius: 18px; background: var(--surface); }
+.cls-reacts button { flex: 1; height: 48px; border-radius: 14px; font-size: 26px; transition: transform .15s; }
+.cls-reacts button:active { transform: scale(1.3); }
+.wide .cls-board { max-height: 72vh; width: min(100%, calc(72vh * 1.6)); margin: 0 auto; }
 .notice-add { width: 100%; margin-top: 18px; padding: 14px; border-radius: var(--r-md); border: 1.5px dashed rgba(255,255,255,.2); color: var(--muted); font-weight: 600; }
 /* Weekly activity rings */
 .rings { display: flex; align-items: center; gap: 18px; width: 100%; margin-top: 18px; padding: 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); text-align: right; }
@@ -2084,6 +2156,7 @@ function vHome() {
     ${cont}
     ${quizBanner()}
     ${mxRow()}
+    ${typeof clsRow === 'function' ? clsRow() : ''}
     ${liveRow()}
     <h2 class="sec">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
     ${termSeg()}
@@ -3574,7 +3647,8 @@ function render(scroll = true) {
   if (simStop) { simStop(); simStop = null; }
   const top = S.stack[S.stack.length - 1];
   if (!(top && top.type === 'live') && LIVE.poll) liveStop();
-  document.body.classList.toggle('wide', !!top && top.type === 'live' && LIVE.role === 'host');
+  document.body.classList.toggle('wide', !!top && (top.type === 'live' && LIVE.role === 'host' || top.type === 'class'));
+  if (!(top && top.type === 'class')) document.body.classList.remove('cls-lock');
   let html;
   if (!top) html = { home: vHome, lab: vLab, notes: vNotes, profile: vProfile }[S.tab]();
   else if (top.type === 'unit') html = vUnit(top.u);
@@ -3588,10 +3662,12 @@ function render(scroll = true) {
   else if (top.type === 'game') html = vGameLevels(top.k);
   else if (top.type === 'glevel') html = vGamePlay(top.k, +top.i);
   else if (top.type === 'qrun') html = Q.done ? vQuizResult() : vQuizRun();
+  else if (top.type === 'class') html = vClass();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
   if (top && top.type === 'glevel') startGame(top.k, +top.i);
+  if (top && top.type === 'class') clsAfterRender();
   if (ADMIN) setupReorder();
   if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at) loadAdmin();
   if (scroll) window.scrollTo(0, 0);
@@ -3779,6 +3855,7 @@ document.addEventListener('click', e => {
   else if (act === 'rings') ringsSheet();
   else if (act === 'rank') rankSheet();
   else if (act && act.startsWith('g-') && typeof gameAct === 'function') gameAct(act);
+  else if (act && act.startsWith('cls-') && typeof clsAct === 'function') clsAct(act, el);
   else if (act === 'pred-pick' || act === 'pred-show' || act === 'pred-again') { const t = S.stack[S.stack.length - 1]; if (t && t.type === 'sim') predictAct(t.k, act, el); }
   else if (act === 'live-new') liveModelSheet();
   else if (act === 'live-host') liveHost(+el.dataset.m);
@@ -3918,5 +3995,6 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
 }
 </script>
 <script src="games.js"></script>
+<script src="classroom.js"></script>
 </body>
 </html>
