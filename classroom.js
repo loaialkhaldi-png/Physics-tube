@@ -129,6 +129,7 @@ function clsOnBoard(m) {
   else if (m.t === 'c') pg.s = [];
   else if (m.t === 'pg') { while (B.pages.length < m.n) B.pages.push({ s: [] }); B.cur = m.cur; clsBar(); }
   else if (m.t === 'g') B.grid = m.on;
+  else if (m.t === 'v') pg.v = m.v;
   else if (m.t === 'st') { CLS.board = m.board; clsBar(); }
   else if (m.t === 'z') { CLS.laser.push({ x: m.x, y: m.y, at: Date.now() }); clsAnimate(); return; }
   else if (m.t === 'pen') return clsPenCheck();
@@ -178,15 +179,16 @@ function clsDrawStroke(c, s) {
 }
 function clsDraw() {
   const cv = clsCanvas(); if (!cv || !CLS.board) return;
-  const c = cv.getContext('2d'), k = cv.width / BW;
-  c.setTransform(k, 0, 0, k, 0, 0);
+  const c = cv.getContext('2d'), k = cv.width / BW, V = clsV(), kz = k * V.z;
+  c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#0B1612'; c.fillRect(0, 0, cv.width, cv.height);
+  c.setTransform(kz, 0, 0, kz, -V.x * kz, -V.y * kz);
   c.fillStyle = '#10211B'; c.fillRect(0, 0, BW, BH);
   const bg = clsPage().bg;
   if (bg) {
-    const im = clsBg(bg);
+    const im = (V.z > 1.6 && clsBg(bg, 1)) || clsBg(bg, 0);
     if (im) { const k2 = Math.min(BW / im.width, BH / im.height), w = im.width * k2, h = im.height * k2;
       c.fillStyle = '#fff'; c.fillRect((BW - w) / 2, (BH - h) / 2, w, h); c.drawImage(im, (BW - w) / 2, (BH - h) / 2, w, h); }
-    else { c.fillStyle = 'rgba(255,255,255,.6)'; c.font = '600 40px system-ui, sans-serif'; c.textAlign = 'center'; c.fillText(CLS_BG[bg.u + '#' + bg.n] && CLS_BG[bg.u + '#' + bg.n].err ? 'تعذّر تحميل الصفحة' : 'جارٍ تحميل الصفحة…', BW / 2, BH / 2); }
+    else { c.fillStyle = 'rgba(255,255,255,.6)'; c.font = '600 40px system-ui, sans-serif'; c.textAlign = 'center'; c.fillText((CLS_BG[bg.u + '#' + bg.n] || {}).err ? 'تعذّر تحميل الصفحة' : 'جارٍ تحميل الصفحة…', BW / 2, BH / 2); }
     const nx = CLS.board.pages[CLS.board.cur + 1]; if (nx && nx.bg) clsBg(nx.bg);
   } else if (CLS.board.grid) {
     for (let x = 50; x < BW; x += 50) { c.fillStyle = x % 250 ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.1)'; c.fillRect(x - .75, 0, 1.5, BH); }
@@ -194,9 +196,28 @@ function clsDraw() {
   }
   clsPage().s.forEach(s => clsDrawStroke(c, s));
   const ov = document.getElementById('cls-ov'); if (!ov) return;
-  const o = ov.getContext('2d'); o.setTransform(k, 0, 0, k, 0, 0); o.clearRect(0, 0, BW, BH);
+  const o = ov.getContext('2d'); o.setTransform(1, 0, 0, 1, 0, 0); o.clearRect(0, 0, ov.width, ov.height); o.setTransform(kz, 0, 0, kz, -V.x * kz, -V.y * kz);
   const now = Date.now(); CLS.laser = CLS.laser.filter(l => now - l.at < 700);
-  CLS.laser.forEach((l, i) => { const a = 1 - (now - l.at) / 700; o.fillStyle = `rgba(255,59,92,${a * (i === CLS.laser.length - 1 ? 1 : .45)})`; o.beginPath(); o.arc(l.x, l.y, i === CLS.laser.length - 1 ? 14 : 9 * a + 2, 0, 7); o.fill(); });
+  CLS.laser.forEach((l, i) => { const a = 1 - (now - l.at) / 700; o.fillStyle = `rgba(255,59,92,${a * (i === CLS.laser.length - 1 ? 1 : .45)})`; o.beginPath(); o.arc(l.x, l.y, (i === CLS.laser.length - 1 ? 14 : 9 * a + 2) / V.z, 0, 7); o.fill(); });
+  const zl = document.getElementById('cls-zl'); if (zl) zl.textContent = Math.round(V.z * 100) + '%';
+}
+/* ---------- Zoom and pan: each page keeps its own view (v), and students follow the teacher's view ---------- */
+const clsV = () => { const p = clsPage(); return p.v || (p.v = { z: 1, x: 0, y: 0 }); };
+function clsClampV(v) {
+  v.z = Math.min(5, Math.max(1, v.z));
+  v.x = Math.min(BW - BW / v.z, Math.max(0, v.x)); v.y = Math.min(BH - BH / v.z, Math.max(0, v.y)); return v;
+}
+/* Screen position in board units (0..BW, 0..BH) before the view is applied */
+function clsScr(cx, cy) { const r = clsCanvas().getBoundingClientRect(); return [(cx - r.left) / r.width * BW, (cy - r.top) / r.height * BH]; }
+function clsZoomAt(sx, sy, z) {
+  const v = clsV(), bx = v.x + sx / v.z, by = v.y + sy / v.z;
+  v.z = Math.min(5, Math.max(1, z)); v.x = bx - sx / v.z; v.y = by - sy / v.z; clsClampV(v); clsDraw(); clsViewSend();
+}
+function clsViewSend(force) {
+  if (!clsHost()) return; const now = Date.now();
+  if (!force && now - (CLS.vSent || 0) < Math.max(80, clsSendMs() / 2)) { clearTimeout(CLS.vT); CLS.vT = setTimeout(() => clsViewSend(true), 120); return; }
+  CLS.vSent = now; clearTimeout(CLS.vT);
+  const v = clsV(); clsSend({ t: 'v', pg: CLS.board.cur, v: { z: +v.z.toFixed(3), x: Math.round(v.x), y: Math.round(v.y) } }); clsSave();
 }
 /* Remote strokes arrive in batches; feed their points in a few per frame so the line is drawn smoothly. */
 function clsAnimate() {
@@ -209,9 +230,9 @@ function clsAnimate() {
   };
   CLS.anim = requestAnimationFrame(step);
 }
-function clsPt(e) { const r = clsCanvas().getBoundingClientRect(); return [Math.round((e.clientX - r.left) / r.width * BW), Math.round((e.clientY - r.top) / r.height * BH)]; }
+function clsPt(e) { const [sx, sy] = clsScr(e.clientX, e.clientY), v = clsV(); return [Math.round(v.x + sx / v.z), Math.round(v.y + sy / v.z)]; }
 function clsErase(x, y) {
-  const pg = clsPage(), R = 24, hit = pg.s.filter(s => {
+  const pg = clsPage(), R = 24 / clsV().z, hit = pg.s.filter(s => {
     const p = s.p;
     if (s.k === 'l' || s.k === 'a') { const dx = p[2] - p[0], dy = p[3] - p[1], t = Math.max(0, Math.min(1, ((x - p[0]) * dx + (y - p[1]) * dy) / (dx * dx + dy * dy || 1))); return Math.hypot(p[0] + t * dx - x, p[1] + t * dy - y) < R + s.w / 2; }
     for (let i = 0; i < p.length; i += 2) if (Math.hypot(p[i] - x, p[i + 1] - y) < R + s.w / 2) return true; return false;
@@ -232,16 +253,40 @@ function clsMount() {
   const fit = () => { [cv, document.getElementById('cls-ov')].forEach(x => { const d = Math.min(2, devicePixelRatio || 1); x.width = Math.round(x.clientWidth * d); x.height = Math.round(x.clientWidth * d * BH / BW); }); clsDraw(); };
   fit(); window.onresize = () => { if (clsCanvas()) fit(); };
   if (!clsCanDraw()) return;
+  const touches = new Map(); let pinch = null, pan = null;
+  const mid = () => { const [a, b] = [...touches.values()]; return [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, Math.hypot(a[0] - b[0], a[1] - b[1])]; };
+  cv.style.cursor = CLS.tool === 'hand' ? 'grab' : 'crosshair';
+  if (clsHost()) {
+    cv.onwheel = e => { e.preventDefault(); const [sx, sy] = clsScr(e.clientX, e.clientY), v = clsV();
+      if (e.ctrlKey || e.metaKey) clsZoomAt(sx, sy, v.z * Math.exp(-e.deltaY * .01));
+      else { v.x += e.deltaX / v.z; v.y += e.deltaY / v.z; clsClampV(v); clsDraw(); clsViewSend(); } };
+    cv.addEventListener('gesturestart', e => e.preventDefault());
+  }
   cv.onpointerdown = e => {
-    if (CLS.cur || (e.pointerType === 'mouse' && e.button)) return;
-    try { cv.setPointerCapture(e.pointerId); } catch (_) {} const [x, y] = clsPt(e);
+    if (e.pointerType === 'mouse' && e.button) return;
+    touches.set(e.pointerId, [e.clientX, e.clientY]);
+    try { cv.setPointerCapture(e.pointerId); } catch (_) {}
+    if (touches.size === 2 && clsHost()) {   // two fingers: zoom and move, and drop the line the first finger just started
+      const s = CLS.cur; CLS.cur = null; pan = null;
+      if (s && s.id) { clsPage().s = clsPage().s.filter(x => x !== s); clsSend({ t: 'd', pg: CLS.board.cur, ids: [s.id] }); clsDraw(); }
+      const [mx, my, d] = mid(), [sx, sy] = clsScr(mx, my), v = clsV();
+      pinch = { d, z: v.z, bx: v.x + sx / v.z, by: v.y + sy / v.z }; return;
+    }
+    if (touches.size > 1 || CLS.cur) return;
+    if (CLS.tool === 'hand' && clsHost()) { const v = clsV(); pan = { cx: e.clientX, cy: e.clientY, x: v.x, y: v.y }; cv.style.cursor = 'grabbing'; return; }
+    const [x, y] = clsPt(e);
     if (CLS.tool === 'erase') { CLS.cur = { erase: true }; return clsErase(x, y); }
     if (CLS.tool === 'laser') { CLS.cur = { laser: true }; CLS.laser.push({ x, y, at: Date.now() }); clsSend({ t: 'z', x, y }); return clsAnimate(); }
     const k = { pen: 'p', line: 'l', arrow: 'a' }[CLS.tool];
-    CLS.cur = { id: clsRid(), k, c: CLS.color, w: CLS.width, p: k === 'p' ? [x, y] : [x, y, x, y] };
+    CLS.cur = { id: clsRid(), k, c: CLS.color, w: +(CLS.width / clsV().z).toFixed(2), p: k === 'p' ? [x, y] : [x, y, x, y] };
     CLS.pend = k === 'p' ? [x, y] : []; clsPage().s.push(CLS.cur); clsDraw(); clsFlush(true);
   };
   cv.onpointermove = e => {
+    if (touches.has(e.pointerId)) touches.set(e.pointerId, [e.clientX, e.clientY]);
+    if (pinch) { if (touches.size < 2) return; const [mx, my, d] = mid(), [sx, sy] = clsScr(mx, my), v = clsV();
+      v.z = Math.min(5, Math.max(1, pinch.z * d / (pinch.d || 1))); v.x = pinch.bx - sx / v.z; v.y = pinch.by - sy / v.z; clsClampV(v); clsDraw(); return clsViewSend(); }
+    if (pan) { const v = clsV(), r = clsCanvas().getBoundingClientRect();
+      v.x = pan.x - (e.clientX - pan.cx) / r.width * BW / v.z; v.y = pan.y - (e.clientY - pan.cy) / r.height * BH / v.z; clsClampV(v); clsDraw(); return clsViewSend(); }
     const s = CLS.cur; if (!s) return; const [x, y] = clsPt(e);
     if (s.erase) return clsErase(x, y);
     if (s.laser) { CLS.laser.push({ x, y, at: Date.now() }); if (Date.now() - CLS.lastSend > 80) { CLS.lastSend = Date.now(); clsSend({ t: 'z', x, y }); } return clsAnimate(); }
@@ -249,7 +294,10 @@ function clsMount() {
     else { s.p[2] = x; s.p[3] = y; }
     clsDraw(); clsFlush();
   };
-  cv.onpointerup = cv.onpointercancel = () => {
+  cv.onpointerup = cv.onpointercancel = e => {
+    touches.delete(e.pointerId);
+    if (pinch) { if (!touches.size) { pinch = null; clsViewSend(true); } return; }
+    if (pan) { pan = null; cv.style.cursor = 'grab'; return clsViewSend(true); }
     const s = CLS.cur; CLS.cur = null; if (!s || s.erase || s.laser) return;
     if (s.k !== 'p' && Math.hypot(s.p[2] - s.p[0], s.p[3] - s.p[1]) < 6) { clsPage().s = clsPage().s.filter(x => x !== s); return clsDraw(); }
     CLS.mine.push(s.id); clsSend({ t: 'e', id: s.id, pg: CLS.board.cur, k: s.k, c: s.c, w: s.w, p: s.p }); clsSave();
@@ -269,7 +317,7 @@ function clsToolbar() {
   const host = clsHost(), B = CLS.board;
   return `<div class="cls-tools" role="toolbar" aria-label="أدوات السبورة">
     ${host ? '<div class="grp"><button class="doc" data-act="cls-import" aria-label="أضف ملف PDF أو صوراً للشرح عليها">📄 <span>ملف</span></button></div>' : ''}
-    <div class="grp">${t('pen', '✏️', 'قلم')}${t('line', '<i class="ln"></i>', 'خط مستقيم')}${t('arrow', '<i class="ar"></i>', 'سهم (متجه)')}${t('erase', '🧽', 'ممحاة')}${host ? t('laser', '<i class="lz"></i>', 'مؤشر ليزر') : ''}</div>
+    <div class="grp">${host ? t('hand', '✋', 'اليد: حرّك الصفحة، وكبّر بإصبعين') : ''}${t('pen', '✏️', 'قلم')}${t('line', '<i class="ln"></i>', 'خط مستقيم')}${t('arrow', '<i class="ar"></i>', 'سهم (متجه)')}${t('erase', '🧽', 'ممحاة')}${host ? t('laser', '<i class="lz"></i>', 'مؤشر ليزر') : ''}</div>
     <div class="grp">${CLS_COLORS.map(c => `<button class="sw ${CLS.color === c ? 'on' : ''}" data-act="cls-color" data-c="${c}" style="--c:${c}" aria-label="لون"></button>`).join('')}</div>
     <div class="grp">${CLS_WIDTHS.map(w => `<button class="wd ${CLS.width === w ? 'on' : ''}" data-act="cls-width" data-w="${w}" aria-label="سماكة ${w}"><i style="width:${w / 2 + 3}px;height:${w / 2 + 3}px"></i></button>`).join('')}</div>
     <div class="grp"><button data-act="cls-undo" aria-label="تراجع">↶</button>${host ? `<button data-act="cls-clear" aria-label="امسح الصفحة">🗑️</button><button class="${B.grid ? 'on' : ''}" data-act="cls-grid" aria-label="ورق مربعات">#</button>` : ''}<button data-act="cls-png" aria-label="احفظ صورة السبورة">⤓</button></div>
@@ -288,6 +336,7 @@ function vClass() {
     <div class="cls-stage ${CLS.full ? 'full' : ''}">
       <div class="cls-board"><canvas id="cls-cv" ${clsCanDraw() ? 'style="touch-action:none"' : ''}></canvas><canvas id="cls-ov"></canvas><div class="cls-fx" id="cls-fx" aria-hidden="true"></div>
         <div class="cls-bar" id="cls-bar"></div>
+        ${host ? `<div class="cls-zoom"><button data-act="cls-zoom" data-d="1" aria-label="تكبير">+</button><button id="cls-zl" data-act="cls-zoom" data-d="0" aria-label="رجوع للحجم الأصلي">100%</button><button data-act="cls-zoom" data-d="-1" aria-label="تصغير">−</button></div>` : ''}
         <button class="cls-fs" data-act="cls-full" aria-label="${CLS.full ? 'تصغير' : 'ملء الشاشة'}">${CLS.full ? '✕' : '⛶'}</button>${clsCanDraw() ? '' : '<button class="cls-fs sv" data-act="cls-png" aria-label="احفظ صورة السبورة">⤓</button>'}</div>
       ${clsCanDraw() ? clsToolbar() : ''}
     </div>
@@ -378,6 +427,9 @@ function clsAct(act, el) {
   else if (act === 'cls-full') { CLS.full = !CLS.full; document.body.classList.toggle('cls-lock', CLS.full); render(false); }
   else if (act === 'cls-png') clsPng();
   else if (act === 'cls-import') clsImport();
+  else if (act === 'cls-zoom') { const v = clsV();
+    if (+d.d === 0) { Object.assign(v, { z: 1, x: 0, y: 0 }); clsDraw(); clsViewSend(true); }
+    else clsZoomAt(BW / 2, BH / 2, v.z * (+d.d > 0 ? 1.4 : 1 / 1.4)); }
   else if (act === 'cls-tab') { CLS.tab = d.k; clsSide(); }
   else if (act === 'cls-pen') clsGivePen(d.u || null);
   else if (act === 'cls-lower') clsIn({ t: 'lower', uid: d.u });
@@ -404,7 +456,7 @@ function clsAct(act, el) {
     clsIn({ t: 'r', e: d.e }); clsFloat(d.e);
   }
 }
-function clsToolsRefresh() { const t = document.querySelector('.cls-tools'); if (t) t.outerHTML = clsToolbar(); }
+function clsToolsRefresh() { const t = document.querySelector('.cls-tools'); if (t) t.outerHTML = clsToolbar(); const cv = clsCanvas(); if (cv) cv.style.cursor = CLS.tool === 'hand' ? 'grab' : 'crosshair'; }
 async function clsGivePen(uid) {
   const { error } = await db.from('class_rooms').update({ pen: uid }).eq('code', CLS.code);
   if (error) return toast(dbError(error));
@@ -432,16 +484,17 @@ function clsPdfLib() {
 }
 const clsDoc = (u, data) => CLS_DOCS[u] || (CLS_DOCS[u] = clsPdfLib().then(L => L.getDocument(data ? { data } : { url: u }).promise).catch(e => { delete CLS_DOCS[u]; throw e; }));
 /* Rendered page images, kept for the few pages around the current one */
-function clsBg(bg) {
-  const k = bg.u + '#' + bg.n, e = CLS_BG[k];
+function clsBg(bg, tier = 0) {
+  const k = bg.u + '#' + bg.n + (tier ? '@hi' : ''), e = CLS_BG[k];
   if (e) { e.at = Date.now(); return e.cv || null; }
   const ent = CLS_BG[k] = { at: Date.now() };
   clsDoc(bg.u).then(d => d.getPage(bg.n)).then(pg => {
-    const v = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: Math.min(2200 / v.width, 1400 / v.height) });
+    const v = pg.getViewport({ scale: 1 }), vp = pg.getViewport({ scale: Math.min(2200 / v.width, 1400 / v.height) * (tier ? 1.8 : 1) });
     const cv = document.createElement('canvas'); cv.width = Math.round(vp.width); cv.height = Math.round(vp.height);
     return pg.render({ canvasContext: cv.getContext('2d'), viewport: vp }).promise.then(() => {
       ent.cv = cv; const ks = Object.keys(CLS_BG).sort((a, b) => CLS_BG[a].at - CLS_BG[b].at);
       while (ks.length > 6) delete CLS_BG[ks.shift()];
+      const hi = ks.filter(x => x.endsWith('@hi')); while (hi.length > 2) delete CLS_BG[hi.shift()];
       clsDraw();
     });
   }).catch(() => { ent.err = true; setTimeout(() => { if (CLS_BG[k] === ent) delete CLS_BG[k]; }, 8000); clsDraw(); });

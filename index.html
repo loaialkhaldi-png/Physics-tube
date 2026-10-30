@@ -413,6 +413,9 @@ input[type="range"]::-moz-range-thumb { width: 26px; height: 26px; border: 0; bo
 .cls-bar button:disabled { opacity: .3; }
 .cls-fs { position: absolute; top: 8px; left: 8px; width: 34px; height: 34px; border-radius: 10px; background: rgba(0,0,0,.4); color: #fff; font-size: 17px; }
 .cls-fs.sv { left: 48px; }
+.cls-zoom { position: absolute; top: 8px; right: 8px; display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 12px; background: rgba(0,0,0,.45); backdrop-filter: blur(8px); }
+.cls-zoom button { min-width: 32px; height: 30px; padding: 0 6px; border-radius: 9px; color: #fff; font-size: 18px; font-weight: 700; }
+.cls-zoom #cls-zl { font-size: 12px; min-width: 46px; background: rgba(255,255,255,.1); }
 .cls-fx { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
 .cls-fx span { position: absolute; bottom: 4%; font-size: 34px; animation: clsFloat 2.2s ease-out forwards; }
 @keyframes clsFloat { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: 1; transform: translateY(-20px) scale(1.15); } 100% { transform: translateY(-260px) scale(1); opacity: 0; } }
