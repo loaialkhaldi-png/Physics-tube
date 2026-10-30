@@ -7,11 +7,6 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="description" content="دروس الفيزياء للمرحلة الثانوية: فيديوهات شرح، مختبر تفاعلي، ومذكرات PDF.">
 <meta name="theme-color" content="#0A0B0F">
-<script>/* Appearance before first paint: "dark" (default), "light" or "auto" (follows the device) */
-(function () { var t = 'dark'; try { t = JSON.parse(localStorage.getItem('pt.theme')) || 'dark'; } catch (e) {}
-  var l = t === 'light' || (t === 'auto' && window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches);
-  document.documentElement.dataset.theme = l ? 'light' : 'dark';
-  document.querySelector('meta[name=theme-color]').content = l ? '#F2F2F7' : '#0A0B0F'; })();</script>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -41,18 +36,6 @@
   padding-top: env(safe-area-inset-top, 0px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
   background: var(--bg);
-}
-/* Light appearance */
-:root[data-theme="light"] {
-  --bg: #F2F2F7;
-  --surface: #FFFFFF;
-  --surface-2: #E9EAF0;
-  --line: rgba(0, 0, 0, .09);
-  --fg: #111318;
-  --muted: #6B6F7B;
-  --accent: #0A6CFF;
-  --glass: rgba(255, 255, 255, .82);
-  color-scheme: light;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html, body { background: var(--bg); }
@@ -625,9 +608,6 @@ body.cls-lock { overflow: hidden; } body.cls-lock .tabbar { display: none; }
 .opt .t { flex: 1; display: grid; }
 .opt .t small { color: var(--muted); font-size: 13px; }
 .opt .tick { color: var(--accent); }
-.theme-pick { display: grid; gap: 10px; margin-top: 16px; }
-.theme-pick .opt.on { border-color: var(--accent); }
-.theme-pick .opt .ico { width: 22px; height: 22px; color: var(--accent); }
 .qr-box { margin: 18px auto 0; width: min(240px, 70%); padding: 16px; border-radius: 22px; background: #fff; }
 .qr-box .qr { display: block; width: 100%; height: auto; }
 .share-url { margin-top: 12px; text-align: center; font-size: 14px; color: var(--muted); word-break: break-all; user-select: all; -webkit-user-select: all; }
@@ -883,26 +863,6 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
   .unit h3 { font-size: 16px; }
   .mark { font-size: 16px; letter-spacing: .22em; }
 }
-
-/* Light appearance: colorful cards keep their dark artwork, so their text stays light */
-[data-theme="light"] :is(.daily, .promo, .games-card, .qbanner, .unit, .install, .hero, .poster, .qhero, .g-tile, .g-hero, .xcd, .notice, .qres, .gm-card, .cls-board, .stage, .g-stage) { --fg: #F5F5F7; --muted: rgba(255,255,255,.72); color: #F5F5F7; }
-[data-theme="light"] .pill .stat { background: #E4ECFF; }
-[data-theme="light"] .tab[aria-current="page"] { background: #E6E9F0; }
-[data-theme="light"] .seg button[aria-pressed="true"] { background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.12); }
-[data-theme="light"] .sheet { background: #fff; }
-[data-theme="light"] .sheet .grab { background: #D3D5DC; }
-[data-theme="light"] .opt[aria-pressed="true"] { background: #E8F0FF; }
-[data-theme="light"] .g-head p { color: #3A3F4B; }
-[data-theme="light"] :is(.sim-stars, .g-lv span, .missions .st) { color: #D99A00; }
-[data-theme="light"] .qgraph { background: #F6F8FC; border-color: rgba(0,0,0,.08); }
-[data-theme="light"] .qgraph .gr line { stroke: rgba(0,0,0,.06); }
-[data-theme="light"] .qgraph .gd line { stroke: rgba(0,0,0,.35); }
-[data-theme="light"] .qgraph :is(.ax, .ah) { stroke: #3A3F4B; }
-[data-theme="light"] .qgraph circle { fill: #fff; }
-[data-theme="light"] .qgraph text { fill: #3A3F4B; }
-[data-theme="light"] .qgraph .lb { fill: #111318; }
-[data-theme="light"] .rank .bar { background: rgba(0,0,0,.08); }
-[data-theme="light"] .tabbar { box-shadow: 0 8px 30px rgba(0,0,0,.12); }
 </style>
 </head>
 <body>
@@ -2347,18 +2307,6 @@ function vNotes() {
   </div>`;
 }
 
-const THEME_NAMES = { dark: '🌙 داكن', light: '☀️ فاتح', auto: '🌓 تلقائي حسب الجهاز' };
-function applyTheme() {
-  const t = store.get('theme', 'dark'), l = t === 'light' || (t === 'auto' && matchMedia('(prefers-color-scheme: light)').matches);
-  document.documentElement.dataset.theme = l ? 'light' : 'dark';
-  document.querySelector('meta[name=theme-color]').content = l ? '#F2F2F7' : '#0A0B0F';
-}
-if (window.matchMedia) matchMedia('(prefers-color-scheme: light)').addEventListener('change', applyTheme);
-function themeSheet() {
-  const cur = store.get('theme', 'dark');
-  sheet(`<h2>المظهر</h2><p>اختر شكل التطبيق المريح لعينيك.</p>
-    <div class="theme-pick">${Object.entries(THEME_NAMES).map(([k, t]) => `<button class="opt ${cur === k ? 'on' : ''}" data-act="theme-set" data-k="${k}"><span class="t"><b>${t}</b><small>${k === 'dark' ? 'مريح في الليل وفي الإضاءة الخافتة' : k === 'light' ? 'خلفية فاتحة واضحة في النهار' : 'يتبدّل تلقائياً مع وضع جوالك الليلي والنهاري'}</small></span>${cur === k ? icon('check') : ''}</button>`).join('')}</div>`);
-}
 function vProfile() {
   const g = G();
   const all = g.units.reduce((n, u) => n + u.lessons.length, 0);
@@ -2392,7 +2340,6 @@ function vProfile() {
     <div class="list">
       <button class="row" data-act="share"><span class="t"><b>شارك التطبيق</b><small>أرسله لزملائك أو اعرض رمز QR</small></span><span class="end">${icon('share')}</span></button>
       <button class="row" data-act="grade"><span class="t"><b>المرحلة الدراسية</b><small>${esc(g.name)}</small></span><span class="end">${icon('chev')}</span></button>
-      <button class="row" data-act="theme"><span class="t"><b>المظهر</b><small>${THEME_NAMES[store.get('theme', 'dark')]}</small></span><span class="end">${icon('chev')}</span></button>
       ${!db ? '' : USER
         ? `<button class="row" data-act="logout"><span class="t"><b>تسجيل الخروج</b><small>${ADMIN ? 'وضع المعلم' : esc(PROFILE ? '@' + PROFILE.username : '')}</small></span></button>`
         : `<button class="row" data-act="login"><span class="t"><b>تسجيل الدخول</b><small>للطلاب والمعلم</small></span><span class="end">${icon('chev')}</span></button>`}
@@ -3945,8 +3892,6 @@ document.addEventListener('click', e => {
   }
   else if (act === 'card-share') { if (CARD) navigator.share({ files: [CARD.file], text: CARD.text }).catch(() => {}); }
   else if (act === 'notice-edit') noticeSheet();
-  else if (act === 'theme') themeSheet();
-  else if (act === 'theme-set') { store.set('theme', el.dataset.k); applyTheme(); closeSheet(); render(false); }
   else if (act === 'notice-ics') noticeIcs();
   else if (act === 'notice-save') {
     const v = id => (document.getElementById(id).value || '').trim(), title = v('nt-title');
