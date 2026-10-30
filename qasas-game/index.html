@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>رحلة موسى عليه السلام</title>
+<style>
+:root{
+  --sand:#F6EEDC; --sand-2:#EADBBB; --card:#FFFDF7;
+  --nile:#1D5C88; --nile-dark:#123A57; --nile-soft:#E2EEF6;
+  --gold:#B8862A; --gold-soft:#F6E6C2;
+  --ink:#1B2630; --muted:#5A6670;
+  --ok:#1E7F4C; --ok-soft:#DFF3E7;
+  --bad:#B3261E; --bad-soft:#FBE3E0;
+  --radius:18px;
+  --ui:"Segoe UI","Noto Sans Arabic","Geeza Pro",Tahoma,Arial,sans-serif;
+  --quran:"Amiri Quran","Amiri","KFGQPC Uthmanic Script HAFS","Traditional Arabic","Noto Naskh Arabic","Scheherazade New","Geeza Pro",serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+html{background:var(--sand)}
+body{
+  font-family:var(--ui); color:var(--ink); background:var(--sand);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(255,255,255,.7), transparent 40%),
+    radial-gradient(circle at 90% 95%, rgba(29,92,136,.10), transparent 45%);
+  background-attachment:fixed;
+  font-size:clamp(18px,1.6vw,24px); line-height:1.7;
+}
+button{font-family:inherit;cursor:pointer}
+.hidden{display:none !important}
+.screen{min-height:100vh;padding:16px;display:flex;flex-direction:column;align-items:center}
+.wrap{width:100%;max-width:1200px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  border:none;border-radius:14px;padding:.55em 1.3em;font-size:clamp(20px,2vw,30px);font-weight:700;
+  background:var(--nile);color:#fff;box-shadow:0 4px 0 var(--nile-dark);transition:transform .1s, filter .15s;
+}
+.btn:hover{filter:brightness(1.08)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--nile-dark)}
+.btn.gold{background:var(--gold);box-shadow:0 4px 0 #8a6318}
+.btn.light{background:#fff;color:var(--nile-dark);box-shadow:0 4px 0 var(--sand-2);border:2px solid var(--sand-2)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.icon-btn{
+  border:2px solid var(--sand-2);background:#fff;color:var(--nile-dark);border-radius:12px;
+  font-size:clamp(16px,1.4vw,22px);font-weight:700;padding:.3em .7em;white-space:nowrap;
+}
+.icon-btn:hover{background:var(--nile-soft)}
+
+/* ---------- Start screen ---------- */
+#start{justify-content:center}
+.hero{background:var(--card);border-radius:28px;padding:clamp(20px,4vw,48px);text-align:center;
+  box-shadow:0 10px 40px rgba(18,58,87,.15);border-top:10px solid var(--gold);max-width:900px;width:100%}
+.hero .sub{color:var(--gold);font-weight:800;font-size:clamp(20px,2vw,28px);margin:0}
+.hero h1{margin:.1em 0 .2em;color:var(--nile-dark);font-size:clamp(36px,5.5vw,72px);line-height:1.25}
+.hero .ayah-line{font-family:var(--quran);font-size:clamp(24px,2.6vw,36px);color:var(--nile);margin:0 0 .6em}
+.scenes{display:flex;justify-content:center;gap:clamp(10px,2vw,28px);margin:.4em 0 1em;flex-wrap:wrap}
+.scene{background:var(--sand);border-radius:16px;padding:.4em .9em;font-weight:700;color:var(--nile-dark);font-size:clamp(16px,1.5vw,22px)}
+.scene span{font-size:1.5em;display:block}
+.name-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:1em 0}
+.name-row input{
+  font-family:inherit;font-size:clamp(22px,2.2vw,32px);padding:.4em .8em;border-radius:14px;border:3px solid var(--sand-2);
+  width:min(520px,100%);text-align:center;background:#fff;color:var(--ink);
+}
+.name-row input:focus{outline:none;border-color:var(--nile)}
+.start-tools{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:.6em}
+.rules{color:var(--muted);font-size:clamp(16px,1.4vw,21px);margin-top:1em}
+.err{color:var(--bad);font-weight:700;min-height:1.6em}
+
+/* ---------- Quiz top bar ---------- */
+.topbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--card);border-radius:var(--radius);
+  padding:10px 16px;box-shadow:0 4px 18px rgba(18,58,87,.10);margin-bottom:14px}
+.player{font-weight:800;color:var(--nile-dark);font-size:clamp(18px,1.7vw,26px)}
+.progress-box{flex:1;min-width:180px}
+.progress-label{font-weight:700;color:var(--muted);font-size:clamp(16px,1.4vw,22px)}
+.bar{height:14px;background:var(--sand-2);border-radius:99px;overflow:hidden}
+.bar>div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--nile));border-radius:99px;transition:width .4s}
+.score{background:var(--gold-soft);color:#7a5410;border-radius:14px;padding:.15em .7em;font-weight:900;font-size:clamp(22px,2.2vw,34px);white-space:nowrap}
+.score.bump{animation:bump .5s}
+@keyframes bump{50%{transform:scale(1.25)}}
+.timer{position:relative;width:clamp(56px,5vw,76px);height:clamp(56px,5vw,76px)}
+.timer svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer circle{fill:none;stroke-width:8}
+.timer .track{stroke:var(--sand-2)}
+.timer .ring{stroke:var(--nile);stroke-linecap:round;transition:stroke-dashoffset 1s linear, stroke .3s}
+.timer.warn .ring{stroke:var(--bad)}
+.timer .t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:clamp(20px,2vw,30px)}
+.timer.warn .t{color:var(--bad)}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Question card ---------- */
+.card{background:var(--card);border-radius:24px;padding:clamp(16px,3vw,36px);box-shadow:0 8px 30px rgba(18,58,87,.12)}
+.badge{display:inline-block;background:var(--nile-soft);color:var(--nile-dark);font-weight:800;border-radius:99px;
+  padding:.1em .9em;font-size:clamp(16px,1.5vw,22px)}
+.q-text{font-size:clamp(26px,3vw,44px);font-weight:800;color:var(--ink);margin:.4em 0 .3em;line-height:1.55}
+.hint{color:var(--muted);font-size:clamp(17px,1.5vw,22px);margin:0 0 .6em}
+.ayah{font-family:var(--quran);font-size:clamp(28px,3.2vw,46px);color:var(--nile-dark);background:#F1F7EC;border-right:6px solid #6AA84F;
+  border-radius:14px;padding:.3em .8em;margin:.3em 0 .6em;line-height:1.9}
+
+.options{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:.6em}
+.options.single{grid-template-columns:1fr}
+.opt{
+  display:flex;align-items:center;gap:.6em;text-align:right;background:#fff;border:3px solid var(--sand-2);border-radius:16px;
+  padding:.5em .8em;font-size:clamp(22px,2.4vw,34px);font-weight:700;color:var(--ink);transition:border-color .15s, background .15s, transform .1s;
+}
+.opt:hover:not(:disabled){border-color:var(--nile);background:var(--nile-soft)}
+.opt .letter{flex:none;width:1.6em;height:1.6em;border-radius:50%;background:var(--nile);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8em}
+.opt .txt{flex:1}
+.opt.quran .txt{font-family:var(--quran);font-weight:400;line-height:1.8}
+.opt.correct{border-color:var(--ok);background:var(--ok-soft)}
+.opt.correct .letter{background:var(--ok)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .letter{background:var(--bad)}
+.opt.dim{opacity:.5}
+.opt:disabled{cursor:default}
+.opt .mark{font-size:1.1em;font-weight:900}
+
+/* ---------- Matching ---------- */
+.match{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,3vw,40px);margin-top:.6em}
+.col-title{font-weight:800;color:var(--gold);text-align:center;font-size:clamp(18px,1.6vw,24px)}
+.mcol{display:flex;flex-direction:column;gap:12px}
+.chip{
+  position:relative;background:#fff;border:3px solid var(--sand-2);border-radius:16px;padding:.4em .8em;
+  font-size:clamp(22px,2.4vw,34px);font-weight:800;color:var(--ink);text-align:center;transition:all .15s;
+}
+.chip:hover:not(:disabled){border-color:var(--nile)}
+.chip.word{color:var(--nile-dark)}
+.chip.sel{border-color:var(--nile);background:var(--nile-soft);box-shadow:0 0 0 4px rgba(29,92,136,.25)}
+.chip.done{border-color:var(--ok);background:var(--ok-soft);cursor:default}
+.chip.shake{animation:shake .45s;border-color:var(--bad);background:var(--bad-soft)}
+.chip .pairno{position:absolute;top:-12px;left:-10px;background:var(--ok);color:#fff;border-radius:50%;width:1.6em;height:1.6em;
+  font-size:.65em;display:flex;align-items:center;justify-content:center}
+.chip.reveal{border-style:dashed;border-color:var(--ok)}
+@keyframes shake{20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}}
+
+/* ---------- Ordering ---------- */
+.order{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,3vw,40px);margin-top:.6em}
+.slots,.pool{display:flex;flex-direction:column;gap:10px}
+.slot{display:flex;align-items:center;gap:10px}
+.slot .num{flex:none;width:1.8em;height:1.8em;border-radius:50%;background:var(--gold);color:#fff;font-weight:900;
+  display:flex;align-items:center;justify-content:center;font-size:clamp(18px,1.8vw,26px)}
+.slot .place{flex:1;min-height:2.2em;border:3px dashed var(--sand-2);border-radius:14px;background:#fff;
+  font-size:clamp(20px,2.1vw,30px);font-weight:700;text-align:right;padding:.25em .7em;color:var(--ink)}
+.slot .place.filled{border-style:solid;border-color:var(--nile)}
+.slot .place.ok{border-color:var(--ok);background:var(--ok-soft)}
+.slot .place.no{border-color:var(--bad);background:var(--bad-soft)}
+.pool .chip{text-align:right;font-size:clamp(20px,2.1vw,30px)}
+.pool .chip.used{visibility:hidden}
+.check-row{text-align:center;margin-top:16px}
+
+/* ---------- Feedback ---------- */
+.feedback{margin-top:20px;border-radius:18px;padding:.7em 1em;font-size:clamp(20px,2.1vw,30px);animation:pop .3s}
+.feedback.ok{background:var(--ok-soft);border:3px solid var(--ok)}
+.feedback.bad{background:var(--bad-soft);border:3px solid var(--bad)}
+.feedback h3{margin:0 0 .2em;font-size:1.25em}
+.feedback.part{background:var(--gold-soft);border:3px solid var(--gold)}
+.feedback.ok h3{color:var(--ok)} .feedback.bad h3{color:var(--bad)} .feedback.part h3{color:#7a5410}
+.feedback .right{font-weight:800;color:var(--ok)}
+.feedback p{margin:.2em 0}
+.feedback ol{margin:.2em 0;padding-right:1.4em}
+.next-row{display:flex;justify-content:flex-start;margin-top:14px}
+@keyframes pop{from{transform:scale(.96);opacity:0}to{transform:none;opacity:1}}
+.points-fly{font-weight:900;color:var(--gold)}
+
+/* ---------- Station overlay & modals ---------- */
+.overlay{position:fixed;inset:0;background:rgba(18,58,87,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px}
+.station-card{background:var(--card);border-radius:28px;padding:clamp(24px,4vw,56px);text-align:center;border-bottom:10px solid var(--gold);animation:pop .35s;max-width:700px;width:100%}
+.station-card .big{font-size:clamp(60px,8vw,110px);line-height:1}
+.station-card .n{color:var(--gold);font-weight:800;font-size:clamp(22px,2.2vw,32px)}
+.station-card h2{margin:.1em 0;color:var(--nile-dark);font-size:clamp(34px,4.5vw,60px)}
+.modal{background:var(--card);border-radius:24px;max-width:1000px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-head{display:flex;justify-content:space-between;align-items:center;padding:12px 20px;background:var(--nile);color:#fff}
+.modal-head h2{margin:0;font-size:clamp(22px,2.2vw,32px)}
+.modal-head button{background:#fff;color:var(--nile-dark);border:none;border-radius:10px;font-size:clamp(18px,1.6vw,24px);font-weight:800;padding:.2em .8em}
+.modal-body{padding:16px clamp(16px,3vw,36px);overflow:auto}
+.verses{font-family:var(--quran);font-size:clamp(28px,3vw,44px);line-height:2.2;text-align:justify;color:var(--ink)}
+.verses .basmala{text-align:center;color:var(--nile-dark)}
+.verses .vn{color:var(--gold);font-size:.8em;white-space:nowrap}
+.board{width:100%;border-collapse:collapse;font-size:clamp(20px,2vw,28px)}
+.board th,.board td{padding:.35em .5em;border-bottom:2px solid var(--sand-2);text-align:center}
+.board th{color:var(--nile-dark)}
+.board tr:first-child td{font-weight:900}
+.empty{color:var(--muted);text-align:center;padding:1em}
+
+/* ---------- Results ---------- */
+.result-card{text-align:center}
+.result-card h2{color:var(--nile-dark);font-size:clamp(32px,4vw,56px);margin:.1em 0}
+.stars{font-size:clamp(50px,7vw,96px);letter-spacing:.1em}
+.stars .off{filter:grayscale(1);opacity:.3}
+.big-score{display:flex;justify-content:center;gap:clamp(12px,3vw,40px);flex-wrap:wrap;margin:.4em 0}
+.stat{background:var(--sand);border-radius:18px;padding:.3em 1em;min-width:150px}
+.stat b{display:block;font-size:clamp(34px,4vw,58px);color:var(--nile-dark);line-height:1.2}
+.stat span{color:var(--muted);font-weight:700}
+.msg{font-size:clamp(22px,2.3vw,32px);font-weight:700;color:var(--gold);margin:.4em 0}
+.cats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:1em 0;text-align:right}
+.cat-stat{background:#fff;border:2px solid var(--sand-2);border-radius:14px;padding:.4em .8em;font-weight:700}
+.cat-stat .bar{margin-top:6px}
+.review{text-align:right;margin-top:1em}
+.review h3{color:var(--nile-dark);font-size:clamp(24px,2.4vw,34px)}
+.rv{background:#fff;border-right:6px solid var(--bad);border-radius:12px;padding:.5em 1em;margin-bottom:12px;font-size:clamp(18px,1.8vw,26px)}
+.rv .rq{font-weight:800}
+.rv .ru{color:var(--bad)}
+.rv .rc{color:var(--ok);font-weight:800}
+.rv .re{color:var(--muted)}
+.result-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:1em}
+
+@media (max-width:760px){
+  .options,.match,.order{grid-template-columns:1fr}
+  .order .pool{order:-1}
+  .topbar{gap:8px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= START ================= -->
+<section id="start" class="screen">
+  <div class="hero">
+    <p class="sub">اللغة العربية · الصف العاشر</p>
+    <h1>رحلة موسى عليه السلام</h1>
+    <p class="ayah-line">﴿لَقَدْ كَانَ فِي قَصَصِهِمْ عِبْرَةٌ لِأُولِي الْأَلْبَابِ﴾</p>
+    <div class="scenes">
+      <div class="scene"><span>⚖️</span>الطغيان</div>
+      <div class="scene"><span>🌊</span>التوكل</div>
+      <div class="scene"><span>💛</span>الوفاء</div>
+    </div>
+    <div class="name-row">
+      <input id="nameInput" type="text" maxlength="30" placeholder="اكتب اسمك هنا" autocomplete="off">
+    </div>
+    <div class="err" id="nameErr"></div>
+    <button class="btn gold" id="startBtn">ابدأ الرحلة ◀</button>
+    <div class="start-tools">
+      <button class="icon-btn" data-open="verses">📖 اقرأ الآيات</button>
+      <button class="icon-btn" data-open="board">🏆 أفضل النتائج</button>
+      <button class="icon-btn sound-toggle">🔊 الصوت</button>
+      <button class="icon-btn fs-toggle">⛶ ملء الشاشة</button>
+    </div>
+    <p class="rules">٢٠ سؤالاً في ٤ محطات · ٣٠ ثانية لكل سؤال (٦٠ ثانية للمطابقة والترتيب)<br>
+      ١٠ نقاط لكل إجابة صحيحة + حتى ٥ نقاط إضافية للسرعة</p>
+  </div>
+</section>
+
+<!-- ================= QUIZ ================= -->
+<section id="quiz" class="screen hidden">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="player" id="playerName"></div>
+      <div class="progress-box">
+        <div class="progress-label" id="progLabel"></div>
+        <div class="bar"><div id="progBar"></div></div>
+      </div>
+      <div class="score" id="scoreBox">⭐ ٠</div>
+      <div class="timer" id="timer">
+        <svg viewBox="0 0 100 100"><circle class="track" cx="50" cy="50" r="42"/><circle class="ring" id="ring" cx="50" cy="50" r="42"/></svg>
+        <div class="t" id="timeText">٣٠</div>
+      </div>
+      <div class="tools">
+        <button class="icon-btn" data-open="verses">📖 الآيات</button>
+        <button class="icon-btn sound-toggle">🔊</button>
+        <button class="icon-btn fs-toggle">⛶</button>
+        <button class="icon-btn" id="homeBtn">🏠</button>
+      </div>
+    </div>
+    <div class="card" id="qCard"></div>
+  </div>
+</section>
+
+<!-- ================= RESULT ================= -->
+<section id="result" class="screen hidden">
+  <div class="wrap card result-card" id="resultCard"></div>
+</section>
+
+<!-- ================= OVERLAYS ================= -->
+<div class="overlay hidden" id="stationOverlay">
+  <div class="station-card">
+    <div class="big" id="stIcon"></div>
+    <div class="n" id="stNum"></div>
+    <h2 id="stName"></h2>
+    <p id="stDesc"></p>
+  </div>
+</div>
+
+<div class="overlay hidden" id="versesModal">
+  <div class="modal">
+    <div class="modal-head"><h2>📖 آيات من سورة القصص (١–١٣)</h2><button data-close>إغلاق ✕</button></div>
+    <div class="modal-body"><div class="verses" id="versesBody"></div></div>
+  </div>
+</div>
+
+<div class="overlay hidden" id="boardModal">
+  <div class="modal">
+    <div class="modal-head"><h2>🏆 أفضل ٥ نتائج</h2><button data-close>إغلاق ✕</button></div>
+    <div class="modal-body">
+      <div id="boardBody"></div>
+      <div style="text-align:center;margin-top:14px"><button class="icon-btn" id="clearBoard">🗑️ مسح النتائج</button></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   المحتوى: مأخوذ من صفحات الكتاب المدرسي (آيات من سورة القصص ١–١٣)
+   ========================================================= */
+const VERSES = [
+  "طسم",
+  "تِلْكَ آيَاتُ الْكِتَابِ الْمُبِينِ",
+  "نَتْلُو عَلَيْكَ مِنْ نَبَإِ مُوسَى وَفِرْعَوْنَ بِالْحَقِّ لِقَوْمٍ يُؤْمِنُونَ",
+  "إِنَّ فِرْعَوْنَ عَلَا فِي الْأَرْضِ وَجَعَلَ أَهْلَهَا شِيَعًا يَسْتَضْعِفُ طَائِفَةً مِنْهُمْ يُذَبِّحُ أَبْنَاءَهُمْ وَيَسْتَحْيِي نِسَاءَهُمْ إِنَّهُ كَانَ مِنَ الْمُفْسِدِينَ",
+  "وَنُرِيدُ أَنْ نَمُنَّ عَلَى الَّذِينَ اسْتُضْعِفُوا فِي الْأَرْضِ وَنَجْعَلَهُمْ أَئِمَّةً وَنَجْعَلَهُمُ الْوَارِثِينَ",
+  "وَنُمَكِّنَ لَهُمْ فِي الْأَرْضِ وَنُرِيَ فِرْعَوْنَ وَهَامَانَ وَجُنُودَهُمَا مِنْهُمْ مَا كَانُوا يَحْذَرُونَ",
+  "وَأَوْحَيْنَا إِلَى أُمِّ مُوسَى أَنْ أَرْضِعِيهِ فَإِذَا خِفْتِ عَلَيْهِ فَأَلْقِيهِ فِي الْيَمِّ وَلَا تَخَافِي وَلَا تَحْزَنِي إِنَّا رَادُّوهُ إِلَيْكِ وَجَاعِلُوهُ مِنَ الْمُرْسَلِينَ",
+  "فَالْتَقَطَهُ آلُ فِرْعَوْنَ لِيَكُونَ لَهُمْ عَدُوًّا وَحَزَنًا إِنَّ فِرْعَوْنَ وَهَامَانَ وَجُنُودَهُمَا كَانُوا خَاطِئِينَ",
+  "وَقَالَتِ امْرَأَتُ فِرْعَوْنَ قُرَّتُ عَيْنٍ لِي وَلَكَ لَا تَقْتُلُوهُ عَسَى أَنْ يَنْفَعَنَا أَوْ نَتَّخِذَهُ وَلَدًا وَهُمْ لَا يَشْعُرُونَ",
+  "وَأَصْبَحَ فُؤَادُ أُمِّ مُوسَى فَارِغًا إِنْ كَادَتْ لَتُبْدِي بِهِ لَوْلَا أَنْ رَبَطْنَا عَلَى قَلْبِهَا لِتَكُونَ مِنَ الْمُؤْمِنِينَ",
+  "وَقَالَتْ لِأُخْتِهِ قُصِّيهِ فَبَصُرَتْ بِهِ عَنْ جُنُبٍ وَهُمْ لَا يَشْعُرُونَ",
+  "وَحَرَّمْنَا عَلَيْهِ الْمَرَاضِعَ مِنْ قَبْلُ فَقَالَتْ هَلْ أَدُلُّكُمْ عَلَى أَهْلِ بَيْتٍ يَكْفُلُونَهُ لَكُمْ وَهُمْ لَهُ نَاصِحُونَ",
+  "فَرَدَدْنَاهُ إِلَى أُمِّهِ كَيْ تَقَرَّ عَيْنُهَا وَلَا تَحْزَنَ وَلِتَعْلَمَ أَنَّ وَعْدَ اللَّهِ حَقٌّ وَلَكِنَّ أَكْثَرَهُمْ لَا يَعْلَمُونَ"
+];
+
+const CATS = {
+  lex:   {name:"المعجم والدلالة", icon:"📖", n:1, desc:"معاني المفردات ودلالاتها في النص"},
+  comp:  {name:"الفهم والتحليل",  icon:"💡", n:2, desc:"أحداث القصة ومشاعر شخصياتها ودروسها"},
+  taste: {name:"التذوق الجمالي",  icon:"✨", n:3, desc:"جماليات التعبير القرآني وأسراره"},
+  lang:  {name:"القضايا اللغوية", icon:"✏️", n:4, desc:"الأساليب والأفعال والجمل والحقول الدلالية"}
+};
+
+const QUESTIONS = [
+  /* ---------- المعجم والدلالة ---------- */
+  {cat:"lex", type:"match",
+   q:"صِلْ كل كلمة بمعناها كما ورد في معجم الدرس",
+   pairs:[["علا","تجبّر وطغى"],["شِيَعًا","أصنافًا"],["اليمّ","النهر"],["قُصّيه","اتبعي أثره"],["عن جُنُب","عن بُعد"]],
+   explain:"علا: تجبّر وطغى · شِيَعًا: أصنافًا · اليمّ: النهر · قُصّيه: اتبعي أثره · عن جُنُب: عن بُعد."},
+  {cat:"lex", type:"match",
+   q:"صِلْ كل كلمة بمعناها كما ورد في معجم الدرس",
+   pairs:[["فارغًا","خاليًا"],["لتُبدي به","تصرّح بأنه ابنها"],["ربطنا","ثبّتنا"],["نمُنّ","نتفضّل"],["يستحيي نساءهم","يستبقي بناتهم"]],
+   explain:"فارغًا: خاليًا · لتُبدي به: تصرّح بأنه ابنها · ربطنا: ثبّتنا · نمُنّ: نتفضّل · يستحيي نساءهم: يستبقي بناتهم."},
+  {cat:"lex", type:"mcq",
+   q:"وردت المفردات الآتية في النص: (يستضعف – يُذبِّح – خاطئين – يستحيي – علا – المفسدين). الحقل الدلالي الذي تنتمي إليه هذه المفردات هو:",
+   options:["الطغيان","العجز","الثقة","السعي"], answer:0,
+   explain:"كل هذه المفردات تصف أفعال فرعون وأعوانه في التجبّر والظلم، فهي تنتمي إلى حقل الطغيان."},
+  {cat:"lex", type:"mcq",
+   q:"جاءت المفردات (يستضعف – يُذبِّح – خاطئين – يستحيي – علا – المفسدين) في النص لتوضيح:",
+   options:["ظلم فرعون وإفساده في الأرض","ضعف بني إسرائيل وعجزهم","تمكّن فرعون وقوته في الأرض","فطنة الجند والأتباع وذكائهم"], answer:0,
+   explain:"جاءت لتوضيح ظلم فرعون وإفساده؛ فقد طغى وتجبّر، واستضعف بني إسرائيل، يذبّح أبناءهم ويستبقي بناتهم للخدمة، إنه كان من المفسدين."},
+  {cat:"lex", type:"mcq",
+   q:"اختير الفعل (التقط) بدلًا من (أخذ) في النص للدلالة على:",
+   ayah:"فَالْتَقَطَهُ آلُ فِرْعَوْنَ",
+   options:["الأخذ ذهولًا","الأخذ حذرًا","الأخذ خفية","الأخذ فرحًا"], answer:0,
+   explain:"اختير الفعل (التقط) للدلالة على الأخذ ذهولًا؛ فقد عثر أعوان فرعون على الصندوق في النيل فأخذوه."},
+
+  /* ---------- الفهم والتحليل ---------- */
+  {cat:"comp", type:"order",
+   q:"رتّب أحداث القصة حسب تسلسلها في النص القرآني",
+   items:["قتل فرعون أبناء بني إسرائيل","إلقاء موسى – عليه السلام – في اليمّ","إنقاذ امرأة فرعون موسى – عليه السلام –","تتبّع أخت موسى – عليه السلام – له","رفض موسى – عليه السلام – المراضع","عودة موسى – عليه السلام – إلى أمّه"],
+   explain:"بدأت القصة بقتل فرعون أبناء بني إسرائيل، فألقت أم موسى ابنها في اليمّ، فأنقذته امرأة فرعون، وتتبّعته أخته، ثم رفض المراضع، فعاد إلى أمّه."},
+  {cat:"comp", type:"order",
+   q:"تباينت مشاعر أم موسى في النص. رتّب هذه المشاعر حسب تسلسل الأحداث",
+   items:["الخوف","الحزن","الطمأنينة","الفرح"],
+   explain:"الخوف: على ابنها من بطش فرعون · الحزن: لفراق ابنها بعد أن ألقته في اليمّ · الطمأنينة: لثقتها بوعد الله ﴿إِنَّا رَادُّوهُ إِلَيْكِ﴾ · الفرح: بعودة موسى إليها لترضعه."},
+  {cat:"comp", type:"mcq",
+   q:"التعليل الصحيح لقتل فرعون أبناء بني إسرائيل الذكور هو:",
+   options:["حماية ملكه من الأخطار","إخضاع المتمردين لسلطته","دفع بني إسرائيل إلى الهجرة","إرضاء الملأ من جنده وقومه"], answer:0,
+   explain:"كان فرعون يخشى أن يذهب ملكه على يد مولود من بني إسرائيل، فقتل أبناءهم الذكور حمايةً لملكه من الأخطار."},
+  {cat:"comp", type:"mcq", quranOpts:true,
+   q:"الآية التي تُعدّ دليلًا قاطعًا على تحقّق البشارة والوعد الإلهي لأم موسى هي:",
+   options:["﴿فَرَدَدْنَاهُ إِلَى أُمِّهِ كَيْ تَقَرَّ عَيْنُهَا وَلَا تَحْزَنَ وَلِتَعْلَمَ أَنَّ وَعْدَ اللَّهِ حَقٌّ﴾",
+            "﴿وَقَالَتْ لِأُخْتِهِ قُصِّيهِ فَبَصُرَتْ بِهِ عَنْ جُنُبٍ وَهُمْ لَا يَشْعُرُونَ﴾",
+            "﴿وَحَرَّمْنَا عَلَيْهِ الْمَرَاضِعَ مِنْ قَبْلُ فَقَالَتْ هَلْ أَدُلُّكُمْ عَلَى أَهْلِ بَيْتٍ يَكْفُلُونَهُ لَكُمْ﴾",
+            "﴿فَالْتَقَطَهُ آلُ فِرْعَوْنَ لِيَكُونَ لَهُمْ عَدُوًّا وَحَزَنًا﴾"], answer:0,
+   explain:"وعد الله أم موسى بقوله: ﴿إِنَّا رَادُّوهُ إِلَيْكِ﴾، فتحقّق الوعد حين ردّه إليها كي تقرّ عينها ولا تحزن، ولتعلم أن وعد الله حق."},
+  {cat:"comp", type:"mcq", quranOpts:true,
+   q:"نصرة المظلومين سُنّة ربانية لا تتخلف. الآية الكريمة التي تعبّر عن هذا المعنى هي:",
+   options:["﴿وَنُرِيدُ أَنْ نَمُنَّ عَلَى الَّذِينَ اسْتُضْعِفُوا فِي الْأَرْضِ وَنَجْعَلَهُمْ أَئِمَّةً وَنَجْعَلَهُمُ الْوَارِثِينَ﴾",
+            "﴿إِنَّ فِرْعَوْنَ عَلَا فِي الْأَرْضِ وَجَعَلَ أَهْلَهَا شِيَعًا يَسْتَضْعِفُ طَائِفَةً مِنْهُمْ يُذَبِّحُ أَبْنَاءَهُمْ﴾",
+            "﴿وَقَالَتِ امْرَأَتُ فِرْعَوْنَ قُرَّتُ عَيْنٍ لِي وَلَكَ لَا تَقْتُلُوهُ عَسَى أَنْ يَنْفَعَنَا أَوْ نَتَّخِذَهُ وَلَدًا﴾",
+            "﴿وَحَرَّمْنَا عَلَيْهِ الْمَرَاضِعَ مِنْ قَبْلُ فَقَالَتْ هَلْ أَدُلُّكُمْ عَلَى أَهْلِ بَيْتٍ يَكْفُلُونَهُ لَكُمْ﴾"], answer:0,
+   explain:"يريد الله أن يتفضّل على الذين استضعفهم فرعون في الأرض، فيجعلهم قادة في الخير ويجعلهم يرثون الأرض بعد هلاك فرعون وقومه."},
+  {cat:"comp", type:"mcq",
+   q:"من مظاهر الامتثال لأوامر الله تعالى في النص القرآني:",
+   options:["إلقاء أمّ موسى لطفلها في اليمّ","تتبّع أخت موسى لأخيها","طلب أمّ موسى من أخته البحث عنه","إرشاد أخت موسى إلى مرضع"], answer:0,
+   explain:"أمر الله أمّ موسى: ﴿فَأَلْقِيهِ فِي الْيَمِّ﴾ فامتثلت وألقته في اليمّ متوكّلة على الله، فحفظه الله وأعاده إليها."},
+
+  /* ---------- التذوق الجمالي ---------- */
+  {cat:"taste", type:"mcq",
+   q:"جاء التعبير بالأفعال المضارعة (يستضعف، يُذبِّح، يستحيي):",
+   ayah:"إِنَّ فِرْعَوْنَ عَلَا فِي الْأَرْضِ وَجَعَلَ أَهْلَهَا شِيَعًا يَسْتَضْعِفُ طَائِفَةً مِنْهُمْ يُذَبِّحُ أَبْنَاءَهُمْ وَيَسْتَحْيِي نِسَاءَهُمْ",
+   options:["لاستحضار الصورة المفزعة لجرائم فرعون وبيان تجدّدها واستمرارها","لبيان أن ظلم فرعون وطغيانه كان حدثًا عابرًا في الماضي وانتهى","للإشارة إلى أن فرعون سيتراجع عن هذه الأفعال في المستقبل","للتأكيد على ضعف بني إسرائيل وعدم قدرتهم على المقاومة في الماضي"], answer:0,
+   explain:"الفعل المضارع يدل على التجدّد والاستمرار، فيستحضر الصورة المفزعة لجرائم فرعون كأنها تحدث أمامنا."},
+  {cat:"taste", type:"mcq",
+   q:"تدل الكناية في الآية الكريمة على:",
+   ayah:"إِنَّ فِرْعَوْنَ عَلَا فِي الْأَرْضِ",
+   options:["طغيان فرعون","مكانة فرعون","قوة فرعون","بأس فرعون"], answer:0,
+   explain:"(علا في الأرض) كناية عن طغيان فرعون وتجبّره، فـ(علا) معناها: تجبّر وطغى."},
+  {cat:"taste", type:"mcq",
+   q:"استُخدم لفظ (خاطئين) دون لفظ (مخطئين) في وصف فرعون وهامان وجنودهما؛ لأنهم:",
+   ayah:"إِنَّ فِرْعَوْنَ وَهَامَانَ وَجُنُودَهُمَا كَانُوا خَاطِئِينَ",
+   options:["كانوا يتعمّدون ارتكاب الأخطاء","وقعوا في الخطأ عن سهو أو نسيان","وقعوا في الخطأ بلا قصد","ندموا على ما ارتكبوه من أخطاء"], answer:0,
+   explain:"خاطئين: تدل على من يتعمّدون فعل الخطأ. مخطئين: تدل على من يقعون في الخطأ بلا قصد أو عن سهو أو نسيان وجهل. ولأن فرعون وهامان وجنودهما كانوا متعمّدين، وصفهم الله تعالى بالخاطئين."},
+  {cat:"taste", type:"mcq",
+   q:"دلالة تلازم النهي عن الخوف والحزن في سياق الآية الكريمة:",
+   ayah:"فَإِذَا خِفْتِ عَلَيْهِ فَأَلْقِيهِ فِي الْيَمِّ وَلَا تَخَافِي وَلَا تَحْزَنِي",
+   options:["الرعاية الإلهية التي تحقّق الطمأنينة التامة لأم موسى","لوم أم موسى على خوفها وحزنها على ابنها","أن الخطر على موسى قد زال قبل أن تلقيه في اليمّ","التأكيد على عقاب فرعون وجنوده"], answer:0,
+   explain:"يدل على الرعاية الإلهية؛ فلا يجب عليها أن تخاف على ولدها من المستقبل، وألّا تحزن على ما مضى من فراقه، مما يحقّق الطمأنينة التامة لأم موسى."},
+  {cat:"taste", type:"match",
+   q:"صِلْ كل تعبير لغوي بدلالته السياقية في النص",
+   hint:"انتبه: في عمود الدلالات دلالة زائدة لا تنتمي لأيّ تعبير!",
+   pairs:[["تقرّ عينها","الفرح والسرور"],["ربطنا على قلبها","التثبيت والطمأنينة"]],
+   extra:["الخوف والحزن"],
+   explain:"(تقرّ عينها) تعبير لغوي يدل على الفرح والسرور، و(ربطنا على قلبها) يدل على التثبيت والطمأنينة. والتعبيرات اللغوية تراكيب محفوظة استقرّت في اللغة بصيغة ثابتة."},
+
+  /* ---------- القضايا اللغوية ---------- */
+  {cat:"lang", type:"mcq",
+   q:"الفعل الناسخ (أصبح) في الآية يدل على:",
+   ayah:"وَأَصْبَحَ فُؤَادُ أُمِّ مُوسَى فَارِغًا",
+   options:["التحوّل","الاستمرار","التمنّي","الثبات"], answer:0,
+   explain:"يدل الفعل (أصبح) على التحوّل من حالة الطمأنينة إلى حالة الفزع والخوف مما قد يحدث لولدها."},
+  {cat:"lang", type:"mcq",
+   q:"اعتمد النص القرآني في خطابه لأم موسى على أسلوب:",
+   ayah:"وَأَوْحَيْنَا إِلَى أُمِّ مُوسَى أَنْ أَرْضِعِيهِ فَإِذَا خِفْتِ عَلَيْهِ فَأَلْقِيهِ فِي الْيَمِّ وَلَا تَخَافِي وَلَا تَحْزَنِي",
+   options:["الأمر والنهي","الاستفهام والتعجّب","القسم والشرط","التمنّي والنداء"], answer:0,
+   explain:"الأمر في: ﴿أَرْضِعِيهِ﴾ و﴿فَأَلْقِيهِ﴾، والنهي في: ﴿وَلَا تَخَافِي وَلَا تَحْزَنِي﴾."},
+  {cat:"lang", type:"mcq",
+   q:"التعبير بالجملة الاسمية (أَنَّ وَعْدَ اللَّهِ حَقٌّ) في الآية الكريمة يدل على:",
+   ayah:"وَلِتَعْلَمَ أَنَّ وَعْدَ اللَّهِ حَقٌّ",
+   options:["الثبوت والاستقرار","التجدّد والحدوث","الشكّ والتردّد","الطلب والتمنّي"], answer:0,
+   explain:"يدل التعبير بالجملة الاسمية دائمًا على الثبوت والاستقرار؛ فوعد الله حقّ ثابت لا يتخلّف."},
+  {cat:"lang", type:"mcq",
+   q:"المجموعة اللفظية التي تكوّن حقلًا دلاليًا متجانسًا من المجموعات الآتية هي:",
+   options:["أبناءهم، نساءهم، أمّ، أخت","عين، شيعًا، فؤاد، قلب","فرعون، هامان، جنودهما، المراضع","تابوت، اليمّ، الأرض، خاطئين"], answer:0,
+   explain:"(أبناءهم، نساءهم، أمّ، أخت) ألفاظ تنتمي إلى حقل دلالي واحد هو الأسرة والقرابة، أما بقية المجموعات فألفاظها متفرقة لا يجمعها حقل واحد."}
+];
+
+/* =========================================================
+   أدوات مساعدة
+   ========================================================= */
+const $ = s => document.querySelector(s);
+const toAr = n => String(n).replace(/\d/g, d => "٠١٢٣٤٥٦٧٨٩"[d]);
+const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const shuffleNotSame = a => { if (a.length < 2) return a.slice(); let s; do { s = shuffle(a); } while (s.every((x, i) => x === a[i])); return s; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const LETTERS = ["أ","ب","ج","د"];
+const BASE_TIME = 30, LONG_TIME = 60, POINTS = 10, MAX_BONUS = 5;
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch(e){ return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+};
+
+/* ---------- الأصوات (مولّدة داخل المتصفح، دون ملفات خارجية) ---------- */
+let soundOn = store.get("qasas-sound", true);
+let actx = null;
+function audio(){ if (!actx) { try { actx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){} } if (actx && actx.state === "suspended") actx.resume(); return actx; }
+function tone(freq, start, dur, type = "sine", vol = .22){
+  const c = audio(); if (!c || !soundOn) return;
+  const o = c.createOscillator(), g = c.createGain(), t = c.currentTime + start;
+  o.type = type; o.frequency.setValueAtTime(freq, t);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + .02); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .05);
+}
+const sfx = {
+  correct(){ tone(523,0,.15); tone(659,.12,.15); tone(784,.24,.3); },
+  wrong(){ tone(220,0,.25,"sawtooth",.12); tone(165,.2,.35,"sawtooth",.12); },
+  click(){ tone(660,0,.07,"triangle",.12); },
+  tick(){ tone(990,0,.06,"square",.06); },
+  finish(){ [523,659,784,1047].forEach((f,i) => tone(f, i*.15, .35)); }
+};
+function refreshSoundButtons(){
+  document.querySelectorAll(".sound-toggle").forEach(b => {
+    const short = b.closest(".tools");
+    b.textContent = soundOn ? (short ? "🔊" : "🔊 الصوت") : (short ? "🔇" : "🔇 الصوت مغلق");
+  });
+}
+
+/* =========================================================
+   حالة اللعبة
+   ========================================================= */
+const S = { name:"", list:[], idx:0, score:0, results:[], timer:null, timeLeft:0, total:0, answered:false, cur:null };
+
+function buildList(){
+  const order = ["lex","comp","taste","lang"];
+  return order.flatMap(c => shuffle(QUESTIONS.filter(q => q.cat === c)));
+}
+
+function show(id){
+  ["start","quiz","result"].forEach(s => $("#"+s).classList.toggle("hidden", s !== id));
+  window.scrollTo(0,0);
+}
+
+function startGame(){
+  const name = $("#nameInput").value.trim();
+  if (!name) { $("#nameErr").textContent = "اكتب اسمك أولًا لتبدأ الرحلة ✍️"; $("#nameInput").focus(); return; }
+  $("#nameErr").textContent = "";
+  audio();
+  Object.assign(S, { name, list: buildList(), idx:0, score:0, results:[], answered:false });
+  $("#playerName").textContent = "👤 " + name;
+  updateScore(false);
+  show("quiz");
+  loadQuestion();
+}
+
+/* ---------- المحطات ---------- */
+function stationIntro(cat, done){
+  const c = CATS[cat];
+  $("#stIcon").textContent = c.icon;
+  $("#stNum").textContent = "المحطة " + toAr(c.n) + " من ٤";
+  $("#stName").textContent = c.name;
+  $("#stDesc").textContent = c.desc;
+  const ov = $("#stationOverlay");
+  ov.classList.remove("hidden");
+  sfx.click();
+  let closed = false;
+  const close = () => { if (closed) return; closed = true; ov.classList.add("hidden"); ov.onclick = null; done(); };
+  ov.onclick = close;
+  setTimeout(close, 1900);
+}
+
+/* ---------- عرض السؤال ---------- */
+function loadQuestion(){
+  const q = S.list[S.idx];
+  S.cur = q; S.answered = false;
+  const prev = S.list[S.idx - 1];
+  $("#progLabel").textContent = "السؤال " + toAr(S.idx + 1) + " من " + toAr(S.list.length);
+  $("#progBar").style.width = (S.idx / S.list.length * 100) + "%";
+  renderQuestion(q);
+  stopTimer(); setTimerDisplay(q.type === "mcq" ? BASE_TIME : LONG_TIME, q.type === "mcq" ? BASE_TIME : LONG_TIME);
+  if (!prev || prev.cat !== q.cat) stationIntro(q.cat, () => startTimer(q));
+  else startTimer(q);
+}
+
+function renderQuestion(q){
+  const c = CATS[q.cat];
+  let html = `<span class="badge">${c.icon} ${c.name}</span>
+    <div class="q-text">${esc(q.q)}</div>`;
+  if (q.ayah) html += `<div class="ayah">﴿${q.ayah}﴾</div>`;
+  if (q.type === "mcq") {
+    q._opts = shuffle(q.options.map((t,i) => ({t, ok: i === q.answer})));
+    const long = q.quranOpts || q._opts.some(o => o.t.length > 26);
+    html += `<p class="hint">اختر الإجابة الصحيحة (أو اضغط الرقم ١–٤ على لوحة المفاتيح)</p>
+      <div class="options ${long ? "single" : ""}">` +
+      q._opts.map((o,i) => `<button class="opt ${q.quranOpts ? "quran" : ""}" data-i="${i}"><span class="letter">${LETTERS[i]}</span><span class="txt">${esc(o.t)}</span><span class="mark"></span></button>`).join("") +
+      `</div>`;
+  } else if (q.type === "match") {
+    q._state = { sel:null, matched:0, mistakes:0 };
+    const words = shuffle(q.pairs.map((p,i) => ({t:p[0], k:i})));
+    const means = shuffle(q.pairs.map((p,i) => ({t:p[1], k:i})).concat((q.extra||[]).map(t => ({t, k:-1}))));
+    html += `<p class="hint">${q.hint ? esc(q.hint) + "<br>" : ""}اضغط على الكلمة، ثم على معناها المناسب.</p>
+      <div class="match">
+        <div class="mcol"><div class="col-title">الكلمة / التعبير</div>${words.map(w => `<button class="chip word" data-side="w" data-k="${w.k}">${esc(w.t)}</button>`).join("")}</div>
+        <div class="mcol"><div class="col-title">المعنى / الدلالة</div>${means.map(m => `<button class="chip mean" data-side="m" data-k="${m.k}">${esc(m.t)}</button>`).join("")}</div>
+      </div>`;
+  } else if (q.type === "order") {
+    q._placed = new Array(q.items.length).fill(null);
+    const pool = shuffleNotSame(q.items.map((t,i) => ({t, k:i})));
+    html += `<p class="hint">اضغط على العبارات بالترتيب الصحيح لتضعها في الخانات. اضغط على خانة ممتلئة لإرجاع عبارتها.</p>
+      <div class="order">
+        <div class="slots">${q.items.map((_,i) => `<div class="slot"><span class="num">${toAr(i+1)}</span><button class="place" data-slot="${i}"></button></div>`).join("")}</div>
+        <div class="pool">${pool.map(p => `<button class="chip" data-k="${p.k}">${esc(p.t)}</button>`).join("")}</div>
+      </div>
+      <div class="check-row"><button class="btn" id="checkOrder" disabled>تحقّق من الترتيب ✔</button></div>`;
+  }
+  html += `<div id="fbArea"></div>`;
+  $("#qCard").innerHTML = html;
+  bindQuestion(q);
+}
+
+function bindQuestion(q){
+  const card = $("#qCard");
+  if (q.type === "mcq") {
+    card.querySelectorAll(".opt").forEach(b => b.onclick = () => answerMcq(+b.dataset.i));
+  } else if (q.type === "match") {
+    card.querySelectorAll(".chip").forEach(b => b.onclick = () => matchClick(b));
+  } else if (q.type === "order") {
+    card.querySelectorAll(".pool .chip").forEach(b => b.onclick = () => orderPlace(b));
+    card.querySelectorAll(".place").forEach(b => b.onclick = () => orderRemove(+b.dataset.slot));
+    $("#checkOrder").onclick = () => finishOrder(false);
+  }
+}
+
+/* ---------- اختيار من متعدد ---------- */
+function answerMcq(i, timeout = false){
+  const q = S.cur; if (S.answered) return;
+  const bonus = stopTimer();
+  const btns = [...document.querySelectorAll(".opt")];
+  const ok = !timeout && q._opts[i].ok;
+  btns.forEach((b,j) => {
+    b.disabled = true;
+    if (q._opts[j].ok) { b.classList.add("correct"); b.querySelector(".mark").textContent = "✔"; }
+    else if (j === i) { b.classList.add("wrong"); b.querySelector(".mark").textContent = "✖"; }
+    else b.classList.add("dim");
+  });
+  const right = q._opts.find(o => o.ok).t;
+  finish({ ok, points: ok ? POINTS + bonus : 0, bonus: ok ? bonus : 0, timeout,
+    user: timeout ? "لم تُجب (انتهى الوقت)" : q._opts[i].t, right });
+}
+
+/* ---------- المطابقة ---------- */
+function matchClick(b){
+  const q = S.cur, st = q._state;
+  if (S.answered || b.classList.contains("done")) return;
+  sfx.click();
+  if (!st.sel || st.sel.dataset.side === b.dataset.side) {
+    if (st.sel) st.sel.classList.remove("sel");
+    st.sel = (st.sel === b) ? null : b;
+    if (st.sel) b.classList.add("sel");
+    return;
+  }
+  const a = st.sel; st.sel = null; a.classList.remove("sel");
+  if (a.dataset.k === b.dataset.k && a.dataset.k !== "-1") {
+    st.matched++;
+    [a,b].forEach(x => { x.classList.add("done"); x.disabled = true; x.insertAdjacentHTML("beforeend", `<span class="pairno">${toAr(st.matched)}</span>`); });
+    tone(784,0,.12);
+    if (st.matched === q.pairs.length) finishMatch(false);
+  } else {
+    st.mistakes++;
+    sfx.wrong();
+    [a,b].forEach(x => { x.classList.remove("shake"); void x.offsetWidth; x.classList.add("shake"); setTimeout(() => x.classList.remove("shake"), 500); });
+  }
+}
+function finishMatch(timeout){
+  const q = S.cur, st = q._state; if (S.answered) return;
+  const bonus = stopTimer();
+  document.querySelectorAll(".match .chip").forEach(x => { x.disabled = true; x.classList.remove("sel"); });
+  const ok = !timeout && st.mistakes === 0;
+  let points;
+  if (timeout) points = Math.round(st.matched / q.pairs.length * POINTS / 2);
+  else points = ok ? POINTS + bonus : Math.max(2, POINTS - 2 * st.mistakes);
+  const right = q.pairs.map(p => p[0] + " ← " + p[1]).join(" · ");
+  finish({ ok, points, bonus: ok ? bonus : 0, timeout, partial: !ok && points > 0,
+    user: timeout ? `انتهى الوقت بعد مطابقة ${toAr(st.matched)} من ${toAr(q.pairs.length)}` : `أكملت المطابقة مع ${toAr(st.mistakes)} محاولة خاطئة`,
+    right, extraMsg: !timeout && st.mistakes ? `حاولت ${toAr(st.mistakes)} مرة خطأ قبل الوصول إلى المطابقة الكاملة.` : "" });
+}
+
+/* ---------- الترتيب ---------- */
+function orderPlace(b){
+  const q = S.cur; if (S.answered) return;
+  const slot = q._placed.indexOf(null); if (slot < 0) return;
+  sfx.click();
+  q._placed[slot] = +b.dataset.k;
+  b.classList.add("used");
+  renderSlots();
+}
+function orderRemove(slot){
+  const q = S.cur; if (S.answered || q._placed[slot] === null) return;
+  sfx.click();
+  const k = q._placed[slot]; q._placed[slot] = null;
+  document.querySelector(`.pool .chip[data-k="${k}"]`).classList.remove("used");
+  renderSlots();
+}
+function renderSlots(){
+  const q = S.cur;
+  document.querySelectorAll(".place").forEach((p,i) => {
+    const k = q._placed[i];
+    p.textContent = k === null ? "" : q.items[k];
+    p.classList.toggle("filled", k !== null);
+  });
+  $("#checkOrder").disabled = q._placed.includes(null);
+}
+function finishOrder(timeout){
+  const q = S.cur; if (S.answered) return;
+  const bonus = stopTimer();
+  let good = 0;
+  document.querySelectorAll(".place").forEach((p,i) => {
+    p.disabled = true;
+    if (q._placed[i] === null) { p.classList.add("no"); return; }
+    const right = q._placed[i] === i; if (right) good++;
+    p.classList.add(right ? "ok" : "no");
+    p.textContent = (right ? "✔ " : "✖ ") + q.items[q._placed[i]];
+  });
+  document.querySelectorAll(".pool .chip").forEach(c => c.disabled = true);
+  $("#checkOrder").disabled = true;
+  const n = q.items.length, ok = !timeout && good === n;
+  const points = ok ? POINTS + bonus : Math.round(good / n * POINTS * (timeout ? .5 : 1));
+  finish({ ok, points, bonus: ok ? bonus : 0, timeout, partial: !ok && points > 0,
+    user: `${toAr(good)} من ${toAr(n)} في مكانها الصحيح`,
+    right: q.items.join(" ← "),
+    orderList: q.items, extraMsg: !ok ? `رتّبت ${toAr(good)} من ${toAr(n)} في مكانها الصحيح.` : "" });
+}
+
+/* ---------- التغذية الراجعة ---------- */
+function finish(r){
+  const q = S.cur;
+  S.answered = true;
+  S.score += r.points;
+  S.results.push({ q, ...r });
+  updateScore(r.points > 0);
+  r.ok ? sfx.correct() : sfx.wrong();
+
+  const praise = ["أحسنت! 🌟","إجابة رائعة! 👏","ممتاز! ✔","بارك الله فيك! 🌟"];
+  let title;
+  if (r.timeout) title = "⏰ انتهى الوقت!";
+  else if (r.ok) title = praise[Math.floor(Math.random() * praise.length)];
+  else if (r.partial) title = "إجابة صحيحة جزئيًا 🟡";
+  else title = "إجابة غير صحيحة ✖";
+
+  let body = "";
+  if (r.extraMsg) body += `<p>${r.extraMsg}</p>`;
+  if (!r.ok && q.type === "mcq") body += `<p>الإجابة الصحيحة: <span class="right">${esc(r.right)}</span></p>`;
+  if (!r.ok && q.type === "order") body += `<p>الترتيب الصحيح:</p><ol>${r.orderList.map(t => `<li class="right">${esc(t)}</li>`).join("")}</ol>`;
+  if (!r.ok && q.type === "match" && r.timeout) {
+    revealMatch();
+    body += `<p>المطابقة الصحيحة: <span class="right">${esc(r.right)}</span></p>`;
+  }
+  body += `<p>💡 ${esc(q.explain)}</p>`;
+  const pts = r.points > 0 ? `<span class="points-fly">+${toAr(r.points)} نقطة${r.bonus ? ` (منها ${toAr(r.bonus)} للسرعة ⚡)` : ""}</span>` : "";
+  const last = S.idx === S.list.length - 1;
+  $("#fbArea").innerHTML = `
+    <div class="feedback ${r.ok ? "ok" : r.partial ? "part" : "bad"}"><h3>${title} ${pts}</h3>${body}</div>
+    <div class="next-row"><button class="btn gold" id="nextBtn">${last ? "عرض النتيجة 🏁" : "السؤال التالي ◀"}</button></div>`;
+  $("#nextBtn").onclick = next;
+  $("#nextBtn").focus({preventScroll:true});
+  $("#fbArea").scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+function revealMatch(){
+  // إظهار الأزواج غير المطابقة بإطار متقطع ورقم
+  const q = S.cur; let n = q._state.matched;
+  q.pairs.forEach((_,k) => {
+    const w = document.querySelector(`.chip.word[data-k="${k}"]`);
+    if (w.classList.contains("done")) return;
+    const m = document.querySelector(`.chip.mean[data-k="${k}"]`);
+    n++;
+    [w,m].forEach(x => { x.classList.add("reveal"); x.insertAdjacentHTML("beforeend", `<span class="pairno">${toAr(n)}</span>`); });
+  });
+}
+function next(){
+  if (S.idx < S.list.length - 1) { S.idx++; loadQuestion(); }
+  else showResult();
+}
+function updateScore(bump){
+  const b = $("#scoreBox");
+  b.textContent = "⭐ " + toAr(S.score);
+  if (bump) { b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); }
+}
+
+/* ---------- المؤقت ---------- */
+const CIRC = 2 * Math.PI * 42;
+function setTimerDisplay(left, total){
+  const ring = $("#ring");
+  ring.style.strokeDasharray = CIRC;
+  ring.style.strokeDashoffset = CIRC * (1 - left / total);
+  $("#timeText").textContent = toAr(left);
+  $("#timer").classList.toggle("warn", left <= 10);
+}
+function startTimer(q){
+  S.total = q.type === "mcq" ? BASE_TIME : LONG_TIME;
+  S.timeLeft = S.total;
+  setTimerDisplay(S.timeLeft, S.total);
+  S.timer = setInterval(() => {
+    if (S.answered) return stopTimer();
+    S.timeLeft--;
+    setTimerDisplay(S.timeLeft, S.total);
+    if (S.timeLeft <= 5 && S.timeLeft > 0) sfx.tick();
+    if (S.timeLeft <= 0) {
+      stopTimer();
+      if (q.type === "mcq") answerMcq(-1, true);
+      else if (q.type === "match") finishMatch(true);
+      else finishOrder(true);
+    }
+  }, 1000);
+}
+function stopTimer(){
+  if (S.timer) { clearInterval(S.timer); S.timer = null; }
+  return Math.max(0, Math.ceil(S.timeLeft / (S.total || 1) * MAX_BONUS));
+}
+
+/* =========================================================
+   شاشة النتيجة
+   ========================================================= */
+function showResult(){
+  stopTimer();
+  $("#progBar").style.width = "100%";
+  const total = S.results.length;
+  const correct = S.results.filter(r => r.ok).length;
+  const pct = Math.round(correct / total * 100);
+  const stars = pct >= 90 ? 3 : pct >= 70 ? 2 : pct >= 50 ? 1 : 0;
+  const msg = pct >= 90 ? "ممتاز! أنت من أولي الألباب الذين يعتبرون بقصص القرآن 🌟"
+            : pct >= 70 ? "أحسنت! فهمك للنص جيد جدًا، راجع الأخطاء القليلة أدناه."
+            : pct >= 50 ? "جيد، تحتاج إلى مراجعة بعض جوانب الدرس."
+            : "لا بأس، عُد إلى النص وتفسيره ثم حاول مجددًا؛ فالمحاولة طريق الإتقان.";
+  const maxScore = total * (POINTS + MAX_BONUS);
+
+  const catRows = Object.entries(CATS).map(([k,c]) => {
+    const rs = S.results.filter(r => r.q.cat === k), ok = rs.filter(r => r.ok).length;
+    return `<div class="cat-stat">${c.icon} ${c.name}: ${toAr(ok)} / ${toAr(rs.length)}
+      <div class="bar"><div style="width:${rs.length ? ok/rs.length*100 : 0}%"></div></div></div>`;
+  }).join("");
+
+  const wrong = S.results.filter(r => !r.ok);
+  const review = wrong.length ? `<div class="review"><h3>📝 راجع هذه الأسئلة</h3>` + wrong.map(r => `
+      <div class="rv">
+        <div class="rq">${CATS[r.q.cat].icon} ${esc(r.q.q)}</div>
+        <div class="ru">إجابتك: ${esc(r.user)}</div>
+        <div class="rc">الصحيح: ${esc(r.right)}</div>
+        <div class="re">💡 ${esc(r.q.explain)}</div>
+      </div>`).join("") + `</div>`
+    : `<p class="msg">🎉 لم تخطئ في أي سؤال!</p>`;
+
+  $("#resultCard").innerHTML = `
+    <h2>نتيجة ${esc(S.name)}</h2>
+    <div class="stars">${[0,1,2].map(i => `<span class="${i < stars ? "" : "off"}">⭐</span>`).join("")}</div>
+    <div class="big-score">
+      <div class="stat"><b>${toAr(S.score)}</b><span>النقاط من ${toAr(maxScore)}</span></div>
+      <div class="stat"><b>${toAr(correct)} / ${toAr(total)}</b><span>إجابات صحيحة</span></div>
+      <div class="stat"><b>٪${toAr(pct)}</b><span>النسبة</span></div>
+    </div>
+    <p class="msg">${msg}</p>
+    <div class="cats">${catRows}</div>
+    <div class="result-actions">
+      <button class="btn gold" id="againBtn">🔁 العب مجددًا</button>
+      <button class="btn light" id="newPlayerBtn">👤 طالب جديد</button>
+      <button class="btn light" data-open="board">🏆 أفضل النتائج</button>
+    </div>
+    ${review}`;
+  $("#againBtn").onclick = () => { $("#nameInput").value = S.name; startGame(); };
+  $("#newPlayerBtn").onclick = () => { $("#nameInput").value = ""; show("start"); $("#nameInput").focus(); };
+  bindOpeners($("#resultCard"));
+  saveScore({ name:S.name, score:S.score, correct, total });
+  show("result");
+  sfx.finish();
+}
+
+/* ---------- لوحة أفضل النتائج ---------- */
+function saveScore(e){
+  const list = store.get("qasas-top5", []);
+  list.push({ ...e, t: Date.now() });
+  list.sort((a,b) => b.score - a.score || b.correct - a.correct || a.t - b.t);
+  store.set("qasas-top5", list.slice(0,5));
+}
+function renderBoard(){
+  const list = store.get("qasas-top5", []);
+  const medals = ["🥇","🥈","🥉","٤","٥"];
+  $("#boardBody").innerHTML = list.length
+    ? `<table class="board"><tr><th>المركز</th><th>الاسم</th><th>النقاط</th><th>الصحيحة</th></tr>` +
+      list.map((e,i) => `<tr><td>${medals[i]}</td><td>${esc(e.name)}</td><td>${toAr(e.score)}</td><td>${toAr(e.correct)} / ${toAr(e.total)}</td></tr>`).join("") + `</table>`
+    : `<div class="empty">لا توجد نتائج بعد. كن أول من يسجّل نتيجته! 🏁</div>`;
+}
+
+/* ---------- النوافذ ---------- */
+function openModal(which){
+  if (which === "board") renderBoard();
+  $("#" + which + "Modal").classList.remove("hidden");
+}
+function bindOpeners(root){ root.querySelectorAll("[data-open]").forEach(b => b.onclick = () => openModal(b.dataset.open)); }
+document.querySelectorAll(".overlay [data-close]").forEach(b => b.onclick = () => b.closest(".overlay").classList.add("hidden"));
+["versesModal","boardModal"].forEach(id => $("#"+id).addEventListener("click", e => { if (e.target.id === id) e.target.classList.add("hidden"); }));
+
+$("#versesBody").innerHTML = `<p class="basmala">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</p><p>` +
+  VERSES.map((v,i) => `${v} <span class="vn">﴿${toAr(i+1)}﴾</span>`).join(" ") + `</p>`;
+
+/* ---------- الأزرار العامة ولوحة المفاتيح ---------- */
+bindOpeners(document);
+$("#startBtn").onclick = startGame;
+$("#nameInput").addEventListener("keydown", e => { if (e.key === "Enter") startGame(); });
+$("#homeBtn").onclick = () => { if (confirm("هل تريد الخروج من اللعبة والعودة إلى البداية؟")) { stopTimer(); S.answered = true; show("start"); } };
+$("#clearBoard").onclick = () => { if (confirm("مسح جميع النتائج المحفوظة؟")) { store.set("qasas-top5", []); renderBoard(); } };
+document.querySelectorAll(".sound-toggle").forEach(b => b.onclick = () => { soundOn = !soundOn; store.set("qasas-sound", soundOn); refreshSoundButtons(); if (soundOn) sfx.click(); });
+document.querySelectorAll(".fs-toggle").forEach(b => b.onclick = () => {
+  try { document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen(); } catch(e){}
+});
+refreshSoundButtons();
+
+document.addEventListener("keydown", e => {
+  if ($("#quiz").classList.contains("hidden")) return;
+  if (!$("#versesModal").classList.contains("hidden") || !$("#boardModal").classList.contains("hidden")) {
+    if (e.key === "Escape") document.querySelectorAll(".overlay").forEach(o => o.classList.add("hidden"));
+    return;
+  }
+  const q = S.cur;
+  if (!S.answered && q && q.type === "mcq") {
+    const map = {"1":0,"2":1,"3":2,"4":3,"١":0,"٢":1,"٣":2,"٤":3};
+    if (e.key in map && $("#stationOverlay").classList.contains("hidden")) answerMcq(map[e.key]);
+  } else if (S.answered && (e.key === "Enter" || e.key === " ") && $("#nextBtn") && document.activeElement !== $("#nextBtn")) {
+    e.preventDefault(); next();
+  }
+});
+</script>
+</body>
+</html>
