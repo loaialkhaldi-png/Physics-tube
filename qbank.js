@@ -1,7 +1,7 @@
 'use strict';
 /* بنك الأسئلة التفاعلي: مسار الفصول والدروس، جولات بكل أنواع الأسئلة، إتقان ومراجعة ذكية، تحدي الدقيقة، وهدف يومي.
    Loaded after the main script and games.js, so it uses: store, S, G, go, render, transition, toast, esc, icon, qtext, ring, starStr,
-   addXP, track, shareCard, navBar, SFX. Questions come from bank-g11.js (window.BANK_G11) and bank-g12.js (window.BANK_G12). */
+   addXP, track, shareCard, navBar, SFX. Questions come from bank-g10.js (window.BANK_G10), bank-g11.js (window.BANK_G11) and bank-g12.js (window.BANK_G12). */
 const QB_SRC = 'من بنك الأسئلة — التوجيه الفني العام للعلوم 2025–2026';
 const QB_GOAL = 20, QB_ROUND = 10, QB_SPRINT = 60;
 const QB_KIND = { term: 'المصطلح العلمي', tf: 'صح أم خطأ', fill: 'أكمل الفراغ', mcq: 'اختر الإجابة', num: 'مسألة', card: 'بطاقة مراجعة' };
@@ -11,7 +11,9 @@ let QBD = store.get('qbd', {});   // day → number of answered questions
 let QBR = store.get('qbr', {});   // records: { sprint: best }
 const QB = { s: null, timer: 0 };
 
-const qbBank = () => ({ g11: window.BANK_G11, g12: window.BANK_G12 })[S.grade] || null;
+const qbBank = () => ({ g10: window.BANK_G10, g11: window.BANK_G11, g12: window.BANK_G12 })[S.grade] || null;
+const qbSrc = () => S.grade === 'g10' && window.BANK_G10_SRC ? window.BANK_G10_SRC : QB_SRC;
+const qbTerm = () => S.grade === 'g10' ? 'الفصل الدراسي الأول' : 'الفترة الأولى';
 const qbPre = () => S.grade === 'g11' ? '' : S.grade.slice(1) + ':';   // keeps each grade's progress apart
 const qbRK = () => S.grade === 'g11' ? 'sprint' : 'sprint' + S.grade;
 const qbAll = () => { const B = qbBank(); return B ? B.flatMap((c, ci) => c.ls.flatMap(l => l.qs.map((q, i) => ({ q, id: `${qbPre()}${l.id}.${i}`, l, c, ci })))) : []; };
@@ -96,11 +98,11 @@ function qbFinish() {
 
 /* ---------- Views ---------- */
 function vBank() {
-  const B = qbBank(); if (!B) return `<div class="view push">${navBar()}<div class="live-msg"><div class="em">🏦</div><h1>بنك الأسئلة متاح للصفين الحادي عشر والثاني عشر</h1></div></div>`;
+  const B = qbBank(); if (!B) return `<div class="view push">${navBar()}<div class="live-msg"><div class="em">🏦</div><h1>بنك الأسئلة متاح للصفوف العاشر والحادي عشر والثاني عشر</h1></div></div>`;
   const all = qbAll(), st = qbStats(all), today = qbToday(), streak = qbStreak();
   return `<div class="view push qbank">${navBar()}
     <section class="qb-hero">
-      <div class="qb-hero-t"><small>${esc(G().name)} · الفترة الأولى</small><h1>بنك الأسئلة</h1><p>${all.length} سؤالاً ${esc(QB_SRC.replace('من ', 'من '))}</p></div>
+      <div class="qb-hero-t"><small>${esc(G().name)} · ${qbTerm()}</small><h1>بنك الأسئلة</h1><p>${all.length} سؤالاً ${esc(qbSrc())}</p></div>
       <div class="qb-rings">
         <span class="qb-r">${ring(qbPct(st), 92, '#2BD4B0', 9)}<b>${qbPct(st)}%</b><small>إتقان</small></span>
         <span class="qb-r">${ring(Math.min(100, today / QB_GOAL * 100), 92, '#FFB020', 9)}<b>${Math.min(today, 99)}/${QB_GOAL}</b><small>هدف اليوم</small></span>
@@ -122,7 +124,7 @@ function vBank() {
           <span class="go">${icon('chev')}</span></button>`; }).join('')}</div>
       <button class="qb-test" data-act="qb-start" data-m="chapter" data-s="${ci}">📝 اختبار الفصل (15 سؤالاً)</button>
     </section>`; }).join('')}
-    <p class="hint">الأسئلة والإجابات ${esc(QB_SRC)}. السؤال الذي تخطئ فيه يعود إليك أكثر حتى تتقنه.</p>
+    <p class="hint">الأسئلة والإجابات ${esc(qbSrc())}. السؤال الذي تخطئ فيه يعود إليك أكثر حتى تتقنه.</p>
   </div>`;
 }
 function qbQuestionHTML(x, a) {
