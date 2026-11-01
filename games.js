@@ -102,6 +102,18 @@ function startGame(id, i) {
   GPLAY = st;
   simStop = () => { cancelAnimationFrame(raf); GPLAY = null; };
 }
+// Finger control: set a level control from the canvas (the slider follows), and map a pointer to canvas units.
+function gSet(st, id, v) {
+  const k = (st.g.controls ? st.g.controls(st.L) : []).find(c => c.id === id), el = document.getElementById('gc-' + id); if (!k || !el) return;
+  v = +(Math.round(Math.min(k.max, Math.max(k.min, v)) / k.step) * k.step).toFixed(4); if (+el.value !== v) { el.value = v; el.oninput(); }
+}
+const gPt = (cv, e) => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 800, (e.clientY - r.top) / r.height * 500]; };
+function gDrag(cv, st, move) {
+  cv.style.touchAction = 'none';
+  cv.onpointerdown = e => { if (st.phase !== 'aim') return; st.drag = true; try { cv.setPointerCapture(e.pointerId); } catch (_) {} SFX.init(); move(...gPt(cv, e)); };
+  cv.onpointermove = e => { if (st.drag) move(...gPt(cv, e)); };
+  cv.onpointerup = cv.onpointercancel = () => { if (st.drag) { st.drag = false; SFX.play('pop'); } };
+}
 function gLock(on) { document.querySelectorAll('.view input[type=range]').forEach(x => { x.disabled = on; }); const b = document.getElementById('g-bar'); if (b) b.style.display = on ? 'none' : ''; }
 function gGo() {
   const st = GPLAY; if (!st || st.phase !== 'aim') return;
@@ -267,6 +279,7 @@ const EGG = {
   init(st, P, L) { st.cx = -Math.max(P.x || 5, 5) - L.v * 1.5; st.ey = L.h; st.ev = 0; st.dropped = false; st.landed = false; st.splat = false; st.tDrop = 0; st.bounce = 0; st.cam = 0; },
   launch(st, P, L) { st.cx = -P.x - L.v * 1.5; st.ey = L.h; st.ev = 0; st.dropped = false; st.landed = false; st.splat = false; st.tDrop = 0; },
   sxF: (x) => 640 + x * 24,
+  pointer(cv, st) { gDrag(cv, st, x => gSet(st, 'x', (640 - x) / 24)); },
   sy(st, L, y) { return 420 - y * (330 / L.h); },
   update(st, dt, P, L) {
     st.cx += L.v * dt;
@@ -305,6 +318,7 @@ const EGG = {
     for (let m = 0; m <= 20; m += 2) { const x = X(-m); if (x < 0) break; c.fillStyle = 'rgba(255,255,255,.35)'; c.fillRect(x - 1, 440, 2, m % 10 ? 8 : 14); if (m % 4 === 0) gtx(c, `${m}`, x, 468, 'rgba(255,255,255,.6)', 'center', 12, 600); }
     gtx(c, 'm', 20, 468, 'rgba(255,255,255,.6)', 'center', 12, 600);
     if (st.phase === 'aim') { c.strokeStyle = '#FFD23F'; c.setLineDash([6, 6]); c.lineWidth = 2; c.beginPath(); c.moveTo(X(-P.x), 300); c.lineTo(X(-P.x), 430); c.stroke(); c.setLineDash([]); pill(c, `x = ${P.x.toFixed(1)} m`, X(-P.x), 290, '#FFD23F', '#2A1A00'); }
+    if (st.phase === 'aim') pill(c, 'اسحب بإصبعك على الطريق لتحريك العلامة الصفراء', 300, 84, 'rgba(0,0,0,.4)', '#fff', 13);
     // drop line
     c.strokeStyle = 'rgba(255,255,255,.25)'; c.setLineDash([4, 8]); c.beginPath(); c.moveTo(X(0), top + 10); c.lineTo(X(0), 420); c.stroke(); c.setLineDash([]);
     // cart
@@ -349,6 +363,10 @@ const CANNON = {
   go: '💥 أطلق',
   init(st) { st.ball = null; st.trails = []; st.hits = []; st.towerDown = 0; st.shots = 0; st.flag = 0; },
   X: x => 60 + x * 10, Y: y => 440 - y * 10,
+  pointer(cv, st) {
+    gDrag(cv, st, (x, y) => { const L = st.L, cx = this.X(0), cy = this.Y((L.cliff || 0) + 1.2), dx = x - cx, dy = cy - y; if (dx < 4) return;
+      gSet(st, 'th', Math.atan2(dy, dx) * 180 / Math.PI); gSet(st, 'v', 5 + (Math.hypot(dx, dy) - 60) / 11); });
+  },
   launch(st, P, L) { st.shots++; st.ball = { t: 0, trail: [], th: P.th, v: P.v }; st.towerDown = 0; SFX.play('shoot'); st.shake = 4;
     burst(st, this.X(1.6 * Math.cos(P.th * Math.PI / 180)), this.Y((L.cliff || 0) + 1.2 + 1.6 * Math.sin(P.th * Math.PI / 180)), 14, { cols: ['#d0d4dc', '#9aa0aa'], sp: 50, up: 20, life: 1.2, r: 8, g: -20, kind: 'smoke' }); },
   update(st, dt, P, L) {
@@ -400,7 +418,7 @@ const CANNON = {
     const a = (st.ball ? st.ball.th : P.th) * Math.PI / 180, cx = X(0), cy = Y(cl + 1.2);
     c.save(); c.translate(cx, cy); c.rotate(-a);
     const bg = c.createLinearGradient(0, -8, 0, 8); bg.addColorStop(0, '#5A5F6B'); bg.addColorStop(1, '#23262E'); c.fillStyle = bg; rr(c, -6, -8, 40, 16, 6); c.fill(); c.fillStyle = '#16181D'; c.fillRect(30, -9, 6, 18);
-    if (st.phase === 'aim') { c.strokeStyle = 'rgba(255,210,63,.7)'; c.setLineDash([5, 6]); c.lineWidth = 2; c.beginPath(); c.moveTo(40, 0); c.lineTo(90, 0); c.stroke(); c.setLineDash([]); }
+    if (st.phase === 'aim') { c.strokeStyle = 'rgba(255,210,63,.75)'; c.setLineDash([5, 6]); c.lineWidth = 2.5; c.beginPath(); c.moveTo(40, 0); c.lineTo(60 + (P.v - 5) * 11, 0); c.stroke(); c.setLineDash([]); c.fillStyle = 'rgba(255,210,63,.9)'; c.beginPath(); c.arc(60 + (P.v - 5) * 11, 0, 6, 0, 7); c.fill(); }
     c.restore();
     c.fillStyle = '#6B4423'; c.beginPath(); c.arc(cx - 2, cy + 6, 10, 0, 7); c.fill(); c.strokeStyle = '#3D2612'; c.lineWidth = 2; c.stroke();
     // ball and trail
@@ -408,7 +426,8 @@ const CANNON = {
       const tr = st.ball.trail; c.strokeStyle = 'rgba(255,200,61,.55)'; c.lineWidth = 3; c.beginPath(); tr.forEach(([x, y], k) => k ? c.lineTo(X(x), Y(y)) : c.moveTo(X(x), Y(y))); c.stroke();
       c.fillStyle = '#1B1D22'; c.shadowColor = 'rgba(255,170,60,.8)'; c.shadowBlur = 12; c.beginPath(); c.arc(X(st.ball.x), Y(st.ball.y), 6, 0, 7); c.fill(); c.shadowBlur = 0;
     }
-    pill(c, `θ = ${P.th}°`, 70, 34, 'rgba(0,0,0,.4)'); pill(c, `v₀ = ${P.v.toFixed(1)} m/s`, 190, 34, 'rgba(0,0,0,.4)'); pill(c, `القذائف: ${st.shots}`, 720, 34, 'rgba(0,0,0,.4)', '#FFD23F');
+    pill(c, `θ = ${P.th}°`, 70, 34, 'rgba(0,0,0,.4)'); pill(c, `v₀ = ${P.v.toFixed(1)} m/s`, 190, 34, 'rgba(0,0,0,.4)');
+    if (st.phase === 'aim' && !st.shots) pill(c, 'اسحب بإصبعك أمام المدفع: الاتجاه هو الزاوية، والبُعد هو السرعة', 400, 82, 'rgba(0,0,0,.45)', '#fff', 13); pill(c, `القذائف: ${st.shots}`, 720, 34, 'rgba(0,0,0,.4)', '#FFD23F');
   },
 };
 
@@ -426,6 +445,7 @@ const BOAT = {
   hint: L => 'السرعة المحصلة = سرعة الزورق + سرعة التيار (جمع متجهات). إذا وجّهت الزورق بزاوية φ عكس التيار: <code>vx = u − v·sinφ</code> و <code>vy = v·cosφ</code>.<br>زمن العبور <code>t = W / vy</code>، والانحراف <code>Δx = vx·t</code>.' + (L.D === 0 ? '<br>للوصول إلى المقابل تماماً يجب أن تكون <code>vx = 0</code> أي <code>sinφ = u / v</code>.' : ''),
   controls: () => [{ id: 'phi', label: 'زاوية التوجيه φ (موجبة = عكس التيار)', min: -60, max: 60, step: 1, v: 0, unit: '°' }],
   go: '⛵ أبحر',
+  pointer(cv, st) { gDrag(cv, st, (x, y) => { const dx = x - st.ox, dy = 420 - y; if (dy < 12) return; gSet(st, 'phi', Math.atan2(-dx, dy) * 180 / Math.PI); }); },
   init(st, P, L) { st.bx = 0; st.by = 0; st.wake = []; st.k = 300 / L.W; st.ox = Math.max(140, Math.min(660, 400 - (L.D * st.k) / 2)); },
   launch(st) { st.bx = 0; st.by = 0; },
   update(st, dt, P, L) {
@@ -474,6 +494,7 @@ const BOAT = {
     arrow(x0, y0, x0 + L.u * s, y0, '#32D17A', 'u');
     if (st.phase !== 'aim') arrow(x0, y0, x0 + (bvx + L.u) * s, y0 - bvy * s, '#FFA53A', 'R');
     pill(c, `φ = ${P.phi}°`, 70, 470, 'rgba(0,0,0,.45)');
+    if (st.phase === 'aim') gtx(c, 'وجّه الزورق بإصبعك: اسحب في الاتجاه الذي تريده', 470, 476, 'rgba(255,255,255,.85)', 'center', 13);
   },
 };
 
