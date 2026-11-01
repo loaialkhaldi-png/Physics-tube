@@ -934,6 +934,65 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
   .sheet .grab { display: none; }
   .toast { bottom: 40px; }
 }
+/* Question bank (grade 11) */
+.qb-entry { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 16px; padding: 16px; border-radius: var(--r-md); text-align: right; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 100%, rgba(43,212,176,.5), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(255,176,32,.42), transparent 60%), #0B1A1E; border: 1px solid rgba(43,212,176,.35); }
+.qb-entry:active { transform: scale(.98); }
+.qb-entry .gi { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.14); font-size: 28px; flex: none; }
+.qb-entry .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .qb-entry .t b { font-size: 18px; } .qb-entry .t small { color: rgba(255,255,255,.78); font-size: 13px; }
+.qb-entry .qb-go { color: #0B1A1E; }
+.qb-hero { margin-top: 8px; padding: 22px 18px; border-radius: var(--r-lg); position: relative; overflow: hidden;
+  background: radial-gradient(120% 120% at 100% 0%, rgba(43,212,176,.38), transparent 60%), radial-gradient(110% 120% at 0% 100%, rgba(255,176,32,.32), transparent 60%), #0E1418; border: 1px solid rgba(255,255,255,.1); }
+.qb-hero-t small { color: rgba(255,255,255,.7); font-size: 13px; } .qb-hero-t h1 { margin: 4px 0 4px; font-size: 32px; font-weight: 800; } .qb-hero-t p { margin: 0; color: rgba(255,255,255,.75); font-size: 14px; }
+.qb-rings { display: flex; justify-content: space-around; gap: 8px; margin-top: 18px; }
+.qb-r { position: relative; width: 92px; height: 92px; display: grid; place-items: center; align-content: center; text-align: center; }
+.qb-r .ring { position: absolute; inset: 0; } .qb-r b { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.1; } .qb-r small { color: rgba(255,255,255,.7); font-size: 11px; }
+.qb-r.flame { border-radius: 50%; background: rgba(255,255,255,.06); border: 9px solid rgba(255,255,255,.1); box-sizing: border-box; }
+.qb-r.flame .fl { font-size: 20px; line-height: 1; filter: grayscale(1); opacity: .5; }
+.qb-r.flame.on { border-color: rgba(255,122,40,.55); } .qb-r.flame.on .fl { filter: none; opacity: 1; animation: qbFlame 1.4s ease-in-out infinite; }
+@keyframes qbFlame { 0%, 100% { transform: scale(1) rotate(-4deg); } 50% { transform: scale(1.18) rotate(4deg); } }
+.qb-quick { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 14px; }
+.qb-quick button { display: grid; justify-items: center; gap: 3px; padding: 14px 8px; border-radius: var(--r-md); text-align: center; background: linear-gradient(170deg, color-mix(in srgb, var(--c) 30%, transparent), var(--surface)); border: 1px solid color-mix(in srgb, var(--c) 45%, transparent); }
+.qb-quick button:active { transform: scale(.96); }
+.qb-quick span { font-size: 26px; } .qb-quick b { font-size: 14px; } .qb-quick small { color: var(--muted); font-size: 11px; line-height: 1.35; }
+.qb-ch { margin-top: 18px; padding: 16px; border-radius: var(--r-lg); background: radial-gradient(120% 90% at 100% 0%, var(--g1), transparent 60%), linear-gradient(170deg, var(--g2), #0A0B0F 75%); border: 1px solid rgba(255,255,255,.12); }
+.qb-ch-h { display: flex; align-items: center; gap: 12px; }
+.qb-ch-h .ic { width: 48px; height: 48px; border-radius: 15px; display: grid; place-items: center; background: rgba(255,255,255,.14); font-size: 26px; flex: none; }
+.qb-ch-h .t { flex: 1; display: grid; } .qb-ch-h .t small { color: rgba(255,255,255,.7); font-size: 12px; } .qb-ch-h .t b { font-size: 19px; }
+.qb-ch-h .pc { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.qb-bar { height: 8px; margin: 12px 0 4px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+.qb-bar i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #FFD23F, #2BD4B0); transition: width .6s; }
+.qb-ls { display: grid; gap: 8px; margin-top: 10px; }
+.qb-l { display: flex; align-items: center; gap: 12px; width: 100%; padding: 10px 12px; border-radius: 18px; text-align: right; background: rgba(0,0,0,.28); border: 1px solid rgba(255,255,255,.08); }
+.qb-l:active { transform: scale(.98); } .qb-l.full { border-color: rgba(255,210,63,.55); background: rgba(255,210,63,.1); }
+.qb-lr { position: relative; width: 56px; height: 56px; display: grid; place-items: center; flex: none; }
+.qb-lr .ring { position: absolute; inset: 0; } .qb-lr b { font-size: 13px; font-weight: 800; }
+.qb-l .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .qb-l .t small { color: rgba(255,255,255,.6); font-size: 12px; } .qb-l .t b { font-size: 15px; line-height: 1.4; }
+.qb-l .k { color: rgba(255,255,255,.65); font-size: 12px; } .qb-l .k em { font-style: normal; color: #FFB020; font-weight: 700; }
+.qb-l .go .ico { width: 18px; height: 18px; transform: scaleX(-1); opacity: .6; }
+.qb-test { width: 100%; margin-top: 10px; padding: 13px; border-radius: 16px; font-weight: 700; font-size: 15px; background: rgba(255,255,255,.12); border: 1px dashed rgba(255,255,255,.3); }
+.qb-test:active { transform: scale(.98); }
+.qb-src { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; }
+.qb-blank { display: inline-block; min-width: 70px; padding: 0 10px; margin: 0 4px; border-radius: 10px; border-bottom: 3px solid var(--qc, #4C86FF); background: rgba(255,255,255,.07); text-align: center; }
+.qb-blank.ok { border-color: #32D17A; background: rgba(50,209,122,.16); color: #6BF0A6; } .qb-blank.no { border-color: #FF6B6B; background: rgba(255,107,107,.14); color: #FF9A9A; }
+.qb-tf { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+.qb-tf .qopt { justify-content: center; padding: 18px 10px; font-size: 18px; font-weight: 700; }
+.qb-flip { display: grid; justify-items: center; gap: 8px; width: 100%; margin-top: 16px; padding: 28px 16px; border-radius: 20px; background: linear-gradient(160deg, color-mix(in srgb, var(--qc, #4C86FF) 32%, transparent), var(--surface-2)); border: 1.5px dashed color-mix(in srgb, var(--qc, #4C86FF) 60%, transparent); }
+.qb-flip span { font-size: 40px; } .qb-flip b { font-size: 15px; } .qb-flip:active { transform: scale(.98); }
+.qb-card-a { margin-top: 16px; padding: 16px; border-radius: 20px; line-height: 1.8; font-size: 16px; background: var(--surface-2); border: 1.5px solid color-mix(in srgb, var(--qc, #4C86FF) 60%, transparent); animation: qbCard .5s cubic-bezier(.2,.8,.2,1); transform-origin: top; }
+.qb-card-a ul, .qb-card-a ol { margin: 4px 0; padding-inline-start: 20px; }
+@keyframes qbCard { from { transform: perspective(700px) rotateX(-70deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.qb-ask { margin: 14px 0 8px; text-align: center; color: var(--muted); font-size: 14px; }
+.qb-self { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.qb-gain { display: inline-block; margin-inline-start: 8px; padding: 2px 10px; border-radius: 99px; background: rgba(255,210,63,.18); color: #FFD23F; font-weight: 800; font-size: 13px; animation: pop .5s cubic-bezier(.2,.8,.2,1.4); }
+.qb-timer { position: relative; height: 34px; margin: 6px 0 4px; border-radius: 99px; background: rgba(255,255,255,.08); overflow: hidden; display: grid; place-items: center; }
+.qb-timer i { position: absolute; inset-block: 0; right: 0; background: linear-gradient(90deg, #FF4D7A, #FFB020); border-radius: inherit; transition: width .25s linear; }
+.qb-timer b { position: relative; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.qb-timer.low i { background: #FF3B5C; } .qb-timer.low b { animation: pop .5s infinite; }
+@media (min-width: 900px) {
+  .view.qbank { max-width: 900px; }
+  .qb-ls { grid-template-columns: 1fr 1fr; }
+}
 </style>
 </head>
 <body>
@@ -2268,6 +2327,7 @@ function vHome() {
     </div>
     ${ringsCard()}
     ${rankCard()}
+    ${typeof qbCard === 'function' ? qbCard() : ''}
     ${typeof gamesCard === 'function' ? gamesCard() : ''}
     ${cont}
     ${quizBanner()}
@@ -2550,6 +2610,7 @@ function vQuizHub() {
       <h1>اختبر نفسك</h1>
       <p>نماذج الاختبار القصير. أجب عن الأسئلة وشاهد التصحيح والحل فوراً بعد كل سؤال.</p>
     </section>
+    ${typeof qbCard === 'function' ? qbCard() : ''}
     ${mxRow()}
     ${liveRow()}
     ${bank.length ? `<div class="qmodels">${bank.map((md, m) => { const r = b[qKey(m)], c = QCOL[m % QCOL.length]; return `<button class="qmodel" data-go="qrun:${m}" style="--qc:${c}">
@@ -3963,11 +4024,14 @@ function render(scroll = true) {
   else if (top.type === 'glevel') html = vGamePlay(top.k, +top.i);
   else if (top.type === 'qrun') html = Q.done ? vQuizResult() : vQuizRun();
   else if (top.type === 'class') html = vClass();
+  else if (top.type === 'bank') html = vBank();
+  else if (top.type === 'bankrun') html = vBankRun();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
   if (top && top.type === 'glevel') startGame(top.k, +top.i);
   if (top && top.type === 'class') clsAfterRender(); else if (typeof clsYt === 'function') clsYt();
+  if (typeof qbAfterRender === 'function') qbAfterRender(top);
   if (ADMIN) setupReorder();
   if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at) loadAdmin();
   if (scroll) window.scrollTo(0, 0);
@@ -4165,6 +4229,7 @@ document.addEventListener('click', e => {
   else if (act === 'rank') rankSheet();
   else if (act && act.startsWith('g-') && typeof gameAct === 'function') gameAct(act);
   else if (act && act.startsWith('cls-') && typeof clsAct === 'function') clsAct(act, el);
+  else if (act && act.startsWith('qb-') && typeof qbAct === 'function') qbAct(act, el);
   else if (act === 'pred-pick' || act === 'pred-show' || act === 'pred-again') { const t = S.stack[S.stack.length - 1]; if (t && t.type === 'sim') predictAct(t.k, act, el); }
   else if (act === 'live-new') liveModelSheet();
   else if (act === 'live-host') liveHost(+el.dataset.m);
@@ -4305,5 +4370,7 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
 </script>
 <script src="games.js"></script>
 <script src="classroom.js"></script>
+<script src="bank-g11.js"></script>
+<script src="qbank.js"></script>
 </body>
 </html>
