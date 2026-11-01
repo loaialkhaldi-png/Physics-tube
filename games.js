@@ -188,41 +188,100 @@ const seeded = n => { let h = n * 9301 + 49297; return () => ((h = (h * 9301 + 4
    ===================================================================== */
 const CAR = {
   g: 'g10', t: 'أوقف السيارة على الخط', ic: '🚗', topic: 'الحركة بتسارع منتظم', c: ['#FF7A45', '#7A1F3D'],
-  sub: 'اختر التباطؤ المناسب لتتوقف السيارة تماماً على خط الموقف',
+  sub: 'اضغط دواسة البنزين أو الفرامل بالمقدار المناسب لتتوقف تماماً على الخط أو تعبر الكاميرا بالسرعة المطلوبة',
   levels: [
     { name: 'الموقف الأول', v0: 10, d: 25 }, { name: 'شارع سريع', v0: 20, d: 40 }, { name: 'دقة أعلى', v0: 15, d: 30 },
     { name: 'حوّل الوحدات', v0: 20, kmh: 72, d: 50 }, { name: 'فرملة قوية', v0: 30, d: 45 }, { name: 'الطريق السريع', v0: 25, kmh: 90, d: 62.5 },
+    { name: 'انطلق من السكون', go: 1, d: 40, vt: 20 }, { name: 'كاميرا السرعة', go: 1, d: 40, vt: 16 },
+    { name: 'انطلق ثم توقف', both: 1, d1: 30, vb: 12, d: 24 },
   ],
-  mission: L => `سيارة تسير بسرعة ${nb(L.kmh ? L.kmh : L.v0, L.kmh ? 'km/h' : 'm/s')} وتبدأ الفرملة عند العلامة الحمراء. خط الموقف على بعد ${nb(L.d, 'm')} من العلامة، وبعده حائط. اختر مقدار التباطؤ لتتوقف تماماً على الخط.`,
-  hint: L => `عند التوقف <code>v = 0</code>، فمن <code>v² = v₀² − 2·a·Δx</code> نجد <code>a = v₀² / (2·Δx)</code>.${L.kmh ? '<br>حوّل السرعة أولاً إلى m/s بالقسمة على 3.6.' : ''}`,
-  controls: () => [{ id: 'a', label: 'مقدار التباطؤ a', min: .5, max: 10, step: .05, v: 1, unit: 'm/s²', dec: 2 }],
+  mission: L => L.go ? `السيارة واقفة عند علامة الانطلاق الخضراء. اضغط <b>دواسة البنزين</b> بالمقدار المناسب لتتسارع بانتظام وتعبر كاميرا السرعة على بعد ${nb(L.d, 'm')} بسرعة ${nb(L.vt, 'm/s')} تماماً.`
+    : L.both ? `السيارة واقفة على بعد ${nb(L.d1, 'm')} قبل العلامة الحمراء. اضغط <b>البنزين</b> لتصل إلى العلامة بسرعة ${nb(L.vb, 'm/s')} تماماً (عندها كاميرا سرعة)، ثم تبدأ <b>الفرامل</b> لتتوقف تماماً على خط الموقف بعد ${nb(L.d, 'm')} من العلامة.`
+    : `سيارة تسير بسرعة ${nb(L.kmh ? L.kmh : L.v0, L.kmh ? 'km/h' : 'm/s')} وتبدأ الفرملة عند العلامة الحمراء. خط الموقف على بعد ${nb(L.d, 'm')} من العلامة، وبعده حائط. اضغط <b>دواسة الفرامل</b> بالمقدار المناسب لتتوقف تماماً على الخط.`,
+  hint: L => L.go ? 'تبدأ السيارة من السكون <code>v₀ = 0</code>، فمن <code>v² = v₀² + 2·a·Δx</code> نجد <code>a = v² / (2·Δx)</code>.'
+    : L.both ? 'مرحلة البنزين من السكون: <code>a₁ = v² / (2·Δx₁)</code>.<br>مرحلة الفرامل حتى التوقف <code>v = 0</code>: <code>a₂ = v₀² / (2·Δx₂)</code>، وسرعتها الابتدائية هي سرعة الوصول إلى العلامة.'
+    : `عند التوقف <code>v = 0</code>، فمن <code>v² = v₀² − 2·a·Δx</code> نجد <code>a = v₀² / (2·Δx)</code>.${L.kmh ? '<br>حوّل السرعة أولاً إلى m/s بالقسمة على 3.6.' : ''}`,
+  controls: L => (L.go || L.both ? [{ id: 'ag', label: '🟢 دواسة البنزين: التسارع a', min: .5, max: 10, step: .05, v: 1, unit: 'm/s²', dec: 2 }] : [])
+    .concat(L.go ? [] : [{ id: 'a', label: '🔴 دواسة الفرامل: مقدار التباطؤ a', min: .5, max: 10, step: .05, v: 1, unit: 'm/s²', dec: 2 }]),
   go: '🚗 انطلق',
-  init(st, P, L) { st.x = -Math.max(18, L.v0 * 1.6); st.v = L.v0; st.tb = 0; st.braking = false; st.end = 0; st.crash = false; st.cam = L.d + 9 - 50; st.wheel = 0; },
-  launch(st) { st.x = -Math.max(18, st.L.v0 * 1.6); st.v = st.L.v0; st.braking = false; st.tb = 0; },
+  startX: L => L.go ? 0 : L.both ? -L.d1 : -Math.max(18, L.v0 * 1.6),
+  init(st, P, L) { st.x = this.startX(L); st.v = L.go || L.both ? 0 : L.v0; st.tb = 0; st.braking = false; st.crash = false; st.cam = L.go ? -4 : L.both ? -L.d1 - 6 : L.d + 9 - 50; st.wheel = 0; st.flash = 0; st.vmark = null; },
+  launch(st, P, L) { this.init(st, P, L); },
+  stars: e => e <= .25 ? 3 : e <= .75 ? 2 : 1,
   update(st, dt, P, L) {
-    const wall = L.d + 5, stop = L.v0 ** 2 / (2 * P.a);
-    if (!st.braking) { st.x += st.v * dt; if (st.x >= 0) { st.braking = true; st.tb = (st.x) / L.v0; st.x = 0; SFX.play('screech'); } }
-    else {
-      st.tb += dt; const s = Math.min(L.v0 * st.tb - .5 * P.a * st.tb ** 2, stop);
-      st.v = Math.max(0, L.v0 - P.a * st.tb); st.x = s;
+    const f2 = v => v.toFixed(2);
+    st.flash = Math.max(0, st.flash - dt * 2);
+    if (L.go) {
+      // speeding up from rest until the speed camera
+      st.v += P.ag * dt; st.x += st.v * dt - .5 * P.ag * dt * dt;
+      if (Math.random() < .5) burst(st, this.sx(st, st.x - 4.4), 416, 1, { cols: ['#9aa0aa'], sp: 15, up: 20, life: .6, r: 4, g: -10, kind: 'smoke' });
+      if (st.x >= L.d && st.vmark == null) {
+        st.vmark = Math.sqrt(2 * P.ag * L.d); st.flash = 1; SFX.play('pop');
+        const e = Math.abs(st.vmark - L.vt), why = `من السكون: <code>v = √(2·a·Δx) = √(2 × ${f2(P.ag)} × ${L.d}) = ${f2(st.vmark)} m/s</code>`;
+        if (e <= 1.5) return gEnd(st, true, this.stars(e), e <= .25 ? 'السرعة مطابقة تماماً! 📸' : `عبرت الكاميرا بسرعة ${f2(st.vmark)} m/s`, why);
+        return gEnd(st, false, 0, `سجّلت الكاميرا ${f2(st.vmark)} m/s`, why + (st.vmark > L.vt ? ' أسرع من المطلوب: خفّف دواسة البنزين.' : ' أبطأ من المطلوب: اضغط البنزين أكثر.'));
+      }
+      st.wheel += st.v * dt / .35;
+      return;
+    }
+    if (!st.braking) {
+      if (L.both) { st.v += P.ag * dt; st.x += st.v * dt; } else st.x += st.v * dt;
+      if (st.x >= 0) {
+        st.braking = true; st.x = 0; SFX.play('screech');
+        if (L.both) { st.v0 = Math.sqrt(2 * P.ag * L.d1); st.v = st.v0; st.vmark = st.v0; st.flash = 1; } else st.v0 = L.v0;
+        st.tb = 0;
+      }
+    } else {
+      const v0 = st.v0, stop = v0 ** 2 / (2 * P.a), wall = L.d + 5;
+      st.tb += dt; st.x = Math.min(v0 * st.tb - .5 * P.a * st.tb ** 2, stop); st.v = Math.max(0, v0 - P.a * st.tb);
       if (st.v > 2 && Math.random() < .6) burst(st, this.sx(st, st.x - 3.6), 418, 1, { cols: ['#cfd3da'], sp: 20, up: 40, life: .9, r: 7, g: -20, kind: 'smoke' });
+      const pre = L.both ? `مرحلة البنزين: <code>v = √(2 × ${f2(P.ag)} × ${L.d1}) = ${f2(v0)} m/s</code>. ` : '';
       if (st.x >= wall - .1 && !st.crash) {
         st.crash = true; st.x = wall - .1; st.v = 0; st.shake = 14; SFX.play('boom');
         burst(st, this.sx(st, wall), 395, 40, { cols: ['#FFC83D', '#FF7A45', '#fff'], sp: 260, up: 120, life: .8, r: 3 });
         burst(st, this.sx(st, wall), 395, 12, { cols: ['#9aa0aa'], sp: 60, up: 60, life: 1.6, r: 10, g: -30, kind: 'smoke' });
-        return gEnd(st, false, 0, 'اصطدمت بالحائط! 💥', `مسافة التوقف <code>Δx = v₀² / (2a) = ${L.v0}² / (2 × ${P.a.toFixed(2)}) = ${stop.toFixed(1)} m</code> أكبر من المسافة المتاحة. زِد التباطؤ.`);
+        return gEnd(st, false, 0, 'اصطدمت بالحائط! 💥', pre + `مسافة التوقف <code>Δx = v₀² / (2a) = ${f2(v0)}² / (2 × ${f2(P.a)}) = ${stop.toFixed(1)} m</code> أكبر من المسافة المتاحة. ` + (L.both && Math.abs(v0 - L.vb) > 1.5 ? `وصلت إلى العلامة بسرعة ${f2(v0)} m/s والمطلوب ${L.vb} m/s: ${v0 > L.vb ? 'خفّف دواسة البنزين' : 'اضغط البنزين أكثر'} أولاً.` : 'اضغط الفرامل أكثر.'));
       }
       if (st.v === 0) {
-        const err = st.x - L.d, why = `مسافة التوقف <code>Δx = v₀² / (2a) = ${L.v0}² / (2 × ${P.a.toFixed(2)}) = ${stop.toFixed(2)} m</code>${L.kmh ? `وتذكّر أن <code>${L.kmh} km/h = ${L.v0} m/s</code>` : ''}`;
-        if (Math.abs(err) <= 1.5) return gEnd(st, true, Math.abs(err) <= .25 ? 3 : Math.abs(err) <= .75 ? 2 : 1, Math.abs(err) <= .25 ? 'توقف مثالي على الخط! 🅿️' : `توقفت على بعد ${Math.abs(err).toFixed(2)} m من الخط`, why);
-        return gEnd(st, false, 0, `توقفت قبل الخط بـ ${(-err).toFixed(1)} m`, why + ' قلّل التباطؤ لتقطع مسافة أكبر.');
+        const err = st.x - L.d, why = pre + `مسافة التوقف <code>Δx = v₀² / (2a) = ${L.both ? f2(v0) : v0}² / (2 × ${f2(P.a)}) = ${f2(stop)} m</code>${L.kmh ? `وتذكّر أن <code>${L.kmh} km/h = ${L.v0} m/s</code>` : ''}`;
+        const ev = L.both ? Math.abs(v0 - L.vb) : 0;
+        if (L.both && ev > 1.5) return gEnd(st, false, 0, `سجّلت الكاميرا ${f2(v0)} m/s عند العلامة`, why + ` المطلوب ${L.vb} m/s عند العلامة: ${v0 > L.vb ? 'خفّف دواسة البنزين.' : 'اضغط البنزين أكثر.'}`);
+        if (Math.abs(err) <= 1.5) { const sr = Math.min(this.stars(Math.abs(err)), L.both ? this.stars(ev) : 3); return gEnd(st, true, sr, sr === 3 ? 'توقف مثالي على الخط! 🅿️' : `توقفت على بعد ${Math.abs(err).toFixed(2)} m من الخط`, why); }
+        return gEnd(st, false, 0, `توقفت قبل الخط بـ ${(-err).toFixed(1)} m`, why + ' خفّف الفرامل لتقطع مسافة أكبر.');
       }
     }
     st.wheel += st.v * dt / .35;
   },
   sx: (st, x) => 40 + (x - st.cam) * 16,
+  // the two pedals (drawn in the lower left while aiming); dragging a pedal down presses it harder
+  PED: { a: { x: 646, w: 70, h: 54, col: '#FF3B3B', name: 'فرامل' }, ag: { x: 730, w: 40, h: 84, col: '#32D17A', name: 'بنزين' } }, PB: 214,
+  pedOn: (L, id) => id === 'ag' ? !!(L.go || L.both) : !L.go,
+  pointer(cv, st) {
+    cv.style.touchAction = 'none';
+    const press = (id, y) => { const pd = this.PED[id], top = this.PB - pd.h - 22; gSet(st, id, .5 + Math.min(1, Math.max(0, (y - top) / (pd.h + 10))) * 9.5); };
+    cv.onpointerdown = e => {
+      if (st.phase !== 'aim') return; const [x, y] = gPt(cv, e);
+      const id = Object.keys(this.PED).find(k => this.pedOn(st.L, k) && x > this.PED[k].x - 8 && x < this.PED[k].x + this.PED[k].w + 8 && y > 56 && y < this.PB + 30);
+      if (!id) return; st.drag = id; try { cv.setPointerCapture(e.pointerId); } catch (_) {} SFX.init(); press(id, y);
+    };
+    cv.onpointermove = e => { if (st.drag) press(st.drag, gPt(cv, e)[1]); };
+    cv.onpointerup = cv.onpointercancel = () => { if (st.drag) { st.drag = null; SFX.play('pop'); } };
+  },
+  drawPedals(c, st, P, L) {
+    const B = this.PB; c.fillStyle = 'rgba(10,10,16,.6)'; rr(c, 632, B - 146, 156, 152, 16); c.fill();
+    Object.entries(this.PED).forEach(([id, pd]) => {
+      const on = this.pedOn(L, id), val = on ? P[id] : .5, k = on ? (val - .5) / 9.5 : 0, y0 = B - pd.h - 22 + k * 14;
+      c.fillStyle = 'rgba(255,255,255,.08)'; rr(c, pd.x - 4, B - pd.h - 26, pd.w + 8, pd.h + 22, 10); c.fill();
+      c.save(); if (on && st.drag === id) { c.shadowColor = pd.col; c.shadowBlur = 20; }
+      const g = c.createLinearGradient(0, y0, 0, y0 + pd.h); g.addColorStop(0, on ? pd.col : '#555'); g.addColorStop(1, on ? '#20232B' : '#333');
+      c.fillStyle = g; rr(c, pd.x, y0, pd.w, pd.h, 9); c.fill(); c.restore();
+      c.strokeStyle = 'rgba(0,0,0,.35)'; c.lineWidth = 2; for (let yy = y0 + 10; yy < y0 + pd.h - 6; yy += 9) { c.beginPath(); c.moveTo(pd.x + 8, yy); c.lineTo(pd.x + pd.w - 8, yy); c.stroke(); }
+      gtx(c, on ? pd.name : '—', pd.x + pd.w / 2, B - pd.h - 32, on ? '#fff' : 'rgba(255,255,255,.35)', 'center', 12);
+      if (on) gtx(c, `${val.toFixed(2)}`, pd.x + pd.w / 2, B + 2, pd.col, 'center', 12, 800);
+    });
+  },
   draw(c, st, P, L) {
-    if (st.phase === 'run') st.cam += ((Math.min(Math.max(st.x - 24, -60), L.d + 9 - 50)) - st.cam) * .12;
+    if (st.phase === 'run') st.cam += ((Math.min(Math.max(st.x - 24, L.go || L.both ? this.startX(L) - 6 : -60), L.d + 9 - 50 + (L.go ? 20 : 0))) - st.cam) * .12;
     const sx = x => this.sx(st, x), ground = 420;
     skyGrad(c, ['#1B1446', '#5B2A6E', '#E0645C', '#F7B267'], 360);
     c.fillStyle = 'rgba(255,220,150,.9)'; c.beginPath(); c.arc(600, 250, 46, 0, 7); c.fill();
@@ -233,15 +292,25 @@ const CAR = {
     // road
     c.fillStyle = '#2E3038'; c.fillRect(0, 360, 800, 140); c.fillStyle = '#4A4D57'; c.fillRect(0, 360, 800, 8); c.fillRect(0, ground + 12, 800, 6);
     c.fillStyle = '#E8E3D6'; for (let m = Math.floor(st.cam / 4) * 4 - 4; m < st.cam + 60; m += 4) c.fillRect(sx(m), 388, 30, 4);
-    for (let m = Math.ceil(st.cam / 5) * 5; m < st.cam + 52; m += 5) { if (m < 0 || m > L.d + 5) continue; gtx(c, `${m} m`, sx(m), 470, 'rgba(255,255,255,.4)', 'center', 12, 600); c.fillStyle = 'rgba(255,255,255,.25)'; c.fillRect(sx(m) - 1, 440, 2, 12); }
+    const m0 = this.startX(L);
+    for (let m = Math.ceil(st.cam / 5) * 5; m < st.cam + 52; m += 5) { if (m < (L.go || L.both ? m0 : 0) || m > L.d + 5) continue; gtx(c, `${m - (L.both ? m0 : 0)} m`, sx(m), 470, 'rgba(255,255,255,.4)', 'center', 12, 600); c.fillStyle = 'rgba(255,255,255,.25)'; c.fillRect(sx(m) - 1, 440, 2, 12); }
     // skid marks
     if (st.braking) { c.fillStyle = 'rgba(10,10,12,.55)'; c.fillRect(sx(0) - 58, ground + 5, Math.max(0, sx(st.x) - sx(0)), 5); }
-    // brake mark, line and wall
-    c.fillStyle = '#FF3B3B'; c.fillRect(sx(0) - 3, 368, 6, 60); pill(c, 'ابدأ الفرملة', sx(0), 352, '#FF3B3B');
-    c.fillStyle = '#FFD23F'; c.fillRect(sx(L.d) - 4, 368, 8, 64);
-    c.fillStyle = '#1F6FEB'; rr(c, sx(L.d) - 16, 300, 32, 32, 6); c.fill(); gtx(c, 'P', sx(L.d), 324, '#fff', 'center', 22, 800); c.fillStyle = '#9AA0AA'; c.fillRect(sx(L.d) - 2, 332, 4, 36);
-    const wx = sx(L.d + 5); c.fillStyle = '#7C808A'; c.fillRect(wx, 330, 26, 100);
-    for (let k = 0; k < 5; k++) { c.fillStyle = k % 2 ? '#111' : '#FFC83D'; c.fillRect(wx, 330 + k * 20, 26, 10); }
+    // start mark (from rest)
+    if (L.go || L.both) { c.fillStyle = '#32D17A'; c.fillRect(sx(m0) - 3, 368, 6, 60); pill(c, 'الانطلاق', sx(m0), 352, '#1E9E58'); }
+    // speed camera
+    const cam = (x, v) => { c.fillStyle = '#9AA0AA'; c.fillRect(sx(x) - 2, 280, 4, 88); c.fillStyle = '#1D1F26'; rr(c, sx(x) - 18, 262, 36, 24, 5); c.fill(); c.fillStyle = st.flash > 0 ? `rgba(255,255,255,${st.flash})` : '#4C86FF'; c.beginPath(); c.arc(sx(x) - 6, 274, 6, 0, 7); c.fill(); pill(c, `📸 ${v} m/s`, sx(x), 252, 'rgba(0,0,0,.55)', '#FFD23F', 13); };
+    if (L.go) { c.fillStyle = '#FFD23F'; c.fillRect(sx(L.d) - 3, 368, 6, 64); cam(L.d, L.vt); }
+    else {
+      // brake mark, line and wall
+      c.fillStyle = '#FF3B3B'; c.fillRect(sx(0) - 3, 368, 6, 60); pill(c, 'ابدأ الفرملة', sx(0), 352, '#FF3B3B');
+      if (L.both) cam(0, L.vb);
+      c.fillStyle = '#FFD23F'; c.fillRect(sx(L.d) - 4, 368, 8, 64);
+      c.fillStyle = '#1F6FEB'; rr(c, sx(L.d) - 16, 300, 32, 32, 6); c.fill(); gtx(c, 'P', sx(L.d), 324, '#fff', 'center', 22, 800); c.fillStyle = '#9AA0AA'; c.fillRect(sx(L.d) - 2, 332, 4, 36);
+      const wx = sx(L.d + 5); c.fillStyle = '#7C808A'; c.fillRect(wx, 330, 26, 100);
+      for (let k = 0; k < 5; k++) { c.fillStyle = k % 2 ? '#111' : '#FFC83D'; c.fillRect(wx, 330 + k * 20, 26, 10); }
+    }
+    if (st.flash > 0) { c.fillStyle = `rgba(255,255,255,${st.flash * .25})`; c.fillRect(0, 0, 800, 500); }
     // car (front bumper at st.x)
     const fx = sx(st.x), by = ground - 6;
     c.save(); c.translate(fx, by);
@@ -257,8 +326,8 @@ const CAR = {
     c.restore();
     // HUD
     pill(c, `v = ${st.v.toFixed(1)} m/s`, 90, 34, 'rgba(0,0,0,.45)');
-    if (st.phase !== 'aim') pill(c, `المسافة إلى الخط: ${Math.max(0, L.d - Math.max(0, st.x)).toFixed(1)} m`, 640, 34, 'rgba(0,0,0,.45)');
-    else pill(c, `a = ${P.a.toFixed(2)} m/s²`, 680, 34, 'rgba(0,0,0,.45)', '#FFD23F');
+    if (st.phase !== 'aim') pill(c, L.go ? `المسافة إلى الكاميرا: ${Math.max(0, L.d - st.x).toFixed(1)} m` : `المسافة إلى الخط: ${Math.max(0, L.d - Math.max(0, st.x)).toFixed(1)} m`, 620, 34, 'rgba(0,0,0,.45)');
+    if (st.phase === 'aim') { this.drawPedals(c, st, P, L); pill(c, 'اضغط الدواسة بإصبعك واسحب لأسفل لتضغط أكثر', 400, 34, 'rgba(0,0,0,.45)', '#fff', 13); }
   },
 };
 
