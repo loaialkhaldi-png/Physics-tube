@@ -47,15 +47,18 @@ function qbOptions(x) {
   return null;
 }
 
+// spread question types so a mock exam keeps changing
+function qbMix(out) { const byK = {}; out.forEach(x => (byK[x.q.k] = byK[x.q.k] || []).push(x)); const m = []; while (m.length < out.length) Object.values(byK).forEach(a => { if (a.length) m.push(a.shift()); }); return m; }
 /* ---------- Sessions ---------- */
 function qbStart(mode, scope) {
   const all = qbAll(); let pool = all, title = 'جولة عشوائية', n = QB_ROUND;
   if (mode === 'lesson') { const L = qbLesson(scope); pool = all.filter(x => x.l.id === scope); title = L.l.t; }
   else if (mode === 'chapter') { const c = (qbBank() || [])[+scope]; pool = all.filter(x => x.ci === +scope); title = 'اختبار الفصل: ' + c.ch; n = 15; }
   else if (mode === 'mistakes') { pool = all.filter(x => QBM[x.id] === -1); title = 'أخطائي في البنك'; n = 15; }
+  else if (mode === 'prep' || mode === 'mock' || mode === 'pwrong') { const ids = String(scope).split(','); pool = all.filter(x => ids.includes(x.l.id) && (mode !== 'pwrong' || QBM[x.id] === -1)); title = mode === 'mock' ? 'اختبار تجريبي' : mode === 'pwrong' ? 'أخطائي في دروس الاختبار' : 'مراجعة الاختبار'; n = mode === 'mock' ? 20 : 15; }
   else if (mode === 'sprint') { pool = all.filter(x => ['tf', 'mcq', 'fill', 'term'].includes(x.q.k)); title = 'تحدي الدقيقة'; n = 200; }
   if (!pool.length) return toast(mode === 'mistakes' ? 'لا توجد أخطاء محفوظة، أحسنت! 🎉' : 'لا توجد أسئلة هنا بعد');
-  const items = (mode === 'sprint' ? qbShuffle(pool) : qbPick(pool, n)).map(x => Object.assign({}, x, { opts: qbOptions(x) }));
+  const items = (mode === 'sprint' ? qbShuffle(pool) : mode === 'mock' ? qbMix(qbShuffle(pool).slice(0, n)) : qbPick(pool, n)).map(x => Object.assign({}, x, { opts: qbOptions(x) }));
   const before = qbStats(mode === 'lesson' ? pool : all).done;
   QB.s = { mode, scope, title, items, i: 0, ans: [], streak: 0, best: 0, xp: 0, before, t0: Date.now(), left: QB_SPRINT, done: false, flip: false };
   if (S.stack.length && S.stack[S.stack.length - 1].type === 'bankrun') render(); else go('bankrun');
@@ -73,6 +76,7 @@ function qbAnswer(ok, extra) {
   const gain = ok ? 10 + Math.min(s.streak - 1, 5) * 2 : 0; s.xp += gain;
   s.ans[s.i] = Object.assign({ ok, gain }, extra || {});
   qbMark(x, ok);
+  if (typeof achCount === 'function') achCount(ok);
   if (typeof tdLogAnswer === 'function') tdLogAnswer(`${S.grade}:${x.l.id}.${x.id.split('.').pop()}`, ok);
   if (typeof SFX !== 'undefined') { SFX.init(); SFX.play(ok ? 'pop' : 'fail'); }
   if (navigator.vibrate && !ok) navigator.vibrate(60);
@@ -91,6 +95,7 @@ function qbFinish() {
   s.pct = n ? Math.round(ok / n * 100) : 0; s.ok = ok; s.n = n;
   if (s.mode === 'sprint') { s.newBest = (s.score || 0) > (QBR[qbRK()] || 0); if (s.newBest) { QBR[qbRK()] = s.score || 0; store.set('qbr', QBR); } }
   const pool = s.mode === 'lesson' ? qbAll().filter(x => x.l.id === s.scope) : qbAll();
+  if (typeof achFlush === 'function') achFlush();
   s.gained = qbStats(pool).done - s.before;
   if (s.xp) addXP(s.xp);
   if (n) track('q');
@@ -116,7 +121,9 @@ function vBank() {
       <button data-act="qb-start" data-m="mistakes" style="--c:#FFB020"><span>🎯</span><b>أخطائي</b><small>${st.wrong ? st.wrong + ' سؤالاً للمراجعة' : 'لا توجد أخطاء'}</small></button>
       <button data-act="qb-start" data-m="mix" style="--c:#4C86FF"><span>🔀</span><b>جولة عشوائية</b><small>من كل الفصول</small></button>
     </div>
+    ${typeof prepCard === 'function' ? prepCard() : ''}
     ${typeof lbCard === 'function' ? lbCard() : ''}
+    ${typeof lawsCard === 'function' ? lawsCard() : ''}
     ${B.map((c, ci) => { const cs = qbStats(all.filter(x => x.ci === ci)); return `<section class="qb-ch" style="--g1:${c.c[0]};--g2:${c.c[1]}">
       <div class="qb-ch-h"><span class="ic">${c.ic}</span><span class="t"><small>الفصل ${['الأول', 'الثاني', 'الثالث'][ci] || ci + 1}</small><b>${esc(c.ch)}</b></span><span class="pc">${qbPct(cs)}%</span></div>
       <div class="qb-bar"><i style="width:${qbPct(cs)}%"></i></div>
@@ -182,6 +189,7 @@ function qbResultHTML() {
       ${s.gained > 0 ? `<span class="qr-badge">👑 أتقنت ${s.gained} ${s.gained === 1 ? 'سؤالاً جديداً' : s.gained <= 10 ? 'أسئلة جديدة' : 'سؤالاً جديداً'}</span>` : ''}
       <span class="qr-badge" style="background:rgba(255,176,32,.14);color:#FFC34D">🎯 هدف اليوم ${Math.min(qbToday(), QB_GOAL)}/${QB_GOAL}${qbToday() >= QB_GOAL ? ' ✓' : ''}</span>
     </section>
+    ${typeof prepResult === 'function' ? prepResult(s) : ''}
     <div class="actions">
       <button class="btn primary" data-act="qb-again">${icon('replay')}${sprint ? 'حاول مرة أخرى' : 'جولة جديدة'}</button>
       <button class="btn" data-act="back">${icon('exam')}البنك</button>

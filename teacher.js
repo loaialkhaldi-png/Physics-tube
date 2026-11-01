@@ -237,6 +237,7 @@ async function tdStudent(id) {
   const base = `<div class="td-sh">
     <header><span class="av big">${esc((p.full_name || '?').trim()[0] || '?')}</span><div><h2>${esc(p.full_name)}</h2><small><span dir="ltr">@${esc(p.username)}</span> · ${esc((GRADES[p.grade] || {}).name || '')}</small><small class="stt ${s.k}"><i></i>${s.t}</small></div></header>
     <div class="td-acts">${p.phone ? `<a class="btn" href="tel:${esc(p.phone)}">📞 <bdi dir="ltr">${esc(p.phone)}</bdi></a>` : ''}${wa ? `<a class="btn primary" href="${wa}" target="_blank" rel="noopener">💬 واتساب</a>` : ''}</div>
+    <button class="btn wide td-certbtn" data-act="td-cert" data-id="${p.id}">🎖️ إصدار شهادة تقدير</button>
     <div class="td-mini">${tiles.map(([t, n]) => `<div><b>${n}</b><small>${t}</small></div>`).join('')}</div>
     <div id="td-sh-more">${ADMIN_DATA.needSql ? '' : '<p class="td-empty">جارٍ تحميل التفاصيل…</p>'}</div>
   </div>`;
@@ -271,6 +272,7 @@ function tdAct(act, el) {
   else if (act === 'td-allless') { d.allLess = !d.allLess; render(false); }
   else if (act === 'td-st') tdStudent(el.dataset.id);
   else if (act === 'td-csv') tdCsv();
+  else if (act === 'td-cert') { const p = (ADMIN_DATA.students || []).find(x => x.id === el.dataset.id); if (p && typeof certTeacher === 'function') certTeacher(p); }
 }
 (function tdTips() {
   let tip = null;

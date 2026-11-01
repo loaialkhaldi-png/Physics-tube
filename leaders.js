@@ -12,7 +12,7 @@ async function lbLoad(force) {
   const r = await db.rpc('leaderboard', { p_grade: ADMIN ? (LB.g || S.grade) : null });
   LB.loading = false; LB.at = Date.now();
   if (r.error || !r.data) { LB.error = 'soon'; LB.data = null; }
-  else { LB.error = ''; LB.data = r.data; }
+  else { LB.error = ''; LB.data = r.data; if (typeof achLb === 'function') achLb(r.data); }
   const top = S.stack[S.stack.length - 1];
   if (!top || top.type === 'leaders') render(false);
 }
