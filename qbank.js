@@ -1,7 +1,7 @@
 'use strict';
 /* بنك الأسئلة التفاعلي: مسار الفصول والدروس، جولات بكل أنواع الأسئلة، إتقان ومراجعة ذكية، تحدي الدقيقة، وهدف يومي.
    Loaded after the main script and games.js, so it uses: store, S, G, go, render, transition, toast, esc, icon, qtext, ring, starStr,
-   addXP, track, shareCard, navBar, SFX. Questions come from bank-g11.js (window.BANK_G11). */
+   addXP, track, shareCard, navBar, SFX. Questions come from bank-g11.js (window.BANK_G11) and bank-g12.js (window.BANK_G12). */
 const QB_SRC = 'من بنك الأسئلة — التوجيه الفني العام للعلوم 2025–2026';
 const QB_GOAL = 20, QB_ROUND = 10, QB_SPRINT = 60;
 const QB_KIND = { term: 'المصطلح العلمي', tf: 'صح أم خطأ', fill: 'أكمل الفراغ', mcq: 'اختر الإجابة', num: 'مسألة', card: 'بطاقة مراجعة' };
@@ -11,8 +11,10 @@ let QBD = store.get('qbd', {});   // day → number of answered questions
 let QBR = store.get('qbr', {});   // records: { sprint: best }
 const QB = { s: null, timer: 0 };
 
-const qbBank = () => S.grade === 'g11' && window.BANK_G11 ? window.BANK_G11 : null;
-const qbAll = () => { const B = qbBank(); return B ? B.flatMap((c, ci) => c.ls.flatMap(l => l.qs.map((q, i) => ({ q, id: `${l.id}.${i}`, l, c, ci })))) : []; };
+const qbBank = () => ({ g11: window.BANK_G11, g12: window.BANK_G12 })[S.grade] || null;
+const qbPre = () => S.grade === 'g11' ? '' : S.grade.slice(1) + ':';   // keeps each grade's progress apart
+const qbRK = () => S.grade === 'g11' ? 'sprint' : 'sprint' + S.grade;
+const qbAll = () => { const B = qbBank(); return B ? B.flatMap((c, ci) => c.ls.flatMap(l => l.qs.map((q, i) => ({ q, id: `${qbPre()}${l.id}.${i}`, l, c, ci })))) : []; };
 const qbLesson = id => { for (const c of qbBank() || []) for (const l of c.ls) if (l.id === id) return { c, l }; return null; };
 const qbMastered = id => (QBM[id] || 0) >= 2;
 const qbStats = list => ({ n: list.length, done: list.filter(x => qbMastered(x.id)).length, seen: list.filter(x => QBM[x.id] != null).length, wrong: list.filter(x => QBM[x.id] === -1).length, pts: list.reduce((t, x) => t + ((QBM[x.id] || 0) >= 2 ? 1 : QBM[x.id] === 1 ? .5 : 0), 0) });
@@ -83,7 +85,7 @@ function qbFinish() {
   const s = QB.s; if (!s || s.done) return; s.done = true; clearInterval(QB.timer); QB.timer = 0;
   const n = s.ans.filter(Boolean).length, ok = s.ans.filter(a => a && a.ok).length;
   s.pct = n ? Math.round(ok / n * 100) : 0; s.ok = ok; s.n = n;
-  if (s.mode === 'sprint') { s.newBest = (s.score || 0) > (QBR.sprint || 0); if (s.newBest) { QBR.sprint = s.score || 0; store.set('qbr', QBR); } }
+  if (s.mode === 'sprint') { s.newBest = (s.score || 0) > (QBR[qbRK()] || 0); if (s.newBest) { QBR[qbRK()] = s.score || 0; store.set('qbr', QBR); } }
   const pool = s.mode === 'lesson' ? qbAll().filter(x => x.l.id === s.scope) : qbAll();
   s.gained = qbStats(pool).done - s.before;
   if (s.xp) addXP(s.xp);
@@ -94,7 +96,7 @@ function qbFinish() {
 
 /* ---------- Views ---------- */
 function vBank() {
-  const B = qbBank(); if (!B) return `<div class="view push">${navBar()}<div class="live-msg"><div class="em">🏦</div><h1>بنك الأسئلة متاح للصف الحادي عشر</h1></div></div>`;
+  const B = qbBank(); if (!B) return `<div class="view push">${navBar()}<div class="live-msg"><div class="em">🏦</div><h1>بنك الأسئلة متاح للصفين الحادي عشر والثاني عشر</h1></div></div>`;
   const all = qbAll(), st = qbStats(all), today = qbToday(), streak = qbStreak();
   return `<div class="view push qbank">${navBar()}
     <section class="qb-hero">
@@ -106,7 +108,7 @@ function vBank() {
       </div>
     </section>
     <div class="qb-quick">
-      <button data-act="qb-start" data-m="sprint" style="--c:#FF4D7A"><span>⚡</span><b>تحدي الدقيقة</b><small>${QBR.sprint ? 'رقمك القياسي ' + QBR.sprint : 'كم سؤالاً تجيب في 60 ثانية؟'}</small></button>
+      <button data-act="qb-start" data-m="sprint" style="--c:#FF4D7A"><span>⚡</span><b>تحدي الدقيقة</b><small>${QBR[qbRK()] ? 'رقمك القياسي ' + QBR[qbRK()] : 'كم سؤالاً تجيب في 60 ثانية؟'}</small></button>
       <button data-act="qb-start" data-m="mistakes" style="--c:#FFB020"><span>🎯</span><b>أخطائي</b><small>${st.wrong ? st.wrong + ' سؤالاً للمراجعة' : 'لا توجد أخطاء'}</small></button>
       <button data-act="qb-start" data-m="mix" style="--c:#4C86FF"><span>🔀</span><b>جولة عشوائية</b><small>من كل الفصول</small></button>
     </div>
@@ -139,6 +141,8 @@ function qbQuestionHTML(x, a) {
     body = s.flip || a ? `<div class="qb-card-a">${q.a}</div>${a ? '' : `<p class="qb-ask">هل كانت إجابتك مثل هذه؟</p><div class="qb-self"><button class="btn" data-act="qb-self" data-v="0">✗ لم أعرفها</button><button class="btn primary" data-act="qb-self" data-v="1">✓ عرفتها</button></div>`}`
       : `<button class="qb-flip" data-act="qb-flip"><span>🃏</span><b>فكّر في الإجابة، ثم اضغط لكشفها</b></button>`;
   }
+  if (q.img) body = `<button class="qb-img" data-act="qb-zoom" aria-label="تكبير الرسم"><img src="${q.img}" alt="رسم السؤال" loading="lazy"></button>` + body;
+  if (q.aimg && (a || (q.k === 'card' && s.flip))) { const fig = `<div class="qb-img ans"><small>✓ الإجابة من البنك</small><img src="${q.aimg}" alt="رسم الإجابة" loading="lazy"></div>`; body = body.includes('<p class="qb-ask">') ? body.replace('<p class="qb-ask">', fig + '<p class="qb-ask">') : body + fig; }
   return { text, body };
 }
 function vBankRun() {
@@ -161,7 +165,7 @@ function vBankRun() {
       <h2 class="qq">${text}</h2>${body}</div>${fb}</div>`;
 }
 function qbResultHTML() {
-  const s = QB.s, sprint = s.mode === 'sprint', pct = s.pct, msg = sprint ? (s.newBest ? ['رقم قياسي جديد! 🏆', 'تفوقت على نفسك، حاول أن تكسره مرة أخرى.'] : ['انتهى الوقت! ⏱️', `رقمك القياسي ${QBR.sprint || 0}. حاول أن تتجاوزه!`])
+  const s = QB.s, sprint = s.mode === 'sprint', pct = s.pct, msg = sprint ? (s.newBest ? ['رقم قياسي جديد! 🏆', 'تفوقت على نفسك، حاول أن تكسره مرة أخرى.'] : ['انتهى الوقت! ⏱️', `رقمك القياسي ${QBR[qbRK()] || 0}. حاول أن تتجاوزه!`])
     : pct >= 90 ? ['أداء أسطوري! 🏆', 'أنت متمكن من هذه الأسئلة.'] : pct >= 70 ? ['أحسنت! 🌟', 'جولة أخرى وتتقن الدرس كله.'] : pct >= 50 ? ['بداية جيدة 💪', 'الأسئلة التي أخطأت فيها ستعود إليك لتتقنها.'] : ['لا بأس، هكذا نتعلم 📚', 'راجع الحلول ثم أعد المحاولة، ستتحسن بسرعة.'];
   const conf = pct >= 70 || s.newBest ? '<div class="confetti" aria-hidden="true">' + Array.from({ length: 30 }, (_, i) => `<i style="--x:${(i * 37) % 100}%;--d:${(i % 7) * .12}s;--c:${['#2BD4B0', '#FFB020', '#FF4D7A', '#4C86FF', '#A866FF'][i % 5]}"></i>`).join('') + '</div>' : '';
   const wrong = s.items.map((x, k) => ({ x, a: s.ans[k] })).filter(o => o.a && !o.a.ok);
@@ -179,7 +183,7 @@ function qbResultHTML() {
       <button class="btn wide" data-act="qb-share">${icon('share')}شارك نتيجتك وتحدَّ أصدقاءك</button>
     </div>
     ${wrong.length ? `<h2 class="sec">راجع ما أخطأت فيه</h2><div class="qlist">${wrong.map(({ x }) => `<details class="qli no"><summary><span class="n">✕</span><span class="t">${qtext(x.q.q)}</span></summary>
-      <div class="qli-b"><p><span class="lbl">الإجابة الصحيحة:</span> ${x.q.k === 'tf' ? (x.q.a ? 'صح' : 'خطأ') : x.q.k === 'num' ? `<bdi dir="ltr">${x.q.n} ${esc(x.q.u || '')}</bdi>` : x.q.k === 'card' ? x.q.a : qtext(x.q.k === 'mcq' ? x.q.o[0] : x.q.a)}</p>${x.q.w ? `<div class="qwhy"><small>الحل</small>${x.q.w}</div>` : ''}</div></details>`).join('')}</div>` : ''}
+      <div class="qli-b">${x.q.img ? `<img class="qb-rimg" src="${x.q.img}" alt="" loading="lazy">` : ''}<p><span class="lbl">الإجابة الصحيحة:</span> ${x.q.k === 'tf' ? (x.q.a ? 'صح' : 'خطأ') : x.q.k === 'num' ? `<bdi dir="ltr">${x.q.n} ${esc(x.q.u || '')}</bdi>` : x.q.k === 'card' ? x.q.a : qtext(x.q.k === 'mcq' ? x.q.o[0] : x.q.a)}</p>${x.q.aimg ? `<img class="qb-rimg" src="${x.q.aimg}" alt="" loading="lazy">` : ''}${x.q.w ? `<div class="qwhy"><small>الحل</small>${x.q.w}</div>` : ''}</div></details>`).join('')}</div>` : ''}
   </div>`;
 }
 // repaint only the session view (keeps the page from jumping)
@@ -216,6 +220,7 @@ function qbAct(act, el) {
     qbAnswer(Math.abs(n - x.q.n) <= tol + 1e-9, { val: v });
   }
   else if (act === 'qb-flip') { s.flip = true; qbPaint(); }
+  else if (act === 'qb-zoom') el.classList.toggle('big');
   else if (act === 'qb-self') qbAnswer(d.v === '1');
   else if (act === 'qb-next') qbNext();
   else if (act === 'qb-again') qbStart(s.mode, s.scope);

@@ -989,6 +989,13 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
 .qb-timer i { position: absolute; inset-block: 0; right: 0; background: linear-gradient(90deg, #FF4D7A, #FFB020); border-radius: inherit; transition: width .25s linear; }
 .qb-timer b { position: relative; font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums; }
 .qb-timer.low i { background: #FF3B5C; } .qb-timer.low b { animation: pop .5s infinite; }
+.qb-img { display: block; width: 100%; margin-top: 14px; padding: 8px; border-radius: 16px; background: #fff; border: 0; text-align: center; overflow: hidden; }
+.qb-img img { display: block; max-width: 100%; max-height: 230px; margin: 0 auto; object-fit: contain; transition: max-height .3s; }
+.qb-img.big img { max-height: 70vh; }
+button.qb-img { cursor: zoom-in; } button.qb-img.big { cursor: zoom-out; }
+.qb-img.ans { box-shadow: 0 0 0 3px #32D17A; animation: qbCard .5s cubic-bezier(.2,.8,.2,1); }
+.qb-img.ans small { display: block; margin-bottom: 6px; color: #15803D; font-weight: 800; font-size: 13px; }
+.qb-rimg { display: block; max-width: 100%; max-height: 180px; margin: 0 auto 10px; padding: 6px; border-radius: 12px; background: #fff; }
 @media (min-width: 900px) {
   .view.qbank { max-width: 900px; }
   .qb-ls { grid-template-columns: 1fr 1fr; }
@@ -4371,6 +4378,7 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
 <script src="games.js"></script>
 <script src="classroom.js"></script>
 <script src="bank-g11.js"></script>
+<script src="bank-g12.js"></script>
 <script src="qbank.js"></script>
 </body>
 </html>
