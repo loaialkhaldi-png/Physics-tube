@@ -1018,10 +1018,10 @@ const GRADES = {
         { t: 'وصف الحركة الدائرية', video: '', min: '' },
         { t: 'القوة الجاذبة المركزية', video: '', min: '' },
       ]},
-      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', sims: ['com'], lessons: [
+      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', sims: ['plumb', 'com'], lessons: [
         { t: 'مركز الثقل', video: '', min: '' },
-        { t: 'مركز الكتلة', video: '', min: '' },
-        { t: 'تحديد موضع مركز الثقل (الكتلة)', video: '', min: '' },
+        { t: 'مركز الكتلة', sim: 'com', video: '', min: '' },
+        { t: 'تحديد موضع مركز الثقل (الكتلة)', sim: 'plumb', video: '', min: '' },
       ]},
       // الفصل الدراسي الثاني — مؤقت حتى يصل الفهرس
       { term: 2, title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', lessons: [
@@ -1115,6 +1115,7 @@ const SIMS = {
   projectile: { title: 'حركة المقذوفات', sub: 'أمثلة الكتاب محلولة خطوة بخطوة: إطلاق أفقي وإطلاق بزاوية', glyph: 'vectors', theme: 7 },
   circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
   com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'box', theme: 0 },
+  plumb:      { title: 'تعيين مركز الثقل بالتعليق', sub: 'علّق صفيحة غير منتظمة من ثقوب مختلفة وارسم خط الشاقول', glyph: 'box', theme: 4 },
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
   torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
@@ -1128,6 +1129,16 @@ const SIMS = {
   balance:    { title: 'اتزان العزوم', sub: 'ضع الكتل على اللوح وحقق الاتزان', glyph: 'ruler', theme: 5 },
   collision:  { title: 'التصادمات وحفظ الزخم', sub: 'تصادم مرن وتصادم عديم المرونة', glyph: 'collide', theme: 3 },
 };
+/* Laminae for «تعيين مركز الثقل بالتعليق»: outline, pin holes, and centre of gravity (centroid of a uniform lamina). */
+const PLUMB_SHAPES = [
+  { poly: [[-130, -70], [-40, -120], [70, -105], [150, -35], [125, 55], [45, 95], [-25, 70], [-105, 115], [-155, 35]], holes: [[-110, -55], [55, -88], [118, 30], [-112, 82]] },
+  { poly: [[-110, -110], [-50, -110], [-50, 50], [110, 50], [110, 110], [-110, 110]], holes: [[-80, -85], [88, 80], [-85, 88]] },
+  { poly: [[-150, 95], [155, 95], [-25, -135]], holes: [[-110, 75], [118, 75], [-27, -95]] },
+].map(s => {
+  let A = 0, cx = 0, cy = 0; const p = s.poly;
+  p.forEach((a, i) => { const b = p[(i + 1) % p.length], c = a[0] * b[1] - b[0] * a[1]; A += c; cx += (a[0] + b[0]) * c; cy += (a[1] + b[1]) * c; });
+  A /= 2; return Object.assign(s, { cg: [cx / (6 * A), cy / (6 * A)] });
+});
 // Which grades and units use each experiment (derived from the curriculum above).
 const simUses = k => GRADE_ORDER.flatMap(g => GRADES[g].units.filter(u => (u.sims || []).includes(k)).map(u => ({ g, u })));
 
@@ -2054,6 +2065,7 @@ const PREDICT = {
   components: { q: 'عندما تزداد زاوية الحبل مع الأفق، فإن القوة التي تسحب الزورق للأمام:', o: ['تقل', 'تزداد', 'لا تتغير', 'تصبح أكبر من قوة الشد'], why: 'القوة التي تسحب للأمام هي المركبة الأفقية <code>A cosθ</code>، و cosθ يقل كلما زادت الزاوية.' },
   vecprod: { q: 'الزاوية بين متجهين 90°. حاصل ضربهما العددي:', o: ['صفر', 'أكبر ما يمكن', 'سالب', 'يساوي AB'], why: '<code>A·B = AB cos90° = 0</code>. أما الضرب الاتجاهي عند 90° فيكون أكبر ما يمكن.' },
   circular: { q: 'كرة تدور في دائرة مربوطة بخيط. ماذا يحدث لها لحظة قطع الخيط؟', o: ['تتحرك في خط مستقيم مماس للدائرة', 'تتحرك نحو المركز', 'تبتعد في اتجاه نصف القطر للخارج', 'تستمر في الدوران'], why: 'عند قطع الخيط تختفي القوة الجاذبة المركزية، فتستمر الكرة بسرعتها في خط مستقيم في اتجاه المماس. اضغط «اقطع الخيط».' },
+  plumb: { q: 'علّقت صفيحة من ثقب ثم من ثقب آخر، ورسمت خط الشاقول في كل مرة. أين يقع مركز ثقل الصفيحة؟', o: ['عند نقطة تقاطع الخطين', 'عند الثقب الأول', 'في منتصف الخط الأول', 'عند أسفل نقطة في الصفيحة'], why: 'عندما تسكن الصفيحة المعلّقة يقع مركز ثقلها على الخط الرأسي المار بنقطة التعليق، أي على خط الشاقول. فهو يقع على الخطين معاً، أي عند تقاطعهما. علّق الصفيحة من ثقبين وشاهد.' },
   com: { q: 'إذا زادت الكتلة m₃ الموجودة عند 10 m، فإن مركز الكتلة:', o: ['يقترب من m₃', 'يبتعد عن m₃', 'لا يتغير', 'ينتقل إلى 0 m'], why: 'مركز الكتلة يقترب دائماً من الكتلة الأكبر. زِد m₃ وراقب المثلث.' },
   work: { q: 'تسحب صندوقاً بقوة ثابتة. ماذا يحدث للشغل عندما تزداد الزاوية بين القوة والإزاحة من 0° إلى 90°؟', o: ['يقل حتى يصبح صفراً', 'يزداد', 'لا يتغير', 'يصبح سالباً'], why: '<code>W = F·d·cosθ</code>، و cosθ يقل من 1 إلى 0. عند 90° تكون القوة عمودية على الإزاحة فلا تبذل شغلاً.' },
   pendulum: { q: 'بندول بدون احتكاك أُفلت من زاوية 40°. إلى أي زاوية يصل في الجهة الأخرى؟', o: ['40° نفسها', 'أقل من 40°', 'أكبر من 40°', 'صفر'], why: 'الطاقة الميكانيكية محفوظة، فيعود إلى نفس الارتفاع ونفس الزاوية. مع الاحتكاك يصل إلى زاوية أقل.' },
@@ -2114,6 +2126,11 @@ const MISSIONS = {
     { t: 'اجعل المحصلة 20 N (أكبر محصلة ممكنة)', ok: P => Math.abs(Math.sqrt(P.A ** 2 + P.B ** 2 + 2 * P.A * P.B * Math.cos(P.th * D2R)) - 20) < .01 },
     { t: 'متجهان 6 N و 8 N: اجعل محصلتهما 10 N', ok: P => P.A * P.B === 48 && P.A + P.B === 14 && Math.abs(Math.sqrt(P.A ** 2 + P.B ** 2 + 2 * P.A * P.B * Math.cos(P.th * D2R)) - 10) < .01 },
     { t: 'اجعل المحصلة صفراً', ok: P => Math.sqrt(Math.max(0, P.A ** 2 + P.B ** 2 + 2 * P.A * P.B * Math.cos(P.th * D2R))) < .01 },
+  ],
+  plumb: [
+    { t: 'علّق الصفيحة من ثقبين وحدّد مركز ثقلها', ok: P => !!P.found },
+    { t: 'تحقّق: علّقها من ثقب ثالث ليمر خطه بنفس النقطة', ok: P => !!P.verified },
+    { t: 'اكتشف شكلاً يقع مركز ثقله خارج مادته', ok: P => !!P.outside },
   ],
   com: [
     { t: 'اجعل مركز الكتلة عند 5 m تماماً', ok: P => Math.abs((P.m2 * P.x2 + P.m3 * 10) / (P.m1 + P.m2 + P.m3) - 5) < .01 },
@@ -2677,6 +2694,7 @@ const LAWS = {
   vectors: 'طريقة تحليل المتجهات: نحلّل كل قوة إلى مركبتين <code>Fx = F cosθ</code> و<code>Fy = F sinθ</code>، ثم نجمع المركبات: <code>ΣFx</code> و<code>ΣFy</code>، فتكون المحصلة <code>F<sub>R</sub> = √(ΣFx² + ΣFy²)</code> واتجاهها <code>tanθ = ΣFy / ΣFx</code>. الزوايا مقيسة من محور x الموجب عكس عقارب الساعة، فالقوة التي تصنع 40° مع محور x السالب زاويتها 140°.',
   projectile: 'بإهمال مقاومة الهواء تكون السرعة الأفقية <code>vx</code> ثابتة (السهم الأزرق)، والحركة الرأسية منتظمة العجلة <code>g</code> (السهم البرتقالي <code>vy</code>). <b>إطلاق أفقي:</b> <code>Δy = ½gt²</code> و<code>Δx = v·t</code>. <b>إطلاق بزاوية:</b> معادلة المسار <code>y = (−g / 2v₀²cos²θ)x² + tanθ·x</code>، وزمن الوصول لأقصى ارتفاع <code>t = v₀sinθ / g</code>، و<code>h<sub>max</sub> = v₀²sin²θ / 2g</code>، و<code>R = v₀²sin2θ / g</code>. زمن الصعود يساوي زمن الهبوط، ومقدار السرعة عند الاصطدام يساوي السرعة الابتدائية.',
   circular: 'القوة الجاذبة المركزية <code>Fc = m·v² / r</code> والتسارع المركزي <code>ac = v² / r</code>. القوة (الوردي) تتجه دائماً نحو المركز والسرعة (الأزرق) مماسة للمسار. اقطع الخيط وشاهد ماذا يحدث.',
+  plumb: 'عندما تُعلَّق صفيحة من نقطة وتسكن، يقع مركز ثقلها على الخط الرأسي المار بنقطة التعليق (خط الشاقول). نعلّقها من نقطتين مختلفتين ونرسم الخطين، فيكون <b>مركز الثقل عند نقطة تقاطعهما</b>، وأي خط ثالث يمر بالنقطة نفسها. وقد يقع مركز الثقل خارج مادة الجسم كما في شكل حرف L.',
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
   pendulum: 'طاقة الوضع <code>PE = m·g·h</code> والطاقة الحركية <code>KE = ½·m·v²</code> (الكتلة 1 kg). بدون احتكاك تبقى الطاقة الميكانيكية ثابتة. مع الاحتكاك يتحول جزء منها إلى طاقة حرارية، وهذا هو عدم حفظ الطاقة.',
@@ -2693,6 +2711,10 @@ const LAWS = {
 };
 const REPLAY = { type: 'btn', label: 'ابدأ من جديد' };
 const SIMCTL = {
+  plumb: [
+    { id: 'shape', type: 'seg', label: 'الصفيحة', opts: [{ t: 'غير منتظمة', v: 0 }, { t: 'حرف L', v: 1 }, { t: 'مثلث', v: 2 }] },
+    { type: 'btn', label: 'امسح الخطوط وابدأ من جديد' },
+  ],
   accel: [
     { id: 'v0', label: 'السرعة الابتدائية v₀', min: 0, max: 20, step: 1, v: 4, unit: 'm/s' },
     { id: 'a', label: 'التسارع a', min: -3, max: 5, step: 0.5, v: 2, unit: 'm/s²' },
@@ -3155,6 +3177,97 @@ function startSim(k) {
       if (fl > 8) arrow(bx + ux * (rad + 2), by + uy * (rad + 2), bx + ux * (rad + 2 + fl), by + uy * (rad + 2 + fl), PINK);
       label('Fc', bx + ux * (rad + fl / 2) + 14, by + uy * (rad + fl / 2) - 8, PINK, 'left', 17);
       label(`r = ${fmt(r, 1)} m`, cx + 12, cy + 26, DIM, 'left', 16);
+    },
+    plumb(t) {
+      // Rigid lamina hanging from a pin: it swings until its centre of gravity is straight below the pin.
+      const SH = PLUMB_SHAPES[P.shape], PIN = [400, 78], COLS = [TEAL, PINK, PURPLE, ORANGE, BLUE];
+      if (!st.init) Object.assign(st, { init: 1, pin: -1, ph: 0, w: 0, off: [0, 0], lines: [], still: 0, lt: t, rest: [400, 270], found: null, flash: 0 });
+      const dt = Math.min(.05, t - st.lt); st.lt = t;
+      const cg = SH.cg, rot = (v, a) => [v[0] * Math.cos(a) - v[1] * Math.sin(a), v[0] * Math.sin(a) + v[1] * Math.cos(a)];
+      // world position of a local point
+      const world = p => { if (st.pin < 0) { const r = rot([p[0] - cg[0], p[1] - cg[1]], st.ph); return [st.rest[0] + r[0], st.rest[1] + r[1]]; }
+        const h = SH.holes[st.pin], r = rot([p[0] - h[0], p[1] - h[1]], st.ph); return [PIN[0] + st.off[0] + r[0], PIN[1] + st.off[1] + r[1]]; };
+      if (st.pin >= 0) {
+        const h = SH.holes[st.pin], v = [cg[0] - h[0], cg[1] - h[1]], d = Math.hypot(v[0], v[1]);
+        const eq = Math.atan2(v[0], v[1]); // angle that puts the CG straight below the pin
+        let e = st.ph - eq; e = Math.atan2(Math.sin(e), Math.cos(e));
+        if (!st.drag) { st.w += (-(d > 4 ? 18 : 0) * Math.sin(e) - 3.4 * st.w) * dt; st.ph += st.w * dt; }
+        st.off = st.off.map(o => o * Math.exp(-7 * dt));
+        const calm = Math.abs(e) < .006 && Math.abs(st.w) < .015 && Math.hypot(...st.off) < .5 && !st.drag;
+        st.still = calm ? st.still + dt : 0;
+        if (st.still > .35 && !st.lines.some(l => l.hole === st.pin)) {
+          // chalk the plumb line onto the lamina (stored in the lamina's own coordinates)
+          st.lines.push({ hole: st.pin, p: h, dir: rot([0, 1], -st.ph) });
+          st.flash = 1;
+          if (st.lines.length >= 2 && !st.found) {
+            const [a, b] = st.lines, cr = a.dir[0] * b.dir[1] - a.dir[1] * b.dir[0];
+            if (Math.abs(cr) > 1e-3) { const s1 = ((b.p[0] - a.p[0]) * b.dir[1] - (b.p[1] - a.p[1]) * b.dir[0]) / cr; st.found = [a.p[0] + s1 * a.dir[0], a.p[1] + s1 * a.dir[1]]; }
+          }
+          if (st.found && st.lines.length >= 3) {
+            const L = st.lines[st.lines.length - 1], dx = st.found[0] - L.p[0], dy = st.found[1] - L.p[1], dist = Math.abs(dx * L.dir[1] - dy * L.dir[0]);
+            if (dist < 3) P.verified = true;
+          }
+          P.found = !!st.found; if (st.found && P.shape === 1) P.outside = true;
+        }
+      }
+      st.flash = Math.max(0, st.flash - dt * 1.5);
+      grid();
+      // stand and pin
+      box(250, 44, 300, 14, 'rgba(255,255,255,.18)', 7); box(250, 44, 300, 4, 'rgba(255,255,255,.3)', 2);
+      // lamina
+      const path = () => { ctx.beginPath(); SH.poly.forEach((p, i) => { const q = world(p); i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1]); }); ctx.closePath(); };
+      ctx.save(); ctx.shadowColor = 'rgba(43,212,176,.35)'; ctx.shadowBlur = 30; path();
+      const c0 = world(cg), gr = ctx.createLinearGradient(c0[0] - 160, c0[1] - 160, c0[0] + 160, c0[1] + 160);
+      gr.addColorStop(0, 'rgba(43,212,176,.30)'); gr.addColorStop(1, 'rgba(76,134,255,.22)'); ctx.fillStyle = gr; ctx.fill(); ctx.restore();
+      path(); ctx.strokeStyle = 'rgba(160,255,232,.85)'; ctx.lineWidth = 2.5; ctx.stroke();
+      // chalked lines, clipped to the lamina
+      ctx.save(); path(); ctx.clip();
+      st.lines.forEach((l, i) => { const a = world([l.p[0] - l.dir[0] * 600, l.p[1] - l.dir[1] * 600]), b = world([l.p[0] + l.dir[0] * 600, l.p[1] + l.dir[1] * 600]);
+        ctx.shadowColor = COLS[i % 5]; ctx.shadowBlur = 12; line(a[0], a[1], b[0], b[1], COLS[i % 5], 4); ctx.shadowBlur = 0; });
+      ctx.restore();
+      // the found centre of gravity (may lie outside the lamina's material)
+      if (st.found) {
+        const f = world(st.found), pulse = 1 + .15 * Math.sin(t * 5);
+        if (P.shape === 1) st.lines.forEach((l, i) => { const a = world(l.p); line(a[0], a[1], f[0], f[1], COLS[i % 5], 2, [6, 6]); });
+        ctx.strokeStyle = ORANGE; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(f[0], f[1], 14 * pulse, 0, 7); ctx.stroke();
+        line(f[0] - 22, f[1], f[0] + 22, f[1], ORANGE, 2); line(f[0], f[1] - 22, f[0], f[1] + 22, ORANGE, 2);
+        ball(f[0], f[1], 5, ORANGE);
+        if (st.pin >= 0) arrow(f[0], f[1] + 18, f[0], f[1] + 88, 'rgba(255,165,58,.75)', 4);
+        label('مركز الثقل', f[0] + 26, f[1] - 14, ORANGE, 'left', 17);
+        if (st.pin >= 0) label('الوزن', f[0] + 12, f[1] + 82, 'rgba(255,165,58,.85)', 'left', 15);
+      }
+      // holes
+      SH.holes.forEach((h, i) => { const q = world(h), on = i === st.pin, used = st.lines.some(l => l.hole === i);
+        ctx.fillStyle = '#07080B'; ctx.beginPath(); ctx.arc(q[0], q[1], 9, 0, 7); ctx.fill();
+        ctx.strokeStyle = on ? WHITE : used ? COLS[st.lines.findIndex(l => l.hole === i) % 5] : 'rgba(255,255,255,.75)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(q[0], q[1], 9, 0, 7); ctx.stroke();
+        if (!on && st.lines.length < 3) { ctx.strokeStyle = `rgba(255,255,255,${.25 + .25 * Math.sin(t * 4 + i)})`; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(q[0], q[1], 16, 0, 7); ctx.stroke(); } });
+      // pin, string and plumb bob (always vertical)
+      if (st.pin >= 0) {
+        const q = world(SH.holes[st.pin]), by = 452;
+        line(q[0], q[1], q[0], by - 18, 'rgba(255,255,255,.85)', 1.5);
+        ctx.fillStyle = '#E8B04B'; ctx.beginPath(); ctx.moveTo(q[0] - 10, by - 18); ctx.lineTo(q[0] + 10, by - 18); ctx.lineTo(q[0], by + 6); ctx.closePath(); ctx.fill();
+        ball(q[0], q[1], 6, '#D7DBE3', 'rgba(255,255,255,.6)');
+        label('خيط الشاقول', q[0] + 14, by - 4, 'rgba(255,255,255,.6)', 'left', 14);
+      }
+      if (st.flash > 0) { ctx.fillStyle = `rgba(255,255,255,${st.flash * .08})`; ctx.fillRect(0, 0, W, H); }
+      const msg = st.pin < 0 ? 'اضغط على أحد الثقوب لتعليق الصفيحة منه' : st.still <= .35 ? 'انتظر حتى تسكن الصفيحة… (أو اسحبها لتهزّها)' : !st.found ? 'رُسم خط الشاقول! علّقها من ثقب آخر' : st.lines.length < 3 ? 'التقاطع هو مركز الثقل. تحقّق بثقب ثالث' : P.verified ? 'الخط الثالث مرّ بنفس النقطة ✓' : 'علّقها من ثقب آخر';
+      label(msg, W / 2, H - 14, WHITE, 'center', 17);
+      setRO([['الخطوط المرسومة', `${st.lines.length}`], ['مركز الثقل', st.found ? 'تحدّد ✓' : '؟'], ['الصفيحة', st.pin < 0 ? 'على الطاولة' : st.still > .35 ? 'ساكنة' : 'تتأرجح']]);
+      st.world = world;
+      if (!cv._plumb) {
+        cv._plumb = true; cv.style.touchAction = 'none';
+        const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+        cv.addEventListener('pointerdown', e => {
+          const [x, y] = pt(e), S2 = PLUMB_SHAPES[P.shape], wp = st.world; if (!wp) return;
+          const hit = S2.holes.findIndex(h => { const q = wp(h); return Math.hypot(q[0] - x, q[1] - y) < 26; });
+          if (hit >= 0 && hit !== st.pin) {
+            const q = wp(S2.holes[hit]); st.off = [q[0] - PIN[0], q[1] - PIN[1]]; st.pin = hit; st.w = 0; st.still = 0; return;
+          }
+          if (st.pin >= 0) { st.drag = { x }; try { cv.setPointerCapture(e.pointerId); } catch (err) {} }
+        });
+        cv.addEventListener('pointermove', e => { if (!st.drag) return; const [x] = pt(e); st.ph -= (x - st.drag.x) * .004; st.drag.x = x; st.w = 0; st.still = 0; });
+        const up = () => { st.drag = null; }; cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+      }
     },
     com() {
       const m1 = P.m1, m2 = P.m2, m3 = P.m3, x2 = P.x2, M = m1 + m2 + m3, mx = m2 * x2 + m3 * 10, xc = mx / M;

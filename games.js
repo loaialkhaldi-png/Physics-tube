@@ -677,7 +677,130 @@ const COASTER = {
   },
 };
 
-const GAMES = { car: CAR, egg: EGG, cannon: CANNON, boat: BOAT, pirate: PIRATE, coaster: COASTER };
+/* =====================================================================
+   Grade 11 · 🧱 برج الصناديق   (مركز الثقل: يتزن البرج ما دام مركز ثقل كل مجموعة صناديق فوق ما تحتها)
+   ===================================================================== */
+const TOWER = {
+  g: 'g11', t: 'برج الصناديق', ic: '🧱', topic: 'مركز الثقل', c: ['#7B5CFF', '#0E1640'],
+  sub: 'رصّ الصناديق فوق حافة السطح لتبرز أبعد ما يمكن دون أن يسقط البرج',
+  levels: [
+    { name: 'صندوقان', m: [1, 1], s: [22, 26, 29] }, { name: 'ثلاثة صناديق', m: [1, 1, 1], s: [28, 32, 35] },
+    { name: 'أبعد من الحافة', m: [1, 1, 1, 1], s: [34, 38, 40.5] }, { name: 'الثقيل في الأسفل', m: [2, 1, 1], s: [30, 35, 38.5] },
+    { name: 'الثقيل في الأعلى', m: [1, 1, 2], s: [24, 28, 30.5] }, { name: 'برج الخمسة', m: [1, 1, 1, 1, 1], s: [38, 42, 44.5] },
+  ],
+  BW: 40, PX: 4, EDGE: 330, TOP: 380, BH: 36,
+  mission(L) {
+    const heavy = L.m.some(m => m > 1);
+    return `طول كل صندوق ${nb(40, 'cm')}. اسحب الصناديق أفقياً لتجعل الصندوق الأبعد يبرز عن حافة السطح أطول مسافة ممكنة، ثم اضغط «اختبر البرج». ` +
+      (heavy ? `الصندوق البنفسجي (2m) كتلته ضعف كتلة كل صندوق أزرق (m). ` : '') + `المطلوب بروز ${nb(L.s[0], 'cm')} على الأقل، والنجوم الثلاث عند ${nb(L.s[2], 'cm')}.`;
+  },
+  hint: L => 'يبقى البرج متزناً إذا وقع <b>مركز ثقل كل مجموعة صناديق فوق الصندوق الذي تحتها</b>، ووقع مركز ثقل البرج كله فوق السطح. العلامة ◆ تحت كل صندوق هي مركز ثقل الصناديق التي فوقه: خضراء إذا كانت مسنودة، وحمراء إذا لم تكن.<br>ابدأ من الأعلى: أبرز الصندوق العلوي حتى يصبح مركز ثقله فوق حافة الصندوق الذي تحته تماماً، ثم حرّك المجموعة كلها.' +
+    (L.m.some(m => m > 1) ? '<br>مركز ثقل صناديق مختلفة الكتل يقترب من الأثقل: <code>x = (m₁x₁ + m₂x₂ + …) / (m₁ + m₂ + …)</code>.' : ''),
+  go: '🧱 اختبر البرج',
+  init(st, P, L) { st.x = L.m.map(() => -24); st.drag = null; st.fall = null; st.hold = 0; st.sel = -1; },
+  // centre of gravity (cm) of the blocks from k to the top
+  cg(st, L, k) { let s = 0, M = 0; for (let j = k; j < L.m.length; j++) { s += L.m[j] * st.x[j]; M += L.m[j]; } return s / M; },
+  check(st, L) {
+    for (let k = 0; k < L.m.length; k++) {
+      const c = this.cg(st, L, k);
+      if (k === 0 ? c > 1e-6 : Math.abs(c - st.x[k - 1]) > this.BW / 2 + 1e-6) return { k, c, out: k === 0 ? c : Math.abs(c - st.x[k - 1]) - this.BW / 2, side: k === 0 ? 1 : Math.sign(c - st.x[k - 1]) };
+    }
+    return null;
+  },
+  over(st) { return Math.max(...st.x.map(x => x + this.BW / 2)); },
+  launch(st, P, L) { st.bad = this.check(st, L); st.hold = 0; st.fall = null; if (st.bad) { const k = st.bad.k, side = st.bad.side; st.fall = { k, side, ang: 0, w: 0, dy: 0, vy: 0, px: k === 0 ? 0 : st.x[k - 1] + side * this.BW / 2, py: this.TOP - k * this.BH }; SFX.play('crack'); } },
+  update(st, dt, P, L) {
+    const f1 = v => (Math.round(v * 10) / 10).toString();
+    if (st.fall) {
+      const F = st.fall; F.w += F.side * 7 * dt; F.ang += F.w * dt;
+      if (Math.abs(F.ang) > .9) { F.vy += 900 * dt; F.dy += F.vy * dt; }
+      if (Math.abs(F.ang) > .9 && !F.boom) { F.boom = 1; st.shake = 7; SFX.play('thud'); }
+      if (F.dy > 520) {
+        const b = st.bad, who = b.k === 0 ? 'الصناديق كلها' : `الصناديق من الصندوق ${b.k + 1} إلى الأعلى`, where = b.k === 0 ? 'خارج حافة السطح' : 'خارج الصندوق الذي تحتها';
+        return gEnd(st, false, 0, 'سقط البرج! 💥', `مركز ثقل ${who} وقع ${where} بمقدار ${nb(f1(b.out), 'cm')}، فلم يعد مسنوداً ودارت الصناديق حول الحافة وسقطت. أرجعها قليلاً نحو الداخل.`);
+      }
+      return;
+    }
+    st.hold += dt;
+    if (st.hold > 1.3) {
+      const ov = this.over(st), inner = -this.cg(st, L, 0), [a, b, c] = L.s;
+      const why = `البروز ${nb(f1(ov), 'cm')}. البرج متزن لأن مركز ثقل كل مجموعة صناديق يقع فوق الصندوق الذي تحتها، ومركز ثقل البرج كله يقع فوق السطح قبل الحافة بـ ${nb(f1(inner), 'cm')}.` + (L.m.some(m => m > 1) ? ' الصندوق الأثقل يسحب مركز الثقل نحوه.' : '') + (ov > 40 ? ' لاحظ: الصندوق العلوي كله خارج حافة السطح! 🤯' : '');
+      if (ov + 1e-6 < a) return gEnd(st, false, 0, 'البرج متزن، لكن البروز قصير', `البروز ${nb(f1(ov), 'cm')} فقط، والمطلوب ${nb(a, 'cm')} على الأقل. أبرز الصناديق أكثر مع إبقاء كل علامة ◆ خضراء.`);
+      const stars = ov + 1e-6 >= c ? 3 : ov + 1e-6 >= b ? 2 : 1;
+      burst(st, this.EDGE + ov * this.PX, this.TOP - L.m.length * this.BH - 10, 50, { cols: ['#7CF7FF', '#B794FF', '#FFE066', '#FF6FD8'], sp: 260, up: 220, life: 1.6, r: 4, kind: 'conf' });
+      return gEnd(st, true, stars, stars === 3 ? 'برج أسطوري! 🏆' : stars === 2 ? 'برج رائع!' : 'البرج صامد!', why);
+    }
+  },
+  X(st, cm) { return this.EDGE + cm * this.PX; },
+  pointer(cv, st) {
+    const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 800, (e.clientY - r.top) / r.height * 500]; };
+    cv.style.touchAction = 'none';
+    cv.onpointerdown = e => {
+      if (st.phase !== 'aim') return; const [x, y] = pt(e), L = st.L, n = L.m.length;
+      for (let k = n - 1; k >= 0; k--) { const cx = this.X(st, st.x[k]), yb = this.TOP - k * this.BH; if (Math.abs(x - cx) < this.BW * this.PX / 2 + 6 && y > yb - this.BH - 6 && y < yb + 4) { st.drag = { k, x0: x, base: st.x.slice() }; st.sel = k; try { cv.setPointerCapture(e.pointerId); } catch (_) {} SFX.init(); return; } }
+    };
+    cv.onpointermove = e => {
+      const d = st.drag; if (!d) return; const [x] = pt(e), n = st.L.m.length;
+      let dc = Math.round((x - d.x0) / this.PX * 2) / 2;
+      // a block carries the blocks above it; keep it resting on the one below (or on the roof)
+      const lo = d.k === 0 ? -60 - d.base[0] : d.base[d.k - 1] - 36 - d.base[d.k], hi = d.k === 0 ? 16 - d.base[0] : d.base[d.k - 1] + 36 - d.base[d.k];
+      dc = Math.max(lo, Math.min(hi, dc));
+      for (let j = 0; j < n; j++) st.x[j] = j >= d.k ? d.base[j] + dc : d.base[j];
+    };
+    cv.onpointerup = cv.onpointercancel = () => { if (st.drag) { st.drag = null; SFX.play('pop'); } };
+  },
+  draw(c, st, P, L) {
+    const n = L.m.length, E = this.EDGE, T = this.TOP, BW = this.BW * this.PX, BH = this.BH;
+    // night sky and skyline
+    skyGrad(c, ['#070B1F', '#151A45', '#3A1F63'], 500);
+    const sr = seeded(3); for (let k = 0; k < 60; k++) { const x = sr() * 800, y = sr() * 260, a = .3 + .5 * Math.abs(Math.sin(st.t * (1 + sr()) + k)); c.fillStyle = `rgba(255,255,255,${a})`; c.fillRect(x, y, 1.6, 1.6); }
+    const mg = c.createRadialGradient(660, 90, 4, 660, 90, 70); mg.addColorStop(0, 'rgba(255,240,210,.95)'); mg.addColorStop(.35, 'rgba(255,230,190,.35)'); mg.addColorStop(1, 'rgba(255,230,190,0)'); c.fillStyle = mg; c.beginPath(); c.arc(660, 90, 70, 0, 7); c.fill();
+    const bl = seeded(9); let bx = 330; while (bx < 820) { const w = 40 + bl() * 50, h = 90 + bl() * 170; c.fillStyle = '#10153A'; c.fillRect(bx, 500 - h, w, h); for (let wy = 500 - h + 10; wy < 490; wy += 16) for (let wx = bx + 6; wx < bx + w - 8; wx += 12) if (bl() < .35) { c.fillStyle = bl() < .5 ? 'rgba(255,214,120,.75)' : 'rgba(120,220,255,.6)'; c.fillRect(wx, wy, 5, 7); } bx += w + 6; }
+    const glow = c.createLinearGradient(0, 430, 0, 500); glow.addColorStop(0, 'rgba(255,90,180,0)'); glow.addColorStop(1, 'rgba(255,90,180,.35)'); c.fillStyle = glow; c.fillRect(E, 430, 800 - E, 70);
+    // rooftop
+    const rg = c.createLinearGradient(0, T, 0, 500); rg.addColorStop(0, '#2A2F4F'); rg.addColorStop(1, '#151832'); c.fillStyle = rg; c.fillRect(0, T, E, 500 - T);
+    c.fillStyle = '#3B416B'; c.fillRect(0, T, E, 6);
+    c.save(); c.beginPath(); c.rect(E - 26, T + 6, 26, 500 - T); c.clip(); for (let y = T - 20; y < 500; y += 22) { c.fillStyle = '#FFC83D'; c.beginPath(); c.moveTo(E - 26, y); c.lineTo(E, y - 14); c.lineTo(E, y - 4); c.lineTo(E - 26, y + 10); c.fill(); } c.restore();
+    c.shadowColor = '#5EF0FF'; c.shadowBlur = 16; c.fillStyle = '#5EF0FF'; c.fillRect(E - 3, T, 3, 500 - T); c.shadowBlur = 0;
+    // edge guide and overhang ruler
+    c.setLineDash([6, 6]); c.strokeStyle = 'rgba(94,240,255,.35)'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(E, 40); c.lineTo(E, T); c.stroke(); c.setLineDash([]);
+    const ov = this.over(st), ry = T + 46;
+    c.strokeStyle = 'rgba(255,255,255,.25)'; c.lineWidth = 1; c.beginPath(); c.moveTo(E, ry); c.lineTo(E + 50 * this.PX, ry); c.stroke();
+    for (let cm = 0; cm <= 50; cm += 5) { const x = E + cm * this.PX; c.beginPath(); c.moveTo(x, ry - (cm % 10 ? 4 : 8)); c.lineTo(x, ry); c.stroke(); if (cm % 10 === 0) gtx(c, String(cm), x, ry + 16, 'rgba(255,255,255,.55)', 'center', 11, 600); }
+    gtx(c, 'cm', E + 50 * this.PX + 16, ry + 4, 'rgba(255,255,255,.55)', 'center', 11, 600);
+    L.s.forEach((v, i) => { const x = E + v * this.PX, on = ov + 1e-6 >= v; c.fillStyle = on ? '#FFE066' : 'rgba(255,255,255,.35)'; c.fillRect(x - 1, ry - 10, 2, 10);
+      if (i === 0) gtx(c, 'الهدف', x, ry - 16, c.fillStyle, 'center', 11, 700); if (i === 2) { c.fillRect(x - 1, ry - 26, 2, 16); gtx(c, '★★★', x, ry - 32, c.fillStyle, 'center', 12, 800); } });
+    if (ov > 0) { c.fillStyle = 'rgba(255,224,102,.9)'; c.fillRect(E, ry - 2, ov * this.PX, 4); }
+    // blocks (toppling group rotates about its pivot)
+    const F = st.fall;
+    const block = (k, cx, yb) => {
+      const heavy = L.m[k] > 1, x = cx - BW / 2, y = yb - BH;
+      const g2 = c.createLinearGradient(x, y, x, yb); g2.addColorStop(0, heavy ? '#C77DFF' : '#4FC3FF'); g2.addColorStop(1, heavy ? '#6A2CC9' : '#1E63D6');
+      c.shadowColor = heavy ? 'rgba(199,125,255,.7)' : 'rgba(79,195,255,.6)'; c.shadowBlur = st.sel === k && st.phase === 'aim' ? 22 : 10;
+      c.fillStyle = g2; rr(c, x, y, BW, BH, 7); c.fill(); c.shadowBlur = 0;
+      c.fillStyle = 'rgba(255,255,255,.22)'; rr(c, x + 4, y + 3, BW - 8, 9, 5); c.fill();
+      c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1.5; rr(c, x, y, BW, BH, 7); c.stroke();
+      gtx(c, heavy ? '2m' : 'm', cx, yb - 11, '#fff', 'center', 15, 800);
+    };
+    for (let k = 0; k < n; k++) {
+      const cx = this.X(st, st.x[k]), yb = T - k * BH;
+      if (F && k >= F.k) { c.save(); const px = this.X(st, F.px); c.translate(px, F.py + F.dy); c.rotate(F.ang); c.translate(-px, -F.py); block(k, cx, yb); c.restore(); }
+      else block(k, cx, yb);
+    }
+    // centre-of-gravity markers of each group of blocks
+    if (st.phase === 'aim' || (st.phase === 'run' && !F)) {
+      for (let k = 0; k < n; k++) {
+        const cg = this.cg(st, L, k), x = this.X(st, cg), y = T - k * BH, ok = k === 0 ? cg <= 1e-6 : Math.abs(cg - st.x[k - 1]) <= this.BW / 2 + 1e-6, col = ok ? '#3DFFA2' : '#FF4D6D';
+        c.setLineDash([4, 4]); c.strokeStyle = col; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x, y - BH * (n - k) + 4); c.lineTo(x, y); c.stroke(); c.setLineDash([]);
+        c.fillStyle = col; c.shadowColor = col; c.shadowBlur = 10; c.beginPath(); c.moveTo(x, y - 7); c.lineTo(x + 7, y); c.lineTo(x, y + 7); c.lineTo(x - 7, y); c.closePath(); c.fill(); c.shadowBlur = 0;
+      }
+    }
+    if (!F) pill(c, `البروز ${(Math.round(Math.max(0, ov) * 10) / 10)} cm`, 120, 40, 'rgba(0,0,0,.45)', '#FFE066');
+    if (st.phase === 'aim') { pill(c, '◆ مركز ثقل الصناديق فوقه', 120, 78, 'rgba(0,0,0,.35)', '#3DFFA2', 13); gtx(c, 'اسحب الصناديق يميناً أو يساراً', 160, 452, 'rgba(255,255,255,.75)', 'center', 14); gtx(c, 'كل صندوق يحمل ما فوقه معه', 160, 474, 'rgba(255,255,255,.5)', 'center', 12, 600); }
+  },
+};
+
+const GAMES = { car: CAR, egg: EGG, cannon: CANNON, boat: BOAT, tower: TOWER, pirate: PIRATE, coaster: COASTER };
 
 // The home and lab screens were drawn before this file loaded; draw them again with the games card.
 if (!S.stack.length) render(false);
