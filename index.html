@@ -2226,12 +2226,6 @@ function vHome() {
         <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
         <span class="foot">${ar(lessons)} درساً في الفصلين</span>
       </button>
-      ${S.grade === 'g12' ? `<button class="promo" data-act="chem12" style="--pbg:radial-gradient(110% 80% at 30% 100%, #8B7CFF 0%, transparent 70%), linear-gradient(170deg, #090D18, #1B1F4A)">
-        <h2>كيمياء ١٢</h2>
-        <p>ورقة عمل تفاعلية: سرعة التفاعل، الاتزان، الأحماض والقواعد</p>
-        <svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('flask', 6)}</g></svg>
-        <span class="foot">٤٩ سؤالاً مع تصحيح فوري</span>
-      </button>` : ''}
       <button class="promo" data-tab="notes" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[5].a} 0%, transparent 70%), linear-gradient(170deg, #160A02, ${THEMES[5].b})">
         <h2>المذكرات</h2>
         <p>ملخص PDF لكل وحدة، جاهز للمراجعة قبل الاختبار</p>
@@ -3931,7 +3925,6 @@ document.addEventListener('click', e => {
     if (S.watched[k]) toast('أحسنت! تم حفظ تقدّمك');
   }
   else if (act === 'share') shareSheet();
-  else if (act === 'chem12') location.href = 'chem12.html';
   else if (act === 'share-send') shareSend();
   else if (act === 'share-copy') shareCopy();
   else if (act === 'login') authSheet('login');
