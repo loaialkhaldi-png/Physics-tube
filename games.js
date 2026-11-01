@@ -254,7 +254,7 @@ const CAR = {
   },
   sx: (st, x) => 40 + (x - st.cam) * 16,
   // the two pedals (drawn in the lower left while aiming); dragging a pedal down presses it harder
-  PED: { a: { x: 646, w: 70, h: 54, col: '#FF3B3B', name: 'فرامل' }, ag: { x: 730, w: 40, h: 84, col: '#32D17A', name: 'بنزين' } }, PB: 214,
+  PED: { a: { x: 34, w: 70, h: 54, col: '#FF3B3B', name: 'فرامل' }, ag: { x: 734, w: 40, h: 84, col: '#32D17A', name: 'بنزين' } }, PB: 214,
   pedOn: (L, id) => id === 'ag' ? !!(L.go || L.both) : !L.go,
   pointer(cv, st) {
     cv.style.touchAction = 'none';
@@ -268,8 +268,9 @@ const CAR = {
     cv.onpointerup = cv.onpointercancel = () => { if (st.drag) { st.drag = null; SFX.play('pop'); } };
   },
   drawPedals(c, st, P, L) {
-    const B = this.PB; c.fillStyle = 'rgba(10,10,16,.6)'; rr(c, 632, B - 146, 156, 152, 16); c.fill();
+    const B = this.PB;
     Object.entries(this.PED).forEach(([id, pd]) => {
+      c.fillStyle = 'rgba(10,10,16,.6)'; rr(c, pd.x - 18, B - 146, pd.w + 36, 152, 16); c.fill();
       const on = this.pedOn(L, id), val = on ? P[id] : .5, k = on ? (val - .5) / 9.5 : 0, y0 = B - pd.h - 22 + k * 14;
       c.fillStyle = 'rgba(255,255,255,.08)'; rr(c, pd.x - 4, B - pd.h - 26, pd.w + 8, pd.h + 22, 10); c.fill();
       c.save(); if (on && st.drag === id) { c.shadowColor = pd.col; c.shadowBlur = 20; }
