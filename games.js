@@ -638,6 +638,17 @@ const COASTER = {
     }
   },
   SX: x => 60 + x * 10.4, SY: y => 430 - y * 13,
+  // Drag the cart up or down the first hill to choose H (the slider follows).
+  pointer(cv, st) {
+    const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 800, (e.clientY - r.top) / r.height * 500]; };
+    cv.style.touchAction = 'none';
+    cv.onpointerdown = e => { if (st.phase !== 'aim') return; const [x, y] = pt(e); if (Math.abs(x - this.SX(0)) < 60 && Math.abs(y - this.SY(st.P.H)) < 50) { st.drag = true; try { cv.setPointerCapture(e.pointerId); } catch (_) {} SFX.init(); } };
+    cv.onpointermove = e => {
+      if (!st.drag) return; const [, y] = pt(e), el = document.getElementById('gc-H'); if (!el) return;
+      const H = Math.min(20, Math.max(2, Math.round((430 - y) / 13 * 2) / 2)); if (+el.value !== H) { el.value = H; el.oninput(); }
+    };
+    cv.onpointerup = cv.onpointercancel = () => { if (st.drag) { st.drag = false; SFX.play('pop'); } };
+  },
   draw(c, st, P, L) {
     const SX = this.SX, SY = this.SY, tr = st.phase === 'aim' ? this.track(L, P.H) : st.tr, n = tr.p.length;
     skyGrad(c, ['#2B1055', '#7A2C7E', '#E8607A', '#FFB86B'], 430);

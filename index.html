@@ -2722,7 +2722,8 @@ const SIMCTL = {
   acrobat: [
     { id: 'm1', label: 'الثقل الأيسر', min: 0, max: 20, step: 1, v: 6, unit: 'kg', keep: true },
     { id: 'm2', label: 'الثقل الأيمن', min: 0, max: 20, step: 1, v: 6, unit: 'kg', keep: true },
-    { id: 'd', label: 'طول خيط الثقلين', min: 0, max: 2.5, step: 0.1, v: 0.6, unit: 'm', keep: true },
+    { id: 'd1', label: 'طول خيط الثقل الأيسر', min: 0, max: 2.5, step: 0.1, v: 0.6, unit: 'm', keep: true },
+    { id: 'd2', label: 'طول خيط الثقل الأيمن', min: 0, max: 2.5, step: 0.1, v: 0.6, unit: 'm', keep: true },
     { type: 'btn', label: 'ادفع البهلوان', act: 'push', icon: 'bolt' },
     { type: 'btn', label: 'أعده إلى الحبل', act: 'reset' },
   ],
@@ -3196,8 +3197,8 @@ function startSim(k) {
     },
     acrobat(t) {
       // Body frame: feet on the rope at the origin, y up (m). Rigid system pivoting about the rope.
-      const MB = 40, HB = 1.0, HH = .9, A = 1.5, m1 = P.m1, m2 = P.m2, d = P.d, M = MB + m1 + m2;
-      const cgx = (m2 * A - m1 * A) / M, cgy = (MB * HB + (m1 + m2) * (HH - d)) / M;
+      const MB = 40, HB = 1.0, HH = .9, A = 1.5, m1 = P.m1, m2 = P.m2, M = MB + m1 + m2;
+      const cgx = (m2 * A - m1 * A) / M, cgy = (MB * HB + m1 * (HH - P.d1) + m2 * (HH - P.d2)) / M;
       if (!st.init) Object.assign(st, { init: 1, th: .03, w: 0, lt: t, fell: 0, fy: 0, still: 0 });
       const dt = Math.min(.04, t - st.lt); st.lt = t;
       if (st.push && !st.fell) { st.w += .9; st.push = false; st.pushed = 1; }
@@ -3222,9 +3223,11 @@ function startSim(k) {
       // pole (bows down at the ends) and hanging weights
       const pole = []; for (let i = 0; i <= 20; i++) { const x = -A + i * A / 10; pole.push(W2(x, HH - .12 * (x / A) ** 2)); }
       ctx.strokeStyle = '#D9DEE8'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); pole.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
-      [[-A, m1, PINK], [A, m2, BLUE]].forEach(([x, m, c]) => {
-        if (!m) return; const top = W2(x, HH - .12), bot = [top[0], top[1] + d * K]; line(top[0], top[1], bot[0], bot[1], 'rgba(255,255,255,.7)', 1.5);
-        ball(bot[0], bot[1] + 9 + m * .7, 9 + m * .7, c); label(`${m} kg`, bot[0], bot[1] + 2 * (9 + m * .7) + 24, c, 'center', 15);
+      st.hw = [];
+      [[-A, m1, PINK, P.d1, 'd1'], [A, m2, BLUE, P.d2, 'd2']].forEach(([x, m, c, d, id]) => {
+        if (!m) return; const top = W2(x, HH - .12), bot = [top[0], top[1] + d * K], r = 9 + m * .7; line(top[0], top[1], bot[0], bot[1], 'rgba(255,255,255,.7)', 1.5);
+        ball(bot[0], bot[1] + r, r, c); label(`${m} kg`, bot[0], bot[1] + 2 * r + 24, c, 'center', 15);
+        st.hw.push({ id, x: bot[0], y: bot[1] + r, r, top: top[1] });
       });
       // acrobat
       seg([0, 0], [-.18, .5], '#FFD8B0', 7); seg([0, 0], [.18, .5], '#FFD8B0', 7);
@@ -3243,6 +3246,7 @@ function startSim(k) {
       setRO([['مركز الثقل', below ? `${fmt(-cgy, 2)} m تحت الحبل` : `${fmt(cgy, 2)} m فوق الحبل`], ['الكتلة الكلية', `${fmt(M, 0)} kg`], ['الحالة', state]]);
       label(st.fell ? 'سقط! ارفع الثقلين أقل أو أطِل خيطهما، ثم «أعده إلى الحبل»' : below ? 'مركز الثقل تحت الحبل' : 'مركز الثقل فوق الحبل', W / 2, H - 14, st.fell ? PINK : below ? TEAL : PINK, 'center', 17);
       label('كتلة البهلوان مع العصا 40 kg', 20, 30, DIM, 'left', 14);
+      if (!st.fell) label('اسحب الثقلين لأعلى أو لأسفل', W - 20, 30, DIM, 'right', 14);
     },
     plumb(t) {
       // Rigid lamina hanging from a pin: it swings until its centre of gravity is straight below the pin.
@@ -3343,6 +3347,8 @@ function startSim(k) {
       box(X(0) - 8, ry, Rr - L + 16, 12, 'rgba(255,255,255,.75)', 4);
       for (let x = 0; x <= 10; x++) { line(X(x), ry + 12, X(x), ry + 20, DIM, 2); label(`${x}`, X(x), ry + 100, 'rgba(255,255,255,.35)', 'center', 15); }
       label('m', X(10) + 30, ry + 100, 'rgba(255,255,255,.35)', 'center', 15);
+      st.h2 = [X(x2), ry - (10 + m2 * 2.4) - 2, 14 + m2 * 2.4];
+      label('اسحب الكتلة m₂ على المسطرة', W - 20, 30, DIM, 'right', 14);
       [[m1, 0, BLUE, 'm₁'], [m2, x2, TEAL, 'm₂'], [m3, 10, ORANGE, 'm₃']].forEach(([m, x, c, n]) => {
         if (!m) return; const rad = 10 + m * 2.4;
         ball(X(x), ry - rad - 2, rad, c, c);
@@ -3386,7 +3392,8 @@ function startSim(k) {
       line(px - 150, py + len, px + 150, py + len, 'rgba(255,255,255,.2)', 2, [4, 6]); label('h = 0', px - 156, py + len + 6, 'rgba(255,255,255,.35)', 'right', 15);
       if (by < py + len - 4) { line(bx + 26, by, bx + 26, py + len, 'rgba(76,134,255,.6)', 2); label('h', bx + 34, (by + py + len) / 2 + 6, BLUE, 'left', 16); }
       line(px, py, bx, by, '#D6F5FF', 2.5);
-      ball(bx, by, 20, TEAL, TEAL);
+      ball(bx, by, 20, TEAL, TEAL); st.hb = [bx, by];
+      label('اسحب الكرة لتغيير زاوية الإفلات وطول الخيط', W - 20, H - 16, DIM, 'right', 14);
       const bars = [['الوضع', PE, BLUE], ['الحركية', KE, ORANGE]].concat(P.f ? [['الحرارية', Q, PINK]] : []).concat([['الكلية', P.f ? E0 : PE + KE, WHITE]]);
       const bw = 44, gap = 18, base = 420, maxH = 300, x0 = W - 30 - bars.length * (bw + gap);
       line(x0 - 10, base, W - 20, base, DIM, 2);
@@ -3839,6 +3846,27 @@ function startSim(k) {
       if (after && d < .25) { ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); ctx.arc((x1 + x2) / 2, ty - 30, 30 * (1 - d * 3), 0, 7); ctx.fill(); }
     },
   };
+  // Move masses with a finger: dragging a mass on the canvas moves its slider too.
+  const setCtl = (id, v) => {
+    const el = document.getElementById(id), c = SIMCTL[k].find(x => x.id === id); if (!el || !c) return;
+    v = +(Math.round(Math.min(c.max, Math.max(c.min, v)) / c.step) * c.step).toFixed(4);
+    if (Math.abs(v - +el.value) > 1e-9) { el.value = v; el.oninput(); }
+  };
+  const DRAG = {
+    com: { hit: (x, y) => st.h2 && Math.hypot(x - st.h2[0], y - st.h2[1]) < st.h2[2] + 16 && 'x2', move: (h, x) => setCtl('x2', (x - 90) / 62) },
+    pendulum: { hit: (x, y) => st.hb && Math.hypot(x - st.hb[0], y - st.hb[1]) < 40 && 'bob',
+      move: (h, x, y) => { const dx = x - 270, dy = Math.max(1, y - 46); setCtl('a', Math.abs(Math.atan2(dx, dy)) / D); setCtl('L', (Math.hypot(dx, dy) - 70) / 150); } },
+    acrobat: { hit: (x, y) => { const w = (st.hw || []).find(o => Math.hypot(x - o.x, y - o.y) < o.r + 22); return w && w.id; },
+      move: (h, x, y) => { const w = (st.hw || []).find(o => o.id === h); if (w) setCtl(h, (y - w.r - w.top) / 110); } },
+  };
+  if (DRAG[k]) {
+    cv.style.touchAction = 'none';
+    const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * W / r.width, (e.clientY - r.top) * H / r.height]; };
+    let held = null;
+    cv.addEventListener('pointerdown', e => { const [x, y] = pt(e), h = DRAG[k].hit(x, y); if (!h) return; held = h; cv.style.cursor = 'grabbing'; try { cv.setPointerCapture(e.pointerId); } catch (err) {} });
+    cv.addEventListener('pointermove', e => { const [x, y] = pt(e); if (held) DRAG[k].move(held, x, y); else cv.style.cursor = DRAG[k].hit(x, y) ? 'grab' : ''; });
+    const up = () => { held = null; cv.style.cursor = ''; }; cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
+  }
   const loop = now => { lastT = (now - t0) / 1000; draws[k](lastT); raf = requestAnimationFrame(loop); };
   raf = requestAnimationFrame(loop);
   const mw = missionWatch(k, P);
