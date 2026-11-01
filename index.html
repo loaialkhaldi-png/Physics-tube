@@ -982,6 +982,8 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
 .qb-card-a { margin-top: 16px; padding: 16px; border-radius: 20px; line-height: 1.8; font-size: 16px; background: var(--surface-2); border: 1.5px solid color-mix(in srgb, var(--qc, #4C86FF) 60%, transparent); animation: qbCard .5s cubic-bezier(.2,.8,.2,1); transform-origin: top; }
 .qb-card-a ul, .qb-card-a ol { margin: 4px 0; padding-inline-start: 20px; }
 @keyframes qbCard { from { transform: perspective(700px) rotateX(-70deg); opacity: 0; } to { transform: none; opacity: 1; } }
+bdi.nw { white-space: nowrap; }
+.qb-card-a code, .qli-b code { direction: ltr; unicode-bidi: isolate; font-family: ui-monospace, "SF Mono", Menlo, monospace; color: #9EC2FF; }
 .qb-ask { margin: 14px 0 8px; text-align: center; color: var(--muted); font-size: 14px; }
 .qb-self { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .qb-gain { display: inline-block; margin-inline-start: 8px; padding: 2px 10px; border-radius: 99px; background: rgba(255,210,63,.18); color: #FFD23F; font-weight: 800; font-size: 13px; animation: pop .5s cubic-bezier(.2,.8,.2,1.4); }
@@ -2653,7 +2655,8 @@ function qGraph(g) {
     <text class="lb" x="${L + 6}" y="${T - 12}">${esc(g.y)}</text><text class="lb" x="${L + pw + 4}" y="${T + ph + 32}" text-anchor="end">${esc(g.x)}</text>
   </svg></figure>`;
 }
-const qtext = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×÷./²³°·()\[\]|,√₀₁₂₃₄αθκπ⁻²]*[A-Za-z0-9²³°)\]|]|[A-Za-z0-9]/g, m => /[A-Za-z=\/\[]/.test(m) && m.includes(' ') || /[A-Za-z]/.test(m) && /[0-9=\/]/.test(m) ? `<bdi dir="ltr">${m}</bdi>` : m);
+const qtext = t => String(t).split(/\u2066([^\u2069]*)\u2069/).map((x, i) => i % 2 ? `<bdi dir="ltr" class="nw">${esc(x)}</bdi>` : qtext1(x)).join('');
+const qtext1 = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×÷./²³°·()\[\]|,√₀₁₂₃₄αθκπ⁻²]*[A-Za-z0-9²³°)\]|]|[A-Za-z0-9]/g, m => /[A-Za-z=\/\[]/.test(m) && m.includes(' ') || /[A-Za-z]/.test(m) && /[0-9=\/]/.test(m) ? `<bdi dir="ltr">${m}</bdi>` : m);
 const qNumOk = (q, v) => { const tol = q.tol != null ? q.tol : Math.max(Math.abs(q.n) * 0.015, 0.011); return Math.abs(v - q.n) <= tol; };
 const qFmt = v => String(+(+v).toFixed(3));
 function vQuizRun() {
