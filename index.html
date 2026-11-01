@@ -1084,6 +1084,54 @@ button.td-row:active, .td-who:active { transform: scale(.99); }
   .td-grid .wide { grid-column: 1 / -1; }
   .td-chart { max-height: 260px; }
 }
+/* Weekly leaderboard */
+.lb-entry { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 16px; padding: 16px; border-radius: var(--r-md); text-align: right; overflow: hidden;
+  background: radial-gradient(120% 140% at 0% 100%, rgba(255,176,32,.5), transparent 60%), radial-gradient(100% 120% at 100% 0%, rgba(255,77,122,.42), transparent 60%), #22120B; border: 1px solid rgba(255,190,90,.35); }
+.lb-entry:active { transform: scale(.98); }
+.lb-entry .gi { width: 54px; height: 54px; border-radius: 16px; display: grid; place-items: center; background: rgba(255,255,255,.14); font-size: 28px; flex: none; }
+.lb-entry .t { flex: 1; min-width: 0; display: grid; gap: 2px; } .lb-entry .t b { font-size: 18px; } .lb-entry .t small { color: rgba(255,255,255,.8); font-size: 13px; }
+.lb-entry .qb-go { color: #22120B; }
+.lb-hero { position: relative; margin-top: 6px; padding: 22px 18px; border-radius: var(--r-lg); overflow: hidden;
+  background: radial-gradient(120% 120% at 100% 0%, rgba(255,176,32,.45), transparent 60%), radial-gradient(110% 120% at 0% 100%, rgba(255,77,122,.38), transparent 60%), #1A0F14; border: 1px solid rgba(255,255,255,.1); }
+.lb-hero small { color: rgba(255,255,255,.75); font-size: 13px; } .lb-hero h1 { margin: 4px 0; font-size: 28px; font-weight: 800; } .lb-hero p { margin: 0; color: rgba(255,255,255,.85); font-size: 14px; }
+.lb-ref { position: absolute; top: 16px; left: 16px; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.14); } .lb-ref .ico { width: 20px; height: 20px; }
+.lb-pod { display: grid; grid-template-columns: 1fr 1.1fr 1fr; align-items: end; gap: 8px; margin-top: 26px; direction: ltr; }
+.lb-pod.sk { height: 240px; border-radius: 20px; background: var(--surface); animation: tdPulse 1.2s ease-in-out infinite; }
+.lb-pod .pl { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; min-width: 0; direction: rtl; }
+.lb-pod .m { font-size: 26px; line-height: 1; } .lb-pod .p1 .m { font-size: 34px; animation: lbBob 2.2s ease-in-out infinite; }
+@keyframes lbBob { 50% { transform: translateY(-4px); } }
+.lb-pod .av { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 22px; color: #fff; background: linear-gradient(135deg, #8E9AAF, #4A5468); box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px #C0C7D4; }
+.lb-pod .p1 .av { width: 66px; height: 66px; font-size: 26px; background: linear-gradient(135deg, #FFD23F, #FF9F1C); box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px #FFD23F, 0 8px 30px rgba(255,210,63,.4); }
+.lb-pod .p3 .av { background: linear-gradient(135deg, #E59866, #A0522D); box-shadow: 0 0 0 3px var(--bg), 0 0 0 5px #D9895B; }
+.lb-pod b { font-size: 14px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 4px; } .lb-pod small { color: var(--muted); font-size: 12px; }
+.lb-pod .st { width: 100%; margin-top: 6px; border-radius: 14px 14px 6px 6px; display: grid; place-items: center; font-weight: 800; font-size: 26px; }
+.lb-pod .st i { font-style: normal; opacity: .9; }
+.lb-pod .p1 .st { height: 110px; background: linear-gradient(180deg, rgba(255,210,63,.55), rgba(255,210,63,.12)); }
+.lb-pod .p2 .st { height: 80px; background: linear-gradient(180deg, rgba(192,199,212,.45), rgba(192,199,212,.08)); }
+.lb-pod .p3 .st { height: 60px; background: linear-gradient(180deg, rgba(217,137,91,.5), rgba(217,137,91,.1)); }
+.lb-pod .empty .st { opacity: .35; }
+.lb-pod .me b { color: #FFD23F; }
+.lb-hint { margin: 14px 0 0; padding: 12px 14px; border-radius: 14px; background: rgba(255,176,32,.12); color: #FFD27A; font-size: 14px; text-align: center; }
+.lb-list { display: grid; gap: 6px; margin-top: 16px; }
+.lb-row { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 16px; background: var(--surface); border: 1px solid var(--line); }
+.lb-row .r { width: 28px; text-align: center; font-weight: 800; color: var(--muted); font-variant-numeric: tabular-nums; }
+.lb-row .av { width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; flex: none; background: linear-gradient(135deg, #2F8CFF, #A866FF); color: #fff; font-weight: 800; }
+.lb-row .t { flex: 1; min-width: 0; display: grid; } .lb-row .t b { font-size: 15px; } .lb-row .t small { color: var(--muted); font-size: 12px; }
+.lb-row .p { font-weight: 800; font-size: 14px; color: #FFD23F; font-variant-numeric: tabular-nums; }
+.lb-row.me { background: rgba(255,210,63,.1); border-color: rgba(255,210,63,.45); }
+.lb-row.sticky { position: sticky; bottom: calc(96px + env(safe-area-inset-bottom)); margin-top: 10px; box-shadow: 0 10px 30px rgba(0,0,0,.5); background: #2A2210; }
+.lb-share, .lb-go { width: 100%; margin-top: 12px; }
+.lb-empty { margin-top: 18px; padding: 26px 18px; border-radius: var(--r-md); background: var(--surface); text-align: center; display: grid; gap: 8px; justify-items: center; }
+.lb-empty .em { font-size: 44px; } .lb-empty b { font-size: 17px; } .lb-empty p { margin: 0; color: var(--muted); font-size: 14px; }
+.lb-prev { margin-top: 22px; } .lb-prev h2, .lb-rules h2 { font-size: 17px; margin: 0 0 10px; }
+.lb-prev div { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.lb-prev span { display: grid; justify-items: center; gap: 2px; padding: 12px 6px; border-radius: 16px; background: var(--surface); text-align: center; }
+.lb-prev i { font-style: normal; font-size: 22px; } .lb-prev b { font-size: 13px; } .lb-prev small { color: var(--muted); font-size: 11px; }
+.lb-rules { margin-top: 22px; padding: 16px; border-radius: var(--r-md); background: var(--surface); }
+.lb-rules ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.td-lb { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 12px; padding: 13px 16px; border-radius: 16px; background: rgba(255,176,32,.13); color: #FFD27A; font-weight: 700; font-size: 15px; }
+.td-lb .ico { width: 16px; height: 16px; transform: scaleX(-1); }
+@media (min-width: 900px) { .view.lb { max-width: 760px; } }
 </style>
 </head>
 <body>
@@ -2419,6 +2467,7 @@ function vHome() {
     ${ringsCard()}
     ${rankCard()}
     ${typeof qbCard === 'function' ? qbCard() : ''}
+    ${typeof lbCard === 'function' ? lbCard() : ''}
     ${typeof gamesCard === 'function' ? gamesCard() : ''}
     ${cont}
     ${quizBanner()}
@@ -4059,12 +4108,14 @@ function render(scroll = true) {
   else if (top.type === 'class') html = vClass();
   else if (top.type === 'bank') html = vBank();
   else if (top.type === 'bankrun') html = vBankRun();
+  else if (top.type === 'leaders') html = typeof vLeaders === 'function' ? vLeaders() : '';
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
   if (top && top.type === 'glevel') startGame(top.k, +top.i);
   if (top && top.type === 'class') clsAfterRender(); else if (typeof clsYt === 'function') clsYt();
   if (typeof qbAfterRender === 'function') qbAfterRender(top);
+  if (typeof lbAfterRender === 'function') lbAfterRender(top);
   if (ADMIN) setupReorder();
   if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at && typeof loadAdmin === 'function') loadAdmin();
   if (scroll) window.scrollTo(0, 0);
@@ -4264,6 +4315,7 @@ document.addEventListener('click', e => {
   else if (act && act.startsWith('cls-') && typeof clsAct === 'function') clsAct(act, el);
   else if (act && act.startsWith('qb-') && typeof qbAct === 'function') qbAct(act, el);
   else if (act && act.startsWith('td-') && typeof tdAct === 'function') tdAct(act, el);
+  else if (act && act.startsWith('lb-') && typeof lbAct === 'function') lbAct(act, el);
   else if (act === 'pred-pick' || act === 'pred-show' || act === 'pred-again') { const t = S.stack[S.stack.length - 1]; if (t && t.type === 'sim') predictAct(t.k, act, el); }
   else if (act === 'live-new') liveModelSheet();
   else if (act === 'live-host') liveHost(+el.dataset.m);
@@ -4409,5 +4461,6 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
 <script src="bank-g12.js"></script>
 <script src="qbank.js"></script>
 <script src="teacher.js"></script>
+<script src="leaders.js"></script>
 </body>
 </html>

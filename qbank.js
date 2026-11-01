@@ -85,6 +85,7 @@ function qbNext() {
   s.i++; s.flip = false; qbPaint(true);
 }
 function qbFinish() {
+  if (typeof lbDirty === 'function') lbDirty();
   const s = QB.s; if (!s || s.done) return; s.done = true; clearInterval(QB.timer); QB.timer = 0;
   const n = s.ans.filter(Boolean).length, ok = s.ans.filter(a => a && a.ok).length;
   s.pct = n ? Math.round(ok / n * 100) : 0; s.ok = ok; s.n = n;
@@ -115,6 +116,7 @@ function vBank() {
       <button data-act="qb-start" data-m="mistakes" style="--c:#FFB020"><span>🎯</span><b>أخطائي</b><small>${st.wrong ? st.wrong + ' سؤالاً للمراجعة' : 'لا توجد أخطاء'}</small></button>
       <button data-act="qb-start" data-m="mix" style="--c:#4C86FF"><span>🔀</span><b>جولة عشوائية</b><small>من كل الفصول</small></button>
     </div>
+    ${typeof lbCard === 'function' ? lbCard() : ''}
     ${B.map((c, ci) => { const cs = qbStats(all.filter(x => x.ci === ci)); return `<section class="qb-ch" style="--g1:${c.c[0]};--g2:${c.c[1]}">
       <div class="qb-ch-h"><span class="ic">${c.ic}</span><span class="t"><small>الفصل ${['الأول', 'الثاني', 'الثالث'][ci] || ci + 1}</small><b>${esc(c.ch)}</b></span><span class="pc">${qbPct(cs)}%</span></div>
       <div class="qb-bar"><i style="width:${qbPct(cs)}%"></i></div>

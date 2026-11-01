@@ -163,6 +163,7 @@ function vAdmin() {
       <button class="td-refresh ${d.loading ? 'spin' : ''}" data-act="admin-refresh" aria-label="تحديث">${icon('replay')}</button>
     </header>
     <div class="td-chips" role="tablist">${chips.map(([g, t]) => `<button role="tab" aria-selected="${d.g === g}" class="${d.g === g ? 'on' : ''}" data-act="td-g" data-g="${g}">${t}</button>`).join('')}</div>
+    <button class="td-lb" data-go="leaders">🏆 لوحة المتصدرين الأسبوعية للطلاب ${icon('chev')}</button>
     ${d.error ? `<p class="td-alert">${d.error}</p>` : ''}
     ${d.needSql && !d.error ? `<p class="td-alert info">📌 لتظهر إجابات الطلاب في بنك الأسئلة وأصعب الأسئلة ونسب الإتقان: شغّل ملف <b>supabase-teacher.sql</b> مرة واحدة في Supabase.</p>` : ''}`;
   if (!D) return `<div class="view push td">${navBar()}${head}<div class="td-kpis">${[0, 1, 2, 3].map(() => '<div class="td-kpi sk"></div>').join('')}</div></div>`;
