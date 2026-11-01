@@ -800,7 +800,91 @@ const TOWER = {
   },
 };
 
-const GAMES = { car: CAR, egg: EGG, cannon: CANNON, boat: BOAT, tower: TOWER, pirate: PIRATE, coaster: COASTER };
+/* =====================================================================
+   Grade 11 · 📍 أين مركز الثقل؟   (صفيحة مثبّتة بدبوس لا تدور إلا إذا كان الدبوس بعيداً عن مركز ثقلها)
+   ===================================================================== */
+const cgPoly = (poly, holes = []) => {
+  // centroid of a lamina: outline minus circular holes
+  let A = 0, X = 0, Y = 0;
+  poly.forEach((a, i) => { const b = poly[(i + 1) % poly.length], c = a[0] * b[1] - b[0] * a[1]; A += c; X += (a[0] + b[0]) * c; Y += (a[1] + b[1]) * c; });
+  A /= 2; X /= 6 * A; Y /= 6 * A; A = Math.abs(A);
+  let At = A, Xt = X * A, Yt = Y * A; holes.forEach(([hx, hy, r]) => { const a = Math.PI * r * r; At -= a; Xt -= hx * a; Yt -= hy * a; });
+  return [Xt / At, Yt / At];
+};
+const arcPts = (cx, cy, r, a0, a1, n = 24) => [...Array(n + 1)].map((_, i) => { const a = a0 + (a1 - a0) * i / n; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; });
+const CGFIND = {
+  g: 'g11', t: 'أين مركز الثقل؟', ic: '📍', topic: 'مركز الثقل', c: ['#FF4FB8', '#2A0B4A'],
+  sub: 'ثبّت الصفيحة بدبوس في مركز ثقلها تماماً فتبقى ثابتة لا تدور',
+  levels: [
+    { name: 'المستطيل', poly: [[-140, -80], [140, -80], [140, 80], [-140, 80]] },
+    { name: 'المثلث', poly: [[-150, 110], [150, 110], [-150, -110]] },
+    { name: 'حرف T', poly: [[-160, -120], [160, -120], [160, -60], [35, -60], [35, 130], [-35, 130], [-35, -60], [-160, -60]] },
+    { name: 'شبه المنحرف', poly: [[-170, 90], [170, 90], [70, -90], [-70, -90]] },
+    { name: 'صفيحة مثقوبة', poly: [[-160, -100], [160, -100], [160, 100], [-160, 100]], holes: [[70, -10, 55]] },
+    { name: 'نصف القرص', poly: arcPts(0, 70, 170, Math.PI, 2 * Math.PI) },
+  ].map(L => Object.assign(L, { cg: cgPoly(L.poly, L.holes) })),
+  mission: L => `اضغط على الصفيحة لتضع الدبوس في النقطة التي تتوقع أنها <b>مركز ثقلها</b>، ثم اضغط «ثبّت الدبوس». إذا كان الدبوس في مركز الثقل تبقى الصفيحة ثابتة، وإلا دارت حتى يصبح مركز ثقلها تحت الدبوس.` + (L.holes ? ' في الصفيحة ثقب دائري مقطوع منها.' : ''),
+  hint: L => 'إذا كان للصفيحة محور تماثل فمركز ثقلها يقع عليه.' + (L.name === 'المثلث' ? '<br>في المثلث يقع مركز الثقل عند تقاطع المتوسطات (الخط من كل رأس إلى منتصف الضلع المقابل).' : '') +
+    (L.name === 'حرف T' ? '<br>قسّم الشكل إلى مستطيلين، فمركز الثقل يقع بين مركزيهما وأقرب إلى المستطيل الأكبر: <code>y = (m₁y₁ + m₂y₂) / (m₁ + m₂)</code>.' : '') +
+    (L.holes ? '<br>الثقب يُنقص الكتلة من جهته، فيبتعد مركز الثقل عن الثقب.' : '') + (L.name === 'نصف القرص' || L.name === 'شبه المنحرف' ? '<br>مركز الثقل أقرب إلى الجهة الأعرض حيث الكتلة أكبر.' : ''),
+  go: '📌 ثبّت الدبوس',
+  init(st, P, L) { st.pin = null; st.th = 0; st.w = 0; st.reveal = 0; st.hold = 0; },
+  ready(st) { if (!st.pin) { toast('اضغط على الصفيحة لتضع الدبوس أولاً'); return false; } return true; },
+  launch(st, P, L) { st.th = 0; st.w = 0; st.hold = 0; st.err = Math.hypot(st.pin[0] - L.cg[0], st.pin[1] - L.cg[1]); },
+  update(st, dt, P, L) {
+    // the lamina turns about the pin until its centre of gravity is straight below it
+    const v = [L.cg[0] - st.pin[0], L.cg[1] - st.pin[1]], c = Math.cos(st.th), s2 = Math.sin(st.th), xw = v[0] * c - v[1] * s2;
+    // the pin's friction holds the lamina when the weight's turning effect is small (pin within 22 px of the centre of gravity)
+    if (Math.abs(xw) <= 22 && Math.abs(st.w) < .02) st.w = 0; else { st.w += (.09 * xw - 1.4 * st.w) * dt; st.th += st.w * dt; }
+    st.hold += dt;
+    if (st.hold > 2.6) {
+      const e = st.err, cm = (e / 20).toFixed(1);
+      st.reveal = 1;
+      if (e <= 22) {
+        const stars = e <= 8 ? 3 : e <= 14 ? 2 : 1;
+        burst(st, 400, 250, 46, { cols: ['#FF4FB8', '#FFD23F', '#7CF7FF', '#B794FF'], sp: 260, up: 200, life: 1.6, r: 4, kind: 'conf' });
+        return gEnd(st, true, stars, stars === 3 ? 'في مركز الثقل تماماً! 🎯' : 'قريب جداً من مركز الثقل!', `بقيت الصفيحة ثابتة، وبُعد الدبوس عن مركز الثقل ${nb(cm, 'cm')} فقط. عندما يكون الدبوس في مركز الثقل يمر خط عمل الوزن بالدبوس فلا يُدير الصفيحة، فتبقى ثابتة في أي وضع.` + (stars < 3 ? ' اقترب أكثر لتحصل على النجوم الثلاث.' : ''));
+      }
+      return gEnd(st, false, 0, 'دارت الصفيحة!', `الدبوس بعيد عن مركز الثقل ${nb(cm, 'cm')}، فأدار الوزن الصفيحة حتى أصبح مركز ثقلها (العلامة البرتقالية) تحت الدبوس تماماً على الخط الرأسي.`);
+    }
+  },
+  pointer(cv, st) {
+    const pt = e => { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 800, (e.clientY - r.top) / r.height * 500]; };
+    cv.style.touchAction = 'none';
+    const place = e => { if (st.phase !== 'aim') return; const [x, y] = pt(e); st.pin = [x - 400, y - 250]; };
+    cv.onpointerdown = e => { if (st.phase !== 'aim') return; st.drag = true; try { cv.setPointerCapture(e.pointerId); } catch (_) {} SFX.init(); place(e); };
+    cv.onpointermove = e => { if (st.drag) place(e); };
+    cv.onpointerup = cv.onpointercancel = () => { if (st.drag) { st.drag = false; SFX.play('pop'); } };
+  },
+  draw(c, st, P, L) {
+    // gallery wall with soft neon light
+    const bg = c.createRadialGradient(400, 230, 40, 400, 250, 520); bg.addColorStop(0, '#2B1450'); bg.addColorStop(1, '#0B0618'); c.fillStyle = bg; c.fillRect(0, 0, 800, 500);
+    c.strokeStyle = 'rgba(255,255,255,.04)'; c.lineWidth = 1; for (let x = 0; x <= 800; x += 40) { c.beginPath(); c.moveTo(x, 0); c.lineTo(x, 500); c.stroke(); } for (let y = 0; y <= 500; y += 40) { c.beginPath(); c.moveTo(0, y); c.lineTo(800, y); c.stroke(); }
+    const pin = st.pin, O = pin ? [400 + pin[0], 250 + pin[1]] : [400, 250];
+    // lamina transform: rotate by th about the pin
+    const T = p => { if (!pin) return [400 + p[0], 250 + p[1]]; const v = [p[0] - pin[0], p[1] - pin[1]], co = Math.cos(st.th), si = Math.sin(st.th); return [O[0] + v[0] * co - v[1] * si, O[1] + v[0] * si + v[1] * co]; };
+    const path = () => { c.beginPath(); L.poly.forEach((p, i) => { const q = T(p); i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]); }); c.closePath();
+      (L.holes || []).forEach(([hx, hy, r]) => { const q = T([hx, hy]); c.moveTo(q[0] + r, q[1]); c.arc(q[0], q[1], r, 0, Math.PI * 2, true); }); };
+    c.save(); c.shadowColor = 'rgba(255,79,184,.55)'; c.shadowBlur = 34; path();
+    const g = c.createLinearGradient(O[0] - 200, O[1] - 160, O[0] + 200, O[1] + 160); g.addColorStop(0, 'rgba(255,79,184,.42)'); g.addColorStop(1, 'rgba(124,247,255,.30)'); c.fillStyle = g; c.fill('evenodd'); c.restore();
+    path(); c.strokeStyle = 'rgba(255,200,240,.95)'; c.lineWidth = 2.5; c.stroke();
+    // reveal the centre of gravity after the result
+    if (st.reveal || st.phase === 'done') {
+      const q = T(L.cg); c.setLineDash([6, 6]); c.strokeStyle = 'rgba(255,165,58,.6)'; c.lineWidth = 2; c.beginPath(); c.moveTo(O[0], O[1]); c.lineTo(O[0], 480); c.stroke(); c.setLineDash([]);
+      c.strokeStyle = '#FFA53A'; c.lineWidth = 3; c.beginPath(); c.arc(q[0], q[1], 11, 0, 7); c.stroke(); c.fillStyle = '#FFA53A'; c.beginPath(); c.arc(q[0], q[1], 4, 0, 7); c.fill();
+      gtx(c, 'مركز الثقل', q[0] + 18, q[1] + 5, '#FFA53A', 'left', 14);
+    }
+    // pin
+    if (pin) {
+      c.fillStyle = 'rgba(0,0,0,.35)'; c.beginPath(); c.arc(O[0] + 3, O[1] + 4, 10, 0, 7); c.fill();
+      const pg = c.createRadialGradient(O[0] - 3, O[1] - 3, 1, O[0], O[1], 10); pg.addColorStop(0, '#FFFFFF'); pg.addColorStop(1, '#FF3B6B'); c.fillStyle = pg; c.shadowColor = '#FF3B6B'; c.shadowBlur = 14; c.beginPath(); c.arc(O[0], O[1], 9, 0, 7); c.fill(); c.shadowBlur = 0;
+    }
+    if (st.phase === 'aim') gtx(c, pin ? 'اسحب الدبوس لتعديل مكانه، ثم ثبّته' : 'اضغط على الصفيحة لتضع الدبوس', 400, 482, 'rgba(255,255,255,.75)', 'center', 15);
+    if (st.phase === 'run') pill(c, Math.abs(st.w) > .02 || Math.abs(st.th) > .05 ? 'تدور…' : 'ثابتة؟', 400, 40, 'rgba(0,0,0,.45)', '#FFE066');
+  },
+};
+
+const GAMES = { car: CAR, egg: EGG, cannon: CANNON, boat: BOAT, tower: TOWER, cgfind: CGFIND, pirate: PIRATE, coaster: COASTER };
 
 // The home and lab screens were drawn before this file loaded; draw them again with the games card.
 if (!S.stack.length) render(false);

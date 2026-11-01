@@ -1018,8 +1018,8 @@ const GRADES = {
         { t: 'وصف الحركة الدائرية', video: '', min: '' },
         { t: 'القوة الجاذبة المركزية', video: '', min: '' },
       ]},
-      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', sims: ['plumb', 'com'], lessons: [
-        { t: 'مركز الثقل', video: '', min: '' },
+      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', sims: ['plumb', 'acrobat', 'com'], lessons: [
+        { t: 'مركز الثقل', sim: 'acrobat', video: '', min: '' },
         { t: 'مركز الكتلة', sim: 'com', video: '', min: '' },
         { t: 'تحديد موضع مركز الثقل (الكتلة)', sim: 'plumb', video: '', min: '' },
       ]},
@@ -1115,6 +1115,7 @@ const SIMS = {
   projectile: { title: 'حركة المقذوفات', sub: 'أمثلة الكتاب محلولة خطوة بخطوة: إطلاق أفقي وإطلاق بزاوية', glyph: 'vectors', theme: 7 },
   circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
   com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'box', theme: 0 },
+  acrobat:    { title: 'وازن البهلوان', sub: 'أثقال معلّقة في عصا البهلوان تُنزل مركز الثقل تحت الحبل', glyph: 'ruler', theme: 3 },
   plumb:      { title: 'تعيين مركز الثقل بالتعليق', sub: 'علّق صفيحة غير منتظمة من ثقوب مختلفة وارسم خط الشاقول', glyph: 'box', theme: 4 },
   work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
@@ -2065,6 +2066,7 @@ const PREDICT = {
   components: { q: 'عندما تزداد زاوية الحبل مع الأفق، فإن القوة التي تسحب الزورق للأمام:', o: ['تقل', 'تزداد', 'لا تتغير', 'تصبح أكبر من قوة الشد'], why: 'القوة التي تسحب للأمام هي المركبة الأفقية <code>A cosθ</code>، و cosθ يقل كلما زادت الزاوية.' },
   vecprod: { q: 'الزاوية بين متجهين 90°. حاصل ضربهما العددي:', o: ['صفر', 'أكبر ما يمكن', 'سالب', 'يساوي AB'], why: '<code>A·B = AB cos90° = 0</code>. أما الضرب الاتجاهي عند 90° فيكون أكبر ما يمكن.' },
   circular: { q: 'كرة تدور في دائرة مربوطة بخيط. ماذا يحدث لها لحظة قطع الخيط؟', o: ['تتحرك في خط مستقيم مماس للدائرة', 'تتحرك نحو المركز', 'تبتعد في اتجاه نصف القطر للخارج', 'تستمر في الدوران'], why: 'عند قطع الخيط تختفي القوة الجاذبة المركزية، فتستمر الكرة بسرعتها في خط مستقيم في اتجاه المماس. اضغط «اقطع الخيط».' },
+  acrobat: { q: 'بهلوان على حبل يحمل عصا في طرفيها ثقلان معلّقان أسفل مستوى الحبل. لماذا لا يسقط عندما يميل؟', o: ['لأن مركز ثقل النظام أصبح تحت الحبل', 'لأن العصا طويلة فقط', 'لأن الثقلين يجعلانه أخف', 'لأنه يمشي بسرعة'], why: 'الثقلان المعلّقان في الأسفل يُنزلان مركز ثقل البهلوان والعصا والثقلين معاً حتى يصبح تحت الحبل، فإذا مال عاد مركز الثقل إلى أسفل نقطة الارتكاز تماماً كالجسم المعلّق. جرّب.' },
   plumb: { q: 'علّقت صفيحة من ثقب ثم من ثقب آخر، ورسمت خط الشاقول في كل مرة. أين يقع مركز ثقل الصفيحة؟', o: ['عند نقطة تقاطع الخطين', 'عند الثقب الأول', 'في منتصف الخط الأول', 'عند أسفل نقطة في الصفيحة'], why: 'عندما تسكن الصفيحة المعلّقة يقع مركز ثقلها على الخط الرأسي المار بنقطة التعليق، أي على خط الشاقول. فهو يقع على الخطين معاً، أي عند تقاطعهما. علّق الصفيحة من ثقبين وشاهد.' },
   com: { q: 'إذا زادت الكتلة m₃ الموجودة عند 10 m، فإن مركز الكتلة:', o: ['يقترب من m₃', 'يبتعد عن m₃', 'لا يتغير', 'ينتقل إلى 0 m'], why: 'مركز الكتلة يقترب دائماً من الكتلة الأكبر. زِد m₃ وراقب المثلث.' },
   work: { q: 'تسحب صندوقاً بقوة ثابتة. ماذا يحدث للشغل عندما تزداد الزاوية بين القوة والإزاحة من 0° إلى 90°؟', o: ['يقل حتى يصبح صفراً', 'يزداد', 'لا يتغير', 'يصبح سالباً'], why: '<code>W = F·d·cosθ</code>، و cosθ يقل من 1 إلى 0. عند 90° تكون القوة عمودية على الإزاحة فلا تبذل شغلاً.' },
@@ -2126,6 +2128,11 @@ const MISSIONS = {
     { t: 'اجعل المحصلة 20 N (أكبر محصلة ممكنة)', ok: P => Math.abs(Math.sqrt(P.A ** 2 + P.B ** 2 + 2 * P.A * P.B * Math.cos(P.th * D2R)) - 20) < .01 },
     { t: 'متجهان 6 N و 8 N: اجعل محصلتهما 10 N', ok: P => P.A * P.B === 48 && P.A + P.B === 14 && Math.abs(Math.sqrt(P.A ** 2 + P.B ** 2 + 2 * P.A * P.B * Math.cos(P.th * D2R)) - 10) < .01 },
     { t: 'اجعل المحصلة صفراً', ok: P => Math.sqrt(Math.max(0, P.A ** 2 + P.B ** 2 + 2 * P.A * P.B * Math.cos(P.th * D2R))) < .01 },
+  ],
+  acrobat: [
+    { t: 'اجعل البهلوان يتزن ويعود مستقيماً بعد دفعه', ok: P => !!P.stable },
+    { t: 'اجعله يتزن مائلاً بثقلين مختلفين', ok: P => !!P.tilted },
+    { t: 'اكتشف متى يسقط: ارفع مركز الثقل فوق الحبل', ok: P => !!P.fell },
   ],
   plumb: [
     { t: 'علّق الصفيحة من ثقبين وحدّد مركز ثقلها', ok: P => !!P.found },
@@ -2694,6 +2701,7 @@ const LAWS = {
   vectors: 'طريقة تحليل المتجهات: نحلّل كل قوة إلى مركبتين <code>Fx = F cosθ</code> و<code>Fy = F sinθ</code>، ثم نجمع المركبات: <code>ΣFx</code> و<code>ΣFy</code>، فتكون المحصلة <code>F<sub>R</sub> = √(ΣFx² + ΣFy²)</code> واتجاهها <code>tanθ = ΣFy / ΣFx</code>. الزوايا مقيسة من محور x الموجب عكس عقارب الساعة، فالقوة التي تصنع 40° مع محور x السالب زاويتها 140°.',
   projectile: 'بإهمال مقاومة الهواء تكون السرعة الأفقية <code>vx</code> ثابتة (السهم الأزرق)، والحركة الرأسية منتظمة العجلة <code>g</code> (السهم البرتقالي <code>vy</code>). <b>إطلاق أفقي:</b> <code>Δy = ½gt²</code> و<code>Δx = v·t</code>. <b>إطلاق بزاوية:</b> معادلة المسار <code>y = (−g / 2v₀²cos²θ)x² + tanθ·x</code>، وزمن الوصول لأقصى ارتفاع <code>t = v₀sinθ / g</code>، و<code>h<sub>max</sub> = v₀²sin²θ / 2g</code>، و<code>R = v₀²sin2θ / g</code>. زمن الصعود يساوي زمن الهبوط، ومقدار السرعة عند الاصطدام يساوي السرعة الابتدائية.',
   circular: 'القوة الجاذبة المركزية <code>Fc = m·v² / r</code> والتسارع المركزي <code>ac = v² / r</code>. القوة (الوردي) تتجه دائماً نحو المركز والسرعة (الأزرق) مماسة للمسار. اقطع الخيط وشاهد ماذا يحدث.',
+  acrobat: 'مركز ثقل النظام (البهلوان والعصا والثقلين) هو <code>x = Σm·x / Σm</code> و<code>y = Σm·y / Σm</code>. عندما يقع مركز الثقل <b>تحت</b> نقطة الارتكاز على الحبل، يعود البهلوان إلى وضعه كلما مال، فيكون متزناً. وعندما يقع <b>فوقها</b> يسقط عند أقل ميل. وإذا اختلف الثقلان يميل البهلوان حتى يصبح مركز الثقل على الخط الرأسي المار بنقطة الارتكاز.',
   plumb: 'عندما تُعلَّق صفيحة من نقطة وتسكن، يقع مركز ثقلها على الخط الرأسي المار بنقطة التعليق (خط الشاقول). نعلّقها من نقطتين مختلفتين ونرسم الخطين، فيكون <b>مركز الثقل عند نقطة تقاطعهما</b>، وأي خط ثالث يمر بالنقطة نفسها. وقد يقع مركز الثقل خارج مادة الجسم كما في شكل حرف L.',
   com: 'موضع مركز الكتلة <code>x = (m₁x₁ + m₂x₂ + m₃x₃) / (m₁ + m₂ + m₃)</code>. المسطرة تتزن على المثلث عند مركز كتلتها، ويقترب مركز الكتلة من الكتلة الأكبر.',
   work: 'الشغل <code>W = F·d·cosθ</code>. المركبة الأفقية للقوة فقط هي التي تبذل شغلاً. عند الزاوية 90° يصبح الشغل صفراً.',
@@ -2711,6 +2719,13 @@ const LAWS = {
 };
 const REPLAY = { type: 'btn', label: 'ابدأ من جديد' };
 const SIMCTL = {
+  acrobat: [
+    { id: 'm1', label: 'الثقل الأيسر', min: 0, max: 20, step: 1, v: 6, unit: 'kg', keep: true },
+    { id: 'm2', label: 'الثقل الأيمن', min: 0, max: 20, step: 1, v: 6, unit: 'kg', keep: true },
+    { id: 'd', label: 'طول خيط الثقلين', min: 0, max: 2.5, step: 0.1, v: 0.6, unit: 'm', keep: true },
+    { type: 'btn', label: 'ادفع البهلوان', act: 'push', icon: 'bolt' },
+    { type: 'btn', label: 'أعده إلى الحبل', act: 'reset' },
+  ],
   plumb: [
     { id: 'shape', type: 'seg', label: 'الصفيحة', opts: [{ t: 'غير منتظمة', v: 0 }, { t: 'حرف L', v: 1 }, { t: 'مثلث', v: 2 }] },
     { type: 'btn', label: 'امسح الخطوط وابدأ من جديد' },
@@ -2869,6 +2884,7 @@ function startSim(k) {
   });
   document.querySelectorAll('[data-simbtn]').forEach(b => b.onclick = () => {
     if (b.dataset.simbtn === 'cut') st.cutReq = true;
+    else if (b.dataset.simbtn === 'push') st.push = true;
     else { reset(); if (b.dataset.simbtn === 'drop') st.drop = true; }
   });
 
@@ -3177,6 +3193,56 @@ function startSim(k) {
       if (fl > 8) arrow(bx + ux * (rad + 2), by + uy * (rad + 2), bx + ux * (rad + 2 + fl), by + uy * (rad + 2 + fl), PINK);
       label('Fc', bx + ux * (rad + fl / 2) + 14, by + uy * (rad + fl / 2) - 8, PINK, 'left', 17);
       label(`r = ${fmt(r, 1)} m`, cx + 12, cy + 26, DIM, 'left', 16);
+    },
+    acrobat(t) {
+      // Body frame: feet on the rope at the origin, y up (m). Rigid system pivoting about the rope.
+      const MB = 40, HB = 1.0, HH = .9, A = 1.5, m1 = P.m1, m2 = P.m2, d = P.d, M = MB + m1 + m2;
+      const cgx = (m2 * A - m1 * A) / M, cgy = (MB * HB + (m1 + m2) * (HH - d)) / M;
+      if (!st.init) Object.assign(st, { init: 1, th: .03, w: 0, lt: t, fell: 0, fy: 0, still: 0 });
+      const dt = Math.min(.04, t - st.lt); st.lt = t;
+      if (st.push && !st.fell) { st.w += .9; st.push = false; st.pushed = 1; }
+      if (!st.fell) {
+        // torque from the weight acting at the centre of gravity (th > 0 tilts clockwise)
+        const xw = cgx * Math.cos(st.th) + cgy * Math.sin(st.th), r2 = cgx * cgx + cgy * cgy, I = .35 + r2;
+        st.w += (9.8 * xw / I * .55 - 1.9 * st.w) * dt; st.th += st.w * dt;
+        if (Math.abs(st.th) > 1.05) { st.fell = Math.sign(st.th); P.fell = true; }
+        st.still = Math.abs(st.w) < .02 ? st.still + dt : 0;
+        if (st.still > 1 && st.pushed && Math.abs(st.th) < .06 && cgy < 0) P.stable = true;
+        if (st.still > 1 && cgy < 0 && Math.abs(st.th) > .14) P.tilted = true;
+      } else { st.th += st.fell * 2.2 * dt; st.fy += 380 * dt * Math.min(1, st.fy / 40 + .2); }
+      grid();
+      // circus stage: spotlights, poles and rope
+      const PX = 400, PY = 230, K = 110;
+      [[160, '#FF4D7A'], [640, '#4C86FF']].forEach(([x, c]) => { const g = ctx.createLinearGradient(x, 0, PX, 500); g.addColorStop(0, c + '55'); g.addColorStop(1, c + '00'); ctx.fillStyle = g; ctx.beginPath(); ctx.moveTo(x - 20, 0); ctx.lineTo(x + 20, 0); ctx.lineTo(PX + 170, 500); ctx.lineTo(PX - 170, 500); ctx.closePath(); ctx.fill(); });
+      box(40, PY - 4, 14, 500 - PY, 'rgba(255,255,255,.18)', 4); box(746, PY - 4, 14, 500 - PY, 'rgba(255,255,255,.18)', 4);
+      line(47, PY, 753, PY, '#E8C27A', 3);
+      // system in world coordinates
+      const sx = st.fell ? 0 : 0, W2 = (x, y) => { const c = Math.cos(st.th), s2 = Math.sin(st.th); return [PX + (x * c + y * s2) * K, PY + st.fy - (-x * s2 + y * c) * K]; };
+      const seg = (a, b, col, w) => { const p = W2(...a), q = W2(...b); line(p[0], p[1], q[0], q[1], col, w); };
+      // pole (bows down at the ends) and hanging weights
+      const pole = []; for (let i = 0; i <= 20; i++) { const x = -A + i * A / 10; pole.push(W2(x, HH - .12 * (x / A) ** 2)); }
+      ctx.strokeStyle = '#D9DEE8'; ctx.lineWidth = 5; ctx.lineCap = 'round'; ctx.beginPath(); pole.forEach((p, i) => i ? ctx.lineTo(p[0], p[1]) : ctx.moveTo(p[0], p[1])); ctx.stroke();
+      [[-A, m1, PINK], [A, m2, BLUE]].forEach(([x, m, c]) => {
+        if (!m) return; const top = W2(x, HH - .12), bot = [top[0], top[1] + d * K]; line(top[0], top[1], bot[0], bot[1], 'rgba(255,255,255,.7)', 1.5);
+        ball(bot[0], bot[1] + 9 + m * .7, 9 + m * .7, c); label(`${m} kg`, bot[0], bot[1] + 2 * (9 + m * .7) + 24, c, 'center', 15);
+      });
+      // acrobat
+      seg([0, 0], [-.18, .5], '#FFD8B0', 7); seg([0, 0], [.18, .5], '#FFD8B0', 7);
+      const hip = W2(0, .55), sh = W2(0, 1.3); ctx.strokeStyle = '#FF4D7A'; ctx.lineWidth = 22; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(hip[0], hip[1]); ctx.lineTo(sh[0], sh[1]); ctx.stroke();
+      seg([0, 1.25], [-.45, HH - .02], '#FFD8B0', 6); seg([0, 1.25], [.45, HH - .02], '#FFD8B0', 6);
+      const hd = W2(0, 1.58); ball(hd[0], hd[1], 16, '#FFD8B0', 'rgba(255,216,176,.4)');
+      ctx.fillStyle = '#A866FF'; ctx.beginPath(); const hat = W2(0, 1.82); ctx.arc(hat[0], hat[1], 9, 0, 7); ctx.fill();
+      // centre of gravity of the whole system and the vertical through the pivot
+      line(PX, 30, PX, 470, 'rgba(255,255,255,.18)', 1.5, [6, 6]);
+      ctx.fillStyle = '#E8C27A'; ctx.beginPath(); ctx.moveTo(PX, PY + 2 + st.fy); ctx.lineTo(PX - 8, PY + 14 + st.fy); ctx.lineTo(PX + 8, PY + 14 + st.fy); ctx.closePath(); ctx.fill();
+      const g = W2(cgx, cgy), below = cgy < 0;
+      ctx.strokeStyle = ORANGE; ctx.lineWidth = 3; ctx.beginPath(); ctx.arc(g[0], g[1], 12, 0, 7); ctx.stroke(); line(g[0] - 18, g[1], g[0] + 18, g[1], ORANGE, 2); line(g[0], g[1] - 18, g[0], g[1] + 18, ORANGE, 2);
+      arrow(g[0], g[1] + 14, g[0], g[1] + 70, 'rgba(255,165,58,.7)', 4);
+      label('مركز الثقل', g[0] + 22, g[1] - 10, ORANGE, 'left', 16);
+      const state = st.fell ? 'سقط البهلوان!' : below ? (Math.abs(st.th) > .14 && Math.abs(st.w) < .05 ? 'متزن مائلاً' : 'متزن: يعود إذا مال') : 'غير متزن: سيسقط';
+      setRO([['مركز الثقل', below ? `${fmt(-cgy, 2)} m تحت الحبل` : `${fmt(cgy, 2)} m فوق الحبل`], ['الكتلة الكلية', `${fmt(M, 0)} kg`], ['الحالة', state]]);
+      label(st.fell ? 'سقط! ارفع الثقلين أقل أو أطِل خيطهما، ثم «أعده إلى الحبل»' : below ? 'مركز الثقل تحت الحبل' : 'مركز الثقل فوق الحبل', W / 2, H - 14, st.fell ? PINK : below ? TEAL : PINK, 'center', 17);
+      label('كتلة البهلوان مع العصا 40 kg', 20, 30, DIM, 'left', 14);
     },
     plumb(t) {
       // Rigid lamina hanging from a pin: it swings until its centre of gravity is straight below the pin.
