@@ -73,6 +73,7 @@ function qbAnswer(ok, extra) {
   const gain = ok ? 10 + Math.min(s.streak - 1, 5) * 2 : 0; s.xp += gain;
   s.ans[s.i] = Object.assign({ ok, gain }, extra || {});
   qbMark(x, ok);
+  if (typeof tdLogAnswer === 'function') tdLogAnswer(`${S.grade}:${x.l.id}.${x.id.split('.').pop()}`, ok);
   if (typeof SFX !== 'undefined') { SFX.init(); SFX.play(ok ? 'pop' : 'fail'); }
   if (navigator.vibrate && !ok) navigator.vibrate(60);
   if (s.mode === 'sprint') { if (ok) s.score = (s.score || 0) + 1; setTimeout(() => { if (QB.s === s && !s.done) { s.i++; if (s.i >= s.items.length) qbFinish(); else qbPaint(); } }, ok ? 260 : 650); qbPaint(); return; }

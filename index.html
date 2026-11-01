@@ -1002,6 +1002,88 @@ button.qb-img { cursor: zoom-in; } button.qb-img.big { cursor: zoom-out; }
   .view.qbank { max-width: 900px; }
   .qb-ls { grid-template-columns: 1fr 1fr; }
 }
+/* Teacher dashboard */
+.td-hero { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 6px; padding: 22px 18px; border-radius: var(--r-lg);
+  background: radial-gradient(120% 140% at 100% 0%, rgba(47,140,255,.42), transparent 60%), radial-gradient(100% 120% at 0% 100%, rgba(168,102,255,.36), transparent 60%), #0E1222; border: 1px solid rgba(255,255,255,.1); }
+.td-hero small { color: rgba(255,255,255,.7); font-size: 13px; } .td-hero h1 { margin: 2px 0; font-size: 30px; font-weight: 800; } .td-hero p { margin: 0; color: rgba(255,255,255,.7); font-size: 13px; }
+.td-refresh { width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.14); flex: none; }
+.td-refresh .ico { width: 22px; height: 22px; } .td-refresh.spin .ico { animation: tdSpin 1s linear infinite; }
+@keyframes tdSpin { to { transform: rotate(-360deg); } }
+.td-chips { display: flex; gap: 8px; margin-top: 14px; overflow-x: auto; scrollbar-width: none; }
+.td-chips button { flex: none; padding: 9px 16px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); color: var(--muted); font-weight: 700; font-size: 14px; }
+.td-chips button.on { background: var(--fg); color: var(--bg); border-color: transparent; }
+.td-chips.small { margin: 10px 0 6px; } .td-chips.small button { padding: 7px 13px; font-size: 13px; }
+.td-alert { margin: 12px 0 0; padding: 12px 14px; border-radius: 14px; background: rgba(255,107,107,.12); color: #FF9A9A; font-size: 14px; line-height: 1.6; }
+.td-alert.info { background: rgba(255,176,32,.12); color: #FFC861; }
+.td-kpis { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+.td-kpi { position: relative; overflow: hidden; display: grid; gap: 2px; padding: 14px; border-radius: 20px; background: linear-gradient(160deg, color-mix(in srgb, var(--c) 22%, var(--surface)), var(--surface) 70%); border: 1px solid color-mix(in srgb, var(--c) 30%, transparent); min-height: 112px; }
+.td-kpi .ic { font-size: 20px; } .td-kpi b { font-size: 30px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.15; }
+.td-kpi .t { font-size: 14px; font-weight: 700; } .td-kpi small { color: var(--muted); font-size: 12px; }
+.td-kpi.sk { background: var(--surface); animation: tdPulse 1.2s ease-in-out infinite; }
+@keyframes tdPulse { 50% { opacity: .5; } }
+.td-grid { display: grid; gap: 14px; margin-top: 14px; }
+.td-panel { padding: 16px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); min-width: 0; }
+.td-panel > header { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-bottom: 12px; }
+.td-panel > header h2 { margin: 0; font-size: 18px; font-weight: 800; } .td-panel > header small { color: var(--muted); font-size: 13px; }
+.td-students { margin-top: 14px; } .td-students > header .td-csv { margin-inline-start: auto; padding: 7px 12px; border-radius: 999px; background: rgba(50,209,122,.14); color: #5BE39A; font-weight: 700; font-size: 13px; }
+.td-seg { display: inline-flex; padding: 3px; border-radius: 12px; background: var(--surface-2); margin-bottom: 10px; }
+.td-seg button { padding: 6px 12px; border-radius: 9px; font-size: 13px; font-weight: 700; color: var(--muted); } .td-seg button.on { background: var(--surface); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.4); }
+.td-seg button:disabled { opacity: .4; }
+.td-chart { display: block; width: 100%; height: auto; overflow: visible; direction: ltr; }
+.td-chart .gl { stroke: currentColor; stroke-opacity: .07; } .td-chart .ax { stroke: currentColor; stroke-opacity: .2; }
+.td-chart .lb { fill: currentColor; fill-opacity: .5; font-size: 12px; }
+.td-chart .bar { fill: #2F8CFF; fill-opacity: .55; transition: fill-opacity .15s; } .td-chart .bar.now { fill-opacity: 1; }
+.td-chart .hit { fill: transparent; } .td-chart .tip:hover .bar { fill-opacity: 1; }
+.td-list { display: grid; gap: 6px; }
+.td-row { display: flex; align-items: center; gap: 10px; padding: 8px; border-radius: 14px; background: var(--surface-2); width: 100%; text-align: right; }
+button.td-row:active, .td-who:active { transform: scale(.99); }
+.td-who { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; text-align: right; }
+.td-who .t { flex: 1; min-width: 0; display: grid; gap: 1px; } .td-who b { font-size: 15px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.td-who small { color: var(--muted); font-size: 12px; line-height: 1.5; }
+.av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; flex: none; background: linear-gradient(135deg, #2F8CFF, #A866FF); color: #fff; font-weight: 800; font-size: 17px; }
+.av.medal { background: rgba(255,210,63,.16); font-size: 20px; } .av.num { background: var(--surface); color: var(--muted); font-size: 15px; } .av.big { width: 58px; height: 58px; font-size: 24px; }
+.why { display: inline-block; color: #FFC861; }
+.td-wa { flex: none; padding: 8px 11px; border-radius: 12px; background: rgba(37,211,102,.16); color: #4BE38B; font-weight: 700; font-size: 13px; text-decoration: none; }
+.td-n { flex: none; display: grid; text-align: center; min-width: 54px; } .td-n b { font-size: 16px; font-variant-numeric: tabular-nums; } .td-n small { color: var(--muted); font-size: 11px; }
+.stt { display: inline-flex; align-items: center; gap: 5px; } .stt i { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); }
+.stt.on { color: #5BE39A; } .stt.on i { background: #32D17A; } .stt.off { color: #FF9A9A; } .stt.off i { background: #FF6B6B; }
+.td-more { width: 100%; margin-top: 8px; padding: 9px; border-radius: 12px; background: var(--surface-2); color: var(--muted); font-weight: 700; font-size: 13px; }
+.td-empty { margin: 4px 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+.td-hard { display: grid; gap: 6px; }
+.td-hard details { border-radius: 14px; background: var(--surface-2); overflow: hidden; }
+.td-hard summary { list-style: none; display: flex; gap: 10px; align-items: center; padding: 10px; cursor: pointer; } .td-hard summary::-webkit-details-marker { display: none; }
+.td-hard .rate { flex: none; width: 56px; height: 56px; border-radius: 14px; display: grid; place-content: center; text-align: center; background: rgba(255,107,107,.13); }
+.td-hard .rate b { font-size: 18px; color: #FF9A9A; } .td-hard .rate small { font-size: 11px; color: var(--muted); }
+.td-hard .t { flex: 1; min-width: 0; display: grid; gap: 3px; } .td-hard .t small { color: var(--muted); font-size: 12px; }
+.qtx { font-size: 14px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.td-hard details[open] .qtx { -webkit-line-clamp: unset; }
+.td-hard .ans { padding: 0 12px 12px; } .td-hard .ans img { display: block; max-width: 100%; max-height: 160px; margin: 0 auto 8px; padding: 6px; border-radius: 10px; background: #fff; }
+.td-hard .ans p { margin: 0; padding: 10px 12px; border-radius: 12px; background: rgba(50,209,122,.1); line-height: 1.7; font-size: 14px; } .td-hard .ans p small { display: block; color: #5BE39A; font-weight: 700; font-size: 12px; }
+.td-hard .ans code, .td-sh code { direction: ltr; unicode-bidi: isolate; color: #9EC2FF; }
+.td-bars { display: grid; gap: 10px; }
+.td-bars > div { display: grid; grid-template-columns: minmax(0, 1fr) 90px 44px; align-items: center; gap: 10px; }
+.td-bars .t { display: grid; min-width: 0; } .td-bars .t b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .td-bars .t small { color: var(--muted); font-size: 11px; }
+.td-bars .trk { height: 8px; border-radius: 99px; background: var(--surface-2); overflow: hidden; } .td-bars .trk i { display: block; height: 100%; border-radius: inherit; background: #2F8CFF; }
+.td-bars .v { font-size: 14px; text-align: left; font-variant-numeric: tabular-nums; }
+.td-heat { display: grid; grid-template-columns: 52px repeat(8, 1fr); gap: 3px; direction: rtl; }
+.td-heat .hh { text-align: center; font-size: 10px; color: var(--muted); line-height: 1.2; } .td-heat .hh small { display: block; font-size: 9px; }
+.td-heat .hw { font-size: 11px; color: var(--muted); align-self: center; }
+.td-heat .hc { aspect-ratio: 1.3; border-radius: 5px; background: var(--surface-2); position: relative; overflow: hidden; }
+.td-heat .hc::after { content: ''; position: absolute; inset: 0; background: #2F8CFF; opacity: var(--o); }
+.td-note { margin: 12px 0 0; font-size: 13px; color: var(--muted); } .td-note b { color: var(--fg); }
+.td-tip { position: fixed; z-index: 99; transform: translate(-50%, -100%); padding: 6px 10px; border-radius: 10px; background: #F5F5F7; color: #0A0B0F; font-size: 12px; font-weight: 700; pointer-events: none; opacity: 0; transition: opacity .12s; white-space: nowrap; box-shadow: 0 4px 16px rgba(0,0,0,.4); }
+.td-sh header { display: flex; gap: 14px; align-items: center; } .td-sh header h2 { margin: 0; font-size: 22px; } .td-sh header small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+.td-acts { display: flex; gap: 8px; margin-top: 14px; } .td-acts .btn { flex: 1; text-decoration: none; justify-content: center; }
+.td-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.td-mini div { padding: 10px; border-radius: 14px; background: var(--surface-2); display: grid; text-align: center; } .td-mini b { font-size: 18px; font-variant-numeric: tabular-nums; } .td-mini small { color: var(--muted); font-size: 11px; }
+.td-sh h3 { margin: 18px 0 8px; font-size: 15px; }
+@media (min-width: 900px) {
+  .view.td { max-width: 1120px; }
+  .td-kpis { grid-template-columns: repeat(4, 1fr); }
+  .td-grid { grid-template-columns: 1fr 1fr; align-items: start; }
+  .td-grid .wide { grid-column: 1 / -1; }
+  .td-chart { max-height: 260px; }
+}
 </style>
 </head>
 <body>
@@ -2519,19 +2601,6 @@ function vProfile() {
 
 /* ---------------- Teacher dashboard ---------------- */
 const ADMIN_DATA = { at: 0, loading: false, stats: null, students: [], q: '', error: '' };
-async function loadAdmin() {
-  if (!db || !ADMIN) return;
-  ADMIN_DATA.loading = true; ADMIN_DATA.error = '';
-  const [st, pr] = await Promise.all([
-    db.rpc('admin_stats'),
-    db.from('profiles').select('username,full_name,phone,grade,created_at,last_seen,visits').order('created_at', { ascending: false }).limit(2000),
-  ]);
-  ADMIN_DATA.loading = false; ADMIN_DATA.at = Date.now();
-  if (st.error || pr.error) ADMIN_DATA.error = 'تعذّر تحميل الإحصائيات. تأكد أنك شغّلت ملف supabase-students.sql في Supabase.';
-  ADMIN_DATA.stats = st.data || null; ADMIN_DATA.students = pr.data || [];
-  const top = S.stack[S.stack.length - 1];
-  if (top && top.type === 'admin') render(false);
-}
 const lessonTitle = key => {
   const [id, i] = String(key).split('.'), u = UNIT_BY_ID[id], l = u && u.lessons[+i];
   if (!l) return { t: key, sub: '' };
@@ -2543,52 +2612,6 @@ const ago = iso => {
   const m = Math.round((Date.now() - new Date(iso)) / 60000);
   return m < 2 ? 'الآن' : m < 60 ? `قبل ${m} دقيقة` : m < 1440 ? `قبل ${Math.round(m / 60)} ساعة` : `قبل ${Math.round(m / 1440)} يوم`;
 };
-function studentRows() {
-  const q = ADMIN_DATA.q.trim().toLowerCase();
-  const list = ADMIN_DATA.students.filter(p => !q || [p.full_name, p.username, p.phone].some(v => String(v || '').toLowerCase().includes(q)));
-  if (!list.length) return `<div class="row"><span class="t"><small>${ADMIN_DATA.students.length ? 'لا يوجد طالب بهذا الاسم.' : 'لم يسجّل أي طالب بعد. شارك رابط التطبيق مع طلابك.'}</small></span></div>`;
-  return list.slice(0, 300).map(p => `<div class="row student">
-    <span class="n">${esc((p.full_name || '?').trim()[0] || '?')}</span>
-    <span class="t"><b>${esc(p.full_name)}</b>
-      <small><span dir="ltr">@${esc(p.username)}</span> · ${esc((GRADES[p.grade] || {}).short || p.grade)} · <span dir="ltr">${esc(p.phone)}</span></small>
-      <small>سجّل ${kwDate(p.created_at)} · آخر دخول ${ago(p.last_seen)}</small></span>
-    <span class="end visits"><b>${ar(p.visits)}</b><small>مرة</small></span>
-  </div>`).join('') + (list.length > 300 ? `<div class="row"><span class="t"><small>يظهر أول 300 طالب. استخدم البحث للوصول إلى البقية.</small></span></div>` : '');
-}
-function dailyChart(daily) {
-  const days = [], map = Object.fromEntries((daily || []).map(x => [x.d, x.n]));
-  for (let i = 29; i >= 0; i--) { const d = new Date(Date.now() - i * 864e5), k = d.toLocaleDateString('en-CA', { timeZone: 'Asia/Kuwait' }); days.push([k, map[k] || 0]); }
-  const max = Math.max(1, ...days.map(d => d[1])), W = 600, H = 160, bw = W / days.length;
-  return `<svg class="chart" viewBox="0 0 ${W} ${H + 24}" role="img" aria-label="عدد مرات الدخول في آخر 30 يوماً">
-    <line x1="0" y1="${H}" x2="${W}" y2="${H}" stroke="currentColor" stroke-opacity=".15"/>
-    ${days.map(([k, n], i) => { const h = n / max * (H - 18); return `<rect x="${i * bw + 2}" y="${H - h}" width="${bw - 4}" height="${Math.max(h, n ? 3 : 1)}" rx="3" fill="${i === days.length - 1 ? 'var(--accent)' : 'rgba(47,140,255,.45)'}"><title>${k}: ${n}</title></rect>`; }).join('')}
-    <text x="${W}" y="${H + 18}" text-anchor="end" fill="currentColor" fill-opacity=".5" font-size="12">اليوم</text>
-    <text x="0" y="${H + 18}" text-anchor="start" fill="currentColor" fill-opacity=".5" font-size="12">قبل 30 يوماً</text>
-    <text x="0" y="12" fill="currentColor" fill-opacity=".5" font-size="12">${max}</text>
-  </svg>`;
-}
-function vAdmin() {
-  const d = ADMIN_DATA, st = d.stats;
-  const tiles = st ? [['الطلاب المسجلون', st.students, st.new_7 ? `+${st.new_7} هذا الأسبوع` : ''], ['مرات الدخول اليوم', st.opens_today, ''], ['الدخول آخر 7 أيام', st.opens_7, `${ar(st.active_7)} طالب نشط`], ['الدخول آخر 30 يوماً', st.opens_30, '']] : [];
-  const byG = st ? st.by_grade || {} : {}, maxG = Math.max(1, ...GRADE_ORDER.map(k => byG[k] || 0));
-  return `<div class="view push">
-    ${navBar()}
-    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">لوحة المعلم</h1><p>${d.at ? `آخر تحديث ${new Date(d.at).toLocaleTimeString('ar-KW-u-nu-latn', { hour: 'numeric', minute: '2-digit' })}` : 'جارٍ تحميل الإحصائيات…'}</p></div>
-    ${d.error ? `<p class="law" style="color:#FF7A7A">${d.error}</p>` : ''}
-    <div class="stats stats4">${(tiles.length ? tiles : [['الطلاب المسجلون', '…', ''], ['مرات الدخول اليوم', '…', ''], ['الدخول آخر 7 أيام', '…', ''], ['الدخول آخر 30 يوماً', '…', '']]).map(([t, n, sub]) => `<div><b>${typeof n === 'number' ? ar(n) : n}</b><small>${t}</small>${sub ? `<small class="up">${sub}</small>` : ''}</div>`).join('')}</div>
-    <button class="btn wide" data-act="admin-refresh" style="margin-top:12px;width:100%">${icon('replay')}تحديث الأرقام</button>
-    <h2 class="sec">مرات الدخول يومياً</h2>
-    <div class="panel">${st ? dailyChart(st.daily) : '<p class="hint">…</p>'}</div>
-    <h2 class="sec">الطلاب حسب الصف</h2>
-    <div class="list">${GRADE_ORDER.map(k => `<div class="row"><span class="t"><b>${GRADES[k].name}</b><span class="prog" style="margin-top:6px"><span class="track" style="background:var(--surface-2)"><i style="width:${(byG[k] || 0) / maxG * 100}%;background:var(--accent)"></i></span><span style="color:var(--muted)">${ar(byG[k] || 0)}</span></span></span></div>`).join('')}</div>
-    <h2 class="sec">أكثر الدروس مشاهدة</h2>
-    <div class="list">${st && st.top.length ? st.top.map((x, i) => { const lt = lessonTitle(x.ref); return `<div class="row"><span class="n">${ar(i + 1)}</span><span class="t"><b>${esc(lt.t)}</b><small>${esc(lt.sub)}</small></span><span class="end visits"><b>${ar(x.n)}</b><small>${ar(x.u)} طالب</small></span></div>`; }).join('') : `<div class="row"><span class="t"><small>لا توجد مشاهدات بعد.</small></span></div>`}</div>
-    <h2 class="sec">الطلاب <small>${ar(d.students.length)} طالب</small></h2>
-    <div class="field" style="margin-bottom:10px"><input id="st-search" type="search" placeholder="ابحث بالاسم أو اسم المستخدم أو الجوال" value="${esc(d.q)}" aria-label="بحث عن طالب"></div>
-    <div class="list" id="st-list">${studentRows()}</div>
-    <p class="hint" style="margin-top:10px">لحذف حساب طالب أو إعادة تعيين كلمة مروره: Supabase ← Authentication ← Users.</p>
-  </div>`;
-}
 
 /* ---------------- اختبر نفسك (Quiz) ---------------- */
 const QBANK = () => (window.QUIZ_BANK || {})[S.grade] || [];
@@ -4025,7 +4048,7 @@ function render(scroll = true) {
   else if (top.type === 'unit') html = vUnit(top.u);
   else if (top.type === 'lesson') html = vLesson(top.u, top.i);
   else if (top.type === 'sim') html = vSim(top.k);
-  else if (top.type === 'admin') html = ADMIN ? vAdmin() : vProfile();
+  else if (top.type === 'admin') html = ADMIN && typeof vAdmin === 'function' ? vAdmin() : vProfile();
   else if (top.type === 'quiz') html = vQuizHub();
   else if (top.type === 'mistakes') html = vMistakes();
   else if (top.type === 'live') html = vLive();
@@ -4043,7 +4066,7 @@ function render(scroll = true) {
   if (top && top.type === 'class') clsAfterRender(); else if (typeof clsYt === 'function') clsYt();
   if (typeof qbAfterRender === 'function') qbAfterRender(top);
   if (ADMIN) setupReorder();
-  if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at) loadAdmin();
+  if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at && typeof loadAdmin === 'function') loadAdmin();
   if (scroll) window.scrollTo(0, 0);
 }
 
@@ -4222,7 +4245,7 @@ document.addEventListener('click', e => {
     });
   }
   else if (act === 'logout') { db && db.auth.signOut(); USER = ADMIN = PROFILE = null; S.stack = S.stack.filter(x => x.type !== 'admin' && x.type !== 'lesson'); render(false); toast('تم تسجيل الخروج'); }
-  else if (act === 'admin-refresh') { ADMIN_DATA.at = 0; loadAdmin(); }
+  else if (act === 'admin-refresh') { ADMIN_DATA.at = 0; loadAdmin(); render(false); }
   else if (act === 'q-pick') { if (!Q.ans[Q.i]) quizAnswer({ pick: +el.dataset.k, ok: +el.dataset.k === 0 }); }
   else if (act === 'q-check') {
     const inp = document.getElementById('q-in'), raw = (inp.value || '').trim().replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('٫', '.').replace(',', '.').replace('−', '-');
@@ -4240,6 +4263,7 @@ document.addEventListener('click', e => {
   else if (act && act.startsWith('g-') && typeof gameAct === 'function') gameAct(act);
   else if (act && act.startsWith('cls-') && typeof clsAct === 'function') clsAct(act, el);
   else if (act && act.startsWith('qb-') && typeof qbAct === 'function') qbAct(act, el);
+  else if (act && act.startsWith('td-') && typeof tdAct === 'function') tdAct(act, el);
   else if (act === 'pred-pick' || act === 'pred-show' || act === 'pred-again') { const t = S.stack[S.stack.length - 1]; if (t && t.type === 'sim') predictAct(t.k, act, el); }
   else if (act === 'live-new') liveModelSheet();
   else if (act === 'live-host') liveHost(+el.dataset.m);
@@ -4384,5 +4408,6 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
 <script src="bank-g11.js"></script>
 <script src="bank-g12.js"></script>
 <script src="qbank.js"></script>
+<script src="teacher.js"></script>
 </body>
 </html>
