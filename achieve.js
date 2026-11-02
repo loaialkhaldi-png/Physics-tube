@@ -41,7 +41,7 @@ function achDefs() {
   (B || []).forEach((c, ci) => L.push([`ch.${S.grade}.${ci}`, c.ic, `بطل ${c.ch}`, `أتقن 90% من أسئلة فصل «${c.ch}» · ${gs}`, qbPct(qbStats(all.filter(x => x.ci === ci))), 90, 'g', '%', { cert: 'chapter', ch: c.ch }]));
   if (B) L.push([`bank.${S.grade}`, '💎', 'سيد البنك', `أتقن 90% من بنك أسئلة ${gs} كاملاً`, qbPct(qbStats(all)), 90, 'd', '%', { cert: 'bank' }]);
   L.push(
-    ['ready', '🎓', 'جاهز للاختبار', 'اوصل إلى جاهزية 90% في «جهّزني للاختبار»', ready, 90, 'g', '%', { cert: 'ready' }],
+    ['ready', '🎓', 'جاهز للفاينال', 'اوصل إلى جاهزية 90% في «جهّزني للفاينال»', ready, 90, 'g', '%', { cert: 'ready' }],
     ['quiz100', '💯', 'العلامة الكاملة', 'احصل على 100% في نموذج من «اختبر نفسك»', quizMax, 100, 's', '%'],
     ['lab5', '🧪', 'مستكشف المختبر', 'جرّب 5 تجارب مختلفة في المختبر', sims.size, 5, 'b'],
     ['stars20', '🎮', 'لاعب الفيزياء', 'اجمع 20 نجمة في ألعاب الفيزياء', stars, 20, 's'],
@@ -113,7 +113,7 @@ function achCertText(b) {
   const gs = (GRADES[S.grade] || G()).name;
   if (b.cert === 'chapter') return { title: 'شهادة إتقان', reason: `تقديراً لإتقان أسئلة فصل «${b.ch}» في بنك الأسئلة`, grade: gs };
   if (b.cert === 'bank') return { title: 'شهادة تميّز', reason: 'تقديراً لإتقان بنك أسئلة الفيزياء كاملاً', grade: gs };
-  if (b.cert === 'ready') return { title: 'شهادة تقدير', reason: 'تقديراً للوصول إلى جاهزية 90% استعداداً للاختبار', grade: gs };
+  if (b.cert === 'ready') return { title: 'شهادة تقدير', reason: 'تقديراً للوصول إلى جاهزية 90% استعداداً للفاينال', grade: gs };
   if (b.cert === 'champ') return { title: 'شهادة تميّز', reason: 'تقديراً للحصول على المركز الأول في لوحة المتصدرين الأسبوعية', grade: gs };
   return { title: 'شهادة تقدير', reason: 'تقديراً للتميّز بين أبطال الأسبوع في لوحة المتصدرين', grade: gs };
 }

@@ -55,7 +55,7 @@ function qbStart(mode, scope) {
   if (mode === 'lesson') { const L = qbLesson(scope); pool = all.filter(x => x.l.id === scope); title = L.l.t; }
   else if (mode === 'chapter') { const c = (qbBank() || [])[+scope]; pool = all.filter(x => x.ci === +scope); title = 'اختبار الفصل: ' + c.ch; n = 15; }
   else if (mode === 'mistakes') { pool = all.filter(x => QBM[x.id] === -1); title = 'أخطائي في البنك'; n = 15; }
-  else if (mode === 'prep' || mode === 'mock' || mode === 'pwrong') { const ids = String(scope).split(','); pool = all.filter(x => ids.includes(x.l.id) && (mode !== 'pwrong' || QBM[x.id] === -1)); title = mode === 'mock' ? 'اختبار تجريبي' : mode === 'pwrong' ? 'أخطائي في دروس الاختبار' : 'مراجعة الاختبار'; n = mode === 'mock' ? 20 : 15; }
+  else if (mode === 'prep' || mode === 'mock' || mode === 'pwrong') { const ids = String(scope).split(','); pool = all.filter(x => ids.includes(x.l.id) && (mode !== 'pwrong' || QBM[x.id] === -1)); title = mode === 'mock' ? 'اختبار تجريبي' : mode === 'pwrong' ? 'أخطائي في دروس الفاينال' : 'مراجعة الفاينال'; n = mode === 'mock' ? 20 : 15; }
   else if (mode === 'sprint') { pool = all.filter(x => ['tf', 'mcq', 'fill', 'term'].includes(x.q.k)); title = 'تحدي الدقيقة'; n = 200; }
   if (!pool.length) return toast(mode === 'mistakes' ? 'لا توجد أخطاء محفوظة، أحسنت! 🎉' : 'لا توجد أسئلة هنا بعد');
   const items = (mode === 'sprint' ? qbShuffle(pool) : mode === 'mock' ? qbMix(qbShuffle(pool).slice(0, n)) : qbPick(pool, n)).map(x => Object.assign({}, x, { opts: qbOptions(x) }));

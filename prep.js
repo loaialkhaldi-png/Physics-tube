@@ -1,5 +1,5 @@
 'use strict';
-/* جهّزني للاختبار: يقيس جاهزية الطالب في دروس الاختبار من بنك الأسئلة، ويضع له خطة يومية حتى موعد الاختبار،
+/* جهّزني للفاينال: يقيس جاهزية الطالب في دروس الاختبار من بنك الأسئلة، ويضع له خطة يومية حتى موعد الاختبار،
    ويبني له جولة مراجعة ذكية واختباراً تجريبياً. دروس الاختبار يحددها المعلم مع موعد الاختبار (إعلان المعلم)،
    أو يختارها الطالب بنفسه. Uses: qbBank, qbAll, qbStats, qbPct, qbStart, qbToday, QBM, getNotice, daysLeft, store, S, G, esc, icon, navBar, ring, render, toast. */
 
@@ -16,7 +16,7 @@ function prepStats(ids) {
   const pool = qbAll().filter(x => ids.includes(x.l.id)), st = qbStats(pool);
   return { pool, st, pct: qbPct(st), wrong: st.wrong, fresh: st.n - st.seen, done: st.done };
 }
-const prepLevel = p => p >= 90 ? ['جاهز للاختبار 💪', '#32D17A'] : p >= 70 ? ['شبه جاهز، بقي القليل', '#2BD4B0'] : p >= 40 ? ['في الطريق الصحيح', '#FFB020'] : ['تحتاج بداية قوية', '#FF6B6B'];
+const prepLevel = p => p >= 90 ? ['جاهز للفاينال 💪', '#32D17A'] : p >= 70 ? ['شبه جاهز، بقي القليل', '#2BD4B0'] : p >= 40 ? ['في الطريق الصحيح', '#FFB020'] : ['تحتاج بداية قوية', '#FF6B6B'];
 function prepExam() {
   const n = typeof getNotice === 'function' ? getNotice() : null;
   const left = n && n.date ? daysLeft(n.date) : null;
@@ -25,12 +25,12 @@ function prepExam() {
 function prepRecord(p) { if (p > (+store.get('prepTop', 0) || 0)) store.set('prepTop', p); }
 
 /* ---------- Entry buttons ---------- */
-function prepBtn(cls = 'nbtn pri') { return qbBank() ? `<button class="${cls}" data-go="prep">🎯 جهّزني للاختبار</button>` : ''; }
+function prepBtn(cls = 'nbtn pri') { return qbBank() ? `<button class="${cls}" data-go="prep">🎯 جهّزني للفاينال</button>` : ''; }
 function prepCard() {
   if (!qbBank()) return '';
   const ids = prepLessons(), s = prepStats(ids), ex = prepExam(), lv = prepLevel(s.pct);
   return `<button class="prep-entry" data-go="prep" style="--rc:${lv[1]}"><span class="pr">${ring(s.pct, 54, lv[1], 6)}<b>${s.pct}%</b></span>
-    <span class="t"><b>🎯 جهّزني للاختبار</b><small>${ex ? (ex.left === 0 ? 'الاختبار اليوم! ' : `باقي ${ex.left} ${ex.left === 1 ? 'يوم' : ex.left === 2 ? 'يومان' : ex.left <= 10 ? 'أيام' : 'يوماً'} · `) : ''}جاهزيتك ${s.pct}% · ${lv[0]}</small></span>
+    <span class="t"><b>🎯 جهّزني للفاينال</b><small>${ex ? (ex.left === 0 ? 'الفاينال اليوم! ' : `باقي ${ex.left} ${ex.left === 1 ? 'يوم' : ex.left === 2 ? 'يومان' : ex.left <= 10 ? 'أيام' : 'يوماً'} · `) : ''}جاهزيتك ${s.pct}% · ${lv[0]}</small></span>
     <span class="qb-go">ابدأ ${icon('chev')}</span></button>`;
 }
 
@@ -47,20 +47,20 @@ function vPrep() {
     ${s.pct > 0 ? `<path d="M20 112 A90 90 0 0 1 200 112" fill="none" stroke="${lv[1]}" stroke-width="16" stroke-linecap="round" pathLength="100" stroke-dasharray="${s.pct} 101"/>` : ''}</svg>`;
   return `<div class="view push prep">${navBar()}
     <section class="prep-hero" style="--lc:${lv[1]}">
-      <small>${esc(G().name)}${ex ? ` · ${esc(ex.n.title)}` : ''}</small><h1>جهّزني للاختبار</h1>
-      ${ex ? `<span class="prep-days">${ex.left === 0 ? '🚀 الاختبار اليوم' : `⏳ باقي <b>${ex.left}</b> ${ex.left === 1 ? 'يوم' : ex.left === 2 ? 'يومان' : ex.left <= 10 ? 'أيام' : 'يوماً'}`}</span>` : ''}
+      <small>${esc(G().name)}${ex ? ` · ${esc(ex.n.title)}` : ''}</small><h1>جهّزني للفاينال</h1>
+      ${ex ? `<span class="prep-days">${ex.left === 0 ? '🚀 الفاينال اليوم' : `⏳ باقي <b>${ex.left}</b> ${ex.left === 1 ? 'يوم' : ex.left === 2 ? 'يومان' : ex.left <= 10 ? 'أيام' : 'يوماً'}`}</span>` : ''}
       <div class="prep-gw">${gauge}<span class="v"><b>${s.pct}%</b><small>جاهزيتك</small></span></div>
       <p class="lvl">${lv[0]}</p>
       <div class="prep-stats"><span><b>${s.done}</b><small>متقنة 👑</small></span><span><b>${s.wrong}</b><small>أخطاء للمراجعة 🎯</small></span><span><b>${s.fresh}</b><small>لم تحلها بعد</small></span></div>
     </section>
-    ${s.pct < 100 ? `<div class="prep-plan"><span class="ic">📅</span><span class="t"><b>خطتك: ${perDay} سؤالاً يومياً${ex ? ' حتى الاختبار' : ''}</b><small>حللت اليوم ${today} من ${perDay}</small><span class="ach-p"><i style="width:${Math.min(100, today / perDay * 100)}%"></i></span></span></div>` : '<p class="lb-hint">👑 أتقنت كل أسئلة دروس الاختبار! راجع ورقة القوانين وادخل الاختبار بثقة.</p>'}
+    ${s.pct < 100 ? `<div class="prep-plan"><span class="ic">📅</span><span class="t"><b>خطتك: ${perDay} سؤالاً يومياً${ex ? ' حتى الفاينال' : ''}</b><small>حللت اليوم ${today} من ${perDay}</small><span class="ach-p"><i style="width:${Math.min(100, today / perDay * 100)}%"></i></span></span></div>` : '<p class="lb-hint">👑 أتقنت كل أسئلة دروس الاختبار! راجع ورقة القوانين وادخل الفاينال بثقة.</p>'}
     <div class="prep-acts">
       <button class="prep-a main" data-act="prep-go" data-m="prep"><span>⚡</span><b>جولة المراجعة الذكية</b><small>15 سؤالاً: أخطاؤك أولاً، ثم ما لم تحله</small></button>
-      <button class="prep-a" data-act="prep-go" data-m="mock"><span>📝</span><b>اختبار تجريبي</b><small>20 سؤالاً منوّعة من كل الدروس</small></button>
+      <button class="prep-a" data-act="prep-go" data-m="mock"><span>📝</span><b>اختبار تجريبي</b><small>20 سؤالاً منوّعة من كل دروس الفاينال</small></button>
       ${s.wrong ? `<button class="prep-a" data-act="prep-go" data-m="pwrong"><span>🎯</span><b>أخطائي فقط</b><small>${s.wrong} ${s.wrong <= 10 ? 'أسئلة' : 'سؤالاً'} تنتظرك</small></button>` : ''}
-      ${typeof lawsCard === 'function' && typeof LAWS_DATA !== 'undefined' && LAWS_DATA[S.grade] ? `<button class="prep-a" data-go="laws"><span>📐</span><b>ورقة القوانين</b><small>راجع القوانين قبل الاختبار</small></button>` : ''}
+      ${typeof lawsCard === 'function' && typeof LAWS_DATA !== 'undefined' && LAWS_DATA[S.grade] ? `<button class="prep-a" data-go="laws"><span>📐</span><b>ورقة القوانين</b><small>راجع القوانين قبل الفاينال</small></button>` : ''}
     </div>
-    <h2 class="sec">دروس الاختبار <small>${teacher ? '🔒 حددها معلمك' : 'اضغط لتغييرها'}</small></h2>
+    <h2 class="sec">دروس الفاينال <small>${teacher ? '🔒 حددها معلمك' : 'اضغط لتغييرها'}</small></h2>
     ${teacher ? `<div class="prep-ls">${sel.map(x => prepRow(x, false)).join('')}</div>`
       : `<div class="prep-ls">${lessons.map(x => prepRow(x, true)).join('')}</div>`}
   </div>`;
