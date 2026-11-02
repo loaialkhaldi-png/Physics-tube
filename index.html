@@ -1222,6 +1222,9 @@ button.td-row:active, .td-who:active { transform: scale(.99); }
   .lw-card { background: #fff; border: 1px solid #bbb; break-inside: avoid; } .lw-card b, .lw-card small { color: #333; } .lw-card code { color: #000; }
   .lw-grid { grid-template-columns: 1fr 1fr; } .lw-sec { break-inside: avoid-page; }
 }
+.rt { display: inline-flex; align-items: baseline; direction: ltr; unicode-bidi: isolate; white-space: nowrap; }
+.rt .rs { display: inline-block; line-height: 1; transform: scaleY(1.28); transform-origin: 50% 80%; margin-right: -.04em; }
+.rt .rr { display: inline-block; line-height: 1; border-top: max(1.5px, .07em) solid currentColor; padding: .1em .1em 0 .06em; }
 </style>
 </head>
 <body>
@@ -2821,6 +2824,34 @@ function qGraph(g) {
     <text class="lb" x="${L + 6}" y="${T - 12}">${esc(g.y)}</text><text class="lb" x="${L + pw + 4}" y="${T + ph + 32}" text-anchor="end">${esc(g.x)}</text>
   </svg></figure>`;
 }
+/* Square roots: draw the bar (vinculum) over everything under √( … ) or √123, anywhere text appears */
+function rootHTML(t) {
+  let out = '', i = 0;
+  while (i < t.length) {
+    const k = t.indexOf('√', i);
+    if (k < 0) { out += esc(t.slice(i)); break; }
+    const pre = t.slice(i, k), cm = /[0-9.]+$/.exec(pre), coef = cm ? cm[0] : '';
+    out += esc(pre.slice(0, pre.length - coef.length));
+    let j = k + 1, inner = null, end = j;
+    if (t[j] === '(') { let d = 0; for (let m = j; m < t.length; m++) { if (t[m] === '(') d++; else if (t[m] === ')' && !--d) { inner = t.slice(j + 1, m); end = m + 1; break; } } }
+    else { const mm = /^[0-9A-Za-z.²³]+/.exec(t.slice(j)); if (mm) { inner = mm[0]; end = j + mm[0].length; } }
+    if (inner == null) { out += esc(coef) + '√'; i = k + 1; continue; }
+    out += `<span class="rt">${coef ? `<span class="rc">${esc(coef)}</span>` : ''}<span class="rs">√</span><span class="rr">${rootHTML(inner)}</span></span>`; i = end;
+  }
+  return out;
+}
+function fixRoots(root) {
+  if (!root || (root.nodeType !== 1 && root.nodeType !== 3)) return;
+  const list = [];
+  if (root.nodeType === 3) list.push(root);
+  else { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.data.includes('√') ? 1 : 3 }); let n; while ((n = w.nextNode())) list.push(n); }
+  list.forEach(n => {
+    const p = n.parentElement; if (!p || !n.data.includes('√') || p.closest('.rt, script, style, textarea, input, svg, title')) return;
+    const html = rootHTML(n.data); if (!html.includes('class="rt"')) return;
+    n.replaceWith(document.createRange().createContextualFragment(html));
+  });
+}
+if (window.MutationObserver) new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(fixRoots))).observe(document.documentElement, { childList: true, subtree: true });
 const qtext = t => String(t).split(/\u2066([^\u2069]*)\u2069/).map((x, i) => i % 2 ? `<bdi dir="ltr" class="nw">${esc(x)}</bdi>` : qtext1(x)).join('');
 const qtext1 = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×÷./²³°·()\[\]|,√₀₁₂₃₄αθκπ⁻²]*[A-Za-z0-9²³°)\]|]|[A-Za-z0-9]/g, m => /[A-Za-z=\/\[]/.test(m) && m.includes(' ') || /[A-Za-z]/.test(m) && /[0-9=\/]/.test(m) ? `<bdi dir="ltr">${m}</bdi>` : m);
 const qNumOk = (q, v) => { const tol = q.tol != null ? q.tol : Math.max(Math.abs(q.n) * 0.015, 0.011); return Math.abs(v - q.n) <= tol; };
