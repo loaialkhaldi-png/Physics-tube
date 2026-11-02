@@ -1233,6 +1233,7 @@ button.td-row:active, .td-who:active { transform: scale(.99); }
 .rt:has(.fr) .rs { display: block; width: .78em; -webkit-text-fill-color: transparent; transform: none; margin-right: -1px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 40' preserveAspectRatio='none'%3E%3Cpath d='M0.5 24 L3.2 21.5 L6.6 39 L11.6 0.8' fill='none' stroke='%23000' stroke-width='1.7' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat 0 0 / 100% 100%; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 40' preserveAspectRatio='none'%3E%3Cpath d='M0.5 24 L3.2 21.5 L6.6 39 L11.6 0.8' fill='none' stroke='%23000' stroke-width='1.7' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat 0 0 / 100% 100%; }
 .rt:has(.fr) .rr { padding-top: .15em; }
 .rr > .fr:only-child { margin: 0 .1em; }
+code sub, .rr sub, .fr sub, bdi sub { font-size: .68em; line-height: 0; vertical-align: -.3em; }
 </style>
 </head>
 <body>
@@ -2881,20 +2882,26 @@ function fracHTML(t) {
   return rootHTML(lead) + `<span class="fr"><span class="fn">${fracHTML(strip(num))}</span><span class="fd">${fracHTML(strip(den))}</span></span>` + (tail ? (/^\s/.test(tail) ? '' : ' ') + fracHTML(tail) : '');
 }
 const MATH_CTX = 'code, bdi[dir="ltr"], .rr';
+// v_y → v with a small y below it (subscript), in every equation
+const MATH_RX = /√|÷| \/ |[A-Za-zΔτΣα-ω₀-₉′]_[A-Za-z0-9]|[A-Za-zΔτΣα-ω′][₀-₉ₓᵧ]/;
+const SUB_CH = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9', 'ₓ': 'x', 'ᵧ': 'y' };
+const mathSubs = h => h
+  .replace(/([A-Za-zΔτΣα-ω′])([₀-₉ₓᵧ]+)(?:_([A-Za-z0-9]+))?/g, (m, a, u, v) => `${a}<sub>${[...u].map(c => SUB_CH[c]).join('')}${v || ''}</sub>`)
+  .replace(/([A-Za-zΔτΣα-ω′])_([A-Za-z0-9]+)/g, '$1<sub>$2</sub>');
 function fixRoots(root) {
   if (!root || (root.nodeType !== 1 && root.nodeType !== 3)) return;
   const list = [];
   if (root.nodeType === 3) list.push(root);
-  else { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => /√|÷| \/ /.test(n.data) ? 1 : 3 }); let n; while ((n = w.nextNode())) list.push(n); }
+  else { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => MATH_RX.test(n.data) ? 1 : 3 }); let n; while ((n = w.nextNode())) list.push(n); }
   list.forEach(n => {
-    const p = n.parentElement; if (!p || !/√|÷| \/ /.test(n.data) || p.closest('.rt, .fr, script, style, textarea, input, svg, title, option')) return;
-    const html = p.closest(MATH_CTX) ? fracHTML(n.data) : rootHTML(n.data); if (!/class="(rt|fr)"/.test(html)) return;
+    const p = n.parentElement; if (!p || !MATH_RX.test(n.data) || p.closest('.rt, .fr, sub, script, style, textarea, input, svg, title, option')) return;
+    const html = mathSubs(p.closest(MATH_CTX) ? fracHTML(n.data) : rootHTML(n.data)); if (!/class="(rt|fr)"|<sub>/.test(html)) return;
     n.replaceWith(document.createRange().createContextualFragment(html));
   });
 }
 if (window.MutationObserver) new MutationObserver(ms => ms.forEach(m => m.addedNodes.forEach(fixRoots))).observe(document.documentElement, { childList: true, subtree: true });
 const qtext = t => String(t).split(/\u2066([^\u2069]*)\u2069/).map((x, i) => i % 2 ? `<bdi dir="ltr" class="nw">${esc(x)}</bdi>` : qtext1(x)).join('');
-const qtext1 = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×÷./²³°·()\[\]|,√₀₁₂₃₄αθκπ⁻²]*[A-Za-z0-9²³°)\]|]|[A-Za-z0-9]/g, m => /[A-Za-z=\/\[]/.test(m) && m.includes(' ') || /[A-Za-z]/.test(m) && /[0-9=\/]/.test(m) ? `<bdi dir="ltr">${m}</bdi>` : m);
+const qtext1 = t => esc(t).replace(/[A-Za-z0-9Δ\[(|√−][A-Za-z0-9Δ =+\-−×÷./²³°·()\[\]|,√₀₁₂₃₄αθκπ⁻²_]*[A-Za-z0-9²³°)\]|]|[A-Za-z0-9]/g, m => /[A-Za-z=\/\[]/.test(m) && m.includes(' ') || /[A-Za-z]/.test(m) && /[0-9=\/]/.test(m) ? `<bdi dir="ltr">${m}</bdi>` : m);
 const qNumOk = (q, v) => { const tol = q.tol != null ? q.tol : Math.max(Math.abs(q.n) * 0.015, 0.011); return Math.abs(v - q.n) <= tol; };
 const qFmt = v => String(+(+v).toFixed(3));
 function vQuizRun() {
