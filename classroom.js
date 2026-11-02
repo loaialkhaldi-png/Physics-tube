@@ -405,7 +405,7 @@ function clsSide() {
   } else {
     body = CLS.poll ? clsPollCard(true) : `<div class="cls-empty">اكتب السؤال على السبورة أو اسأله شفهياً، ثم افتح التصويت ليجيب الطلاب من جوالاتهم.</div>
       <div class="ed-row"><button class="btn primary" data-act="cls-poll" data-k="abcd" style="margin-top:0">أ / ب / ج / د</button><button class="btn primary" data-act="cls-poll" data-k="tf" style="margin-top:0">صح / خطأ</button></div>
-      <button class="btn wide" data-act="live-new" style="width:100%">🎮 مسابقة من نماذج «اختبر نفسك»</button>`;
+      <button class="btn wide" data-act="live-new" style="width:100%">🎮 مسابقة من نماذج «جهّزني للاختبار القصير»</button>`;
   }
   el.innerHTML = `<div class="seg cls-tabs">${tabs.map(([k, t]) => `<button aria-pressed="${CLS.tab === k}" data-act="cls-tab" data-k="${k}">${t}</button>`).join('')}</div>${body}`;
 }

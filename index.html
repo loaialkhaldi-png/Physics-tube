@@ -1930,7 +1930,7 @@ function cdCenter(c) {
 }
 const CD_MSG = {
   calm: ['🪐', 'الوقت في صالحك، راجع درساً واحداً كل يوم'],
-  soon: ['⚡', 'حلّ نموذجاً من «اختبر نفسك» كل يوم'],
+  soon: ['⚡', 'حلّ نموذجاً من «جهّزني للاختبار القصير» كل يوم'],
   urgent: ['🔥', 'اقترب الموعد! راجع أخطاءك وقوانين الوحدة'],
   today: ['💪', 'يوم الاختبار، ركّز واقرأ السؤال جيداً. بالتوفيق!'],
 };
@@ -1942,7 +1942,7 @@ function noticeCard() {
   const left = daysLeft(n.date), d = parseDay(n.date);
   if (left != null && left < 0 && !ADMIN) return '';
   const u = n.unit !== '' && n.unit != null ? G().units[+n.unit] : null;
-  const btn = u ? `<button class="nbtn pri" data-go="unit:${+n.unit}">راجع ${esc(u.title)} ${icon('chev')}</button>` : QBANK().length ? `<button class="nbtn pri" data-go="quiz">اختبر نفسك ${icon('chev')}</button>` : '';
+  const btn = u ? `<button class="nbtn pri" data-go="unit:${+n.unit}">راجع ${esc(u.title)} ${icon('chev')}</button>` : QBANK().length ? `<button class="nbtn pri" data-go="quiz">جهّزني للاختبار القصير ${icon('chev')}</button>` : '';
   if (left == null || left < 0) return `<div class="notice" role="status">
     <div class="top"><span class="cd">${left == null ? '<b>📣</b>' : '<b style="font-size:15px">انتهى</b>'}</span>
       <span class="t"><small>${left == null ? 'إعلان من المعلم' : 'انتهى الموعد'}</small><b>${esc(n.title)}</b>${n.note ? `<span>${esc(n.note)}</span>` : ''}</span></div>
@@ -2032,13 +2032,13 @@ function vMistakes() {
   const L = mxList();
   return `<div class="view push">
     ${navBar()}
-    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">أخطائي</h1><p>${L.length ? `${qWord(L.length)} أخطأت فيها سابقاً. عندما تجيب عن السؤال إجابة صحيحة يخرج من القائمة.` : 'لا توجد أخطاء محفوظة. كل سؤال تخطئ فيه في «اختبر نفسك» يظهر هنا لتراجعه.'}</p></div>
+    <div class="page-h" style="padding-top:4px"><h1 style="font-size:28px">أخطائي</h1><p>${L.length ? `${qWord(L.length)} أخطأت فيها سابقاً. عندما تجيب عن السؤال إجابة صحيحة يخرج من القائمة.` : 'لا توجد أخطاء محفوظة. كل سؤال تخطئ فيه في «جهّزني للاختبار القصير» يظهر هنا لتراجعه.'}</p></div>
     ${L.length ? `<button class="btn primary wide" data-go="qrun:mx" style="width:100%;margin-top:16px">${icon('replay')}ابدأ مراجعة أخطائي</button>
     <h2 class="sec">الأسئلة وحلولها</h2>
     <div class="qlist">${L.map(({ q, md, n }) => `<details class="qli no">
       <summary><span class="n">✕</span><span class="t">${qtext(q.q)}<small style="display:block;color:var(--muted);font-size:12px;margin-top:4px">${esc(md.t)}${n > 1 ? ` · أخطأت فيه ${n} مرات` : ''}</small></span></summary>
       <div class="qli-b">${qGraph(q.g)}<p><span class="lbl">الإجابة الصحيحة:</span> ${q.o ? qtext(q.o[0]) : `<bdi dir="ltr">${qFmt(q.n)} ${esc(q.u || '')}</bdi>`}</p><div class="qwhy"><small>الحل</small>${q.w}</div></div></details>`).join('')}</div>`
-    : `<button class="btn primary wide" data-go="quiz" data-replace="1" style="width:100%;margin-top:16px">${icon('exam')}اذهب إلى اختبر نفسك</button>`}
+    : `<button class="btn primary wide" data-go="quiz" data-replace="1" style="width:100%;margin-top:16px">${icon('exam')}اذهب إلى جهّزني للاختبار القصير</button>`}
   </div>`;
 }
 function startMistakes() {
@@ -2312,7 +2312,7 @@ function vLive() {
   if (!r) return `<div class="view push">${top}<div class="live-msg"><div class="em">⏳</div><p>جارٍ الاتصال…</p></div></div>`;
   const qs = liveQs(r), q = qs[r.q], board = liveBoard();
   if (r.phase === 'lobby') return `<div class="view push">${top}
-    <section class="live-hero"><small>${host ? 'افتحوا physics-tube.com ← اختبر نفسك ← «انضم إلى مسابقة الحصة» واكتبوا الرمز' : 'أنت في المسابقة 🎉'}</small>
+    <section class="live-hero"><small>${host ? 'افتحوا physics-tube.com ← جهّزني للاختبار القصير ← «انضم إلى مسابقة الحصة» واكتبوا الرمز' : 'أنت في المسابقة 🎉'}</small>
       ${host ? `<div class="live-code">${r.code}</div>` : `<h1 style="font-size:30px;margin:10px 0">${esc(firstName() || 'أهلاً')}</h1>`}
       <small>${host ? `${board.length} طالب انضمّ` : 'انتظر حتى يبدأ المعلم المسابقة…'}</small></section>
     <div class="live-players">${board.map(x => `<span>${esc(x.name)}</span>`).join('')}</div>
@@ -2756,7 +2756,7 @@ const ago = iso => {
   return m < 2 ? 'الآن' : m < 60 ? `قبل ${m} دقيقة` : m < 1440 ? `قبل ${Math.round(m / 60)} ساعة` : `قبل ${Math.round(m / 1440)} يوم`;
 };
 
-/* ---------------- اختبر نفسك (Quiz) ---------------- */
+/* ---------------- جهّزني للاختبار القصير (Quiz) ---------------- */
 const QBANK = () => (window.QUIZ_BANK || {})[S.grade] || [];
 const QCOL = ['#4C86FF', '#A866FF', '#2BD4B0', '#FF8A3D', '#FF4D7A', '#32D17A'];
 const Q = { m: 0, i: 0, order: [], perm: [], ans: [], start: 0, streak: 0, best: 0, done: false, review: false };
@@ -2772,7 +2772,7 @@ function quizBanner() {
   const b = qBest(), done = bank.filter((_, m) => b[qKey(m)]).length;
   return `<button class="qbanner" data-go="quiz">
     <span class="qb-ic">${icon('exam')}</span>
-    <span class="t"><b>اختبر نفسك</b><small>الاختبار القصير · ${ar(bank.length)} نماذج${done ? ` · أنجزت ${ar(done)}` : ''}</small></span>
+    <span class="t"><b>جهّزني للاختبار القصير</b><small>${ar(bank.length)} نماذج${done ? ` · أنجزت ${ar(done)}` : ''}</small></span>
     <span class="qb-go">ابدأ ${icon('chev')}</span></button>`;
 }
 function vQuizHub() {
@@ -2782,7 +2782,7 @@ function vQuizHub() {
     <section class="qhero">
       <div class="qhero-orb" aria-hidden="true"></div>
       <small>${esc(G().name)} · الفصل الدراسي الأول</small>
-      <h1>اختبر نفسك</h1>
+      <h1>جهّزني للاختبار القصير</h1>
       <p>نماذج الاختبار القصير. أجب عن الأسئلة وشاهد التصحيح والحل فوراً بعد كل سؤال.</p>
     </section>
     ${typeof qbCard === 'function' ? qbCard() : ''}
@@ -4230,7 +4230,7 @@ function transition(dir, fn) {
 
 /* ---------- First-run welcome ---------- */
 function onboarding() {
-  const feats = [['play', '#FF375F', 'شرح فيديو لكل درس', 'دروس المنهج مرتبة حسب الوحدات'], ['lab', '#32D17A', 'مختبر تفاعلي', 'جرّب القوانين بنفسك وشاهد النتيجة مباشرة'], ['exam', '#A866FF', 'اختبر نفسك', 'نماذج الاختبار القصير مع الحلول ومراجعة أخطائك'], ['chart', '#2FB5FF', 'حلقات الإنجاز', 'تابع تقدّمك وأكمل أهدافك كل أسبوع']];
+  const feats = [['play', '#FF375F', 'شرح فيديو لكل درس', 'دروس المنهج مرتبة حسب الوحدات'], ['lab', '#32D17A', 'مختبر تفاعلي', 'جرّب القوانين بنفسك وشاهد النتيجة مباشرة'], ['exam', '#A866FF', 'جهّزني للاختبار القصير', 'نماذج الاختبار القصير مع الحلول ومراجعة أخطائك'], ['chart', '#2FB5FF', 'حلقات الإنجاز', 'تابع تقدّمك وأكمل أهدافك كل أسبوع']];
   const el = document.createElement('div');
   el.className = 'onb'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'مرحباً بك في Physics Tube');
   el.innerHTML = `<button class="onb-skip" data-onb="skip">تخطَّ</button>
