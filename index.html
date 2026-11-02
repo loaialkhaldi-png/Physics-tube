@@ -1225,6 +1225,14 @@ button.td-row:active, .td-who:active { transform: scale(.99); }
 .rt { display: inline-flex; align-items: baseline; direction: ltr; unicode-bidi: isolate; white-space: nowrap; }
 .rt .rs { display: inline-block; line-height: 1; transform: scaleY(1.28); transform-origin: 50% 80%; margin-right: -.04em; }
 .rt .rr { display: inline-block; line-height: 1; border-top: max(1.5px, .07em) solid currentColor; padding: .1em .1em 0 .06em; }
+.fr { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; direction: ltr; unicode-bidi: isolate; margin: 0 .35em; line-height: 1.2; white-space: nowrap; }
+.fr .fn { border-bottom: max(1.5px, .07em) solid currentColor; padding: 0 .2em .06em; }
+.fr .fd { padding: .06em .2em 0; }
+.fr .fr { font-size: .92em; }
+.rt:has(.fr) { align-items: stretch; vertical-align: middle; }
+.rt:has(.fr) .rs { display: block; width: .78em; -webkit-text-fill-color: transparent; transform: none; margin-right: -1px; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 40' preserveAspectRatio='none'%3E%3Cpath d='M0.5 24 L3.2 21.5 L6.6 39 L11.6 0.8' fill='none' stroke='%23000' stroke-width='1.7' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat 0 0 / 100% 100%; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 40' preserveAspectRatio='none'%3E%3Cpath d='M0.5 24 L3.2 21.5 L6.6 39 L11.6 0.8' fill='none' stroke='%23000' stroke-width='1.7' stroke-linejoin='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") no-repeat 0 0 / 100% 100%; }
+.rt:has(.fr) .rr { padding-top: .15em; }
+.rr > .fr:only-child { margin: 0 .1em; }
 </style>
 </head>
 <body>
@@ -2836,18 +2844,51 @@ function rootHTML(t) {
     if (t[j] === '(') { let d = 0; for (let m = j; m < t.length; m++) { if (t[m] === '(') d++; else if (t[m] === ')' && !--d) { inner = t.slice(j + 1, m); end = m + 1; break; } } }
     else { const mm = /^[0-9A-Za-z.²³]+/.exec(t.slice(j)); if (mm) { inner = mm[0]; end = j + mm[0].length; } }
     if (inner == null) { out += esc(coef) + '√'; i = k + 1; continue; }
-    out += `<span class="rt">${coef ? `<span class="rc">${esc(coef)}</span>` : ''}<span class="rs">√</span><span class="rr">${rootHTML(inner)}</span></span>`; i = end;
+    out += `<span class="rt">${coef ? `<span class="rc">${esc(coef)}</span>` : ''}<span class="rs">√</span><span class="rr">${fracHTML(inner)}</span></span>`; i = end;
   }
   return out;
 }
+/* Fractions: in equations, "a ÷ b" (and "a / b" with spaces) become a numerator over a denominator */
+const FR_DELIM = '=+−-≈⇐⇒→←,،;∴:';
+function fracHTML(t) {
+  // find the first top-level division sign
+  let d = 0, k = -1, len = 0;
+  for (let i = 0; i < t.length; i++) {
+    const c = t[i];
+    if (c === '(' || c === '[') d++; else if (c === ')' || c === ']') d--;
+    else if (!d && (c === '÷' || (c === '/' && t[i - 1] === ' ' && t[i + 1] === ' '))) { k = i; len = 1; break; }
+  }
+  if (k < 0) return rootHTML(t);
+  // left operand: back to a top-level delimiter (a leading minus sign stays with the number)
+  let l = k - 1; d = 0;
+  for (; l >= 0; l--) {
+    const c = t[l];
+    if (c === ')' || c === ']') d++;
+    else if (c === '(' || c === '[') { if (!d) break; d--; }
+    else if (!d && FR_DELIM.includes(c)) {
+      const before = t.slice(0, l).trim();   // a minus right after "=" (or at the start) is the number's sign
+      if ((c === '−' || c === '-') && (!before || FR_DELIM.includes(before.slice(-1)))) l--;
+      break;
+    }
+  }
+  let r = k + len; d = 0; while (t[r] === ' ') r++;
+  if (t[r] === '−' || t[r] === '-') r++;
+  for (; r < t.length; r++) { const c = t[r]; if (c === '(' || c === '[') d++; else if (c === ')' || c === ']') { if (!d) break; d--; } else if (!d && FR_DELIM.includes(c)) break; }
+  const num = t.slice(l + 1, k).trim(), den = t.slice(k + len, r).trim();
+  if (!num || !den) return rootHTML(t.slice(0, k + len)) + fracHTML(t.slice(k + len));
+  const strip = x => { if (x[0] !== '(' || x[x.length - 1] !== ')') return x; let e = 0; for (let i = 0; i < x.length; i++) { if (x[i] === '(') e++; else if (x[i] === ')' && !--e && i < x.length - 1) return x; } return x.slice(1, -1).trim(); };
+  const lead = t.slice(0, l + 1), tail = t.slice(r);
+  return rootHTML(lead) + `<span class="fr"><span class="fn">${fracHTML(strip(num))}</span><span class="fd">${fracHTML(strip(den))}</span></span>` + (tail ? (/^\s/.test(tail) ? '' : ' ') + fracHTML(tail) : '');
+}
+const MATH_CTX = 'code, bdi[dir="ltr"], .rr';
 function fixRoots(root) {
   if (!root || (root.nodeType !== 1 && root.nodeType !== 3)) return;
   const list = [];
   if (root.nodeType === 3) list.push(root);
-  else { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => n.data.includes('√') ? 1 : 3 }); let n; while ((n = w.nextNode())) list.push(n); }
+  else { const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, { acceptNode: n => /√|÷| \/ /.test(n.data) ? 1 : 3 }); let n; while ((n = w.nextNode())) list.push(n); }
   list.forEach(n => {
-    const p = n.parentElement; if (!p || !n.data.includes('√') || p.closest('.rt, script, style, textarea, input, svg, title')) return;
-    const html = rootHTML(n.data); if (!html.includes('class="rt"')) return;
+    const p = n.parentElement; if (!p || !/√|÷| \/ /.test(n.data) || p.closest('.rt, .fr, script, style, textarea, input, svg, title, option')) return;
+    const html = p.closest(MATH_CTX) ? fracHTML(n.data) : rootHTML(n.data); if (!/class="(rt|fr)"/.test(html)) return;
     n.replaceWith(document.createRange().createContextualFragment(html));
   });
 }
