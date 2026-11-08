@@ -2581,7 +2581,7 @@ function vHome() {
     ${typeof clsRow === 'function' ? clsRow() : ''}
     ${dailyCard()}
     <div class="promos" aria-label="العروض">
-      <button class="promo" data-act="plan" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
+      <button class="promo" data-act="curr" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
         <h2>${esc(g.name)}</h2>
         <p>كل دروس الفيزياء لصفك في مكان واحد</p>
         <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
@@ -2612,7 +2612,7 @@ function vHome() {
     ${quizBanner()}
     ${mxRow()}
     ${liveRow()}
-    <h2 class="sec">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
+    <h2 class="sec" id="curriculum" style="scroll-margin-top:12px">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
     ${termSeg()}
     ${groups.map(([name, items]) => `${name ? `<div class="label unit-name">${esc(name)}</div>` : ''}
     <div class="units">${items.map(({ u, i }) => {
@@ -4484,6 +4484,7 @@ document.addEventListener('click', e => {
   if (act === 'back') transition('back', () => { S.stack.pop(); render(); });
   else if (act === 'grade') gradeSheet();
   else if (act === 'plan') planSheet();
+  else if (act === 'curr') { const h = document.getElementById('curriculum'); if (h) h.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   else if (act === 'close') closeSheet();
   else if (act === 'start') { closeSheet(); S.tab = 'home'; S.stack = []; go('unit:0'); }
   else if (act === 'watched') {
