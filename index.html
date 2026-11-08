@@ -1265,14 +1265,12 @@ code sub, .rr sub, .fr sub, bdi sub { font-size: .68em; line-height: 0; vertical
 #splash .sp-bar i { position: absolute; inset: 0 auto 0 0; width: 40%; border-radius: inherit; background: linear-gradient(90deg, #2F8CFF, #A866FF); animation: spBar 1.3s ease-in-out infinite; }
 @keyframes spBar { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
 @media (prefers-reduced-motion: reduce) { #splash *, #splash *::after { animation-duration: 3s !important; } }
-.curr-hero { position: relative; margin-top: 6px; padding: 22px 20px; min-height: 150px; border-radius: var(--r-lg); background: var(--pbg); overflow: hidden; border: 1px solid rgba(255,255,255,.1); animation: currIn .45s cubic-bezier(.2,.8,.2,1); }
+.curr-hero { position: relative; margin-top: 6px; padding: 22px 20px; min-height: 150px; border-radius: var(--r-lg); background: var(--pbg); overflow: hidden; border: 1px solid rgba(255,255,255,.1); }
 .curr-hero small { color: rgba(255,255,255,.7); font-size: 13px; } .curr-hero h1 { margin: 4px 0; font-size: 30px; font-weight: 800; } .curr-hero p { margin: 0; color: rgba(255,255,255,.8); font-size: 14px; }
 .curr-hero .art { position: absolute; left: -6px; bottom: -18px; width: 118px; opacity: .55; }
 .curr-hero > :not(.art) { position: relative; }
 .curr-v .term-seg { margin-top: 16px; }
-.curr-v .units { animation: currUp .5s .08s cubic-bezier(.2,.8,.2,1) both; }
-@keyframes currIn { from { transform: scale(.94); opacity: 0; } }
-@keyframes currUp { from { transform: translateY(18px); opacity: 0; } }
+/* صفحة المنهج: لا حركات إضافية فوق انتقال الصفحة، لأنها كانت تسبب اهتزازاً وضبابية */
 </style>
 </head>
 <body>
