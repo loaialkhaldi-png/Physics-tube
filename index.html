@@ -1449,7 +1449,7 @@ const GRADES = {
 };
 const GRADE_ORDER = ['g10', 'g11', 'g12'];
 const UNIT_BY_ID = {};
-GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; UNIT_BY_ID[u.id] = u; }));
+GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); }));
 
 const SIMS = {
   accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
@@ -1561,6 +1561,7 @@ const ICONS = {
   chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
   grip: '<path d="M5 8h14M5 12h14M5 16h14"/>',
   up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
   trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7M9 7V4.5A.5.5 0 0 1 9.5 4h5a.5.5 0 0 1 .5.5V7"/>',
   clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/>',
 };
@@ -1627,10 +1628,22 @@ function needLogin(then) {
 }
 let REMOTE = store.get('remote', {});
 // Rows keyed "<unit id>.<lesson index>" fill a lesson; rows keyed "<unit id>" fill a unit's PDF.
+// A row keyed "<unit id>.extra" holds the titles of lessons the teacher added (JSON list);
+// added lesson k sits after the built-in lessons, so its video row is "<unit id>.<built-in count + k>".
+function parseExtra(raw) {
+  raw = String(raw || '').trim();
+  if (!raw || raw[0] !== '[') return [];
+  try { return JSON.parse(raw).map(t => String(t == null ? '' : t).trim()).filter(Boolean); } catch (e) { return []; }
+}
 function applyRemote() {
+  for (const g of GRADE_ORDER) for (const unit of GRADES[g].units) {
+    const row = REMOTE[`${unit.id}.extra`];
+    unit.lessons = unit.baseLessons.concat(parseExtra(row && row.video).map(t => ({ t, added: true, extra: true, video: '', min: '' })));
+  }
   for (const [key, row] of Object.entries(REMOTE)) {
     const [id, i] = key.split('.');
     const unit = UNIT_BY_ID[id]; if (!unit) continue;
+    if (i === 'extra') continue;
     if (i === undefined) { unit.files = parseFiles(row.pdf); unit.pdf = (unit.files[0] || {}).url || ''; continue; }
     const l = unit.lessons[+i]; if (!l) continue;
     l.videos = parseVideos(row.video, row.minutes); l.pdf = row.pdf || '';
@@ -1665,6 +1678,17 @@ async function saveRow(key, patch) {
   REMOTE[key] = row; store.set('remote', REMOTE); applyRemote(); render(false);
   return true;
 }
+// Saves several rows in one request (used when adding / deleting a lesson, so nothing is left half-done).
+async function saveRows(rows) {
+  const now = new Date().toISOString();
+  const full = rows.map(r => Object.assign({ video: '', pdf: '', minutes: '' }, REMOTE[r.key], r, { updated_at: now }));
+  const { error } = await db.from('content').upsert(full);
+  if (error) { toast(dbError(error)); return false; }
+  full.forEach(r => { REMOTE[r.key] = r; }); store.set('remote', REMOTE); applyRemote(); render(false);
+  return true;
+}
+const addedTitles = unit => unit.lessons.slice(unit.baseLessons.length).map(l => l.t);
+const titlesRow = (unit, list) => ({ key: `${unit.id}.extra`, video: list.length ? JSON.stringify(list) : '' });
 /* ---------- Unit file library: student book, summary, laws, review, mock exams… ---------- */
 const FILE_KINDS = {
   book:    { t: 'كتاب الطالب', ic: 'book', c: '#4C86FF' },
@@ -1754,6 +1778,20 @@ function pdfEditor(key, current, label) {
       <label class="btn" for="up-${key}">${icon('down', 'style="transform:rotate(180deg)"')}<span>${current ? 'استبدال' : 'رفع PDF'}</span></label>
       <input class="vh" type="file" id="up-${key}" accept="application/pdf,.pdf" data-upload="${key}">
     </div>`;
+}
+// Teacher mode: add as many lessons as needed to a unit, rename them, or delete them.
+function lessonsEditor(unit) {
+  const key = unit.id, added = addedTitles(unit);
+  return `<section class="editor" aria-label="إضافة دروس">
+    <div class="ed-h"><b>إضافة دروس للوحدة</b><span class="tag">وضع المعلم</span></div>
+    ${added.length ? `<div class="label" style="padding:0">الدروس التي أضفتَها (${ar(added.length)})</div>
+    <div class="ed-list">${added.map((t, k) => `<div class="ed-vid">
+      <span class="t"><input class="vtitle" data-lesson-title="${key}" data-k="${k}" value="${esc(t)}" maxlength="80" aria-label="عنوان الدرس المضاف ${ar(k + 1)}"><small>اضغط على العنوان لتعديله</small></span>
+      <button class="circle sm danger" data-act="lesson-del" data-key="${key}" data-k="${k}" aria-label="حذف الدرس">${icon('trash')}</button>
+    </div>`).join('')}</div>` : '<p class="hint">يمكنك إضافة أي عدد من الدروس لهذه الوحدة. بعد إضافة الدرس افتحه لتضع له الفيديو والمذكرة.</p>'}
+    <div class="field"><label for="ls-title">عنوان الدرس الجديد</label><input id="ls-title" maxlength="80" placeholder="مثال: الدرس السادس"></div>
+    <button class="btn primary" data-act="lesson-add" data-key="${key}">${icon('plus', 'style="width:16px;height:16px"')}إضافة الدرس</button>
+  </section>`;
 }
 function lessonEditor(key, l) {
   const vs = vids(l);
@@ -2688,6 +2726,7 @@ function vUnit(u) {
         <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${ADMIN ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
       </button>`;
     }).join('')}</div>
+    ${ADMIN ? lessonsEditor(unit) : ''}
     ${ADMIN ? filesEditor(unit) : ''}
     <h2 class="sec">ملفات الوحدة <small>${unitFiles(unit).length ? fileWord(unitFiles(unit).length) : ''}</small></h2>
     ${fileCards(unit) || `<div class="list"><div class="row"><span class="n">${icon('notes', 'style="width:20px;height:20px"')}</span><span class="t"><b>الملفات قيد التجهيز</b><small>كتاب الطالب، والتلخيص، والقوانين، والمراجعة، والاختبارات التجريبية</small></span><span class="end"><span class="soon">قريباً</span></span></div></div>`}
@@ -4617,6 +4656,29 @@ document.addEventListener('click', e => {
     const list = currentVideos(el.dataset.key); list.splice(+el.dataset.j, 1);
     S.vi = 0; saveVideos(el.dataset.key, list).then(ok => ok && toast('تم حذف الفيديو'));
   }
+  else if (act === 'lesson-add') {
+    const unit = UNIT_BY_ID[el.dataset.key], title = (document.getElementById('ls-title').value || '').trim();
+    if (!unit || !db) return;
+    if (!title) return toast('اكتب عنوان الدرس أولاً');
+    el.classList.add('busy');
+    saveRows([titlesRow(unit, addedTitles(unit).concat(title))]).then(ok => { el.classList.remove('busy'); if (ok) toast(`تمت إضافة «${title}»`); });
+  }
+  else if (act === 'lesson-del') {
+    if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الدرس مع فيديوهاته ومذكرته'); }
+    const unit = UNIT_BY_ID[el.dataset.key];
+    if (!unit || !db) return;
+    const k = +el.dataset.k, base = unit.baseLessons.length, titles = addedTitles(unit);
+    if (!(k >= 0 && k < titles.length)) return;
+    // Later lessons move up one place, so their videos and notes move with them.
+    const rows = [];
+    for (let j = k; j < titles.length; j++) {
+      const src = j + 1 < titles.length ? REMOTE[`${unit.id}.${base + j + 1}`] : null;
+      rows.push({ key: `${unit.id}.${base + j}`, video: (src && src.video) || '', pdf: (src && src.pdf) || '', minutes: (src && src.minutes) || '' });
+    }
+    titles.splice(k, 1);
+    rows.push(titlesRow(unit, titles));
+    saveRows(rows).then(ok => ok && toast('تم حذف الدرس'));
+  }
   else if (act === 'file-del') {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الملف'); }
     const list = unitFiles(UNIT_BY_ID[el.dataset.key]).slice(); list.splice(+el.dataset.j, 1);
@@ -4652,6 +4714,15 @@ document.addEventListener('change', e => {
     if (from === to) return;
     const [moved] = list.splice(from, 1); list.splice(to, 0, moved);
     S.vi = to; saveVideos(pos.dataset.vidPos, list).then(ok => ok && toast(`نُقل الفيديو إلى الترتيب ${to + 1}`));
+    return;
+  }
+  const lt = e.target.closest('[data-lesson-title]');
+  if (lt && db) {
+    const unit = UNIT_BY_ID[lt.dataset.lessonTitle], titles = addedTitles(unit), k = +lt.dataset.k, v = lt.value.trim();
+    if (!v) { lt.value = titles[k] || ''; return toast('عنوان الدرس لا يمكن أن يكون فارغاً'); }
+    if (titles[k] === v) return;
+    titles[k] = v;
+    saveRows([titlesRow(unit, titles)]).then(ok => ok && toast('تم حفظ العنوان'));
     return;
   }
   const ttl = e.target.closest('[data-vid-title]');
