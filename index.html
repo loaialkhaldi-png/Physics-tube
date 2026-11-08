@@ -1422,6 +1422,7 @@ const GRADES = {
         { t: 'قانون لنز', video: '', min: '' },
         { t: 'المولد الكهربائي', video: '', min: '' },
         { t: 'المحول الكهربائي', video: '', min: '' },
+        { t: 'المحرك الكهربائي', video: '', min: '' },
       ]},
       { term: 2, title: 'الفيزياء الحديثة', glyph: 'atom', theme: 6, pdf: '', lessons: [
         { t: 'الظاهرة الكهروضوئية', video: '', min: '' },
@@ -1433,6 +1434,7 @@ const GRADES = {
         { t: 'النشاط الإشعاعي', video: '', min: '' },
         { t: 'عمر النصف', video: '', min: '' },
         { t: 'الانشطار والاندماج النووي', video: '', min: '' },
+        { t: 'معادلة الكتلة والطاقة', video: '', min: '' },
       ]},
     ],
   },
@@ -2700,6 +2702,7 @@ function vLesson(u, i) {
       ${(() => { const uf = unitFiles(unit), pick = l.pdf || ((uf.find(x => x.kind === 'summary') || uf[0] || {}).url); return pick ? `<a class="btn" href="${esc(pick)}" target="_blank" rel="noopener" data-gate="${key}">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`; })()}
       ${simK ? `<button class="btn" data-go="sim:${simK}">${icon('lab')}جرّبها</button>` : (src ? `<a class="btn" href="${esc(src.open)}" target="_blank" rel="noopener">${icon('ext')}${esc(src.name)}</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}فتح الفيديو</span>`)}
     </div>
+    ${ADMIN ? `<button class="btn wide" style="margin-top:12px" data-act="copy-lesson-link" data-key="${key}">نسخ رابط الدرس لوصف الفيديو</button>` : ''}
     ${ADMIN ? lessonEditor(key, l) : ''}
     ${nx ? `<div class="next"><div class="label">الدرس التالي</div><div class="list"><button class="row" data-go="lesson:${nx.u}:${nx.i}" data-replace="1">
       <span class="n">${lessonNo(G().units[nx.u], nx.i) ? `<bdi dir="ltr">${lessonNo(G().units[nx.u], nx.i)}</bdi>` : icon('checkc', 'style="width:18px;height:18px"')}</span>
@@ -4487,6 +4490,10 @@ document.addEventListener('click', e => {
   else if (act === 'curr') { const h = document.getElementById('curriculum'); if (h) h.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
   else if (act === 'close') closeSheet();
   else if (act === 'start') { closeSheet(); S.tab = 'home'; S.stack = []; go('unit:0'); }
+  else if (act === 'copy-lesson-link') {
+    const url = lessonUrl(el.dataset.key);
+    Promise.resolve(navigator.clipboard && navigator.clipboard.writeText(url)).then(() => { if (!navigator.clipboard) throw 0; toast('تم نسخ رابط الدرس'); }).catch(() => prompt('انسخ رابط الدرس:', url));
+  }
   else if (act === 'watched') {
     const k = el.dataset.key; S.watched[k] = !S.watched[k]; if (!S.watched[k]) delete S.watched[k];
     store.set('watched', S.watched); render(false);
@@ -4655,13 +4662,38 @@ function hideSplash() {
 }
 setTimeout(hideSplash, 5000);
 if (!db || navigator.onLine === false) hideSplash();
+/* Direct lesson links: physics-tube.com/#lesson/<unit id>.<lesson index>, used in video descriptions */
+const lessonUrl = key => `${location.origin}${location.pathname}#lesson/${key}`;
+const lessonHashKey = () => { const m = location.hash.match(/^#lesson\/([\w-]+\.\d+)$/); return m ? m[1] : ''; };
+function findLesson(key) {
+  const [id, i] = key.split('.');
+  for (const g of Object.keys(GRADES)) {
+    const u = GRADES[g].units.findIndex(x => x.id === id);
+    if (u >= 0 && GRADES[g].units[u].lessons[+i]) return { g, u, i: +i };
+  }
+  return null;
+}
+function openLessonFromHash() {
+  const t = findLesson(lessonHashKey()); if (!t) return;
+  const open = () => {
+    closeSheet(); S.grade = t.g; S.tab = 'home'; S.stack = []; // the student's saved grade stays as it is
+    go(`lesson:${t.u}:${t.i}`);
+    history.replaceState(null, '', location.pathname + location.search);
+  };
+  if (needLogin(open)) open();
+}
+window.addEventListener('hashchange', openLessonFromHash);
+if (!db) openLessonFromHash();
 if (db) {
-  Promise.allSettled([db.auth.getSession().then(({ data }) => applySession(data.session)), loadRemote()]).then(hideSplash);
-  db.from('profiles').select('id').limit(1).then(({ error }) => { ACCOUNTS = !error; if (ACCOUNTS) render(false); }, () => {});
+  const accountsReady = db.from('profiles').select('id').limit(1).then(({ error }) => { ACCOUNTS = !error; if (ACCOUNTS) render(false); }, () => {});
+  const sessionReady = db.auth.getSession().then(({ data }) => applySession(data.session));
+  Promise.allSettled([sessionReady, loadRemote()]).then(hideSplash);
+  // Wait for the session so a signed-in student is never asked to log in again.
+  Promise.allSettled([sessionReady, accountsReady]).then(openLessonFromHash);
   db.auth.onAuthStateChange((ev, session) => { if (ev === 'SIGNED_OUT') { USER = ADMIN = PROFILE = null; } });
 }
 if (start === 'admin') { S.tab = 'profile'; render(); authSheet('login'); }
-else if (!store.get('onboarded', false) && !store.get('gradePicked', false) && !totalWatched() && !S.last) onboarding();
+else if (!lessonHashKey() && !store.get('onboarded', false) && !store.get('gradePicked', false) && !totalWatched() && !S.last) onboarding();
 else store.set('onboarded', true);
 
 if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:') {
