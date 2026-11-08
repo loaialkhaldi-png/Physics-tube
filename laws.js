@@ -250,8 +250,41 @@ function vLaws() {
     <div class="field lw-search"><input id="lw-q" type="search" placeholder="ابحث عن قانون… مثل: الطاقة الحركية أو KE" value="${esc(LW.q)}" aria-label="بحث في القوانين"></div>
     <div class="td-chips lw-chips">${chips.map(([k, t]) => `<button class="${LW.ch === k ? 'on' : ''}" data-act="lw-ch" data-k="${k}">${t}</button>`).join('')}</div>
     <div id="lw-body">${body}</div>
+    ${lwPrintHTML()}
   </div>`;
 }
+
+/* ---------- نسخة الطباعة: ورقة A4 واحدة فيها كل قوانين الصف ---------- */
+function lwPrintHTML() {
+  const D = lwData(); if (!D) return '';
+  const fav = LW.ch === 'fav', all = lwAll().filter(x => !fav || LW.fav[x.k]);
+  if (!all.length) return '';
+  const body = D.map((c, ci) => {
+    let first = true;
+    return c.ls.map(l => {
+      const xs = all.filter(x => x.ci === ci && x.l === l); if (!xs.length) return '';
+      const chap = first ? `<div class="lwp-chap"><span>${c.ic}</span>${esc(c.ch)}</div>` : ''; first = false;
+      return `${chap}<div class="lwp-les"><bdi dir="ltr">${esc(l.id)}</bdi><span>${esc(l.t)}</span></div>`
+        + xs.map(x => `<div class="lwp-law"><b>${esc(x.n)}</b>${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}</div>`).join('');
+    }).join('');
+  }).join('');
+  return `<div id="lw-print" class="lwp" aria-hidden="true">
+    <header class="lwp-head"><div><small>${esc(G().name)}</small><h1>${fav ? 'قوانيني المفضلة' : 'ورقة القوانين'}</h1></div>
+      <div class="lwp-meta"><b>${all.length}</b><span>قانوناً</span><em>Physics Tube</em></div></header>
+    <div class="lwp-body">${body}</div></div>`;
+}
+/* يصغّر الخط تدريجياً حتى تتسع كل القوانين في صفحة واحدة */
+function lwFit() {
+  const el = document.getElementById('lw-print'); if (!el) return 0;
+  const body = el.querySelector('.lwp-body'); el.classList.add('measure');
+  let fs = 12;
+  for (; fs > 4.5; fs -= .25) {
+    el.style.setProperty('--fs', fs + 'pt');
+    if (body.scrollWidth <= body.clientWidth + 1 && body.scrollHeight <= body.clientHeight + 1) break;
+  }
+  el.classList.remove('measure'); return fs;
+}
+window.addEventListener('beforeprint', () => { try { lwFit(); } catch (e) {} });
 
 /* ---------- Flashcards: name → reveal the formula ---------- */
 function lwFlash(start) {
@@ -330,7 +363,7 @@ function lwAct(act, el) {
   else if (act === 'lw-flash') lwFlash(true);
   else if (act === 'lw-turn') { if (LW.flash) { LW.flash.open = true; lwFlash(); } }
   else if (act === 'lw-next') { const F = LW.flash; if (!F) return; if (el.dataset.k === '1') F.known++; else { const x = F.list[F.i]; LW.fav[x.k] = 1; store.set('lawFav', LW.fav); toast('أضفناه إلى ⭐ المفضلة لتراجعه'); } F.i++; F.open = false; lwFlash(); }
-  else if (act === 'lw-print') { LW.ch = LW.ch === 'fav' ? 'fav' : 'all'; LW.q = ''; render(false); setTimeout(() => window.print(), 300); }
+  else if (act === 'lw-print') { LW.ch = LW.ch === 'fav' ? 'fav' : 'all'; LW.q = ''; render(false); setTimeout(() => { lwFit(); window.print(); }, 400); }
 }
 document.addEventListener('input', e => {
   if (e.target.id !== 'lw-q') return;
