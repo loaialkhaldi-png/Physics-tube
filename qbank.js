@@ -2,7 +2,7 @@
 /* بنك الأسئلة التفاعلي: مسار الفصول والدروس، جولات بكل أنواع الأسئلة، إتقان ومراجعة ذكية، تحدي الدقيقة، وهدف يومي.
    Loaded after the main script and games.js, so it uses: store, S, G, go, render, transition, toast, esc, icon, qtext, ring, starStr,
    addXP, track, shareCard, navBar, SFX. Questions come from bank-g10.js (window.BANK_G10), bank-g11.js (window.BANK_G11) and bank-g12.js (window.BANK_G12). */
-const QB_SRC = 'من بنك الأسئلة — التوجيه الفني العام للعلوم 2025–2026';
+const QB_SRC = 'من بنك الأسئلة 2025–2026';
 const QB_GOAL = 20, QB_ROUND = 10, QB_SPRINT = 60;
 const QB_KIND = { term: 'المصطلح العلمي', tf: 'صح أم خطأ', fill: 'أكمل الفراغ', mcq: 'اختر الإجابة', num: 'مسألة', card: 'بطاقة مراجعة' };
 const QB_KIC = { term: '🏷️', tf: '✔️', fill: '✍️', mcq: '🔘', num: '🧮', card: '🃏' };
