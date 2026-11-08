@@ -1261,6 +1261,14 @@ code sub, .rr sub, .fr sub, bdi sub { font-size: .68em; line-height: 0; vertical
 #splash .sp-bar i { position: absolute; inset: 0 auto 0 0; width: 40%; border-radius: inherit; background: linear-gradient(90deg, #2F8CFF, #A866FF); animation: spBar 1.3s ease-in-out infinite; }
 @keyframes spBar { from { transform: translateX(-110%); } to { transform: translateX(260%); } }
 @media (prefers-reduced-motion: reduce) { #splash *, #splash *::after { animation-duration: 3s !important; } }
+.curr-hero { position: relative; margin-top: 6px; padding: 22px 20px; min-height: 150px; border-radius: var(--r-lg); background: var(--pbg); overflow: hidden; border: 1px solid rgba(255,255,255,.1); animation: currIn .45s cubic-bezier(.2,.8,.2,1); }
+.curr-hero small { color: rgba(255,255,255,.7); font-size: 13px; } .curr-hero h1 { margin: 4px 0; font-size: 30px; font-weight: 800; } .curr-hero p { margin: 0; color: rgba(255,255,255,.8); font-size: 14px; }
+.curr-hero .art { position: absolute; left: -6px; bottom: -18px; width: 118px; opacity: .55; }
+.curr-hero > :not(.art) { position: relative; }
+.curr-v .term-seg { margin-top: 16px; }
+.curr-v .units { animation: currUp .5s .08s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes currIn { from { transform: scale(.94); opacity: 0; } }
+@keyframes currUp { from { transform: translateY(18px); opacity: 0; } }
 </style>
 </head>
 <body>
@@ -2554,6 +2562,34 @@ function missionWatch(k, P) {
 }
 
 /* ---------------- Views ---------------- */
+function unitsBlock() {
+  const tu = termUnits(S.grade, S.term);
+  const groups = [];
+  tu.forEach(x => { const n = x.u.unit || ''; const last = groups[groups.length - 1]; if (last && last[0] === n) last[1].push(x); else groups.push([n, [x]]); });
+  return `
+    ${termSeg()}
+    ${groups.map(([name, items]) => `${name ? `<div class="label unit-name">${esc(name)}</div>` : ''}
+    <div class="units">${items.map(({ u, i }) => {
+      const s = unitStats(S.grade, i);
+      return `<button class="unit" data-go="unit:${i}" style="${tileStyle(u.theme)}">
+        <span class="chip">${lessonWord(u.lessons.length)}</span>
+        ${glyph(u.glyph, u.theme)}
+        <small class="eyebrow">${unitLabel(S.grade, i)}</small>
+        <h3>${esc(u.title)}</h3>
+        ${s.done ? `<span class="bar"><i style="width:${s.pct}%"></i></span>` : ''}
+      </button>`;
+    }).join('')}</div>`).join('')}`;
+}
+function vCurr() {
+  const g = G(), tu = termUnits(S.grade, S.term);
+  return `<div class="view push curr-v">${navBar()}
+    <section class="curr-hero" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
+      <small>المنهج</small><h1>${esc(g.name)}</h1><p>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً في ${esc(TERMS[S.term])}</p>
+      <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
+    </section>
+${unitsBlock()}
+  </div>`;
+}
 function vHome() {
   const g = G();
   const lessons = g.units.reduce((n, u) => n + u.lessons.length, 0);
@@ -2583,7 +2619,7 @@ function vHome() {
     ${typeof clsRow === 'function' ? clsRow() : ''}
     ${dailyCard()}
     <div class="promos" aria-label="العروض">
-      <button class="promo" data-act="curr" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
+      <button class="promo" data-go="curr" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
         <h2>${esc(g.name)}</h2>
         <p>كل دروس الفيزياء لصفك في مكان واحد</p>
         <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
@@ -2615,18 +2651,7 @@ function vHome() {
     ${mxRow()}
     ${liveRow()}
     <h2 class="sec" id="curriculum" style="scroll-margin-top:12px">المنهج <small>${ar(tu.reduce((n, x) => n + x.u.lessons.length, 0))} درساً</small></h2>
-    ${termSeg()}
-    ${groups.map(([name, items]) => `${name ? `<div class="label unit-name">${esc(name)}</div>` : ''}
-    <div class="units">${items.map(({ u, i }) => {
-      const s = unitStats(S.grade, i);
-      return `<button class="unit" data-go="unit:${i}" style="${tileStyle(u.theme)}">
-        <span class="chip">${lessonWord(u.lessons.length)}</span>
-        ${glyph(u.glyph, u.theme)}
-        <small class="eyebrow">${unitLabel(S.grade, i)}</small>
-        <h3>${esc(u.title)}</h3>
-        ${s.done ? `<span class="bar"><i style="width:${s.pct}%"></i></span>` : ''}
-      </button>`;
-    }).join('')}</div>`).join('')}
+    ${unitsBlock()}
   </div>`;
 }
 function glyphInner(name, theme) {
@@ -4318,6 +4343,7 @@ function render(scroll = true) {
   else if (top.type === 'class') html = vClass();
   else if (top.type === 'bank') html = vBank();
   else if (top.type === 'bankrun') html = vBankRun();
+  else if (top.type === 'curr') html = vCurr();
   else if (top.type === 'prep') html = typeof vPrep === 'function' ? vPrep() : '';
   else if (top.type === 'badges') html = typeof vBadges === 'function' ? vBadges() : '';
   else if (top.type === 'laws') html = typeof vLaws === 'function' ? vLaws() : '';
