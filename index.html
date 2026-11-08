@@ -14,7 +14,11 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=4">
 <link rel="icon" type="image/png" href="icons/icon-192.png?v=4">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap"></noscript>
 <style>
 /* Layout: one dark phone-width column; wordmark header, grade switcher, swipeable promo cards, 2-up unit tiles, floating glass tab bar */
 :root {
@@ -576,15 +580,15 @@ body.cls-lock { overflow: hidden; } body.cls-lock .tabbar { display: none; }
 
 /* Tab bar */
 .tabbar {
-  position: fixed; z-index: 20; left: 50%; transform: translateX(-50%);
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-  width: min(488px, calc(100% - 2 * max(16px, env(safe-area-inset-left, 0px))));
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 6px; direction: rtl;
-  border-radius: 30px; background: var(--glass); border: 1px solid var(--line);
+  /* Docked to the very bottom edge; the home-indicator area is filled by the bar itself */
+  position: fixed; z-index: 20; left: 0; right: 0; bottom: 0; transform: none; width: 100%;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; direction: rtl;
+  padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+  border-radius: 0; background: var(--glass); border: 1px solid var(--line); border-width: 1px 0 0 0;
   -webkit-backdrop-filter: saturate(160%) blur(22px); backdrop-filter: saturate(160%) blur(22px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, .5);
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, .35);
 }
-.tab { display: grid; justify-items: center; gap: 2px; padding: 8px 4px 6px; border-radius: 24px; color: #A3A6B0; font-size: 11px; font-weight: 600; transition: background .25s, color .25s; }
+.tab { display: grid; justify-items: center; gap: 2px; padding: 8px 4px 6px; border-radius: 16px; color: #A3A6B0; font-size: 11px; font-weight: 600; transition: background .25s, color .25s; }
 .tab .ico { width: 24px; height: 24px; }
 .tab[aria-current="page"] { background: #2A2D35; color: var(--accent); }
 
