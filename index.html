@@ -1216,10 +1216,16 @@ button.td-row:active, .td-who:active { transform: scale(.99); }
 .lw-flash .fc small { color: var(--muted); }
 .lw-flash .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .lw-done { text-align: center; } .lw-done .em { font-size: 56px; }
+.lw-card { flex-wrap: wrap; } .lw-ed { flex: 1 1 100%; display: flex; gap: 8px; padding-top: 10px; margin-top: 2px; border-top: 1px dashed var(--line); }
+.lw-ed button { flex: 1; min-height: 40px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); color: var(--fg); font: inherit; font-size: 14px; font-weight: 600; } .lw-ed .del { color: #FF7A7A; }
+.lw-add { width: 100%; margin-top: 8px; min-height: 46px; border-radius: 14px; border: 1.5px dashed rgba(255,165,58,.6); color: #FFC56B; background: transparent; font: inherit; font-size: 15px; font-weight: 700; }
+.lw-admin { margin-top: 12px; padding: 14px; border-radius: 16px; background: rgba(255,165,58,.12); border: 1px solid rgba(255,165,58,.45); } .lw-admin p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+.lw-form { display: grid; gap: 12px; } .lw-form h2 { margin: 0; font-size: 20px; } .lw-tip { margin: -4px 0 0; color: var(--muted); font-size: 12px; }
+.lw-sym { display: flex; flex-wrap: wrap; gap: 6px; direction: ltr; } .lw-sym button { min-width: 42px; min-height: 42px; padding: 0 10px; border-radius: 12px; background: var(--surface-2); border: 1px solid var(--line); color: #FFD27A; font-size: 18px; font-weight: 700; }
 @media (min-width: 900px) { .lw-grid { grid-template-columns: 1fr 1fr; } .view.lw, .view.prep, .view.ach-v { max-width: 900px; } .ach-grid { grid-template-columns: repeat(5, 1fr); } }
 @media print {
   body { background: #fff !important; color: #000 !important; }
-  .tabbar, nav, .nav, .lw-acts, .lw-search, .lw-chips, .lw-card .star, .toast { display: none !important; }
+  .tabbar, nav, .nav, .lw-acts, .lw-search, .lw-chips, .lw-card .star, .lw-ed, .lw-add, .lw-admin, .toast { display: none !important; }
   body, #app { padding: 0 !important; margin: 0 !important; }
   .view.lw { max-width: none; padding: 0; }
   .lw-hero { background: none; border: 0; color: #000; padding: 0; } .lw-hero small, .lw-hero p { color: #333; }

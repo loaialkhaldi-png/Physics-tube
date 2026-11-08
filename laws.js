@@ -147,11 +147,13 @@ const LAWS_DATA = {
       { id: '1-3', t: 'حفظ (بقاء) الطاقة', L: [
         { n: 'حفظ الطاقة الميكانيكية (نظام معزول بإهمال الاحتكاك)', f: 'ΔME = 0 ⇒ ME₁ = ME₂ ⇒ KE₁ + PE₁ = KE₂ + PE₂' },
         { n: 'حفظ الطاقة الميكانيكية (بدون احتكاك)', f: 'ΔKE = −ΔPE ⇒ ΔPE = −ΔKE' },
-        { n: 'السرعة بعد هبوط مسافة h', f: 'v = √(2 g h)' },
+        { n: 'سرعة جسم سقط من سكون رأسياً (بإهمال الاحتكاك)', f: 'v = √(2 g h)' },
         { n: 'التغير في الطاقة الكلية', f: 'ΔE = ΔME + ΔU', u: 'في النظام المعزول ΔE = 0' },
         { n: 'عدم حفظ الطاقة الميكانيكية (مع وجود احتكاك)', f: 'ΔME = −ΔU = W_f = −f d', u: 'ΔU = −W_f' },
         { n: 'البندول عند أقصى إزاحة زاوية', f: 'PE = m g L (1 − cosθ)', u: 'حيث \u2066h = L (1 − cosθ)\u2069 ارتفاع الثقل عن موضع الاستقرار' },
         { n: 'البندول عند موضع الاستقرار', f: 'KE = m g L (1 − cosθ)' },
+        { n: 'سرعة جسم سقط من سكون على مستوى مائل أملس', f: 'v = √(2 g d sinθ)' },
+        { n: 'السرعة النهائية للبندول عند موضع الاستقرار', f: 'v = √(2 g h) = √(2 g L (1 − cosθ))' },
       ] },
     ] },
     { ch: 'ميكانيكا الدوران', ic: '🔄', ls: [
@@ -187,18 +189,35 @@ const LAWS_DATA = {
         { n: 'التصادم المرن (سرعة الجسم الأول)', f: 'v₁′ = (2m₂v₂ + (m₁ − m₂)v₁) ÷ (m₁ + m₂)' },
         { n: 'التصادم المرن (سرعة الجسم الثاني)', f: 'v₂′ = (2m₁v₁ − (m₁ − m₂)v₂) ÷ (m₁ + m₂)' },
         { n: 'التصادم المرن (الطاقة الحركية)', f: 'ΔKE = 0', u: 'الطاقة الحركية محفوظة' },
-        { n: 'البندول القذفي', f: '½ m_T v′² = m_T g h', u: 'ومنها v′ = √(2 g h)' },
+        { n: 'البندول القذفي', f: '½ m_T v′² = m_T g h', u: 'ومنها \u2066v′ = √(2 g h)\u2069' },
         { n: 'الطاقة الحركية المفقودة', f: 'ΔKE = KE_f − KE_i' },
       ] },
     ] },
   ],
 };
 
-const LW = { ch: 'all', q: '', fav: store.get('lawFav', {}), flash: null };
+const LW = { ch: 'all', q: '', fav: store.get('lawFav', {}), flash: null, edit: false, ed: null, cache: null };
 const lwKey = (lid, i) => `${S.grade}:${lid}.${i}`;
-function lwAll() {
-  return (LAWS_DATA[S.grade] || []).flatMap((c, ci) => c.ls.flatMap(l => l.L.map((x, i) => Object.assign({ ci, c, l, k: lwKey(l.id, i) }, x))));
+/* تعديلات المعلم تُحفظ في جدول content بالمفتاح laws.<الصف> (نص JSON في عمود video):
+   e: قوانين معدّلة { "رقم الدرس|الاسم الأصلي": {n,f,u} } · d: قوانين محذوفة ["رقم الدرس|الاسم الأصلي"] · a: قوانين مضافة [{id,lid,n,f,u}] */
+const lwRaw = () => { const r = (typeof REMOTE !== 'undefined' && REMOTE['laws.' + S.grade]); return (r && r.video) || ''; };
+function lwCust() {
+  let o = {}; try { o = JSON.parse(lwRaw() || '{}') || {}; } catch (e) {}
+  return { e: o.e && typeof o.e === 'object' ? o.e : {}, d: Array.isArray(o.d) ? o.d : [], a: Array.isArray(o.a) ? o.a : [] };
 }
+function lwData() {
+  const base = LAWS_DATA[S.grade]; if (!base) return null;
+  const raw = lwRaw(); if (LW.cache && LW.cache.g === S.grade && LW.cache.raw === raw) return LW.cache.D;
+  const C = lwCust();
+  const D = base.map(c => ({ ch: c.ch, ic: c.ic, ls: c.ls.map(l => ({ id: l.id, t: l.t,
+    L: l.L.map((x, i) => ({ x, i, o: l.id + '|' + x.n })).filter(r => !C.d.includes(r.o)).map(r => Object.assign({}, r.x, C.e[r.o] || {}, { _o: r.o, _i: r.i }))
+      .concat(C.a.filter(a => a && a.lid === l.id).map(a => ({ n: a.n, f: a.f, u: a.u, _a: a.id }))) })) }));
+  LW.cache = { g: S.grade, raw, D }; return D;
+}
+function lwAll() {
+  return (lwData() || []).flatMap((c, ci) => c.ls.flatMap(l => l.L.map(x => Object.assign({ ci, c, l, k: x._a ? `${S.grade}:${l.id}+${x._a}` : lwKey(l.id, x._i) }, x))));
+}
+const lwCanEdit = () => LW.edit && typeof ADMIN !== 'undefined' && !!ADMIN;
 const lwF = f => `<code dir="ltr">${esc(f)}</code>`;
 
 function lawsCard() {
@@ -206,23 +225,28 @@ function lawsCard() {
   return `<button class="lw-entry" data-go="laws"><span class="gi">📐</span><span class="t"><b>ورقة القوانين</b><small>${n} قانوناً من ${esc(G().short)} · للمراجعة السريعة</small></span><span class="qb-go">افتح ${icon('chev')}</span></button>`;
 }
 function vLaws() {
-  const D = LAWS_DATA[S.grade]; if (!D) return `<div class="view push">${navBar()}<div class="live-msg"><div class="em">📐</div><h1>ورقة القوانين غير متاحة لهذا الصف بعد</h1></div></div>`;
+  const D = lwData(); if (!D) return `<div class="view push">${navBar()}<div class="live-msg"><div class="em">📐</div><h1>ورقة القوانين غير متاحة لهذا الصف بعد</h1></div></div>`;
   const all = lwAll(), q = LW.q.trim().toLowerCase(), favs = all.filter(x => LW.fav[x.k]);
   const hit = x => !q || [x.n, x.f, x.u, x.l.t].some(v => String(v || '').toLowerCase().includes(q));
   const chips = [['all', 'الكل'], ['fav', `⭐ المفضلة${favs.length ? ` (${favs.length})` : ''}`]].concat(D.map((c, i) => [String(i), `${c.ic} ${c.ch}`]));
   const card = x => `<div class="lw-card ${LW.fav[x.k] ? 'fav' : ''}"><div class="t"><b>${esc(x.n)}</b>${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}</div>
-    <button class="star" data-act="lw-fav" data-k="${x.k}" aria-label="${LW.fav[x.k] ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}">${LW.fav[x.k] ? '★' : '☆'}</button></div>`;
+    <button class="star" data-act="lw-fav" data-k="${x.k}" aria-label="${LW.fav[x.k] ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}">${LW.fav[x.k] ? '★' : '☆'}</button>
+    ${lwCanEdit() ? `<div class="lw-ed"><button data-act="lw-edit" data-k="${x.k}">✏️ تعديل</button><button class="del" data-act="lw-del" data-k="${x.k}">🗑️ حذف</button></div>` : ''}</div>`;
   let body;
   if (LW.ch === 'fav') body = favs.filter(hit).length ? `<div class="lw-grid">${favs.filter(hit).map(card).join('')}</div>` : '<p class="td-empty">اضغط ☆ بجانب أي قانون لإضافته إلى المفضلة، لتجد القوانين التي تحتاج حفظها في مكان واحد.</p>';
   else {
     body = D.map((c, ci) => (LW.ch !== 'all' && +LW.ch !== ci) ? '' : c.ls.map(l => {
-      const xs = all.filter(x => x.ci === ci && x.l === l).filter(hit); if (!xs.length) return '';
-      return `<section class="lw-sec"><h2><span>${c.ic}</span>${esc(l.t)}<small>الدرس (${l.id})</small></h2><div class="lw-grid">${xs.map(card).join('')}</div></section>`;
+      const xs = all.filter(x => x.ci === ci && x.l === l).filter(hit); if (!xs.length && !(lwCanEdit() && !q)) return '';
+      return `<section class="lw-sec"><h2><span>${c.ic}</span>${esc(l.t)}<small>الدرس (${l.id})</small></h2><div class="lw-grid">${xs.map(card).join('')}</div>
+        ${lwCanEdit() ? `<button class="lw-add" data-act="lw-new" data-lid="${l.id}">＋ أضف قانوناً في هذا الدرس</button>` : ''}</section>`;
     }).join('')).join('') || '<p class="td-empty">لا يوجد قانون بهذا الاسم.</p>';
   }
   return `<div class="view push lw">${navBar()}
     <section class="lw-hero"><small>${esc(G().name)}</small><h1>ورقة القوانين</h1><p>${all.length} قانوناً من حلول بنك الأسئلة، مرتبة حسب الدروس.</p>
-      <div class="lw-acts"><button class="btn primary" data-act="lw-flash">🃏 احفظ بالبطاقات</button><button class="btn" data-act="lw-print">🖨️ طباعة</button></div></section>
+      <div class="lw-acts"><button class="btn primary" data-act="lw-flash">🃏 احفظ بالبطاقات</button><button class="btn" data-act="lw-print">🖨️ طباعة</button></div>
+      ${typeof ADMIN !== 'undefined' && ADMIN ? `<div class="lw-acts"><button class="btn ${LW.edit ? 'primary' : ''}" data-act="lw-editmode">${LW.edit ? '✔️ إنهاء التعديل' : '✏️ تعديل القوانين (للمعلم)'}</button></div>` : ''}</section>
+    ${lwCanEdit() ? `<div class="lw-admin"><b>وضع التعديل</b><p>ما تعدّله أو تضيفه هنا يظهر لجميع طلاب ${esc(G().name)} بعد حفظه.</p>
+      <div class="lw-acts"><button class="btn primary" data-act="lw-new">＋ قانون جديد</button>${lwCust().d.length ? `<button class="btn" data-act="lw-restore">↩️ استرجاع المحذوف (${lwCust().d.length})</button>` : ''}</div></div>` : ''}
     <div class="field lw-search"><input id="lw-q" type="search" placeholder="ابحث عن قانون… مثل: الطاقة الحركية أو KE" value="${esc(LW.q)}" aria-label="بحث في القوانين"></div>
     <div class="td-chips lw-chips">${chips.map(([k, t]) => `<button class="${LW.ch === k ? 'on' : ''}" data-act="lw-ch" data-k="${k}">${t}</button>`).join('')}</div>
     <div id="lw-body">${body}</div>
@@ -243,8 +267,65 @@ function lwFlash(start) {
     ${F.open ? `<div class="two"><button class="btn" data-act="lw-next" data-k="0">✗ لم أتذكره</button><button class="btn primary" data-act="lw-next" data-k="1">✓ تذكرته</button></div>` : ''}</div>`, 'lw-sheet');
 }
 
+const LW_SYM = ['Δ', 'θ', 'τ', 'ω', 'π', 'α', 'Σ', '√(', '²', '³', '½', '×', '÷', '=', '+', '−', '⇒', '°', '′', '₀', '₁', '₂'];
+function lwSheet(x, lid) {
+  const D = lwData() || [], C = lwCust(), edited = x && x._o && C.e[x._o];
+  const ls = D.flatMap(c => c.ls);
+  LW.ed = { k: x ? x.k : null, lid: x ? x.l.id : (lid || (ls[0] && ls[0].id)) };
+  sheet(`<div class="lw-form"><h2>${x ? 'تعديل القانون' : 'قانون جديد'}</h2>
+    ${x ? '' : `<div class="field"><label for="lwe-l">الدرس</label><select id="lwe-l">${ls.map(l => `<option value="${l.id}" ${l.id === LW.ed.lid ? 'selected' : ''}>${esc(l.t)} (${l.id})</option>`).join('')}</select></div>`}
+    <div class="field"><label for="lwe-n">اسم القانون</label><input id="lwe-n" maxlength="120" placeholder="مثال: الطاقة الحركية" value="${x ? esc(x.n) : ''}"></div>
+    <div class="field"><label for="lwe-f">القانون (الصيغة)</label><input id="lwe-f" maxlength="200" dir="ltr" placeholder="KE = ½ m v²" value="${x ? esc(x.f) : ''}"></div>
+    <div class="lw-sym" aria-label="رموز للإدراج">${LW_SYM.map(c => `<button type="button" data-act="lw-ins" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <p class="lw-tip">اضغط رمزاً لإدراجه في الصيغة. للكسر اكتب ÷ أو ( / ) بين مسافتين، وللرمز السفلي اكتب _ مثل v_y.</p>
+    <div class="field"><label for="lwe-u">ملاحظة أو وحدة (اختياري)</label><input id="lwe-u" maxlength="200" placeholder="مثال: J = N·m" value="${x ? esc(x.u || '') : ''}"></div>
+    <button class="btn primary wide" data-act="lw-save">حفظ ونشر للطلاب</button>
+    ${edited ? '<button class="btn wide" data-act="lw-reset" style="margin-top:8px">↩️ استرجاع الصيغة الأصلية</button>' : ''}
+    <button class="btn wide" data-act="close" style="margin-top:8px">إلغاء</button></div>`, 'lw-sheet');
+}
+async function lwStore(C, msg) {
+  if (typeof saveRow !== 'function') return false;
+  const ok = await saveRow('laws.' + S.grade, { video: JSON.stringify(C) });
+  if (ok) { closeSheet(); toast(msg || 'تم الحفظ وظهر للطلاب'); }
+  return ok;
+}
+const lwFind = k => lwAll().find(x => x.k === k);
+
 function lwAct(act, el) {
-  if (act === 'lw-ch') { LW.ch = el.dataset.k; render(false); }
+  if (act === 'lw-editmode') { if (typeof ADMIN === 'undefined' || !ADMIN) return; LW.edit = !LW.edit; render(false); }
+  else if (act === 'lw-new') { if (lwCanEdit()) lwSheet(null, el.dataset.lid); }
+  else if (act === 'lw-edit') { const x = lwFind(el.dataset.k); if (x && lwCanEdit()) lwSheet(x); }
+  else if (act === 'lw-ins') {
+    const i = document.getElementById('lwe-f'); if (!i) return;
+    const a = i.selectionStart == null ? i.value.length : i.selectionStart, b = i.selectionEnd == null ? a : i.selectionEnd, c = el.dataset.c;
+    i.value = i.value.slice(0, a) + c + i.value.slice(b); i.focus(); i.setSelectionRange(a + c.length, a + c.length);
+  }
+  else if (act === 'lw-save') {
+    if (!lwCanEdit()) return;
+    const n = (document.getElementById('lwe-n').value || '').trim(), f = (document.getElementById('lwe-f').value || '').trim(), u = (document.getElementById('lwe-u').value || '').trim();
+    if (!n || !f) return toast('اكتب اسم القانون وصيغته');
+    const C = lwCust(), x = LW.ed.k ? lwFind(LW.ed.k) : null;
+    if (!x) { const sel = document.getElementById('lwe-l'); C.a.push({ id: 'x' + Date.now().toString(36), lid: sel ? sel.value : LW.ed.lid, n, f, u }); }
+    else if (x._a) { const a = C.a.find(r => r.id === x._a); if (a) Object.assign(a, { n, f, u }); }
+    else C.e[x._o] = { n, f, u };
+    lwStore(C);
+  }
+  else if (act === 'lw-reset') { const x = LW.ed && lwFind(LW.ed.k); if (!x || !x._o) return; const C = lwCust(); delete C.e[x._o]; lwStore(C, 'رجع القانون إلى صيغته الأصلية'); }
+  else if (act === 'lw-del') {
+    const x = lwFind(el.dataset.k); if (!x || !lwCanEdit()) return;
+    LW.ed = { k: x.k };
+    sheet(`<div class="lw-done"><div class="em">🗑️</div><h2>حذف هذا القانون؟</h2><p><b>${esc(x.n)}</b></p><p>سيختفي من صفحة القوانين عند جميع الطلاب.</p>
+      <button class="btn primary wide" data-act="lw-del-ok">نعم، احذف</button><button class="btn wide" data-act="close" style="margin-top:8px">إلغاء</button></div>`, 'lw-sheet');
+  }
+  else if (act === 'lw-del-ok') {
+    const x = LW.ed && lwFind(LW.ed.k); if (!x || !lwCanEdit()) return;
+    const C = lwCust();
+    if (x._a) C.a = C.a.filter(r => r.id !== x._a); else { if (!C.d.includes(x._o)) C.d.push(x._o); delete C.e[x._o]; }
+    delete LW.fav[x.k]; store.set('lawFav', LW.fav);
+    lwStore(C, 'تم حذف القانون');
+  }
+  else if (act === 'lw-restore') { if (!lwCanEdit()) return; const C = lwCust(); C.d = []; lwStore(C, 'تم استرجاع القوانين المحذوفة'); }
+  else if (act === 'lw-ch') { LW.ch = el.dataset.k; render(false); }
   else if (act === 'lw-fav') { const k = el.dataset.k; if (LW.fav[k]) delete LW.fav[k]; else LW.fav[k] = 1; store.set('lawFav', LW.fav); render(false); }
   else if (act === 'lw-flash') lwFlash(true);
   else if (act === 'lw-turn') { if (LW.flash) { LW.flash.open = true; lwFlash(); } }
