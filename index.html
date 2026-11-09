@@ -668,7 +668,10 @@ body.cls-lock { overflow: hidden; } body.cls-lock .tabbar { display: none; }
 .grip { display: grid; place-items: center; width: 44px; height: 44px; margin-inline-start: auto; color: var(--muted); touch-action: none; cursor: grab; flex: none; }
 .grip .ico { width: 24px; height: 24px; }
 body.dragging { -webkit-user-select: none; user-select: none; overflow: hidden; }
-.playlist.sorting { overflow: visible; }
+.playlist.sorting, .list.sorting { overflow: visible; }
+.list.sortable .row { transition: transform .18s ease, box-shadow .18s; }
+.list.sortable .row .grip { width: 36px; margin-inline-start: 0; }
+.list.sorting .row.lifted { transition: box-shadow .18s; position: relative; z-index: 3; background: #262A35; border-radius: 16px; box-shadow: 0 14px 34px rgba(0, 0, 0, .55), 0 0 0 1.5px var(--accent); }
 .playlist .row.lifted { transition: box-shadow .18s; position: relative; z-index: 3; background: #262A35; border-radius: 16px; box-shadow: 0 14px 34px rgba(0, 0, 0, .55), 0 0 0 1.5px var(--accent); }
 .playlist .row.on { background: rgba(47, 140, 255, .08); }
 .playlist .row.on .n { background: var(--accent); color: #fff; }
@@ -1475,7 +1478,7 @@ const GRADES = {
 };
 const GRADE_ORDER = ['g10', 'g11', 'g12'];
 const UNIT_BY_ID = {};
-GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); }));
+GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); u.baseLessons.forEach((l, k) => { l.n = k; }); }));
 
 const SIMS = {
   accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
@@ -1661,17 +1664,29 @@ function parseExtra(raw) {
   if (!raw || raw[0] !== '[') return [];
   try { return JSON.parse(raw).map(t => String(t == null ? '' : t).trim()).filter(Boolean); } catch (e) { return []; }
 }
+// Every lesson keeps a fixed storage number `n` (its original place), which its videos, notes and progress are filed under.
+// A row keyed "<unit id>.order" holds the teacher's chosen display order: a JSON list of those numbers.
+// Lessons missing from the list (for example newly added ones) go at the end.
+function orderLessons(all, row) {
+  let ord = [];
+  try { const a = JSON.parse(String((row && row.video) || '[]')); if (Array.isArray(a)) ord = a.map(Number); } catch (e) { ord = []; }
+  const seen = new Set(), out = [];
+  ord.forEach(n => { const l = all.find(x => x.n === n); if (l && !seen.has(n)) { seen.add(n); out.push(l); } });
+  all.forEach(l => { if (!seen.has(l.n)) out.push(l); });
+  return out;
+}
 function applyRemote() {
   for (const g of GRADE_ORDER) for (const unit of GRADES[g].units) {
-    const row = REMOTE[`${unit.id}.extra`];
-    unit.lessons = unit.baseLessons.concat(parseExtra(row && row.video).map(t => ({ t, added: true, extra: true, video: '', min: '' })));
+    const row = REMOTE[`${unit.id}.extra`], base = unit.baseLessons.length;
+    const all = unit.baseLessons.concat(parseExtra(row && row.video).map((t, k) => ({ t, added: true, extra: true, video: '', min: '', n: base + k })));
+    unit.lessons = orderLessons(all, REMOTE[`${unit.id}.order`]);
   }
   for (const [key, row] of Object.entries(REMOTE)) {
     const [id, i] = key.split('.');
     const unit = UNIT_BY_ID[id]; if (!unit) continue;
-    if (i === 'extra') continue;
+    if (i === 'extra' || i === 'order') continue;
     if (i === undefined) { unit.files = parseFiles(row.pdf); unit.pdf = (unit.files[0] || {}).url || ''; continue; }
-    const l = unit.lessons[+i]; if (!l) continue;
+    const l = unit.lessons.find(x => x.n === +i); if (!l) continue;
     l.videos = parseVideos(row.video, row.minutes); l.pdf = row.pdf || '';
   }
 }
@@ -1713,7 +1728,7 @@ async function saveRows(rows) {
   full.forEach(r => { REMOTE[r.key] = r; }); store.set('remote', REMOTE); applyRemote(); render(false);
   return true;
 }
-const addedTitles = unit => unit.lessons.slice(unit.baseLessons.length).map(l => l.t);
+const addedTitles = unit => unit.lessons.filter(l => l.extra).sort((a, b) => a.n - b.n).map(l => l.t);
 const titlesRow = (unit, list) => ({ key: `${unit.id}.extra`, video: list.length ? JSON.stringify(list) : '' });
 /* ---------- Unit file library: student book, summary, laws, review, mock exams… ---------- */
 const FILE_KINDS = {
@@ -1792,7 +1807,7 @@ async function uploadPdf(key, file, btn) {
   const url = db.storage.from('notes').getPublicUrl(path).data.publicUrl;
   if (await saveRow(key, { pdf: url })) toast('تم رفع المذكرة');
 }
-const lessonByKey = key => { const [id, i] = key.split('.'); const u = UNIT_BY_ID[id]; return u && u.lessons[+i]; };
+const lessonByKey = key => { const [id, i] = key.split('.'); const u = UNIT_BY_ID[id]; return u && u.lessons.find(l => l.n === +i); };
 const currentVideos = key => vids(lessonByKey(key) || {}).map(v => ({ url: v.url, title: v.title || '', min: v.min || '' }));
 const saveVideos = (key, list) => saveRow(key, { video: list.length ? JSON.stringify(list) : '', minutes: '' });
 const fileName = url => { try { return decodeURIComponent(url.split('/').pop()); } catch (e) { return 'ملف PDF'; } };
@@ -1907,10 +1922,14 @@ function authSheet(mode = 'login', then) {
   };
 }
 const G = () => GRADES[S.grade];
-const lid = (g, u, i) => `${GRADES[g].units[u].id}.${i}`;
+const lid = (g, u, i) => { const un = GRADES[g].units[u], l = un.lessons[i]; return `${un.id}.${l ? l.n : i}`; };
 const ORD = ['', 'الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس', 'السابع', 'الثامن'];
 // Book-style lesson number, e.g. "1-2" = lesson 1 of chapter 2.
-const lessonNo = (unit, i) => unit.lessons[i].extra ? '' : (unit.ch ? `${i + 1}-${unit.ch}` : `${i + 1}`);
+const lessonNo = (unit, i) => {
+  if (unit.lessons[i].extra) return '';
+  const k = unit.lessons.slice(0, i + 1).filter(x => !x.extra).length; // the number follows the lesson's place in the list
+  return unit.ch ? `${k}-${unit.ch}` : `${k}`;
+};
 const unitLabel = (g, i) => { const u = GRADES[g].units[i]; return u.ch ? `الفصل ${ORD[u.ch]}` : `الوحدة ${unitNo(g, i)}`; };
 const ytId = url => { const m = String(url || '').match(/(?:youtu\.be\/|v=|embed\/|shorts\/|live\/)([\w-]{11})/); return m ? m[1] : ''; };
 // Turns a pasted link into something the lesson player can show.
@@ -2662,8 +2681,8 @@ function vHome() {
   tu.forEach(x => { const n = x.u.unit || ''; const last = groups[groups.length - 1]; if (last && last[0] === n) last[1].push(x); else groups.push([n, [x]]); });
   let cont = '';
   if (S.last && GRADES[S.last.g] && S.last.g === S.grade) {
-    const u = GRADES[S.last.g].units[S.last.u], l = u && u.lessons[S.last.i];
-    if (l) cont = `<button class="cont" data-go="lesson:${S.last.u}:${S.last.i}">
+    const u = GRADES[S.last.g].units[S.last.u], pi = u ? (S.last.n != null ? u.lessons.findIndex(x => x.n === S.last.n) : S.last.i) : -1, l = u && u.lessons[pi];
+    if (l) cont = `<button class="cont" data-go="lesson:${S.last.u}:${pi}">
       <span class="thumb" style="${tileStyle(u.theme)}">${glyph(u.glyph, u.theme)}</span>
       <span class="txt"><small>تابع من حيث توقفت · ${esc(u.title)}</small><b>${esc(l.t)}</b></span>
       <span class="go">${icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px;transform:translateX(1px)"')}</span></button>`;
@@ -2744,12 +2763,14 @@ function vUnit(u) {
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
-    <div class="list">${unit.lessons.map((l, i) => {
+    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة).</p>' : ''}
+    <div class="list${ADMIN ? ' sortable' : ''}"${ADMIN ? ` data-key="${unit.id}" data-lessons="1"` : ''}>${unit.lessons.map((l, i) => {
       const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
       return `<button class="row" data-go="lesson:${u}:${i}">
         <span class="n ${done ? 'done' : ''}">${done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : (lessonNo(unit, i) ? `<bdi dir="ltr">${lessonNo(unit, i)}</bdi>` : icon('checkc', 'style="width:18px;height:18px"'))}</span>
         <span class="t"><b>${esc(l.t)}</b><small>${has ? (has > 1 ? videoWord(has) + (mins ? ` · ${ar(mins)} دقيقة` : '') : (mins ? `${ar(mins)} دقيقة` : 'فيديو شرح')) : 'الفيديو قيد التجهيز'}</small></span>
         <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${ADMIN ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
+        ${ADMIN && unit.lessons.length > 1 ? `<span class="grip" aria-hidden="true">${icon('grip')}</span>` : ''}
       </button>`;
     }).join('')}</div>
     ${ADMIN ? lessonsEditor(unit) : ''}
@@ -2884,7 +2905,7 @@ function vProfile() {
 /* ---------------- Teacher dashboard ---------------- */
 const ADMIN_DATA = { at: 0, loading: false, stats: null, students: [], q: '', error: '' };
 const lessonTitle = key => {
-  const [id, i] = String(key).split('.'), u = UNIT_BY_ID[id], l = u && u.lessons[+i];
+  const [id, i] = String(key).split('.'), u = UNIT_BY_ID[id], l = u && u.lessons.find(x => x.n === +i);
   if (!l) return { t: key, sub: '' };
   const g = GRADE_ORDER.find(k => GRADES[k].units.includes(u));
   return { t: l.t, sub: `${GRADES[g].short} · ${u.title}` };
@@ -4348,6 +4369,12 @@ function makeSortable(list) {
     drag.active = false; drag.suppressClick = true; setTimeout(() => { drag.suppressClick = false; }, 450);
     list.classList.remove('sorting'); row.classList.remove('lifted'); document.body.classList.remove('dragging');
     if (!commit || target === i) { rows.forEach(r => { r.style.transform = ''; }); return; }
+    if (list.dataset.lessons) { // reordering the lessons of a unit
+      const unit = UNIT_BY_ID[list.dataset.key]; if (!unit || !db) { rows.forEach(r => { r.style.transform = ''; }); return; }
+      const order = unit.lessons.map(l => l.n), [mv] = order.splice(i, 1); order.splice(target, 0, mv);
+      saveRows([{ key: `${unit.id}.order`, video: JSON.stringify(order) }]).then(ok => { if (ok) toast(`نُقل الدرس إلى الترتيب ${target + 1}`); else rows.forEach(r => { r.style.transform = ''; }); });
+      return;
+    }
     const key = list.dataset.key, vids0 = currentVideos(key), [moved] = vids0.splice(i, 1); vids0.splice(target, 0, moved);
     const playing = S.vi || 0;
     S.vi = playing === i ? target : (i < playing && playing <= target) ? playing - 1 : (target <= playing && playing < i) ? playing + 1 : playing;
@@ -4481,7 +4508,8 @@ function go(spec, replace) {
   const entry = type === 'unit' ? { type, u: +a } : type === 'lesson' ? { type, u: +a, i: +b } : { type, k: a, i: b };
   if (type === 'lesson') {
     if (!needLogin(() => go(spec, replace))) return;
-    S.vi = 0; S.last = { g: S.grade, u: +a, i: +b }; store.set('last', S.last);
+    const lsn = GRADES[S.grade].units[+a] && GRADES[S.grade].units[+a].lessons[+b];
+    S.vi = 0; S.last = { g: S.grade, u: +a, i: +b, n: lsn ? lsn.n : +b }; store.set('last', S.last);
     logEvent('lesson', lid(S.grade, +a, +b));
     track('l', lid(S.grade, +a, +b));
   }
@@ -4703,6 +4731,11 @@ document.addEventListener('click', e => {
     }
     titles.splice(k, 1);
     rows.push(titlesRow(unit, titles));
+    // Keep the chosen lesson order: drop the deleted lesson's number and shift the later added lessons down by one.
+    if (REMOTE[`${unit.id}.order`]) {
+      const gone = base + k, ord = unit.lessons.map(l => l.n).filter(n => n !== gone).map(n => n > gone ? n - 1 : n);
+      rows.push({ key: `${unit.id}.order`, video: JSON.stringify(ord) });
+    }
     saveRows(rows).then(ok => ok && toast('تم حذف الدرس'));
   }
   else if (act === 'file-del') {
@@ -4792,7 +4825,8 @@ function findLesson(key) {
   const [id, i] = key.split('.');
   for (const g of Object.keys(GRADES)) {
     const u = GRADES[g].units.findIndex(x => x.id === id);
-    if (u >= 0 && GRADES[g].units[u].lessons[+i]) return { g, u, i: +i };
+    const p = u >= 0 ? GRADES[g].units[u].lessons.findIndex(x => x.n === +i) : -1;
+    if (p >= 0) return { g, u, i: p };
   }
   return null;
 }
