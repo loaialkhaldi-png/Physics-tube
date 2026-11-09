@@ -1757,6 +1757,32 @@ function hideBaseLesson(unit, n) {
   if (!hid.includes(n)) hid.push(n);
   return saveRows([{ key: `${unit.id}.hidden`, video: JSON.stringify(hid) }]);
 }
+// Shows a small bar with an "undo" button for a few seconds.
+function undoBar(msg, fn) {
+  document.querySelectorAll('.toast').forEach(x => x.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status');
+  t.style.cssText = 'display:flex;align-items:center;gap:14px;padding:8px 10px 8px 18px';
+  const sp = document.createElement('span'); sp.textContent = msg;
+  const b = document.createElement('button'); b.type = 'button'; b.textContent = 'تراجع';
+  b.style.cssText = 'font-weight:800;color:#fff;background:#E5484D;border-radius:999px;padding:7px 16px;font-size:14px';
+  const tm = setTimeout(() => t.remove(), 6500);
+  b.onclick = () => { clearTimeout(tm); t.remove(); fn(); };
+  t.append(sp, b); document.body.appendChild(t);
+}
+// Deletes a lesson (teacher only) and offers an undo: the affected rows are saved first and written back if the teacher taps undo.
+function removeLesson(unit, l) {
+  if (!ADMIN || !db || !l) return Promise.resolve(false);
+  const id = unit.id, base = unit.baseLessons.length, keys = [];
+  let run;
+  if (l.extra) {
+    const k = l.n - base, tt = addedTitles(unit);
+    keys.push(`${id}.extra`); if (REMOTE[`${id}.order`]) keys.push(`${id}.order`);
+    for (let j = k; j < tt.length; j++) keys.push(`${id}.${base + j}`);
+    run = () => deleteAddedLesson(unit, k);
+  } else { keys.push(`${id}.hidden`); run = () => hideBaseLesson(unit, l.n); }
+  const snap = keys.map(key => { const r = REMOTE[key] || {}; return { key, video: r.video || '', pdf: r.pdf || '', minutes: r.minutes || '' }; });
+  return run().then(ok => { if (ok) undoBar('تم حذف الدرس', () => saveRows(snap).then(ok2 => ok2 && toast('تمت استعادة الدرس'))); return ok; });
+}
 // Long press on a lesson (without dragging) in teacher mode: ask before deleting it.
 function askDeleteLesson(unit, idx) {
   const l = unit.lessons[idx]; if (!l) return;
@@ -2799,7 +2825,7 @@ function vUnit(u) {
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
-    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اضغط على الدرس مطولاً ثم ارفع إصبعك دون سحب (ويشمل دروس المنهج).</p>' : ''}
+    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اسحب الدرس جانبياً إلى أن يظهر الشريط الأحمر ثم أفلته، أو اضغط عليه مطولاً ثم ارفع إصبعك. بعد الحذف يظهر زر «تراجع».</p>' : ''}
     <div class="list${ADMIN ? ' sortable' : ''}"${ADMIN ? ` data-key="${unit.id}" data-lessons="1"` : ''}>${unit.lessons.map((l, i) => {
       const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
       return `<button class="row" data-go="lesson:${u}:${i}">
@@ -4386,6 +4412,34 @@ function setupReorder() { document.querySelectorAll('.sortable[data-key]').forEa
 function makeSortable(list) {
   const rows = [...list.querySelectorAll(':scope > .row, :scope > .ed-vid')];
   let cur = null;
+  // Swipe a lesson sideways to delete it (teacher only; there is an undo bar afterwards).
+  const swipeable = !!ADMIN && !!list.dataset.lessons;
+  const thr = row => Math.min(110, row.offsetWidth * 0.3);
+  const swipeMove = (row, dx) => {
+    if (!row._sw) {
+      list.style.position = 'relative'; // set first, so offsetTop below is measured inside the list
+      const bg = document.createElement('div'); bg.className = 'swipe-bg';
+      bg.style.cssText = `position:absolute;left:0;right:0;top:${row.offsetTop}px;height:${row.offsetHeight}px;background:#E5484D;color:#fff;display:flex;align-items:center;gap:8px;padding:0 22px;font-weight:700;direction:rtl;pointer-events:none`;
+      bg.innerHTML = `${icon('trash', 'style="width:22px;height:22px"')}<span>حذف</span>`;
+      list.appendChild(bg);
+      row.style.cssText += ';transition:none;position:relative;z-index:1;background:var(--surface)';
+      row._sw = { bg, dx: 0, armed: false };
+    }
+    const sw = row._sw; sw.dx = dx; row.style.transform = `translateX(${dx}px)`;
+    sw.bg.style.justifyContent = dx < 0 ? 'flex-start' : 'flex-end'; // the icon appears on the side that is being uncovered
+    sw.bg.style.opacity = .4 + .6 * Math.min(1, Math.abs(dx) / thr(row));
+    const armed = Math.abs(dx) >= thr(row);
+    if (armed && !sw.armed && navigator.vibrate) navigator.vibrate(15);
+    sw.armed = armed;
+  };
+  const swipeEnd = (row, i, commit) => {
+    const sw = row._sw; if (!sw) return; row._sw = null;
+    clearTimeout(drag.timer); drag.suppressClick = true; setTimeout(() => { drag.suppressClick = false; }, 450);
+    const unit = UNIT_BY_ID[list.dataset.key], l = unit && unit.lessons[i], del = commit && sw.armed && l;
+    row.style.transition = 'transform .18s ease-out';
+    row.style.transform = del ? `translateX(${sw.dx < 0 ? '-' : ''}110%)` : '';
+    setTimeout(() => { sw.bg.remove(); if (del) removeLesson(unit, l); else row.style.cssText = row.style.cssText.replace(/transition[^;]*;?|position[^;]*;?|z-index[^;]*;?|background[^;]*;?/g, ''); }, 190);
+  };
   const begin = (row, i, y, byGrip) => {
     cur = { row, i, y, byGrip: !!byGrip, moved: false, target: i, h: rows.length > 1 ? Math.abs(rows[1].getBoundingClientRect().top - rows[0].getBoundingClientRect().top) : row.offsetHeight };
     drag.active = true; list.classList.add('sorting'); row.classList.add('lifted'); document.body.classList.add('dragging');
@@ -4424,6 +4478,7 @@ function makeSortable(list) {
   };
   rows.forEach((row, i) => {
     const grip = row.querySelector('.grip');
+    if (swipeable) row.style.touchAction = 'pan-y';
     // Touch: the handle drags at once; anywhere else on the row needs a long press.
     row.addEventListener('touchstart', e => {
       if (e.touches.length > 1) return;
@@ -4437,17 +4492,26 @@ function makeSortable(list) {
     row.addEventListener('touchmove', e => {
       const t = e.touches[0];
       if (drag.active && cur && cur.row === row) { e.preventDefault(); moveTo(t.clientY); return; }
-      const st0 = row._start; if (st0 && Math.hypot(t.clientX - st0.sx, t.clientY - st0.sy) > 8) clearTimeout(drag.timer);
+      const st0 = row._start;
+      if (swipeable && st0 && !drag.active) {
+        const dx = t.clientX - st0.sx, dy = t.clientY - st0.sy;
+        if (row._sw || (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.5)) { clearTimeout(drag.timer); e.preventDefault(); swipeMove(row, dx); return; }
+      }
+      if (st0 && Math.hypot(t.clientX - st0.sx, t.clientY - st0.sy) > 8) clearTimeout(drag.timer);
     }, { passive: false });
-    row.addEventListener('touchend', e => { if (cur && cur.row === row) { e.preventDefault(); finish(true); } else clearTimeout(drag.timer); });
-    row.addEventListener('touchcancel', () => finish(false));
+    row.addEventListener('touchend', e => { if (row._sw) { e.preventDefault(); swipeEnd(row, i, true); } else if (cur && cur.row === row) { e.preventDefault(); finish(true); } else clearTimeout(drag.timer); });
+    row.addEventListener('touchcancel', () => { if (row._sw) swipeEnd(row, i, false); else finish(false); });
     // Mouse (computers): same long press, or drag the handle.
     row.addEventListener('pointerdown', e => {
       if (e.pointerType !== 'mouse' || e.button > 0) return;
       const sy = e.clientY, sx = e.clientX, onGrip = grip && grip.contains(e.target);
       if (!onGrip && e.target.closest('input, select, textarea, a, [data-act]:not(.row)')) return;
-      const mm = ev => { if (cur) moveTo(ev.clientY); else if (Math.hypot(ev.clientX - sx, ev.clientY - sy) > 8) up(); };
-      const up = () => { window.removeEventListener('pointermove', mm); window.removeEventListener('pointerup', up); finish(true); };
+      const mm = ev => {
+        if (cur) moveTo(ev.clientY);
+        else if (row._sw || (swipeable && !onGrip && Math.abs(ev.clientX - sx) > 6 && Math.abs(ev.clientX - sx) > Math.abs(ev.clientY - sy) * 1.5)) { clearTimeout(drag.timer); swipeMove(row, ev.clientX - sx); }
+        else if (Math.hypot(ev.clientX - sx, ev.clientY - sy) > 8) up();
+      };
+      const up = () => { window.removeEventListener('pointermove', mm); window.removeEventListener('pointerup', up); if (row._sw) swipeEnd(row, i, true); else finish(true); };
       window.addEventListener('pointermove', mm); window.addEventListener('pointerup', up);
       if (onGrip) { e.preventDefault(); begin(row, i, sy, true); } else drag.timer = setTimeout(() => begin(row, i, sy), 380);
     });
@@ -4768,9 +4832,7 @@ document.addEventListener('click', e => {
   else if (act === 'lesson-del-go') { // confirmed from the long-press sheet
     const unit = UNIT_BY_ID[el.dataset.key];
     if (!unit || !db) return;
-    el.classList.add('busy');
-    const k = +el.dataset.k;
-    (k >= 0 ? deleteAddedLesson(unit, k) : hideBaseLesson(unit, +el.dataset.n)).then(ok => { closeSheet(); if (ok) toast('تم حذف الدرس'); });
+    closeSheet(); removeLesson(unit, unit.lessons.find(x => x.n === +el.dataset.n));
   }
   else if (act === 'file-del') {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الملف'); }
