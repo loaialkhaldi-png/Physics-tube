@@ -1678,13 +1678,14 @@ function orderLessons(all, row) {
 function applyRemote() {
   for (const g of GRADE_ORDER) for (const unit of GRADES[g].units) {
     const row = REMOTE[`${unit.id}.extra`], base = unit.baseLessons.length;
-    const all = unit.baseLessons.concat(parseExtra(row && row.video).map((t, k) => ({ t, added: true, extra: true, video: '', min: '', n: base + k })));
+    let hid = []; try { const h = JSON.parse(String((REMOTE[`${unit.id}.hidden`] || {}).video || '[]')); if (Array.isArray(h)) hid = h.map(Number); } catch (e) { hid = []; }
+    const all = unit.baseLessons.filter(l => !hid.includes(l.n)).concat(parseExtra(row && row.video).map((t, k) => ({ t, added: true, extra: true, video: '', min: '', n: base + k })));
     unit.lessons = orderLessons(all, REMOTE[`${unit.id}.order`]);
   }
   for (const [key, row] of Object.entries(REMOTE)) {
     const [id, i] = key.split('.');
     const unit = UNIT_BY_ID[id]; if (!unit) continue;
-    if (i === 'extra' || i === 'order') continue;
+    if (i === 'extra' || i === 'order' || i === 'hidden') continue;
     if (i === undefined) { unit.files = parseFiles(row.pdf); unit.pdf = (unit.files[0] || {}).url || ''; continue; }
     const l = unit.lessons.find(x => x.n === +i); if (!l) continue;
     l.videos = parseVideos(row.video, row.minutes); l.pdf = row.pdf || '';
@@ -1749,15 +1750,21 @@ function deleteAddedLesson(unit, k) {
   }
   return saveRows(rows);
 }
+// Built-in (curriculum) lessons are hidden, not erased: their number goes into the unit's "<unit id>.hidden" row, so videos and notes stay saved.
+function hideBaseLesson(unit, n) {
+  if (!db || !unit.baseLessons.some(l => l.n === n)) return Promise.resolve(false);
+  let hid = []; try { const h = JSON.parse(String((REMOTE[`${unit.id}.hidden`] || {}).video || '[]')); if (Array.isArray(h)) hid = h.map(Number); } catch (e) { hid = []; }
+  if (!hid.includes(n)) hid.push(n);
+  return saveRows([{ key: `${unit.id}.hidden`, video: JSON.stringify(hid) }]);
+}
 // Long press on a lesson (without dragging) in teacher mode: ask before deleting it.
 function askDeleteLesson(unit, idx) {
   const l = unit.lessons[idx]; if (!l) return;
-  if (!l.extra) return toast('هذا درس من المنهج ولا يمكن حذفه. يمكنك حذف الدروس التي أضفتها أنت فقط.');
-  const k = l.n - unit.baseLessons.length;
+  const k = l.extra ? l.n - unit.baseLessons.length : -1;
   sheet(`<h2>حذف الدرس؟</h2>
     <p>سيُحذف الدرس «${esc(l.t)}» مع فيديوهاته ومذكرته، ولا يمكن التراجع.</p>
     <button class="btn wide" data-act="close">تراجع</button>
-    <button class="btn wide" data-act="lesson-del-go" data-key="${unit.id}" data-k="${k}" style="color:#FF6B6B">نعم، احذف الدرس</button>`);
+    <button class="btn wide" data-act="lesson-del-go" data-key="${unit.id}" data-k="${k}" data-n="${l.n}" style="color:#FF6B6B">نعم، احذف الدرس</button>`);
 }
 /* ---------- Unit file library: student book, summary, laws, review, mock exams… ---------- */
 const FILE_KINDS = {
@@ -2792,7 +2799,7 @@ function vUnit(u) {
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
-    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اضغط على الدرس مطولاً ثم ارفع إصبعك دون سحب (للدروس التي أضفتَها فقط).</p>' : ''}
+    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اضغط على الدرس مطولاً ثم ارفع إصبعك دون سحب (ويشمل دروس المنهج).</p>' : ''}
     <div class="list${ADMIN ? ' sortable' : ''}"${ADMIN ? ` data-key="${unit.id}" data-lessons="1"` : ''}>${unit.lessons.map((l, i) => {
       const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
       return `<button class="row" data-go="lesson:${u}:${i}">
@@ -4762,7 +4769,8 @@ document.addEventListener('click', e => {
     const unit = UNIT_BY_ID[el.dataset.key];
     if (!unit || !db) return;
     el.classList.add('busy');
-    deleteAddedLesson(unit, +el.dataset.k).then(ok => { closeSheet(); if (ok) toast('تم حذف الدرس'); });
+    const k = +el.dataset.k;
+    (k >= 0 ? deleteAddedLesson(unit, k) : hideBaseLesson(unit, +el.dataset.n)).then(ok => { closeSheet(); if (ok) toast('تم حذف الدرس'); });
   }
   else if (act === 'file-del') {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الملف'); }
