@@ -1783,15 +1783,6 @@ function removeLesson(unit, l) {
   const snap = keys.map(key => { const r = REMOTE[key] || {}; return { key, video: r.video || '', pdf: r.pdf || '', minutes: r.minutes || '' }; });
   return run().then(ok => { if (ok) undoBar('تم حذف الدرس', () => saveRows(snap).then(ok2 => ok2 && toast('تمت استعادة الدرس'))); return ok; });
 }
-// Long press on a lesson (without dragging) in teacher mode: ask before deleting it.
-function askDeleteLesson(unit, idx) {
-  const l = unit.lessons[idx]; if (!l) return;
-  const k = l.extra ? l.n - unit.baseLessons.length : -1;
-  sheet(`<h2>حذف الدرس؟</h2>
-    <p>سيُحذف الدرس «${esc(l.t)}» مع فيديوهاته ومذكرته، ولا يمكن التراجع.</p>
-    <button class="btn wide" data-act="close">تراجع</button>
-    <button class="btn wide" data-act="lesson-del-go" data-key="${unit.id}" data-k="${k}" data-n="${l.n}" style="color:#FF6B6B">نعم، احذف الدرس</button>`);
-}
 /* ---------- Unit file library: student book, summary, laws, review, mock exams… ---------- */
 const FILE_KINDS = {
   book:    { t: 'كتاب الطالب', ic: 'book', c: '#4C86FF' },
@@ -2825,7 +2816,7 @@ function vUnit(u) {
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
-    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اسحب الدرس جانبياً إلى أن يظهر الشريط الأحمر ثم أفلته، أو اضغط عليه مطولاً ثم ارفع إصبعك. بعد الحذف يظهر زر «تراجع».</p>' : ''}
+    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اسحب الدرس جانبياً إلى أن يظهر الشريط الأحمر ثم أفلته. بعد الحذف يظهر زر «تراجع».</p>' : ''}
     <div class="list${ADMIN ? ' sortable' : ''}"${ADMIN ? ` data-key="${unit.id}" data-lessons="1"` : ''}>${unit.lessons.map((l, i) => {
       const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
       return `<button class="row" data-go="lesson:${u}:${i}">
@@ -4456,13 +4447,11 @@ function makeSortable(list) {
   const finish = commit => {
     clearTimeout(drag.timer);
     if (!cur) return;
-    const { row, i, target, byGrip, moved: didMove } = cur; cur = null;
+    const { row, i, target } = cur; cur = null;
     drag.active = false; drag.suppressClick = true; setTimeout(() => { drag.suppressClick = false; }, 450);
     list.classList.remove('sorting'); row.classList.remove('lifted'); document.body.classList.remove('dragging');
     if (!commit || target === i) {
       rows.forEach(r => { r.style.transform = ''; });
-      // Long press without dragging on a lesson = delete it (after a confirmation).
-      if (commit && !didMove && !byGrip && list.dataset.lessons) { const unit = UNIT_BY_ID[list.dataset.key]; if (unit) askDeleteLesson(unit, i); }
       return;
     }
     if (list.dataset.lessons) { // reordering the lessons of a unit
@@ -4828,11 +4817,6 @@ document.addEventListener('click', e => {
     const unit = UNIT_BY_ID[el.dataset.key];
     if (!unit || !db) return;
     deleteAddedLesson(unit, +el.dataset.k).then(ok => ok && toast('تم حذف الدرس'));
-  }
-  else if (act === 'lesson-del-go') { // confirmed from the long-press sheet
-    const unit = UNIT_BY_ID[el.dataset.key];
-    if (!unit || !db) return;
-    closeSheet(); removeLesson(unit, unit.lessons.find(x => x.n === +el.dataset.n));
   }
   else if (act === 'file-del') {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الملف'); }
