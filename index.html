@@ -1730,6 +1730,35 @@ async function saveRows(rows) {
 }
 const addedTitles = unit => unit.lessons.filter(l => l.extra).sort((a, b) => a.n - b.n).map(l => l.t);
 const titlesRow = (unit, list) => ({ key: `${unit.id}.extra`, video: list.length ? JSON.stringify(list) : '' });
+// Deletes the k-th lesson the teacher added (k counts from 0 among the added lessons only).
+// Later added lessons move up one place, so their videos and notes move with them.
+function deleteAddedLesson(unit, k) {
+  const base = unit.baseLessons.length, titles = addedTitles(unit);
+  if (!db || !(k >= 0 && k < titles.length)) return Promise.resolve(false);
+  const rows = [];
+  for (let j = k; j < titles.length; j++) {
+    const src = j + 1 < titles.length ? REMOTE[`${unit.id}.${base + j + 1}`] : null;
+    rows.push({ key: `${unit.id}.${base + j}`, video: (src && src.video) || '', pdf: (src && src.pdf) || '', minutes: (src && src.minutes) || '' });
+  }
+  titles.splice(k, 1);
+  rows.push(titlesRow(unit, titles));
+  // Keep the chosen lesson order: drop the deleted lesson's number and shift the later added lessons down by one.
+  if (REMOTE[`${unit.id}.order`]) {
+    const gone = base + k, ord = unit.lessons.map(l => l.n).filter(n => n !== gone).map(n => n > gone ? n - 1 : n);
+    rows.push({ key: `${unit.id}.order`, video: JSON.stringify(ord) });
+  }
+  return saveRows(rows);
+}
+// Long press on a lesson (without dragging) in teacher mode: ask before deleting it.
+function askDeleteLesson(unit, idx) {
+  const l = unit.lessons[idx]; if (!l) return;
+  if (!l.extra) return toast('هذا درس من المنهج ولا يمكن حذفه. يمكنك حذف الدروس التي أضفتها أنت فقط.');
+  const k = l.n - unit.baseLessons.length;
+  sheet(`<h2>حذف الدرس؟</h2>
+    <p>سيُحذف الدرس «${esc(l.t)}» مع فيديوهاته ومذكرته، ولا يمكن التراجع.</p>
+    <button class="btn wide" data-act="close">تراجع</button>
+    <button class="btn wide" data-act="lesson-del-go" data-key="${unit.id}" data-k="${k}" style="color:#FF6B6B">نعم، احذف الدرس</button>`);
+}
 /* ---------- Unit file library: student book, summary, laws, review, mock exams… ---------- */
 const FILE_KINDS = {
   book:    { t: 'كتاب الطالب', ic: 'book', c: '#4C86FF' },
@@ -2763,7 +2792,7 @@ function vUnit(u) {
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
-    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة).</p>' : ''}
+    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اضغط على الدرس مطولاً ثم ارفع إصبعك دون سحب (للدروس التي أضفتَها فقط).</p>' : ''}
     <div class="list${ADMIN ? ' sortable' : ''}"${ADMIN ? ` data-key="${unit.id}" data-lessons="1"` : ''}>${unit.lessons.map((l, i) => {
       const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
       return `<button class="row" data-go="lesson:${u}:${i}">
@@ -4350,14 +4379,15 @@ function setupReorder() { document.querySelectorAll('.sortable[data-key]').forEa
 function makeSortable(list) {
   const rows = [...list.querySelectorAll(':scope > .row, :scope > .ed-vid')];
   let cur = null;
-  const begin = (row, i, y) => {
-    cur = { row, i, y, target: i, h: rows.length > 1 ? Math.abs(rows[1].getBoundingClientRect().top - rows[0].getBoundingClientRect().top) : row.offsetHeight };
+  const begin = (row, i, y, byGrip) => {
+    cur = { row, i, y, byGrip: !!byGrip, moved: false, target: i, h: rows.length > 1 ? Math.abs(rows[1].getBoundingClientRect().top - rows[0].getBoundingClientRect().top) : row.offsetHeight };
     drag.active = true; list.classList.add('sorting'); row.classList.add('lifted'); document.body.classList.add('dragging');
     if (navigator.vibrate) navigator.vibrate(12);
   };
   const moveTo = y => {
     if (!cur) return;
     const dy = y - cur.y, { row, i, h } = cur;
+    if (Math.abs(dy) > 12) cur.moved = true;
     cur.target = Math.max(0, Math.min(rows.length - 1, i + Math.round(dy / h)));
     row.style.transform = `translateY(${dy}px) scale(1.03)`;
     rows.forEach((r, j) => { if (r !== row) r.style.transform = (i < j && j <= cur.target) ? `translateY(${-h}px)` : (cur.target <= j && j < i) ? `translateY(${h}px)` : ''; });
@@ -4365,10 +4395,15 @@ function makeSortable(list) {
   const finish = commit => {
     clearTimeout(drag.timer);
     if (!cur) return;
-    const { row, i, target } = cur; cur = null;
+    const { row, i, target, byGrip, moved: didMove } = cur; cur = null;
     drag.active = false; drag.suppressClick = true; setTimeout(() => { drag.suppressClick = false; }, 450);
     list.classList.remove('sorting'); row.classList.remove('lifted'); document.body.classList.remove('dragging');
-    if (!commit || target === i) { rows.forEach(r => { r.style.transform = ''; }); return; }
+    if (!commit || target === i) {
+      rows.forEach(r => { r.style.transform = ''; });
+      // Long press without dragging on a lesson = delete it (after a confirmation).
+      if (commit && !didMove && !byGrip && list.dataset.lessons) { const unit = UNIT_BY_ID[list.dataset.key]; if (unit) askDeleteLesson(unit, i); }
+      return;
+    }
     if (list.dataset.lessons) { // reordering the lessons of a unit
       const unit = UNIT_BY_ID[list.dataset.key]; if (!unit || !db) { rows.forEach(r => { r.style.transform = ''; }); return; }
       const order = unit.lessons.map(l => l.n), [mv] = order.splice(i, 1); order.splice(target, 0, mv);
@@ -4386,7 +4421,7 @@ function makeSortable(list) {
     row.addEventListener('touchstart', e => {
       if (e.touches.length > 1) return;
       const t = e.touches[0], sx = t.clientX, sy = t.clientY;
-      if (grip && grip.contains(e.target)) { e.preventDefault(); begin(row, i, sy); return; }
+      if (grip && grip.contains(e.target)) { e.preventDefault(); begin(row, i, sy, true); return; }
       if (e.target.closest('input, select, textarea, a, [data-act]:not(.row)')) return;
       clearTimeout(drag.timer);
       drag.timer = setTimeout(() => begin(row, i, sy), 380);
@@ -4407,7 +4442,7 @@ function makeSortable(list) {
       const mm = ev => { if (cur) moveTo(ev.clientY); else if (Math.hypot(ev.clientX - sx, ev.clientY - sy) > 8) up(); };
       const up = () => { window.removeEventListener('pointermove', mm); window.removeEventListener('pointerup', up); finish(true); };
       window.addEventListener('pointermove', mm); window.addEventListener('pointerup', up);
-      if (onGrip) { e.preventDefault(); begin(row, i, sy); } else drag.timer = setTimeout(() => begin(row, i, sy), 380);
+      if (onGrip) { e.preventDefault(); begin(row, i, sy, true); } else drag.timer = setTimeout(() => begin(row, i, sy), 380);
     });
   });
 }
@@ -4721,22 +4756,13 @@ document.addEventListener('click', e => {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الدرس مع فيديوهاته ومذكرته'); }
     const unit = UNIT_BY_ID[el.dataset.key];
     if (!unit || !db) return;
-    const k = +el.dataset.k, base = unit.baseLessons.length, titles = addedTitles(unit);
-    if (!(k >= 0 && k < titles.length)) return;
-    // Later lessons move up one place, so their videos and notes move with them.
-    const rows = [];
-    for (let j = k; j < titles.length; j++) {
-      const src = j + 1 < titles.length ? REMOTE[`${unit.id}.${base + j + 1}`] : null;
-      rows.push({ key: `${unit.id}.${base + j}`, video: (src && src.video) || '', pdf: (src && src.pdf) || '', minutes: (src && src.minutes) || '' });
-    }
-    titles.splice(k, 1);
-    rows.push(titlesRow(unit, titles));
-    // Keep the chosen lesson order: drop the deleted lesson's number and shift the later added lessons down by one.
-    if (REMOTE[`${unit.id}.order`]) {
-      const gone = base + k, ord = unit.lessons.map(l => l.n).filter(n => n !== gone).map(n => n > gone ? n - 1 : n);
-      rows.push({ key: `${unit.id}.order`, video: JSON.stringify(ord) });
-    }
-    saveRows(rows).then(ok => ok && toast('تم حذف الدرس'));
+    deleteAddedLesson(unit, +el.dataset.k).then(ok => ok && toast('تم حذف الدرس'));
+  }
+  else if (act === 'lesson-del-go') { // confirmed from the long-press sheet
+    const unit = UNIT_BY_ID[el.dataset.key];
+    if (!unit || !db) return;
+    el.classList.add('busy');
+    deleteAddedLesson(unit, +el.dataset.k).then(ok => { closeSheet(); if (ok) toast('تم حذف الدرس'); });
   }
   else if (act === 'file-del') {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الملف'); }
