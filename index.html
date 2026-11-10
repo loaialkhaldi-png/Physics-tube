@@ -1298,6 +1298,83 @@ code sub, .rr sub, .fr sub, bdi sub { font-size: .68em; line-height: 0; vertical
 .curr-hero > :not(.art) { position: relative; }
 .curr-v .term-seg { margin-top: 16px; }
 /* صفحة المنهج: لا حركات إضافية فوق انتقال الصفحة، لأنها كانت تسبب اهتزازاً وضبابية */
+
+/* ===== Home redesign (test copy): "لوحة اليوم" hero + quick tiles ===== */
+.grade-row { align-items: flex-end; padding-block: 18px 14px; }
+.grade-row .hi { display: block; font-size: 15px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.tdh {
+  position: relative; overflow: hidden; margin-top: 4px; padding: 20px; border-radius: 30px; text-align: right;
+  background: radial-gradient(120% 90% at 100% 0%, rgba(47,140,255,.38) 0%, transparent 60%),
+              radial-gradient(90% 80% at 0% 100%, rgba(168,102,255,.34) 0%, transparent 62%), #11131A;
+  border: 1px solid rgba(255,255,255,.1); box-shadow: 0 24px 60px -28px rgba(47,140,255,.55);
+  display: grid; gap: 16px;
+}
+.promos[hidden] { display: none !important; }
+.tdh .chips { display: flex; gap: 8px; }
+.tdh .chips .chip { flex: 0 1 auto; min-width: 0; white-space: nowrap; font-size: 14px; padding: 7px 11px 7px 10px; gap: 6px; }
+.tdh .chip small { font-size: 12px; }
+.tdh .chip {
+  display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px 8px 12px; border-radius: 999px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); font-weight: 700; font-size: 15px;
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: var(--fg);
+}
+.tdh .chip .e { font-size: 20px; line-height: 1; }
+.tdh .chip.fire { background: rgba(255,140,40,.16); border-color: rgba(255,160,60,.35); }
+.tdh .chip.fire.off { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.1); color: var(--muted); }
+.tdh .chip.fire.off .e { filter: grayscale(1) opacity(.6); }
+.tdh .chip small { font-weight: 500; color: var(--muted); font-size: 13px; }
+.tdh .xpbar { height: 8px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; }
+.tdh .xpbar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--rc, #4C86FF), #fff); transition: width .8s cubic-bezier(.2,.8,.2,1); }
+.tdh .xpnote { font-size: 13px; color: var(--muted); margin-top: -6px; }
+.tdh .wk { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 12px; color: var(--muted); }
+.tdh .wd { display: grid; justify-items: center; gap: 6px; }
+.tdh .wd i {
+  width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-weight: 800; font-size: 14px;
+  background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.1); color: #04210F;
+}
+.tdh .wd.on i { background: var(--good); border-color: var(--good); box-shadow: 0 0 18px -2px rgba(50,209,122,.6); }
+.tdh .wd.now { color: var(--fg); font-weight: 700; }
+.tdh .wd.now i { border-color: var(--accent); }
+.tdh .go {
+  display: flex; align-items: center; gap: 14px; width: 100%; padding: 14px 16px; border-radius: 22px; text-align: right;
+  background: #fff; color: var(--on-light, #0A0B0F); box-shadow: 0 12px 30px -12px rgba(255,255,255,.35); transition: transform .15s;
+}
+.tdh .go:active { transform: scale(.98); }
+.tdh .go .txt { flex: 1; min-width: 0; }
+.tdh .go small { display: block; font-size: 13px; font-weight: 600; opacity: .62; }
+.tdh .go b { display: block; font-size: 18px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tdh .go .pl { width: 44px; height: 44px; border-radius: 50%; background: #0A0B0F; color: #fff; display: grid; place-items: center; flex: none; }
+.tdh button.wk { display: grid; width: 100%; }
+
+.qk { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 16px; }
+.qk button {
+  position: relative; overflow: hidden; display: grid; align-content: space-between; gap: 18px; min-height: 124px; padding: 14px; text-align: right;
+  border-radius: 24px; border: 1px solid rgba(255,255,255,.09); background: var(--q-bg); color: var(--fg); transition: transform .15s;
+}
+.qk button:active { transform: scale(.97); }
+.qk .qi { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: rgba(255,255,255,.12); color: var(--q-fg); }
+.qk .qi .ico { width: 26px; height: 26px; }
+.qk b { display: block; font-size: 17px; font-weight: 800; }
+.qk small { display: block; font-size: 12.5px; color: rgba(255,255,255,.7); margin-top: 2px; }
+.qk .sec-gap { display: none; }
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  #app { max-width: 760px; }
+  .tdh { grid-template-columns: 1fr 1fr; align-items: center; column-gap: 24px; padding: 26px; }
+  .tdh .chips, .tdh .wk, .tdh .xpbar, .tdh .xpnote { grid-column: 1; }
+  .tdh .go { grid-column: 2; grid-row: 1 / span 4; align-self: center; }
+  .promos { margin-inline: 0; padding-inline: 0; }
+  .units { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1024px) {
+  .tdh { grid-template-columns: 1.2fr 1fr; align-items: center; column-gap: 40px; padding: 32px 36px; }
+  .tdh .chips, .tdh .wk, .tdh .xpbar, .tdh .xpnote { grid-column: 1; }
+  .tdh .go { grid-column: 2; grid-row: 1 / span 4; align-self: center; padding: 22px 24px; }
+  .tdh .go b { font-size: 22px; }
+  .qk { gap: 20px; }
+  .qk button { min-height: 150px; padding: 20px; }
+  .qk b { font-size: 20px; }
+}
 </style>
 </head>
 <body>
@@ -2726,6 +2803,43 @@ function vCurr() {
 ${unitsBlock()}
   </div>`;
 }
+
+/* ---------- Home redesign: "لوحة اليوم" ---------- */
+function lastLesson() {
+  if (!(S.last && GRADES[S.last.g] && S.last.g === S.grade)) return null;
+  const u = GRADES[S.last.g].units[S.last.u]; if (!u) return null;
+  const pi = S.last.n != null ? u.lessons.findIndex(x => x.n === S.last.n) : S.last.i, l = u.lessons[pi];
+  return l ? { ui: S.last.u, pi, u, l } : null;
+}
+function todayHero() {
+  const st = streakDays(), xp = store.get('xp', 0), i = rankOf(xp), r = RANKS[i], nx = RANKS[i + 1];
+  const pct = nx ? Math.round((xp - r.xp) / (nx.xp - r.xp) * 100) : 100;
+  const names = ['أحد', 'اثنين', 'ثلاثاء', 'أربعاء', 'خميس', 'جمعة', 'سبت'], today = dayKey();
+  const week = weekDays().map((d, k) => `<span class="wd ${dayKey(d) === today ? 'now' : ''} ${activeDay(d) ? 'on' : ''}"><i>${activeDay(d) ? '✓' : ''}</i>${names[k]}</span>`).join('');
+  const ll = lastLesson();
+  const cta = ll
+    ? `<button class="go" data-go="lesson:${ll.ui}:${ll.pi}"><span class="txt"><small>تابع من حيث توقفت · ${esc(ll.u.title)}</small><b>${esc(ll.l.t)}</b></span><span class="pl">${icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px;transform:translateX(1px)"')}</span></button>`
+    : `<button class="go" data-go="curr"><span class="txt"><small>${esc(G().name)}</small><b>ابدأ أول درس لك</b></span><span class="pl">${icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px;transform:translateX(1px)"')}</span></button>`;
+  return `<section class="tdh" style="--rc:${r.c}" aria-label="لوحة اليوم">
+    <div class="chips">
+      <button class="chip fire ${st ? '' : 'off'}" data-act="rings" aria-label="سلسلة أيام النشاط"><span class="e">🔥</span>${st ? dayWord(st) : 'ابدأ سلسلتك اليوم'}</button>
+      <button class="chip" data-act="rank" aria-label="رتبتك العلمية"><span class="e">${r.e}</span>${r.n}<small>${ar(xp)} نقطة</small></button>
+    </div>
+    <button class="wk" data-act="rings" aria-label="أيام نشاطك هذا الأسبوع">${week}</button>
+    <div class="xpbar" role="progressbar" aria-valuenow="${pct}" aria-valuemin="0" aria-valuemax="100"><i style="width:${pct}%"></i></div>
+    <div class="xpnote">${nx ? `${ar(nx.xp - xp)} نقطة للوصول إلى ${nx.n} ${nx.e}` : 'وصلت إلى أعلى رتبة! 🏆'}</div>
+    ${cta}
+  </section>`;
+}
+function quickTiles() {
+  const g = G(), labs = new Set(g.units.flatMap(u => u.sims || [])).size;
+  const t = (act, ic, title, sub, bg, fg) => `<button ${act} style="--q-bg:${bg};--q-fg:${fg}"><span class="qi">${icon(ic)}</span><span><b>${title}</b><small>${sub}</small></span></button>`;
+  return `<nav class="qk" aria-label="اختصارات">
+    ${t('data-go="curr"', 'book', 'المنهج', 'كل الدروس', `radial-gradient(120% 90% at 100% 100%, ${THEMES[g.theme].a}88, transparent 70%), #130A22`, '#D9C2FF')}
+    ${t('data-tab="notes"', 'notes', 'المذكرات', 'ملخصات PDF', `radial-gradient(120% 90% at 100% 100%, ${THEMES[5].a}77, transparent 70%), #1A0E04`, '#FFD9A8')}
+    ${t('data-tab="lab"', 'lab', 'المختبر', `${ar(labs)} تجارب`, `radial-gradient(120% 90% at 100% 100%, ${THEMES[0].a}77, transparent 70%), #04140F`, '#A8F5D6')}
+  </nav>`;
+}
 function vHome() {
   const g = G();
   const lessons = g.units.reduce((n, u) => n + u.lessons.length, 0);
@@ -2749,12 +2863,14 @@ function vHome() {
         <button class="me" data-tab="profile" aria-label="حسابي">${icon('user')}</button>
       </span>
     </header>
-    <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
+    <div class="grade-row"><div><small class="hi">${firstName() ? `أهلاً ${esc(firstName())} 👋` : 'أهلاً بك 👋'}</small><h1>${esc(g.name)}</h1></div><button class="link" data-act="grade">غيّر مرحلتك</button></div>
     ${ADMIN ? `<button class="admin-bar" data-go="admin">${icon('chart')}<span>وضع المعلم: لوحة الإحصائيات والطلاب</span>${icon('chev')}</button>` : ''}
+    ${todayHero()}
     ${noticeCard()}
     ${typeof clsRow === 'function' ? clsRow() : ''}
     ${dailyCard()}
-    <div class="promos" aria-label="العروض">
+    ${quickTiles()}
+    <div class="promos" hidden aria-label="العروض">
       <button class="promo" data-go="curr" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
         <h2>${esc(g.name)}</h2>
         <p>كل دروس الفيزياء لصفك في مكان واحد</p>
@@ -2782,7 +2898,6 @@ function vHome() {
     ${typeof lbCard === 'function' ? lbCard() : ''}
     ${typeof lawsCard === 'function' ? lawsCard() : ''}
     ${typeof gamesCard === 'function' ? gamesCard() : ''}
-    ${cont}
     ${quizBanner()}
     ${mxRow()}
     ${liveRow()}
