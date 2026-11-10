@@ -411,7 +411,7 @@ function lwPrintHTML() {
 }
 /* يبني الصفحات: يملأ الأعمدة عموداً عموداً، وإذا لم يتسع القانون ينتقل للعمود التالي */
 function lwLayout(el, fs, maxPages) {
-  const P = LW.pu, pages = el.querySelector('.lwp-pages'); pages.innerHTML = ''; el.style.setProperty('--fs', fs + 'pt');
+  const P = LW.pu, pages = el.querySelector('.lwp-pages'); pages.innerHTML = ''; el.style.setProperty('--fs', fs);
   const head = (i, total) => i === 0
     ? `<header class="lwp-head"><div><small>${esc(P.name)}</small><h1>${esc(P.title)}</h1></div><div class="lwp-meta"><b>${P.n}</b><span>قانوناً</span><em>Physics Tube</em></div></header>`
     : `<header class="lwp-head mini"><div><h1>${esc(P.title)}</h1><small>${esc(P.name)} · تابع</small></div><div class="lwp-meta"><em>Physics Tube</em></div></header>`;
@@ -427,7 +427,7 @@ function lwLayout(el, fs, maxPages) {
   /* نقيس موضع حافة آخر عنصر (وليس scrollHeight لأنه قد يعطي قيمة قديمة قبل رسم الإطار فيُظهر أن المحتوى يتسع وهو لا يتسع) */
   const over = () => { const l = col.lastElementChild; if (!l) return false;
     const mb = parseFloat(getComputedStyle(l).marginBottom) || 0;
-    return l.getBoundingClientRect().bottom + mb > col.getBoundingClientRect().bottom + .5; };
+    return l.getBoundingClientRect().bottom + mb > col.getBoundingClientRect().bottom - col.clientHeight * .012; }; /* هامش أمان 1.2% لاختلاف التقريب بين الأجهزة */
   const nextCol = () => {
     if (++ci > 2) { ci = 0; pi++; if (!pg[pi] && !addPage()) return false; }
     col = pg[pi].querySelectorAll('.lwp-col')[ci]; empty = true; return true;
