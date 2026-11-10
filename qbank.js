@@ -157,6 +157,23 @@ function qbQuestionHTML(x, a) {
   if (q.aimg && (a || (q.k === 'card' && s.flip))) { const fig = `<div class="qb-img ans"><small>✓ الإجابة من البنك</small><img src="${q.aimg}" alt="رسم الإجابة" loading="lazy"></div>`; body = body.includes('<p class="qb-ask">') ? body.replace('<p class="qb-ask">', fig + '<p class="qb-ask">') : body + fig; }
   return { text, body };
 }
+/* ---------- اشرح لي الحل: من مادة المعلم فقط (الحل في البنك + قوانين الدرس) ---------- */
+function qbAnsText(q) {
+  return q.k === 'tf' ? (q.a ? 'صح' : 'خطأ') : q.k === 'num' ? `<bdi dir="ltr">${q.n} ${esc(q.u || '')}</bdi>` : q.k === 'card' ? q.a : qtext(q.k === 'mcq' ? q.o[0] : q.a);
+}
+function qbExplainHTML(x) {
+  const q = x.q;
+  let laws = [];
+  try { if (typeof lwAll === 'function') laws = lwAll().filter(l => l.l && l.l.id === x.l.id); } catch (e) {}
+  const lawsUl = `<ul class="qx-laws">${laws.map(l => `<li><span>${esc(l.n)}</span>${lwF(l.f)}${l.u ? `<small>${esc(l.u)}</small>` : ''}</li>`).join('')}</ul>`;
+  const lawsH = laws.length ? `<div class="qx-step"><span class="qx-n">1</span><div>${laws.length > 4 ? `<details class="qx-det"><summary><b>القوانين التي نحتاجها في هذا الدرس (${laws.length})</b></summary>${lawsUl}</details>` : `<b>القوانين التي نحتاجها في هذا الدرس</b>${lawsUl}`}</div></div>` : '';
+  const k = laws.length ? 2 : 1;
+  const solH = q.w ? `<div class="qx-step"><span class="qx-n">${k}</span><div><b>${q.k === 'tf' ? 'التصحيح' : 'خطوات الحل'}</b><div class="qx-body">${q.w}</div></div></div>`
+    : `<div class="qx-step"><span class="qx-n">${k}</span><div><b>خطوات الحل</b><div class="qx-body qx-note">نموذج الإجابة لهذا السؤال يذكر الناتج النهائي فقط، ولا أضيف خطوات من عندي. اسأل معلّمك عن طريقة الحل.</div></div></div>`;
+  const ansH = `<div class="qx-step"><span class="qx-n">${k + 1}</span><div><b>الإجابة النهائية</b><div class="qx-body">${qbAnsText(q)}</div></div></div>`;
+  return `<div class="qexp">${lawsH}${solH}${ansH}</div>`;
+}
+
 function vBankRun() {
   const s = QB.s; if (!s) return `<div class="view push">${navBar()}<div class="live-msg"><div class="em">🏦</div><h1>اختر درساً من البنك</h1><button class="btn primary" data-act="back">رجوع</button></div></div>`;
   if (s.done) return qbResultHTML();
@@ -170,7 +187,7 @@ function vBankRun() {
       ${a.ok && a.gain ? `<span class="qb-gain">+${a.gain} نقطة</span>` : ''}
       ${!a.ok && q.k === 'num' ? `<div class="qwhy"><small>الإجابة الصحيحة</small><bdi dir="ltr">${q.n} ${esc(q.u || '')}</bdi></div>` : ''}
       ${!a.ok && q.k === 'tf' ? `<div class="qwhy"><small>الصواب</small>العبارة ${q.a ? 'صحيحة' : 'غير صحيحة'} علمياً.</div>` : ''}
-      ${q.w ? `<div class="qwhy"><small>${q.k === 'tf' ? 'التصحيح' : 'الحل'}</small>${q.w}</div>` : ''}
+      ${q.k === 'card' ? (q.w ? `<div class="qwhy"><small>الحل</small>${q.w}</div>` : '') : `<button class="btn qx-btn" data-act="qb-explain" aria-expanded="${s.exp && s.exp[s.i] ? 'true' : 'false'}">🧠 ${s.exp && s.exp[s.i] ? 'إخفاء الشرح' : 'اشرح لي الحل'}</button>${s.exp && s.exp[s.i] ? qbExplainHTML(x) : ''}`}
       <button class="btn primary" data-act="qb-next">${s.i + 1 < s.items.length ? 'السؤال التالي' : 'النتيجة'} ${icon('chev')}</button></div>` : '';
   return `<div class="view push qrun qbrun" style="--qc:${(x.c.c || [])[0] || '#4C86FF'}">${head}${bar}
     <div class="qcard qb-q" id="qb-q"><span class="qtype">${QB_KIC[q.k]} ${QB_KIND[q.k]}</span><span class="qb-src">الدرس (${x.l.id}) ${esc(x.l.t)}</span>
@@ -196,7 +213,7 @@ function qbResultHTML() {
       <button class="btn wide" data-act="qb-share">${icon('share')}شارك نتيجتك وتحدَّ أصدقاءك</button>
     </div>
     ${wrong.length ? `<h2 class="sec">راجع ما أخطأت فيه</h2><div class="qlist">${wrong.map(({ x }) => `<details class="qli no"><summary><span class="n">✕</span><span class="t">${qtext(x.q.q)}</span></summary>
-      <div class="qli-b">${x.q.img ? `<img class="qb-rimg" src="${x.q.img}" alt="" loading="lazy">` : ''}<p><span class="lbl">الإجابة الصحيحة:</span> ${x.q.k === 'tf' ? (x.q.a ? 'صح' : 'خطأ') : x.q.k === 'num' ? `<bdi dir="ltr">${x.q.n} ${esc(x.q.u || '')}</bdi>` : x.q.k === 'card' ? x.q.a : qtext(x.q.k === 'mcq' ? x.q.o[0] : x.q.a)}</p>${x.q.aimg ? `<img class="qb-rimg" src="${x.q.aimg}" alt="" loading="lazy">` : ''}${x.q.w ? `<div class="qwhy"><small>الحل</small>${x.q.w}</div>` : ''}</div></details>`).join('')}</div>` : ''}
+      <div class="qli-b">${x.q.img ? `<img class="qb-rimg" src="${x.q.img}" alt="" loading="lazy">` : ''}<p><span class="lbl">الإجابة الصحيحة:</span> ${x.q.k === 'tf' ? (x.q.a ? 'صح' : 'خطأ') : x.q.k === 'num' ? `<bdi dir="ltr">${x.q.n} ${esc(x.q.u || '')}</bdi>` : x.q.k === 'card' ? x.q.a : qtext(x.q.k === 'mcq' ? x.q.o[0] : x.q.a)}</p>${x.q.aimg ? `<img class="qb-rimg" src="${x.q.aimg}" alt="" loading="lazy">` : ''}${x.q.k === 'card' ? (x.q.w ? `<div class="qwhy"><small>الحل</small>${x.q.w}</div>` : '') : qbExplainHTML(x)}</div></details>`).join('')}</div>` : ''}
   </div>`;
 }
 // repaint only the session view (keeps the page from jumping)
@@ -235,6 +252,7 @@ function qbAct(act, el) {
   else if (act === 'qb-flip') { s.flip = true; qbPaint(); }
   else if (act === 'qb-zoom') el.classList.toggle('big');
   else if (act === 'qb-self') qbAnswer(d.v === '1');
+  else if (act === 'qb-explain') { s.exp = s.exp || {}; s.exp[s.i] = !s.exp[s.i]; qbPaint(); }
   else if (act === 'qb-next') qbNext();
   else if (act === 'qb-again') qbStart(s.mode, s.scope);
   else if (act === 'qb-share') shareCard(s.mode === 'sprint' ? { big: `⚡${s.score || 0}`, title: 'تحدي الدقيقة في بنك الأسئلة', sub: `${G().name} · ${s.score || 0} إجابة صحيحة في 60 ثانية`, text: `أجبت ${s.score || 0} أسئلة صحيحة في دقيقة واحدة في بنك أسئلة الفيزياء على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/` }
