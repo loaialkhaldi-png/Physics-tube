@@ -434,7 +434,7 @@ function lwLayout(el, fs, maxPages) {
   };
   for (const u of P.units) {
     for (let tries = 0; ; tries++) {
-      const html = (empty ? (u.head || u.cont) : u.head) + u.law, box = document.createElement('div'); box.innerHTML = html;
+      const html = (empty ? (u.head || u.cont) : u.head) + (P.nowhen ? u.law.replace(/<p class="lwp-w">.*?<\/p>/, '') : u.law), box = document.createElement('div'); box.innerHTML = html;
       const nodes = Array.from(box.children); nodes.forEach(n => { col.appendChild(n); if (typeof fixRoots === 'function') fixRoots(n); }); /* الكسور والجذور تُحوَّل فوراً حتى يكون القياس بشكلها النهائي */
       if (!over()) { empty = false; break; }
       nodes.forEach(n => n.remove());
@@ -451,10 +451,12 @@ function lwFit() {
   const best = (lo, hi, pages) => { let ok = 0;
     while (lo <= hi) { const mid = Math.floor((lo + hi) / 2) / 4; if (lwLayout(el, mid, pages)) { ok = mid; lo = Math.floor((lo + hi) / 2) + 1; } else hi = Math.floor((lo + hi) / 2) - 1; }
     return ok; };
-  let fs = best(8 * 4, 11 * 4, 1);                 /* صفحة واحدة بخط ٨ أو أكبر */
-  if (!fs) fs = best(4.5 * 4, 11 * 4, 2);          /* صفحتان */
-  if (!fs) fs = best(4 * 4, 11 * 4, 3) || 4;
-  const pages = fs === 4 ? 3 : (fs >= 8 && lwLayout(el, fs, 1) ? 1 : 2);
+  /* ورقة واحدة دائماً: أكبر خط يتسع (حتى 5 نقاط)، وإن لم يتسع تُحذف أسطر «متى؟» مؤقتاً من الطباعة فقط */
+  LW.pu.nowhen = false;
+  let fs = best(5 * 4, 11 * 4, 1);
+  if (!fs) { LW.pu.nowhen = true; fs = best(4 * 4, 11 * 4, 1); }
+  if (!fs) { LW.pu.nowhen = false; fs = best(3 * 4, 11 * 4, 3) || 3; }
+  const pages = fs <= 3 ? 3 : 1;
   lwLayout(el, fs, pages);
   el.classList.remove('measure'); LW.pfs = fs; LW.pn = el.querySelectorAll('.lwp-page').length; return fs;
 }
