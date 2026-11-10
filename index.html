@@ -1679,7 +1679,7 @@ async function applySession(session) {
       logOpen();
     } else {
       const { data } = await db.rpc('is_admin');
-      if (data === true) ADMIN = USER;
+      if (data === true) { ADMIN = USER; store.set('noVisit', true); }
     }
   }
   render(false);
@@ -1694,6 +1694,27 @@ function logOpen() {
 function logEvent(kind, ref) {
   if (!db || !USER || !PROFILE) return;
   db.rpc('log_event', { p_kind: kind, p_ref: ref || null }).then(() => {}, () => {});
+}
+/* Anonymous visitor counting (for the teacher's "الزوار" screen): a random id kept on the device, no name or phone.
+   The teacher's own device is never counted (flag set once the teacher signs in). */
+function visitId() {
+  let v = store.get('vid', '');
+  if (!v || String(v).length < 8) {
+    try { v = crypto.randomUUID(); } catch (e) { v = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 12); }
+    store.set('vid', v);
+  }
+  return v;
+}
+function visit(kind, ref) {
+  try {
+    if (!db || ADMIN || store.get('noVisit', false)) return;
+    db.rpc('track_visit', { p_vid: visitId(), p_kind: kind, p_ref: ref || null, p_grade: S.grade, p_member: !!PROFILE }).then(() => {}, () => {});
+  } catch (e) {}
+}
+function visitOpen() {   // one "open" per 30 minutes per device
+  const last = store.get('vopen', 0);
+  if (Date.now() - last < 30 * 60 * 1000) return;
+  store.set('vopen', Date.now()); visit('open');
 }
 // Videos and notes need an account; returns true when the visitor may continue.
 function needLogin(then) {
@@ -4672,6 +4693,7 @@ function render(scroll = true) {
   else if (top.type === 'badges') html = typeof vBadges === 'function' ? vBadges() : '';
   else if (top.type === 'laws') html = typeof vLaws === 'function' ? vLaws() : '';
   else if (top.type === 'leaders') html = typeof vLeaders === 'function' ? vLeaders() : '';
+  else if (top.type === 'visitors') html = ADMIN && typeof vVisitors === 'function' ? vVisitors() : vProfile();
   app.innerHTML = html;
   tabbar.innerHTML = TABS.map(([k, t, ic]) => `<button class="tab" data-tab="${k}" ${S.tab === k ? 'aria-current="page"' : ''}>${icon(ic)}<span>${t}</span></button>`).join('');
   if (top && top.type === 'sim') startSim(top.k);
@@ -4753,6 +4775,11 @@ function go(spec, replace) {
     else if (a === 'daily') { if (dailyDone() != null) return toast('أنجزت تحدّي اليوم، عد غداً لتحدٍّ جديد'); if (!startDaily()) return; }
     else startQuiz(+a);
   }
+  if (type !== 'admin' && type !== 'visitors') {
+    const un = GRADES[S.grade] && GRADES[S.grade].units[+a];
+    visit('view', type === 'lesson' ? 'lesson:' + lid(S.grade, +a, +b) : type === 'unit' ? 'unit:' + (un ? un.id : a) : [type, a, b].filter(x => x != null && x !== '').join(':'));
+  }
+  if (type === 'visitors' && typeof visLoad === 'function') visLoad();
   transition('fwd', () => { if (replace) S.stack.pop(); S.stack.push(entry); render(); });
 }
 
@@ -4830,7 +4857,7 @@ document.addEventListener('click', e => {
   if (el.dataset.fkind) { S.fileKind = el.dataset.fkind; return render(false); }
   if (el.dataset.term) { S.term = +el.dataset.term; store.set('term', S.term); return render(false); }
   if (el.dataset.go) { closeSheet(); return go(el.dataset.go, el.dataset.replace); }
-  if (el.dataset.tab) { closeSheet(); if (S.tab === el.dataset.tab && !S.stack.length) return window.scrollTo({ top: 0, behavior: 'smooth' }); return transition('tab', () => { S.tab = el.dataset.tab; S.stack = []; render(); }); }
+  if (el.dataset.tab) { closeSheet(); if (S.tab === el.dataset.tab && !S.stack.length) return window.scrollTo({ top: 0, behavior: 'smooth' }); return transition('tab', () => { S.tab = el.dataset.tab; S.stack = []; visit('view', 'tab:' + S.tab); render(); }); }
   if (el.dataset.grade) {
     S.grade = el.dataset.grade; store.set('grade', S.grade); store.set('gradePicked', true); closeSheet(); S.stack = []; render();
     return toast(`تم التغيير إلى ${GRADES[S.grade].name}`);
@@ -4885,6 +4912,7 @@ document.addEventListener('click', e => {
   else if (act && act.startsWith('cls-') && typeof clsAct === 'function') clsAct(act, el);
   else if (act && act.startsWith('qb-') && typeof qbAct === 'function') qbAct(act, el);
   else if (act && act.startsWith('td-') && typeof tdAct === 'function') tdAct(act, el);
+  else if (act === 'vis-refresh' && typeof visLoad === 'function') visLoad(true);
   else if (act && act.startsWith('lb-') && typeof lbAct === 'function') lbAct(act, el);
   else if (act && act.startsWith('prep-') && typeof prepAct === 'function') prepAct(act, el);
   else if (act && act.startsWith('ach-') && typeof achAct === 'function') achAct(act, el);
@@ -5020,6 +5048,7 @@ document.addEventListener('click', e => {
   const a = e.target.closest('a[data-gate]'); if (!a) return;
   if (!needLogin(() => toast('اضغط على المذكرة مرة أخرى لفتحها'))) { e.preventDefault(); e.stopPropagation(); return; }
   logEvent('pdf', a.dataset.gate);
+  visit('pdf', a.dataset.gate);
 }, true);
 document.addEventListener('input', e => {
   if (e.target.id !== 'st-search') return;
@@ -5029,6 +5058,7 @@ document.addEventListener('input', e => {
 const start = (location.hash || '').slice(1);
 if (['home', 'lab', 'notes', 'profile'].includes(start)) S.tab = start;
 render();
+visitOpen();
 /* Hide the splash once the session and the lessons have loaded (at least 0.7 s so it never flashes, at most 5 s) */
 function hideSplash() {
   const el = document.getElementById('splash'); if (!el || el.dataset.out) return; el.dataset.out = '1';
@@ -5090,6 +5120,7 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
 <script src="bank-g12.js"></script>
 <script src="qbank.js"></script>
 <script src="teacher.js"></script>
+<script src="visitors.js"></script>
 <script src="leaders.js"></script>
 <script src="achieve.js"></script>
 <script src="prep.js"></script>

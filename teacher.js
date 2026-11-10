@@ -101,10 +101,10 @@ const tdMsgBack = p => `مرحباً ${(p.full_name || '').split(' ')[0]} 👋 �
 const tdMsgStar = p => `أحسنت يا ${(p.full_name || '').split(' ')[0]} 🌟 أداؤك في بنك الأسئلة هذا الأسبوع رائع، استمر! 🏆`;
 
 /* ---------- Charts ---------- */
-function tdActivity(daily, metric) {
+function tdActivity(daily, metric, unitName) {
   const map = Object.fromEntries((daily || []).map(x => [x.d, x])), days = [];
   for (let i = 29; i >= 0; i--) { const t = new Date(Date.now() - i * 864e5), k = t.toLocaleDateString('en-CA', { timeZone: 'Asia/Kuwait' }); const x = map[k] || {}; days.push([k, +(metric === 'a' ? x.a : x.u) || 0]); }
-  const max = Math.max(1, ...days.map(d => d[1])), W = 600, H = 150, bw = W / days.length, unit = metric === 'a' ? 'إجابة' : 'طالب';
+  const max = Math.max(1, ...days.map(d => d[1])), W = 600, H = 150, bw = W / days.length, unit = metric === 'a' ? 'إجابة' : (unitName || 'طالب');
   const sum = days.reduce((s, d) => s + d[1], 0), last7 = days.slice(-7).reduce((s, d) => s + d[1], 0);
   return { sum, last7, svg: `<svg class="td-chart" viewBox="0 0 ${W} ${H + 22}" role="img" aria-label="النشاط اليومي في آخر 30 يوماً">
     ${[0.5, 1].map(f => `<line x1="0" x2="${W}" y1="${H - f * (H - 14)}" y2="${H - f * (H - 14)}" class="gl"/>`).join('')}
@@ -163,6 +163,7 @@ function vAdmin() {
       <button class="td-refresh ${d.loading ? 'spin' : ''}" data-act="admin-refresh" aria-label="تحديث">${icon('replay')}</button>
     </header>
     <div class="td-chips" role="tablist">${chips.map(([g, t]) => `<button role="tab" aria-selected="${d.g === g}" class="${d.g === g ? 'on' : ''}" data-act="td-g" data-g="${g}">${t}</button>`).join('')}</div>
+    <button class="td-lb" data-go="visitors">📈 الزوار وما يجذبهم في التطبيق ${icon('chev')}</button>
     <button class="td-lb" data-go="leaders">🏆 لوحة المتصدرين الأسبوعية للطلاب ${icon('chev')}</button>
     ${d.error ? `<p class="td-alert">${d.error}</p>` : ''}
     ${d.needSql && !d.error ? `<p class="td-alert info">📌 لتظهر إجابات الطلاب في بنك الأسئلة وأصعب الأسئلة ونسب الإتقان: شغّل ملف <b>supabase-teacher.sql</b> مرة واحدة في Supabase.</p>` : ''}`;
