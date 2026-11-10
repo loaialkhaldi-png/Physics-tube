@@ -93,14 +93,36 @@ p { margin: 0; }
 .grade-row h1 { font-size: 30px; font-weight: 800; letter-spacing: -.01em; }
 .link { color: var(--accent); font-weight: 700; font-size: 17px; white-space: nowrap; }
 
-/* Promo cards */
-.promos {
-  display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  margin-inline: calc(-1 * max(16px, env(safe-area-inset-right, 0px))) calc(-1 * max(16px, env(safe-area-inset-left, 0px)));
-  padding-inline: max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-left, 0px));
-  scroll-padding-inline: max(16px, env(safe-area-inset-right, 0px));
+/* Promo wheel (rotating 3D disc) */
+.wheel { position: relative; margin: 6px -16px 20px; padding-inline: 16px; overflow-x: clip; overflow-y: visible; user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+.w-stage { position: relative; height: 350px; perspective: 1100px; perspective-origin: 50% 40%; overflow: visible; display: block; }
+.wheel .wcard {
+  position: absolute; left: 50%; top: 0; width: min(74%, 300px); height: 330px; min-height: 0; margin-left: calc(min(74%, 300px) / -2);
+  cursor: pointer; will-change: transform; transition: box-shadow .3s, border-color .3s; direction: rtl;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .45);
 }
-.promos::-webkit-scrollbar { display: none; }
+.wheel .wcard.front { border-color: rgba(255, 255, 255, .22); box-shadow: 0 22px 50px rgba(0, 0, 0, .55), 0 0 0 1px color-mix(in srgb, var(--wc) 45%, transparent), 0 0 46px -6px color-mix(in srgb, var(--wc) 55%, transparent); }
+.wheel .wcard:active { transform-origin: 50% 50%; }
+.wheel .wcard.front::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, .13) 48%, transparent 60%); background-size: 260% 100%; animation: wsheen 5.2s ease-in-out infinite;
+}
+@keyframes wsheen { 0%, 55% { background-position: 130% 0; } 100% { background-position: -60% 0; } }
+.wheel .promo h2 { font-size: 32px; }
+.w-disc { position: absolute; left: 50%; bottom: 36px; width: min(92%, 380px); aspect-ratio: 1.9; transform: translateX(-50%); pointer-events: none; perspective: 700px; }
+.w-disc > i { position: absolute; left: 50%; top: 50%; border-radius: 50%; transform: translate(-50%, -50%) rotateX(68deg) rotate(var(--rot, 0deg)); }
+.w-ring.r1 { width: 100%; aspect-ratio: 1; border: 2px solid rgba(255, 255, 255, .13); }
+.w-ring.r2 { width: 78%; aspect-ratio: 1; border: 1px dashed rgba(255, 255, 255, .16); }
+.w-ticks { width: 100%; aspect-ratio: 1; background: repeating-conic-gradient(rgba(255, 255, 255, .28) 0 1deg, transparent 1deg 10deg); -webkit-mask: radial-gradient(circle, transparent 66%, #000 67%, #000 71%, transparent 72%); mask: radial-gradient(circle, transparent 66%, #000 67%, #000 71%, transparent 72%); }
+.w-glow { width: 62%; aspect-ratio: 1; background: radial-gradient(circle, color-mix(in srgb, var(--accent) 35%, transparent), transparent 68%); filter: blur(8px); }
+.w-nav { display: flex; justify-content: center; gap: 8px; margin-top: 4px; direction: rtl; }
+.w-dot { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; background: var(--surface); color: var(--muted); font-size: 14px; font-weight: 600; border: 1px solid var(--line); transition: background .25s, color .25s, border-color .25s; }
+.w-dot i { width: 8px; height: 8px; border-radius: 50%; background: rgba(255, 255, 255, .28); transition: background .25s, transform .25s; }
+.w-dot.on { background: var(--fg); color: var(--on-light); border-color: var(--fg); }
+.w-dot.on i { background: var(--accent); transform: scale(1.25); }
+@media (prefers-reduced-motion: reduce) { .wheel .wcard.front::after { animation: none; } }
+
+/* Promo cards */
 .promo {
   flex: 0 0 84%; scroll-snap-align: start; position: relative; overflow: hidden; text-align: right;
   border-radius: var(--r-lg); padding: 26px 22px 22px; min-height: 360px;
@@ -108,7 +130,7 @@ p { margin: 0; }
   background: var(--pbg); border: 1px solid rgba(255, 255, 255, .06);
   transition: transform .2s;
 }
-.promo:active, .unit:active, .row:active { transform: scale(.98); }
+.unit:active, .row:active { transform: scale(.98); }
 .promo h2 { font-size: 34px; font-weight: 800; line-height: 1.15; letter-spacing: -.015em; }
 .promo p { font-size: 17px; color: rgba(255, 255, 255, .82); max-width: 30ch; }
 .badge { align-self: flex-start; background: #fff; color: var(--on-light); font-weight: 700; font-size: 15px; padding: 6px 13px; border-radius: 12px; }
@@ -866,7 +888,7 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
   *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
 @media (max-width: 360px) {
-  .promo h2 { font-size: 29px; }
+  .promo h2, .wheel .promo h2 { font-size: 27px; }
   .unit h3 { font-size: 16px; }
   .mark { font-size: 16px; letter-spacing: .22em; }
 }
@@ -895,8 +917,9 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
   .view:has(> .grade-row) > :is(.rings, .rank, .games-card, .qbanner) { grid-column: auto; height: calc(100% - 16px); }
   .view:has(> .grade-row) > .rank { margin-top: 18px; }
   .grade-row h1 { font-size: 40px; }
-  .promos { margin-inline: 0; padding-inline: 0; margin-top: 18px; }
-  .promo { flex: 0 0 calc((100% - 28px) / 3); min-height: 380px; }
+  .wheel { max-width: 760px; margin: 14px auto 26px; padding-inline: 0; overflow-x: visible; }
+  .w-stage { height: 380px; }
+  .wheel .wcard { width: 320px; height: 360px; margin-left: -160px; }
   .units { grid-template-columns: repeat(4, 1fr); gap: 16px; }
 
   /* Unit: hero beside the lesson lists */
@@ -2726,6 +2749,117 @@ function vCurr() {
 ${unitsBlock()}
   </div>`;
 }
+
+/* ---------- Home wheel: three promo cards on a rotating 3D disc ---------- */
+const WHEEL = { pos: 0, auto: true };
+function wheelHtml(g, lessons) {
+  const labs = new Set(g.units.flatMap(u => u.sims || [])).size;
+  const cards = [
+    { k: 'curr', t: g.name, tab: 'الصف', p: 'كل دروس الفيزياء لصفك في مكان واحد', foot: `${ar(lessons)} درساً في الفصلين`,
+      bg: `radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})`,
+      art: `<svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>`, c: THEMES[g.theme].c2 },
+    { k: 'notes', t: 'المذكرات', tab: 'المذكرات', p: 'ملخص PDF لكل وحدة، جاهز للمراجعة قبل الاختبار', foot: 'لكل الصفوف',
+      bg: `radial-gradient(110% 80% at 30% 100%, ${THEMES[5].a} 0%, transparent 70%), linear-gradient(170deg, #160A02, ${THEMES[5].b})`,
+      art: `<svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('doc', 5)}</g></svg>`, c: THEMES[5].c2 },
+    { k: 'lab', t: 'المختبر', tab: 'المختبر', p: 'جرّب القوانين بنفسك وشاهد النتيجة لحظياً', foot: 'يعمل بدون إنترنت', badge: `${ar(labs)} تجارب`,
+      bg: `radial-gradient(110% 80% at 30% 100%, ${THEMES[0].a} 0%, transparent 70%), linear-gradient(170deg, #021310, ${THEMES[0].b})`,
+      art: `<svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('flask', 0)}</g></svg>`, c: THEMES[0].c2 }
+  ];
+  return `<section class="wheel" id="wheel" aria-roledescription="قرص دوّار" aria-label="التنقل السريع">
+    <div class="w-disc" aria-hidden="true"><i class="w-ring r1"></i><i class="w-ring r2"></i><i class="w-ticks"></i><i class="w-glow"></i></div>
+    <div class="w-stage" dir="ltr">${cards.map((c, i) => `<div class="promo wcard" role="button" tabindex="0" data-w="${c.k}" data-i="${i}" style="--pbg:${c.bg};--wc:${c.c}" aria-label="${esc(c.t)}">
+      <h2>${esc(c.t)}</h2><p>${c.p}</p>${c.badge ? `<span class="badge">${c.badge}</span>` : ''}${c.art}<span class="foot">${c.foot}</span></div>`).join('')}</div>
+    <div class="w-nav" role="tablist" aria-label="اختر القسم">${cards.map((c, i) => `<button class="w-dot" role="tab" data-wi="${i}" aria-label="${esc(c.tab)}"><i></i><span>${esc(c.tab)}</span></button>`).join('')}</div>
+  </section>`;
+}
+function wheelInit() {
+  const root = document.getElementById('wheel');
+  if (!root) return;
+  const cards = [...root.querySelectorAll('.wcard')], dots = [...root.querySelectorAll('.w-dot')], disc = root.querySelector('.w-disc');
+  const N = cards.length, reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pos = WHEEL.pos, target = Math.round(pos), raf = 0, down = null, moved = false, lastT = 0, idle = 0, timer = 0;
+  const mod = (a, n) => ((a % n) + n) % n;
+  const front = () => mod(Math.round(pos), N);
+  const draw = () => {
+    const w = root.clientWidth, cw = cards[0].offsetWidth || 260, dx = cw * (w > 600 ? .98 : .66), tilt = 52;
+    cards.forEach((c, i) => {
+      let d = i - pos; d = mod(d + N / 2, N) - N / 2;       // shortest signed distance, -1.5..1.5
+      const a = Math.abs(d), sc = 1 - Math.min(a, 1.5) * .17;
+      c.style.transform = `translateX(${d * dx}px) translateZ(${-a * 150}px) rotateY(${-d * tilt}deg) scale(${sc})`;
+      c.style.opacity = String(Math.max(.18, 1 - a * .5));
+      c.style.zIndex = String(10 - Math.round(a * 4));
+      c.style.filter = a > .02 ? `brightness(${Math.max(.45, 1 - a * .38)}) saturate(${1 - Math.min(a, 1) * .2})` : '';
+    });
+    disc.style.setProperty('--rot', `${-pos * 360 / N}deg`);
+    const f = front();
+    cards.forEach((c, i) => {
+      const on = i === f;
+      c.classList.toggle('front', on); c.setAttribute('aria-current', on ? 'true' : 'false'); c.tabIndex = on ? 0 : -1;
+      // only the front card navigates; side cards just rotate the wheel
+      c.removeAttribute('data-go'); c.removeAttribute('data-tab');
+      if (on) c.setAttribute(c.dataset.w === 'curr' ? 'data-go' : 'data-tab', c.dataset.w);
+    });
+    dots.forEach((d, i) => { d.classList.toggle('on', i === f); d.setAttribute('aria-selected', i === f ? 'true' : 'false'); });
+  };
+  const tick = t => {
+    const dt = Math.min(48, t - (lastT || t)); lastT = t;
+    if (!down) {
+      const k = 1 - Math.pow(.0016, dt / 1000);
+      pos += (target - pos) * k;
+      if (Math.abs(target - pos) < .0008) pos = target;
+    }
+    WHEEL.pos = pos; draw();
+    raf = (down || pos !== target) ? requestAnimationFrame(tick) : 0;
+    if (!raf) lastT = 0;
+  };
+  const kick = () => { if (!raf) raf = requestAnimationFrame(tick); };
+  const goTo = n => { target = n; if (reduce) { pos = n; WHEEL.pos = pos; draw(); } else kick(); rest(); };
+  const rest = () => { clearTimeout(timer); if (reduce) return; timer = setTimeout(autoStep, 5200); };
+  const autoStep = () => {
+    if (!document.body.contains(root)) return;
+    if (document.hidden || down || !WHEEL.auto) return rest();
+    goTo(Math.round(target) + 1);
+  };
+  root.addEventListener('pointerdown', e => {
+    if (e.target.closest('.w-dot') || (e.pointerType === 'mouse' && e.button !== 0)) return;
+    down = { x: e.clientX, y: e.clientY, p: pos, id: e.pointerId, lock: false }; moved = false; WHEEL.auto = false; clearTimeout(timer);
+  });
+  root.addEventListener('pointermove', e => {
+    if (!down || e.pointerId !== down.id) return;
+    const dx = e.clientX - down.x, dy = e.clientY - down.y;
+    if (!down.lock) {
+      if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { down = null; target = Math.round(pos); kick(); return; }   // vertical scroll wins
+      if (Math.abs(dx) < 6) return;
+      down.lock = true; moved = true; try { root.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+    pos = down.p - dx / Math.max(150, root.clientWidth * .5); kick();
+  });
+  const end = e => {
+    if (!down || (e && e.pointerId !== down.id)) return;
+    const dx = e ? e.clientX - down.x : 0, was = down.lock; down = null;
+    if (was) { const fling = Math.abs(dx) > 40 ? -Math.sign(dx) : 0; target = Math.round(pos + fling * .35); if (!fling) target = Math.round(pos); }
+    else target = Math.round(pos);
+    kick(); rest(); WHEEL.auto = true;
+  };
+  root.addEventListener('pointerup', end); root.addEventListener('pointercancel', end);
+  // capture-phase: swallow the click after a drag, and make side-card taps rotate instead of navigate
+  root.addEventListener('click', e => {
+    if (moved) { moved = false; e.stopPropagation(); e.preventDefault(); return; }
+    const dot = e.target.closest('.w-dot');
+    if (dot) { e.stopPropagation(); return goTo(Math.round(pos) + shortest(+dot.dataset.wi)); }
+    const c = e.target.closest('.wcard');
+    if (c && !c.classList.contains('front')) { e.stopPropagation(); e.preventDefault(); goTo(Math.round(pos) + shortest(+c.dataset.i)); }
+  }, true);
+  const shortest = i => { let d = mod(i - Math.round(pos), N); if (d > N / 2) d -= N; return d; };
+  root.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') { goTo(Math.round(pos) + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { goTo(Math.round(pos) - 1); e.preventDefault(); }
+    else if ((e.key === 'Enter' || e.key === ' ') && e.target.classList.contains('wcard')) { e.preventDefault(); e.target.click(); }
+  });
+  root.addEventListener('mouseenter', () => { WHEEL.auto = false; }); root.addEventListener('mouseleave', () => { WHEEL.auto = true; });
+  new ResizeObserver(draw).observe(root);
+  draw(); if (!reduce) rest();
+}
 function vHome() {
   const g = G();
   const lessons = g.units.reduce((n, u) => n + u.lessons.length, 0);
@@ -2750,31 +2884,11 @@ function vHome() {
       </span>
     </header>
     <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
+    ${wheelHtml(g, lessons)}
     ${ADMIN ? `<button class="admin-bar" data-go="admin">${icon('chart')}<span>وضع المعلم: لوحة الإحصائيات والطلاب</span>${icon('chev')}</button>` : ''}
     ${noticeCard()}
     ${typeof clsRow === 'function' ? clsRow() : ''}
     ${dailyCard()}
-    <div class="promos" aria-label="العروض">
-      <button class="promo" data-go="curr" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})">
-        <h2>${esc(g.name)}</h2>
-        <p>كل دروس الفيزياء لصفك في مكان واحد</p>
-        <svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>
-        <span class="foot">${ar(lessons)} درساً في الفصلين</span>
-      </button>
-      <button class="promo" data-tab="notes" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[5].a} 0%, transparent 70%), linear-gradient(170deg, #160A02, ${THEMES[5].b})">
-        <h2>المذكرات</h2>
-        <p>ملخص PDF لكل وحدة، جاهز للمراجعة قبل الاختبار</p>
-        <svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('doc', 5)}</g></svg>
-        <span class="foot">لكل الصفوف</span>
-      </button>
-      <button class="promo" data-tab="lab" style="--pbg:radial-gradient(110% 80% at 30% 100%, ${THEMES[0].a} 0%, transparent 70%), linear-gradient(170deg, #021310, ${THEMES[0].b})">
-        <h2>المختبر</h2>
-        <p>جرّب القوانين بنفسك وشاهد النتيجة لحظياً</p>
-        <span class="badge">${ar(new Set(g.units.flatMap(u => u.sims || [])).size)} تجارب</span>
-        <svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('flask', 0)}</g></svg>
-        <span class="foot">يعمل بدون إنترنت</span>
-      </button>
-    </div>
     ${ringsCard()}
     ${rankCard()}
     ${typeof qbCard === 'function' ? qbCard() : ''}
@@ -4542,6 +4656,7 @@ function render(scroll = true) {
   if (top && top.type === 'class') clsAfterRender(); else if (typeof clsYt === 'function') clsYt();
   if (typeof qbAfterRender === 'function') qbAfterRender(top);
   if (typeof lbAfterRender === 'function') lbAfterRender(top);
+  if (!top && S.tab === 'home') wheelInit();
   if (ADMIN) setupReorder();
   if (top && top.type === 'admin' && !ADMIN_DATA.loading && !ADMIN_DATA.at && typeof loadAdmin === 'function') loadAdmin();
   if (scroll) window.scrollTo(0, 0);
