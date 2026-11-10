@@ -427,7 +427,7 @@ function lwLayout(el, fs, maxPages) {
   /* نقيس موضع حافة آخر عنصر (وليس scrollHeight لأنه قد يعطي قيمة قديمة قبل رسم الإطار فيُظهر أن المحتوى يتسع وهو لا يتسع) */
   const over = () => { const l = col.lastElementChild; if (!l) return false;
     const mb = parseFloat(getComputedStyle(l).marginBottom) || 0;
-    return l.getBoundingClientRect().bottom + mb > col.getBoundingClientRect().bottom - col.clientHeight * .012; }; /* هامش أمان 1.2% لاختلاف التقريب بين الأجهزة */
+    return l.getBoundingClientRect().bottom + mb > col.getBoundingClientRect().bottom - col.clientHeight * .035; }; /* هامش أمان 3.5% لاختلاف الخطوط والتقريب بين الأجهزة (آيفون) */
   const nextCol = () => {
     if (++ci > 2) { ci = 0; pi++; if (!pg[pi] && !addPage()) return false; }
     col = pg[pi].querySelectorAll('.lwp-col')[ci]; empty = true; return true;
@@ -456,6 +456,7 @@ function lwFit() {
   let fs = best(5 * 4, 11 * 4, 1);
   if (!fs) { LW.pu.nowhen = true; fs = best(4 * 4, 11 * 4, 1); }
   if (!fs) { LW.pu.nowhen = false; fs = best(3 * 4, 11 * 4, 3) || 3; }
+  if (fs > 4) fs = Math.round((fs - .5) * 4) / 4; /* نصف نقطة أمان إضافية */
   const pages = fs <= 3 ? 3 : 1;
   lwLayout(el, fs, pages);
   el.classList.remove('measure'); LW.pfs = fs; LW.pn = el.querySelectorAll('.lwp-page').length; return fs;
