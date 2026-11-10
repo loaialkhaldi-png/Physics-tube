@@ -196,6 +196,139 @@ const LAWS_DATA = {
   ],
 };
 
+/* متى يستخدم الطالب القانون: سطر قصير لكل قانون، مأخوذ من اسم القانون ورموزه وملاحظاته فقط.
+   المفتاح: الصف:رقم الدرس.ترتيب القانون داخل الدرس (للمعلم تعديله من وضع التعديل) */
+const LAWS_WHEN = {
+  'g10:1-2.0': 'تحقّق من صحة معادلة فيها سرعة بمقارنة أبعاد طرفيها.',
+  'g10:1-2.1': 'تحقّق من صحة معادلة فيها تسارع بمقارنة أبعاد طرفيها.',
+  'g10:1-2.2': 'لمعرفة أبعاد القوة من F = m.a أو للتحقق من معادلة فيها قوة.',
+  'g10:1-2.3': 'عند فحص كمية مساحة أو تحويل وحدتها (طول × طول).',
+  'g10:1-2.4': 'عند فحص كمية حجم أو تحويل وحدتها (طول × طول × طول).',
+  'g10:1-2.5': 'عند إيجاد أبعاد الكثافة: الكتلة ÷ الحجم.',
+  'g10:1-2.6': 'عند السؤال عن الكميات الأساسية ورموزها ووحداتها.',
+  'g10:1-2.7': 'عندما تُعطى السرعة بـ km/h وتحتاجها بـ m/s.',
+  'g10:2-1.0': 'عند إيجاد السرعة من المسافة المقطوعة والزمن.',
+  'g10:2-1.1': 'عند إيجاد السرعة من الإزاحة والزمن (انتبه للاتجاه).',
+  'g10:2-1.2': 'عندما تتغير السرعة خلال زمن معلوم وتريد التسارع.',
+  'g10:2-1.3': 'عندما تُعطى سرعة ثابتة وزمناً وتريد المسافة.',
+  'g10:2-2.0': 'عندما لا تُعطى الإزاحة ولا تُطلب.',
+  'g10:2-2.1': 'عندما لا تُعطى السرعة النهائية ولا تُطلب.',
+  'g10:2-2.2': 'عندما لا يُعطى الزمن ولا يُطلب.',
+  'g10:2-2.3': 'عند إيجاد التسارع من منحنى (v – t).',
+  'g10:2-2.4': 'عند رسم (Δx – t²) لجسم بدأ من السكون وإيجاد التسارع.',
+  'g10:2-2.5': 'عند رسم (v² – Δx) لجسم بدأ من السكون وإيجاد التسارع.',
+  'g10:2-3.0': 'عند إيجاد سرعة جسم يسقط أو يُقذف رأسياً بعد زمن معلوم.',
+  'g10:2-3.1': 'عند إيجاد الإزاحة الرأسية أو الارتفاع بعد زمن معلوم.',
+  'g10:2-3.2': 'عندما لا يُعطى الزمن ولا يُطلب في حركة رأسية.',
+  'g10:2-3.3': 'عند إيجاد أقصى ارتفاع لجسم قُذف رأسياً لأعلى.',
+  'g10:2-3.4': 'عند إيجاد زمن الصعود، ومنه زمن التحليق.',
+  'g10:2-3.5': 'عند إيجاد زمن سقوط جسم من السكون من ارتفاع معلوم.',
+  'g10:2-3.6': 'عند التعويض عن g في مسائل السقوط (بالقيمة التي تحددها المسألة).',
+  'g10:3-1.0': 'عند كتابة المتجه بمقداره وزاويته.',
+  'g10:3-1.1': 'عند رسم المتجه على الورق بمقياس رسم.',
+  'g10:3-2.0': 'عندما يؤثر متجهان في نفس الاتجاه.',
+  'g10:3-2.1': 'عندما يؤثر متجهان في اتجاهين متعاكسين.',
+  'g10:3-2.2': 'عند إيجاد محصلة متجهين متعامدين.',
+  'g10:3-2.3': 'بعد إيجاد المحصلة، لتحديد زاويتها.',
+  'g10:3-2.4': 'عند تحليل متجه إلى مركبته الأفقية.',
+  'g10:3-2.5': 'عند تحليل متجه إلى مركبته الرأسية.',
+  'g10:3-3.0': 'عندما يكون الناتج المطلوب كمية عددية.',
+  'g10:3-3.1': 'عندما يكون الناتج المطلوب متجهاً.',
+  'g10:3-3.2': 'عندما يُسأل: متى يتساوى مقدار الضربين؟',
+  'g10:3-4.0': 'عند إيجاد المركبة الأفقية للسرعة، وهي ثابتة طوال الحركة.',
+  'g10:3-4.1': 'عند إيجاد المركبة الرأسية للسرعة بعد زمن t.',
+  'g10:3-4.2': 'عند إيجاد زمن الوصول لأقصى ارتفاع، ومنه زمن التحليق.',
+  'g10:3-4.3': 'عند إيجاد أقصى ارتفاع تصله القذيفة.',
+  'g10:3-4.4': 'عند إيجاد المدى الأفقي للقذيفة.',
+  'g10:3-4.5': 'عند إطلاق جسم أفقياً من ارتفاع.',
+  'g10:3-4.6': 'عند إيجاد مقدار السرعة في لحظة ما من مركبتيها.',
+
+  'g11:1-1.0': 'عند إيجاد محصلة متجهين بينهما زاوية معلومة.',
+  'g11:1-1.1': 'بعد إيجاد المحصلة، لتحديد اتجاهها.',
+  'g11:1-1.2': 'عند إيجاد محصلة متجهين متعامدين.',
+  'g11:1-1.3': 'حالة خاصة: المتجهان في نفس الاتجاه.',
+  'g11:1-1.4': 'حالة خاصة: المتجهان متعاكسان.',
+  'g11:1-1.5': 'عندما يكون الناتج المطلوب كمية عددية.',
+  'g11:1-1.6': 'عندما يكون المطلوب مقدار ناتج الضرب الاتجاهي.',
+  'g11:2-1.0': 'عند تحليل قوة إلى مركبتها الأفقية.',
+  'g11:2-1.1': 'عند تحليل قوة إلى مركبتها الرأسية.',
+  'g11:2-1.2': 'عند إيجاد محصلة عدة قوى من مركباتها.',
+  'g11:2-1.3': 'لإيجاد زاوية المحصلة بعد جمع المركبات.',
+  'g11:2-1.4': 'عند إيجاد مركبة الوزن الموازية للمستوى المائل.',
+  'g11:2-1.5': 'عند إيجاد مركبة الوزن العمودية على المستوى المائل.',
+  'g11:3-1.0': 'عند إيجاد المركبة الأفقية للسرعة.',
+  'g11:3-1.1': 'عند إيجاد المركبة الرأسية الابتدائية للسرعة.',
+  'g11:3-1.2': 'عند إيجاد زمن الوصول لأقصى ارتفاع.',
+  'g11:3-1.3': 'عند إيجاد أقصى ارتفاع تصله القذيفة.',
+  'g11:3-1.4': 'عند إيجاد المدى الأفقي للقذيفة.',
+  'g11:3-1.5': 'عند إطلاق جسم أفقياً من ارتفاع.',
+  'g11:1-2.0': 'عندما يُعطى نصف القطر وزمن الدورة.',
+  'g11:1-2.1': 'عندما يُعطى عدد الدورات والزمن الكلي.',
+  'g11:1-2.2': 'عند إيجاد السرعة الزاوية من زمن الدورة أو من عدد الدورات.',
+  'g11:1-2.3': 'للانتقال بين السرعة الخطية والسرعة الزاوية.',
+  'g11:1-2.4': 'عند إيجاد زمن الدورة من السرعة الزاوية.',
+  'g11:1-2.5': 'عند إيجاد التسارع المركزي من السرعة أو من زمن الدورة.',
+  'g11:1-2.6': 'عندما تتغير السرعة الخطية خلال زمن معلوم.',
+  'g11:1-2.7': 'عندما تتغير السرعة الزاوية خلال زمن معلوم.',
+  'g11:2-2.0': 'عند إيجاد القوة الجاذبة المركزية لجسم يتحرك في مسار دائري.',
+  'g11:2-2.1': 'عند إيجاد معامل الاحتكاك من قوة الاحتكاك والقوة العمودية.',
+  'g11:3-3.0': 'عند إيجاد الإحداثي السيني لمركز كتلة عدة كتل.',
+  'g11:3-3.1': 'عند إيجاد الإحداثي الصادي لمركز كتلة عدة كتل.',
+
+  'g12:1-1.0': 'عند إيجاد شغل قوة ثابتة تصنع زاوية مع اتجاه الإزاحة.',
+  'g12:1-1.1': 'عند إيجاد الوزن من الكتلة.',
+  'g12:1-1.2': 'عند إيجاد الارتفاع الرأسي لجسم قطع مسافة d على مستوى مائل.',
+  'g12:1-1.3': 'عند إيجاد شغل الوزن على مستوى مائل.',
+  'g12:1-1.4': 'عند إيجاد شغل الوزن إذا عُرف التغير في الارتفاع.',
+  'g12:1-1.5': 'عند إيجاد شغل قوة الاحتكاك (اتجاهها يعاكس الحركة).',
+  'g12:1-1.6': 'عند إيجاد القوة اللازمة لشد النابض أو ضغطه.',
+  'g12:1-1.7': 'عند إيجاد الشغل المبذول لشد النابض أو ضغطه.',
+  'g12:1-1.8': 'عندما يُعطى منحنى القوة مع الإزاحة (F – x).',
+  'g12:1-1.9': 'عند وجود أكثر من قوة: اجمع شغل كل قوة.',
+  'g12:1-2.0': 'عند إيجاد طاقة جسم متحرك.',
+  'g12:1-2.1': 'عند ربط الشغل الكلي بتغير طاقة الحركة.',
+  'g12:1-2.2': 'عند إيجاد طاقة الوضع التثاقلية لجسم على ارتفاع h.',
+  'g12:1-2.3': 'للربط بين شغل الوزن والتغير في طاقة الوضع.',
+  'g12:1-2.4': 'عند إيجاد طاقة نابض مشدود أو مضغوط.',
+  'g12:1-2.5': 'عند إيجاد طاقة خيط مطاطي ملتوي.',
+  'g12:1-2.6': 'عند جمع طاقة الوضع وطاقة الحركة لجسم.',
+  'g12:1-2.7': 'عند حساب الطاقة الكلية: الميكانيكية مع U.',
+  'g12:1-3.0': 'في نظام معزول بإهمال الاحتكاك: قارن بين حالتين للجسم.',
+  'g12:1-3.1': 'عند ربط النقص في طاقة الوضع بالزيادة في طاقة الحركة.',
+  'g12:1-3.2': 'عند إيجاد سرعة جسم سقط من السكون من ارتفاع h.',
+  'g12:1-3.3': 'عند تتبع التغير في الطاقة الكلية للنظام.',
+  'g12:1-3.4': 'عند وجود احتكاك: الطاقة الميكانيكية غير محفوظة.',
+  'g12:1-3.5': 'عند إيجاد طاقة وضع البندول عند أقصى إزاحة زاوية.',
+  'g12:1-3.6': 'عند إيجاد طاقة حركة البندول عند موضع الاستقرار.',
+  'g12:1-3.7': 'عند إيجاد سرعة جسم انزلق من السكون على مستوى مائل أملس.',
+  'g12:1-3.8': 'عند إيجاد سرعة البندول عند موضع الاستقرار.',
+  'g12:2-1.0': 'عند إيجاد عزم قوة تصنع زاوية مع الذراع.',
+  'g12:2-1.1': 'عندما تكون القوة عمودية على الذراع.',
+  'g12:2-1.2': 'عند إيجاد عزم قوتين متساويتين متعاكستين (ازدواج).',
+  'g12:2-1.3': 'عند حل مسائل الاتزان الدوراني.',
+  'g12:2-1.4': 'عند اتزان أرجوحة بكتلتين.',
+  'g12:2-2.0': 'لكتلة نقطية تبعد r عن المحور.',
+  'g12:2-2.1': 'لنظام مكوّن من عدة كتل نقطية.',
+  'g12:2-2.2': 'عندما لا يمر المحور بمركز الكتلة.',
+  'g12:2-2.3': 'لأسطوانة مصمتة تدور حول محورها.',
+  'g12:2-2.4': 'لكرة مصمتة تدور حول مركزها.',
+  'g12:3-1.0': 'عند إيجاد كمية حركة جسم من كتلته وسرعته.',
+  'g12:3-1.1': 'عند تغير سرعة الجسم وتريد التغير في كمية حركته.',
+  'g12:3-1.2': 'عند إيجاد الدفع من القوة وزمن التأثير.',
+  'g12:3-1.3': 'عند إيجاد القوة المتوسطة من التغير في كمية الحركة.',
+  'g12:3-1.4': 'عندما يُعطى منحنى القوة مع الزمن (F – t).',
+  'g12:3-2.0': 'عند تصادم جسمين أو انفصالهما دون قوى خارجية.',
+  'g12:3-2.1': 'عند ارتداد جسمين بدآ من السكون.',
+  'g12:3-2.2': 'عند التحام جسمين بعد التصادم.',
+  'g12:3-2.3': 'عند إيجاد الطاقة الحركية قبل التصادم.',
+  'g12:3-2.4': 'عند إيجاد الطاقة الحركية بعد التحام الجسمين.',
+  'g12:3-2.5': 'عند إيجاد سرعة الجسم الأول بعد تصادم مرن.',
+  'g12:3-2.6': 'عند إيجاد سرعة الجسم الثاني بعد تصادم مرن.',
+  'g12:3-2.7': 'في التصادم المرن تبقى الطاقة الحركية محفوظة.',
+  'g12:3-2.8': 'عند إيجاد سرعة أو ارتفاع في البندول القذفي.',
+  'g12:3-2.9': 'عند إيجاد الطاقة الحركية المفقودة في التصادم.',
+};
+
 const LW = { ch: 'all', q: '', fav: store.get('lawFav', {}), flash: null, edit: false, ed: null, cache: null };
 const lwKey = (lid, i) => `${S.grade}:${lid}.${i}`;
 /* تعديلات المعلم تُحفظ في جدول content بالمفتاح laws.<الصف> (نص JSON في عمود video):
@@ -210,8 +343,8 @@ function lwData() {
   const raw = lwRaw(); if (LW.cache && LW.cache.g === S.grade && LW.cache.raw === raw) return LW.cache.D;
   const C = lwCust();
   const D = base.map(c => ({ ch: c.ch, ic: c.ic, ls: c.ls.map(l => ({ id: l.id, t: l.t,
-    L: l.L.map((x, i) => ({ x, i, o: l.id + '|' + x.n })).filter(r => !C.d.includes(r.o)).map(r => Object.assign({}, r.x, C.e[r.o] || {}, { _o: r.o, _i: r.i }))
-      .concat(C.a.filter(a => a && a.lid === l.id).map(a => ({ n: a.n, f: a.f, u: a.u, _a: a.id }))) })) }));
+    L: l.L.map((x, i) => ({ x, i, o: l.id + '|' + x.n })).filter(r => !C.d.includes(r.o)).map(r => Object.assign({}, r.x, { w: LAWS_WHEN[lwKey(l.id, r.i)] || '' }, C.e[r.o] || {}, { _o: r.o, _i: r.i }))
+      .concat(C.a.filter(a => a && a.lid === l.id).map(a => ({ n: a.n, f: a.f, u: a.u, w: a.w || '', _a: a.id }))) })) }));
   LW.cache = { g: S.grade, raw, D }; return D;
 }
 function lwAll() {
@@ -229,7 +362,7 @@ function vLaws() {
   const all = lwAll(), q = LW.q.trim().toLowerCase(), favs = all.filter(x => LW.fav[x.k]);
   const hit = x => !q || [x.n, x.f, x.u, x.l.t].some(v => String(v || '').toLowerCase().includes(q));
   const chips = [['all', 'الكل'], ['fav', `⭐ المفضلة${favs.length ? ` (${favs.length})` : ''}`]].concat(D.map((c, i) => [String(i), `${c.ic} ${c.ch}`]));
-  const card = x => `<div class="lw-card ${LW.fav[x.k] ? 'fav' : ''}"><div class="t"><b>${esc(x.n)}</b>${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}</div>
+  const card = x => `<div class="lw-card ${LW.fav[x.k] ? 'fav' : ''}"><div class="t"><b>${esc(x.n)}</b>${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}${x.w ? `<p class="lw-w"><em>متى؟</em> ${esc(x.w)}</p>` : ''}</div>
     <button class="star" data-act="lw-fav" data-k="${x.k}" aria-label="${LW.fav[x.k] ? 'إزالة من المفضلة' : 'إضافة إلى المفضلة'}">${LW.fav[x.k] ? '★' : '☆'}</button>
     ${lwCanEdit() ? `<div class="lw-ed"><button data-act="lw-edit" data-k="${x.k}">✏️ تعديل</button><button class="del" data-act="lw-del" data-k="${x.k}">🗑️ حذف</button></div>` : ''}</div>`;
   let body;
@@ -254,35 +387,76 @@ function vLaws() {
   </div>`;
 }
 
-/* ---------- نسخة الطباعة: ورقة A4 واحدة فيها كل قوانين الصف ---------- */
+/* ---------- نسخة الطباعة: ورقة أو ورقتان A4 تتسع فيهما كل القوانين بدون قصّ ----------
+   الأعمدة والصفحات تُبنى بالجافاسكربت (وليس بأعمدة CSS) حتى تظهر كاملة على الآيفون والحاسوب. */
 function lwPrintHTML() {
   const D = lwData(); if (!D) return '';
   const fav = LW.ch === 'fav', all = lwAll().filter(x => !fav || LW.fav[x.k]);
-  if (!all.length) return '';
-  const body = D.map((c, ci) => {
-    let first = true;
-    return c.ls.map(l => {
-      const xs = all.filter(x => x.ci === ci && x.l === l); if (!xs.length) return '';
-      const chap = first ? `<div class="lwp-chap"><span>${c.ic}</span>${esc(c.ch)}</div>` : ''; first = false;
-      return `${chap}<div class="lwp-les"><bdi dir="ltr">${esc(l.id)}</bdi><span>${esc(l.t)}</span></div>`
-        + xs.map(x => `<div class="lwp-law"><b>${esc(x.n)}</b>${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}</div>`).join('');
-    }).join('');
-  }).join('');
-  return `<div id="lw-print" class="lwp" aria-hidden="true">
-    <header class="lwp-head"><div><small>${esc(G().name)}</small><h1>${fav ? 'قوانيني المفضلة' : 'ورقة القوانين'}</h1></div>
-      <div class="lwp-meta"><b>${all.length}</b><span>قانوناً</span><em>Physics Tube</em></div></header>
-    <div class="lwp-body">${body}</div></div>`;
+  if (!all.length) { LW.pu = null; return ''; }
+  const units = [];
+  D.forEach((c, ci) => {
+    let firstInChap = true;
+    c.ls.forEach(l => {
+      const xs = all.filter(x => x.ci === ci && x.l === l); if (!xs.length) return;
+      const chap = firstInChap ? `<div class="lwp-chap"><span>${c.ic}</span>${esc(c.ch)}</div>` : ''; firstInChap = false;
+      const les = (cont) => `<div class="lwp-les ${cont ? 'lwp-cn' : ''}"><bdi dir="ltr">${esc(l.id)}</bdi><span>${esc(l.t)}${cont ? ' (تابع)' : ''}</span></div>`;
+      xs.forEach((x, i) => units.push({
+        head: i === 0 ? chap + les(false) : '', cont: les(true),
+        law: `<div class="lwp-law"><b>${esc(x.n)}</b>${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}${x.w ? `<p class="lwp-w"><em>متى؟</em> ${esc(x.w)}</p>` : ''}</div>`
+      }));
+    });
+  });
+  LW.pu = { units, title: fav ? 'قوانيني المفضلة' : 'ورقة القوانين', n: all.length, name: G().name };
+  return '<div id="lw-print" class="lwp" aria-hidden="true"><div class="lwp-pages"></div></div>';
 }
-/* يصغّر الخط تدريجياً حتى تتسع كل القوانين في صفحة واحدة */
-function lwFit() {
-  const el = document.getElementById('lw-print'); if (!el) return 0;
-  const body = el.querySelector('.lwp-body'); el.classList.add('measure');
-  let fs = 12;
-  for (; fs > 4.5; fs -= .25) {
-    el.style.setProperty('--fs', fs + 'pt');
-    if (body.scrollWidth <= body.clientWidth + 1 && body.scrollHeight <= body.clientHeight + 1) break;
+/* يبني الصفحات: يملأ الأعمدة عموداً عموداً، وإذا لم يتسع القانون ينتقل للعمود التالي */
+function lwLayout(el, fs, maxPages) {
+  const P = LW.pu, pages = el.querySelector('.lwp-pages'); pages.innerHTML = ''; el.style.setProperty('--fs', fs + 'pt');
+  const head = (i, total) => i === 0
+    ? `<header class="lwp-head"><div><small>${esc(P.name)}</small><h1>${esc(P.title)}</h1></div><div class="lwp-meta"><b>${P.n}</b><span>قانوناً</span><em>Physics Tube</em></div></header>`
+    : `<header class="lwp-head mini"><div><h1>${esc(P.title)}</h1><small>${esc(P.name)} · تابع</small></div><div class="lwp-meta"><em>Physics Tube</em></div></header>`;
+  const pg = [];
+  const addPage = () => {
+    if (pg.length >= maxPages) return false;
+    const d = document.createElement('section'); d.className = 'lwp-page';
+    d.innerHTML = head(pg.length) + '<div class="lwp-cols"><div class="lwp-col"></div><div class="lwp-col"></div><div class="lwp-col"></div></div>';
+    pages.appendChild(d); pg.push(d); return true;
+  };
+  if (!addPage()) return false;
+  let pi = 0, ci = 0, col = pg[0].querySelectorAll('.lwp-col')[0], empty = true;
+  /* نقيس موضع حافة آخر عنصر (وليس scrollHeight لأنه قد يعطي قيمة قديمة قبل رسم الإطار فيُظهر أن المحتوى يتسع وهو لا يتسع) */
+  const over = () => { const l = col.lastElementChild; if (!l) return false;
+    const mb = parseFloat(getComputedStyle(l).marginBottom) || 0;
+    return l.getBoundingClientRect().bottom + mb > col.getBoundingClientRect().bottom + .5; };
+  const nextCol = () => {
+    if (++ci > 2) { ci = 0; pi++; if (!pg[pi] && !addPage()) return false; }
+    col = pg[pi].querySelectorAll('.lwp-col')[ci]; empty = true; return true;
+  };
+  for (const u of P.units) {
+    for (let tries = 0; ; tries++) {
+      const html = (empty ? (u.head || u.cont) : u.head) + u.law, box = document.createElement('div'); box.innerHTML = html;
+      const nodes = Array.from(box.children); nodes.forEach(n => { col.appendChild(n); if (typeof fixRoots === 'function') fixRoots(n); }); /* الكسور والجذور تُحوَّل فوراً حتى يكون القياس بشكلها النهائي */
+      if (!over()) { empty = false; break; }
+      nodes.forEach(n => n.remove());
+      if (empty) return false;           /* القانون لا يتسع حتى في عمود فارغ: الخط كبير */
+      if (!nextCol()) return false;      /* لا توجد أعمدة كافية: الخط كبير */
+    }
   }
-  el.classList.remove('measure'); return fs;
+  return true;
+}
+/* يختار أكبر خط مقروء: صفحة واحدة إن اتسعت بخط جيد، وإلا صفحتان */
+function lwFit() {
+  const el = document.getElementById('lw-print'); if (!el || !LW.pu) return 0;
+  el.classList.add('measure');
+  const best = (lo, hi, pages) => { let ok = 0;
+    while (lo <= hi) { const mid = Math.floor((lo + hi) / 2) / 4; if (lwLayout(el, mid, pages)) { ok = mid; lo = Math.floor((lo + hi) / 2) + 1; } else hi = Math.floor((lo + hi) / 2) - 1; }
+    return ok; };
+  let fs = best(8 * 4, 11 * 4, 1);                 /* صفحة واحدة بخط ٨ أو أكبر */
+  if (!fs) fs = best(4.5 * 4, 11 * 4, 2);          /* صفحتان */
+  if (!fs) fs = best(4 * 4, 11 * 4, 3) || 4;
+  const pages = fs === 4 ? 3 : (fs >= 8 && lwLayout(el, fs, 1) ? 1 : 2);
+  lwLayout(el, fs, pages);
+  el.classList.remove('measure'); LW.pfs = fs; LW.pn = el.querySelectorAll('.lwp-page').length; return fs;
 }
 window.addEventListener('beforeprint', () => { try { lwFit(); } catch (e) {} });
 
@@ -296,7 +470,7 @@ function lwFlash(start) {
     <button class="btn primary wide" data-act="lw-flash">جولة جديدة</button><button class="btn wide" data-act="close" style="margin-top:8px">إغلاق</button></div>`);
   const x = F.list[F.i];
   sheet(`<div class="lw-flash"><small>${F.i + 1} من ${F.list.length} · ${esc(x.l.t)}</small>
-    <div class="fc ${F.open ? 'open' : ''}" data-act="lw-turn"><b>${esc(x.n)}</b>${F.open ? `${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}` : '<span class="tap">اكتب القانون في ذهنك، ثم اضغط لكشفه</span>'}</div>
+    <div class="fc ${F.open ? 'open' : ''}" data-act="lw-turn"><b>${esc(x.n)}</b>${F.open ? `${lwF(x.f)}${x.u ? `<small>${esc(x.u)}</small>` : ''}${x.w ? `<p class="lw-w"><em>متى؟</em> ${esc(x.w)}</p>` : ''}` : '<span class="tap">اكتب القانون في ذهنك، ثم اضغط لكشفه</span>'}</div>
     ${F.open ? `<div class="two"><button class="btn" data-act="lw-next" data-k="0">✗ لم أتذكره</button><button class="btn primary" data-act="lw-next" data-k="1">✓ تذكرته</button></div>` : ''}</div>`, 'lw-sheet');
 }
 
@@ -312,6 +486,7 @@ function lwSheet(x, lid) {
     <div class="lw-sym" aria-label="رموز للإدراج">${LW_SYM.map(c => `<button type="button" data-act="lw-ins" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>
     <p class="lw-tip">اضغط رمزاً لإدراجه في الصيغة. للكسر اكتب ÷ أو ( / ) بين مسافتين، وللرمز السفلي اكتب _ مثل v_y.</p>
     <div class="field"><label for="lwe-u">ملاحظة أو وحدة (اختياري)</label><input id="lwe-u" maxlength="200" placeholder="مثال: J = N·m" value="${x ? esc(x.u || '') : ''}"></div>
+    <div class="field"><label for="lwe-w">متى يستخدمه الطالب؟ (اختياري)</label><input id="lwe-w" maxlength="160" placeholder="مثال: عندما لا يُعطى الزمن ولا يُطلب" value="${x ? esc(x.w || '') : ''}"></div>
     <button class="btn primary wide" data-act="lw-save">حفظ ونشر للطلاب</button>
     ${edited ? '<button class="btn wide" data-act="lw-reset" style="margin-top:8px">↩️ استرجاع الصيغة الأصلية</button>' : ''}
     <button class="btn wide" data-act="close" style="margin-top:8px">إلغاء</button></div>`, 'lw-sheet');
@@ -335,12 +510,12 @@ function lwAct(act, el) {
   }
   else if (act === 'lw-save') {
     if (!lwCanEdit()) return;
-    const n = (document.getElementById('lwe-n').value || '').trim(), f = (document.getElementById('lwe-f').value || '').trim(), u = (document.getElementById('lwe-u').value || '').trim();
+    const n = (document.getElementById('lwe-n').value || '').trim(), f = (document.getElementById('lwe-f').value || '').trim(), u = (document.getElementById('lwe-u').value || '').trim(), w = (document.getElementById('lwe-w').value || '').trim();
     if (!n || !f) return toast('اكتب اسم القانون وصيغته');
     const C = lwCust(), x = LW.ed.k ? lwFind(LW.ed.k) : null;
-    if (!x) { const sel = document.getElementById('lwe-l'); C.a.push({ id: 'x' + Date.now().toString(36), lid: sel ? sel.value : LW.ed.lid, n, f, u }); }
-    else if (x._a) { const a = C.a.find(r => r.id === x._a); if (a) Object.assign(a, { n, f, u }); }
-    else C.e[x._o] = { n, f, u };
+    if (!x) { const sel = document.getElementById('lwe-l'); C.a.push({ id: 'x' + Date.now().toString(36), lid: sel ? sel.value : LW.ed.lid, n, f, u, w }); }
+    else if (x._a) { const a = C.a.find(r => r.id === x._a); if (a) Object.assign(a, { n, f, u, w }); }
+    else C.e[x._o] = { n, f, u, w };
     lwStore(C);
   }
   else if (act === 'lw-reset') { const x = LW.ed && lwFind(LW.ed.k); if (!x || !x._o) return; const C = lwCust(); delete C.e[x._o]; lwStore(C, 'رجع القانون إلى صيغته الأصلية'); }
