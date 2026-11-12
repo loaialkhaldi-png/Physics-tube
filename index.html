@@ -241,7 +241,8 @@ p { margin: 0; }
 .readout { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
 .readout div { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 12px; display: grid; gap: 2px; min-width: 0; }
 .readout small { color: var(--muted); font-size: 12px; font-weight: 600; }
-.readout b { font-size: 18px; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; white-space: nowrap; }
+/* Long values (e.g. «0.84 m فوق الحبل») wrap onto a second line instead of spilling past the box or the screen edge */
+.readout b { font-size: 18px; font-variant-numeric: tabular-nums; direction: ltr; text-align: right; overflow-wrap: break-word; text-wrap: balance; }
 .controls { display: grid; gap: 4px; margin-top: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px 16px; }
 .ctl { display: grid; gap: 6px; padding-block: 10px; }
 .ctl + .ctl { border-top: 1px solid var(--line); }
@@ -1666,23 +1667,33 @@ let ADMIN = null;     // the signed-in teacher (only when is_admin() says so)
 let USER = null;      // anyone signed in
 let PROFILE = null;   // the signed-in student's profile row
 const STUDENT_DOMAIN = 'student.physics-tube.com';
-let ACCOUNTS = false; // turns on by itself once supabase-students.sql has created the profiles table
+let ACCOUNTS = store.get('accounts', false); // turns on by itself once supabase-students.sql has created the profiles table (remembered on the device)
 const studentEmail = u => `${u.toLowerCase()}@${STUDENT_DOMAIN}`;
 const isStudentUser = u => !!u && String(u.email || '').endsWith('@' + STUDENT_DOMAIN);
+// The account Supabase keeps on the device from last time (read without waiting for the internet).
+function savedUser() {
+  try { const v = JSON.parse(localStorage.getItem('sb-' + new URL(SUPABASE_URL).hostname.split('.')[0] + '-auth-token') || 'null'); return (v && v.user && v.user.id) ? v.user : null; } catch (e) { return null; }
+}
+// The signed-in person's profile (or teacher flag) is also kept on the device, so the app opens at once
+// with the right name and grade; the fresh copy from the server replaces it a moment later.
 async function applySession(session) {
   USER = (session && session.user) || null; ADMIN = null; PROFILE = null;
-  if (USER && db) {
-    if (isStudentUser(USER)) {
-      const { data } = await db.from('profiles').select('*').eq('id', USER.id).maybeSingle();
-      PROFILE = data || null;
-      if (PROFILE && GRADES[PROFILE.grade] && !store.get('gradePicked', false)) { S.grade = PROFILE.grade; store.set('grade', S.grade); }
-      logOpen();
-    } else {
-      const { data } = await db.rpc('is_admin');
-      if (data === true) { ADMIN = USER; store.set('noVisit', true); }
+  if (!USER || !db) { render(false); return; }
+  const id = USER.id, saved = store.get('me', null), hit = !!saved && saved.id === id;
+  const student = isStudentUser(USER);
+  const useProfile = () => { if (PROFILE && GRADES[PROFILE.grade] && !store.get('gradePicked', false)) { S.grade = PROFILE.grade; store.set('grade', S.grade); } };
+  if (hit) { if (student) { PROFILE = saved.profile || null; useProfile(); } else if (saved.admin) ADMIN = USER; }
+  const fresh = (student ? db.from('profiles').select('*').eq('id', id).maybeSingle() : db.rpc('is_admin')).then(({ data, error }) => {
+    if (!USER || USER.id !== id) return;   // signed out meanwhile
+    if (!error) {                          // offline: keep the saved copy
+      if (student) { PROFILE = data || null; useProfile(); store.set('me', { id, profile: PROFILE }); }
+      else { ADMIN = data === true ? USER : null; store.set('me', { id, admin: !!ADMIN }); if (ADMIN) store.set('noVisit', true); }
     }
-  }
-  render(false);
+    if (student) logOpen();
+    render(false);
+  }, () => { if (student) logOpen(); });
+  if (hit) { render(false); return; }
+  await fresh;
 }
 // One "open" per 30 minutes per student, so reloads don't inflate the count.
 function logOpen() {
@@ -1723,6 +1734,7 @@ function needLogin(then) {
   return false;
 }
 let REMOTE = store.get('remote', {});
+const REMOTE_SAVED = store.get('remote', null) !== null;   // the lessons' videos/notes were downloaded on an earlier visit
 // Rows keyed "<unit id>.<lesson index>" fill a lesson; rows keyed "<unit id>" fill a unit's PDF.
 // A row keyed "<unit id>.extra" holds the titles of lessons the teacher added (JSON list);
 // added lesson k sits after the built-in lessons, so its video row is "<unit id>.<built-in count + k>".
@@ -4917,10 +4929,10 @@ document.addEventListener('click', e => {
     if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.textContent = 'اضغط مرة أخرى للتأكيد'; return; }
     db.rpc('delete_my_account').then(({ error }) => {
       if (error) return toast(/function|does not exist|42883|PGRST202/.test(error.message + error.code) ? 'تعذّر الحذف الآن. تواصل مع المعلم لحذف حسابك.' : dbError(error));
-      db.auth.signOut(); USER = ADMIN = PROFILE = null; closeSheet(); S.stack = []; render(false); toast('تم حذف حسابك');
+      db.auth.signOut(); USER = ADMIN = PROFILE = null; store.set('me', null); closeSheet(); S.stack = []; render(false); toast('تم حذف حسابك');
     });
   }
-  else if (act === 'logout') { db && db.auth.signOut(); USER = ADMIN = PROFILE = null; S.stack = S.stack.filter(x => x.type !== 'admin' && x.type !== 'lesson'); render(false); toast('تم تسجيل الخروج'); }
+  else if (act === 'logout') { db && db.auth.signOut(); USER = ADMIN = PROFILE = null; store.set('me', null); S.stack = S.stack.filter(x => x.type !== 'admin' && x.type !== 'lesson'); render(false); toast('تم تسجيل الخروج'); }
   else if (act === 'admin-refresh') { ADMIN_DATA.at = 0; loadAdmin(); render(false); }
   else if (act === 'q-pick') { if (!Q.ans[Q.i]) quizAnswer({ pick: +el.dataset.k, ok: +el.dataset.k === 0 }); }
   else if (act === 'q-check') {
@@ -5103,12 +5115,16 @@ document.addEventListener('input', e => {
 
 const start = (location.hash || '').slice(1);
 if (['home', 'lab', 'notes', 'profile'].includes(start)) S.tab = start;
+// Someone signed in last time is shown their own screen straight from the device; the server confirms the sign-in a moment later.
+const earlyUser = db ? savedUser() : null, earlyMe = store.get('me', null), knownUser = !earlyUser || (!!earlyMe && earlyMe.id === earlyUser.id);
+if (earlyUser && knownUser) { USER = earlyUser; PROFILE = earlyMe.profile || null; ADMIN = earlyMe.admin ? USER : null; }
 render();
 visitOpen();
-/* Hide the splash once the session and the lessons have loaded (at least 0.7 s so it never flashes, at most 5 s) */
+/* Hide the splash once the session and the lessons are ready (at least 0.35 s so it never flashes, at most 5 s).
+   When the lessons are already saved on the device it does not wait for the internet: the fresh copy arrives a moment later. */
 function hideSplash() {
   const el = document.getElementById('splash'); if (!el || el.dataset.out) return; el.dataset.out = '1';
-  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 500); }, Math.max(0, 700 - performance.now()));
+  setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 500); }, Math.max(0, 350 - performance.now()));
 }
 setTimeout(hideSplash, 5000);
 if (!db || navigator.onLine === false) hideSplash();
@@ -5136,12 +5152,13 @@ function openLessonFromHash() {
 window.addEventListener('hashchange', openLessonFromHash);
 if (!db) openLessonFromHash();
 if (db) {
-  const accountsReady = db.from('profiles').select('id').limit(1).then(({ error }) => { ACCOUNTS = !error; if (ACCOUNTS) render(false); }, () => {});
+  const accountsReady = db.from('profiles').select('id').limit(1).then(({ error }) => { if (!error && !ACCOUNTS) { ACCOUNTS = true; store.set('accounts', true); render(false); } }, () => {});
   const sessionReady = db.auth.getSession().then(({ data }) => applySession(data.session));
-  Promise.allSettled([sessionReady, loadRemote()]).then(hideSplash);
+  const remoteReady = loadRemote();
+  Promise.allSettled(REMOTE_SAVED && knownUser ? [] : [sessionReady, remoteReady]).then(hideSplash);
   // Wait for the session so a signed-in student is never asked to log in again.
   Promise.allSettled([sessionReady, accountsReady]).then(openLessonFromHash);
-  db.auth.onAuthStateChange((ev, session) => { if (ev === 'SIGNED_OUT') { USER = ADMIN = PROFILE = null; } });
+  db.auth.onAuthStateChange((ev, session) => { if (ev === 'SIGNED_OUT') { USER = ADMIN = PROFILE = null; store.set('me', null); } });
 }
 if (start === 'admin') { S.tab = 'profile'; render(); authSheet('login'); }
 else if (!lessonHashKey() && !store.get('onboarded', false) && !store.get('gradePicked', false) && !totalWatched() && !S.last) onboarding();
@@ -5153,9 +5170,17 @@ if ('serviceWorker' in navigator && CAN_EMBED && location.protocol === 'https:')
       reg.update();
       document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update(); });
     }).catch(() => {});
-    // When a new version takes over, reload once so the latest app shows straight away.
+    // When a new version takes over, reload once so the latest app shows. If the student is already in the middle
+    // of something (a lesson, a quiz, an open window), wait until the app is put away so nothing is lost.
     let reloaded = false, hadController = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.addEventListener('controllerchange', () => { if (hadController && !reloaded) { reloaded = true; location.reload(); } hadController = true; });
+    const reloadNow = () => { if (!reloaded) { reloaded = true; location.reload(); } };
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (hadController) {
+        if (!S.stack.length && !layer.children.length && !document.querySelector('.onb')) reloadNow();
+        else document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') reloadNow(); });
+      }
+      hadController = true;
+    });
   } catch (e) {}
 }
 </script>

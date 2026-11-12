@@ -1,5 +1,5 @@
 // يحفظ ملفات التطبيق على الجهاز ليفتح بسرعة ويعمل بدون إنترنت
-const CACHE = 'physics-tube-v123';
+const CACHE = 'physics-tube-v124';
 const SHELL = ['./', 'index.html', 'quiz-bank.js', 'games.js', 'classroom.js', 'bank-g10.js', 'bank-g11.js', 'bank-g12.js', 'qbank.js', 'teacher.js', 'visitors.js', 'leaders.js', 'achieve.js', 'prep.js', 'laws.js', 'manifest.webmanifest', 'icons/icon-192.png', 'icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -39,12 +39,20 @@ self.addEventListener('fetch', e => {
     e.respondWith(staleWhileRevalidate(req));
     return;
   }
-  // Pages and scripts: network first so content updates show immediately; fall back to cache offline.
-  e.respondWith(
-    // Pages may serve a cached copy for up to 10 minutes; always revalidate the app page itself.
-    fetch(req, req.mode === 'navigate' || /index\.html$|\/$/.test(url.pathname) ? { cache: 'no-cache' } : undefined).then(r => {
-      if (r.ok) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
+  // The app page and its scripts: open straight from the device (no waiting for the internet, even on a weak signal),
+  // and fetch the newest copy quietly for next time. A new version (new CACHE number) installs in the background
+  // and the page reloads once by itself (see index.html), so updates still arrive within seconds.
+  const home = new URL('./', location).pathname, page = url.pathname === home || url.pathname === home + 'index.html';
+  const key = page ? './' : req;
+  const done = caches.open(CACHE).then(cache => cache.match(key, page ? { ignoreSearch: true } : undefined).then(hit => {
+    // The app page itself is always checked with the server (GitHub may hand out a 10-minute-old copy otherwise).
+    const refresh = fetch(req, page ? { cache: 'no-cache' } : undefined).then(r => {
+      if (r.ok && !r.redirected) return cache.put(key, r.clone()).then(() => r);
       return r;
-    }).catch(() => caches.match(req).then(r => r || caches.match('index.html')))
-  );
+    });
+    if (hit) return { hit, refresh: refresh.catch(() => {}) };
+    return { hit: refresh.catch(() => caches.match(req).then(r => r || caches.match('index.html'))) };  // offline, not saved yet
+  }));
+  e.respondWith(done.then(x => x.hit));
+  e.waitUntil(done.then(x => x.refresh));
 });
