@@ -1441,23 +1441,22 @@ const GRADES = {
         { t: 'مركز الكتلة', sim: 'com', video: '', min: '' },
         { t: 'تحديد موضع مركز الثقل (الكتلة)', sim: 'plumb', video: '', min: '' },
       ]},
-      // الفصل الدراسي الثاني — مؤقت حتى يصل الفهرس
-      { term: 2, title: 'الحركة الاهتزازية', glyph: 'pendulum', theme: 0, pdf: '', lessons: [
-        { t: 'الحركة التوافقية البسيطة', video: '', min: '' },
-        { t: 'البندول البسيط', video: '', min: '' },
-        { t: 'النابض المهتز', video: '', min: '' },
+      // الفصل الدراسي الثاني (من فهرس المعلم)
+      { id: 'g11-heat', term: 2, title: 'الحرارة', glyph: 'thermo', theme: 3, pdf: '', lessons: [
+        { t: 'الحرارة والاتزان الحراري', video: '', min: '' },
+        { t: 'القياسات الحرارية', video: '', min: '' },
+        { t: 'التمدد الحراري', video: '', min: '' },
       ]},
-      { term: 2, title: 'الموجات والصوت', glyph: 'wave', theme: 6, pdf: '', lessons: [
-        { t: 'خصائص الموجات', video: '', min: '' },
-        { t: 'انعكاس الموجات وانكسارها', video: '', min: '' },
-        { t: 'الصوت', video: '', min: '' },
-        { t: 'ظاهرة دوبلر', video: '', min: '' },
+      { id: 'g11-state', term: 2, title: 'الحرارة وتغير الحالة', glyph: 'drop', theme: 6, pdf: '', lessons: [
+        { t: 'الطاقة وتغيرات الحالة', video: '', min: '' },
       ]},
-      { term: 2, title: 'الضوء', glyph: 'prism', theme: 7, pdf: '', lessons: [
-        { t: 'طبيعة الضوء', video: '', min: '' },
-        { t: 'الانعكاس والمرايا', video: '', min: '' },
-        { t: 'الانكسار والعدسات', video: '', min: '' },
-        { t: 'تشتت الضوء', video: '', min: '' },
+      { id: 'g11-electricity', term: 2, title: 'الكهرباء', glyph: 'charges', theme: 2, pdf: '', lessons: [
+        { t: 'المجالات الكهربية', video: '', min: '' },
+        { t: 'المكثف الكهربي', video: '', min: '' },
+        { t: 'توصيل المكثفات', video: '', min: '' },
+      ]},
+      { id: 'g11-magnetism', term: 2, title: 'المغناطيسية', glyph: 'magnet', theme: 5, pdf: '', lessons: [
+        { t: 'التيارات الكهربية والمجالات المغناطيسية', video: '', min: '' },
       ]},
     ],
   },
@@ -1481,51 +1480,35 @@ const GRADES = {
         { t: 'حفظ كمية الحركة', video: '', min: '' },
         { t: 'التصادمات', video: '', min: '' },
       ]},
-      // الفصل الدراسي الثاني — مؤقت حتى يصل الفهرس
-      { term: 2, title: 'الكهرباء الساكنة', glyph: 'charges', theme: 2, pdf: '', lessons: [
-        { t: 'الشحنة وقانون كولوم', video: '', min: '' },
-        { t: 'المجال الكهربائي', video: '', min: '' },
-        { t: 'الجهد الكهربائي', video: '', min: '' },
-        { t: 'المكثفات', video: '', min: '' },
+      // الفصل الدراسي الثاني (من فهرس المعلم)
+      { id: 'g12-induction', term: 2, title: 'الحث الكهرومغناطيسي', glyph: 'coil', theme: 1, pdf: '', lessons: [
+        { t: 'التدفق المغناطيسي', video: '', min: '' },
+        { t: 'الحث الكهرومغناطيسي', video: '', min: '' },
+        { t: 'المولد الكهربي', video: '', min: '' },
+        { t: 'القوة المغناطيسية - المحرك الكهربي', video: 'https://youtu.be/kkhAnMoAGbw', min: '13' },
       ]},
-      { term: 2, title: 'التيار الكهربائي', glyph: 'battery', theme: 5, pdf: '', lessons: [
-        { t: 'شدة التيار', video: '', min: '' },
-        { t: 'قانون أوم والمقاومة', video: '', min: '' },
-        { t: 'توصيل المقاومات', video: '', min: '' },
-        { t: 'القدرة الكهربائية', video: '', min: '' },
-        { t: 'قانونا كيرشوف', video: '', min: '' },
+      { id: 'g12-ac', term: 2, title: 'التيار المتردد', glyph: 'wave', theme: 5, pdf: '', lessons: [
+        { t: 'التيار المتردد', video: '', min: '' },
+        { t: 'دوائر التيار المتردد', video: '', min: '' },
       ]},
-      { term: 2, title: 'المغناطيسية', glyph: 'magnet', theme: 3, pdf: '', lessons: [
-        { t: 'المجال المغناطيسي', video: '', min: '' },
-        { t: 'القوة على شحنة متحركة', video: '', min: '' },
-        { t: 'القوة على سلك يحمل تياراً', video: '', min: '' },
-        { t: 'المجال حول سلك وملف', video: '', min: '' },
+      { id: 'g12-electronics', term: 2, title: 'الإلكترونيات', glyph: 'battery', theme: 4, pdf: '', lessons: [
+        { t: 'أشباه الموصلات', video: '', min: '' },
+        { t: 'الوصلة الثنائية', video: '', min: '' },
       ]},
-      { term: 2, title: 'الحث الكهرومغناطيسي', glyph: 'coil', theme: 1, pdf: '', lessons: [
-        { t: 'قانون فاراداي', video: '', min: '' },
-        { t: 'قانون لنز', video: '', min: '' },
-        { t: 'المولد الكهربائي', video: '', min: '' },
-        { t: 'المحول الكهربائي', video: '', min: '' },
-        { t: 'المحرك الكهربائي', video: 'https://youtu.be/kkhAnMoAGbw', min: '13' },
-      ]},
-      { term: 2, title: 'الفيزياء الحديثة', glyph: 'atom', theme: 6, pdf: '', lessons: [
+      { id: 'g12-quantum', term: 2, title: 'الذرة والكم', glyph: 'atom', theme: 6, pdf: '', lessons: [
+        { t: 'نماذج الذرة', video: '', min: '' },
         { t: 'الظاهرة الكهروضوئية', video: '', min: '' },
-        { t: 'نموذج بور للذرة', video: '', min: '' },
-        { t: 'ثنائية الموجة والجسيم', video: '', min: '' },
-      ]},
-      { term: 2, title: 'الفيزياء النووية', glyph: 'nucleus', theme: 4, pdf: '', lessons: [
-        { t: 'تركيب النواة', video: '', min: '' },
-        { t: 'النشاط الإشعاعي', video: '', min: '' },
-        { t: 'عمر النصف', video: '', min: '' },
-        { t: 'الانشطار والاندماج النووي', video: '', min: '' },
-        { t: 'معادلة الكتلة والطاقة', video: 'https://youtu.be/yKNR5Crla8c', min: '9' },
       ]},
     ],
   },
 };
 const GRADE_ORDER = ['g10', 'g11', 'g12'];
 const UNIT_BY_ID = {};
-GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); u.baseLessons.forEach((l, k) => { l.n = k; }); }));
+GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; u.baseTitle = u.title; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); u.baseLessons.forEach((l, k) => { l.n = k; }); }));
+// The built-in units of each grade, kept aside so a unit the teacher deleted can be brought back.
+const BUILTIN = {}; GRADE_ORDER.forEach(g => { BUILTIN[g] = GRADES[g].units.slice(); });
+// Units the teacher deleted (built-in or added), per grade: they stay saved and can be restored.
+const OFF_UNITS = {};
 
 const SIMS = {
   accel:      { title: 'الحركة المتسارعة بانتظام', sub: 'السرعة الابتدائية والتسارع ومنحنى السرعة والزمن', glyph: 'motion', theme: 1 },
@@ -1759,19 +1742,28 @@ function orderLessons(all, row) {
 function parseUnits(raw) {
   try { const a = JSON.parse(String(raw || '[]')); return Array.isArray(a) ? a.filter(x => x && x.id && GRADES[x.g] && String(x.title || '').trim()) : []; } catch (e) { return []; }
 }
+// The teacher can rename any unit (row "<unit id>.title" holds the new name; empty = the original name)
+// and delete any unit (row "<unit id>.off"). A deleted unit only leaves the list: its lessons, videos and files stay saved,
+// and it can be restored from the curriculum page in teacher mode.
+const unitOff = id => !!String((REMOTE[`${id}.off`] || {}).video || '').trim();
 function applyCustomUnits() {
-  for (const g of GRADE_ORDER) GRADES[g].units = GRADES[g].units.filter(u => !u.custom);
   Object.keys(UNIT_BY_ID).forEach(id => { if (UNIT_BY_ID[id].custom) delete UNIT_BY_ID[id]; });
+  const all = {}; GRADE_ORDER.forEach(g => { all[g] = BUILTIN[g].slice(); });
   parseUnits((REMOTE._units || {}).video).forEach(c => {
     const lessons = (Array.isArray(c.lessons) ? c.lessons : []).map(t => String(t == null ? '' : t).trim()).filter(Boolean).map((t, k) => ({ t, video: '', min: '', n: k }));
     const u = { id: c.id, custom: true, term: c.term === 2 ? 2 : 1, title: String(c.title).trim(), glyph: GLYPHS[c.glyph] ? c.glyph : 'box', theme: c.theme >= 0 && c.theme < THEMES.length ? +c.theme : 0, pdf: '', lessons };
-    u.baseLessons = lessons.slice();
-    GRADES[c.g].units.push(u); UNIT_BY_ID[u.id] = u;
+    u.baseTitle = u.title; u.baseLessons = lessons.slice();
+    all[c.g].push(u); UNIT_BY_ID[u.id] = u;
   });
+  for (const g of GRADE_ORDER) {
+    all[g].forEach(u => { u.title = String((REMOTE[`${u.id}.title`] || {}).video || '').trim() || u.baseTitle; });
+    GRADES[g].units = all[g].filter(u => !unitOff(u.id));
+    OFF_UNITS[g] = all[g].filter(u => unitOff(u.id));
+  }
 }
 function applyRemote() {
   applyCustomUnits();
-  for (const g of GRADE_ORDER) for (const unit of GRADES[g].units) {
+  for (const g of GRADE_ORDER) for (const unit of GRADES[g].units.concat(OFF_UNITS[g])) {
     const row = REMOTE[`${unit.id}.extra`], base = unit.baseLessons.length;
     let hid = []; try { const h = JSON.parse(String((REMOTE[`${unit.id}.hidden`] || {}).video || '[]')); if (Array.isArray(h)) hid = h.map(Number); } catch (e) { hid = []; }
     const all = unit.baseLessons.filter(l => !hid.includes(l.n)).concat(parseExtra(row && row.video).map((t, k) => ({ t, added: true, extra: true, video: '', min: '', n: base + k })));
@@ -1780,7 +1772,7 @@ function applyRemote() {
   for (const [key, row] of Object.entries(REMOTE)) {
     const [id, i] = key.split('.');
     const unit = UNIT_BY_ID[id]; if (!unit) continue;
-    if (i === 'extra' || i === 'order' || i === 'hidden') continue;
+    if (i === 'extra' || i === 'order' || i === 'hidden' || i === 'title' || i === 'off') continue;
     if (i === undefined) { unit.files = parseFiles(row.pdf); unit.pdf = (unit.files[0] || {}).url || ''; continue; }
     const l = unit.lessons.find(x => x.n === +i); if (!l) continue;
     l.videos = parseVideos(row.video, row.minutes); l.pdf = row.pdf || '';
@@ -1980,6 +1972,21 @@ function lessonsEditor(unit) {
     </div>`).join('')}</div>` : '<p class="hint">يمكنك إضافة أي عدد من الدروس لهذه الوحدة. بعد إضافة الدرس افتحه لتضع له الفيديو والمذكرة.</p>'}
     <div class="field"><label for="ls-title">عنوان الدرس الجديد</label><input id="ls-title" maxlength="80" placeholder="مثال: الدرس السادس"></div>
     <button class="btn primary" data-act="lesson-add" data-key="${key}">${icon('plus', 'style="width:16px;height:16px"')}إضافة الدرس</button>
+  </section>`;
+}
+// Teacher mode: rename or delete the unit (any unit, built-in or added).
+function unitEditor(unit) {
+  const renamed = unit.title !== unit.baseTitle;
+  return `<section class="editor" aria-label="تعديل الوحدة">
+    <div class="ed-h"><b>تعديل الوحدة</b><span class="tag">وضع المعلم</span></div>
+    <div class="field"><label for="un-title">اسم الوحدة</label><input id="un-title" maxlength="80" value="${esc(unit.title)}"></div>
+    ${renamed ? `<p class="hint" style="margin:0">الاسم الأصلي: «${esc(unit.baseTitle)}»</p>` : ''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn primary" data-act="unit-rename" data-key="${unit.id}">${icon('check', 'style="width:16px;height:16px"')}حفظ الاسم</button>
+      ${renamed ? `<button class="btn" data-act="unit-title-reset" data-key="${unit.id}">إرجاع الاسم الأصلي</button>` : ''}
+    </div>
+    <button class="btn danger wide" data-act="unit-del" data-key="${unit.id}">${icon('trash', 'style="width:16px;height:16px"')}حذف هذه الوحدة</button>
+    <p class="hint" style="margin:0">الحذف يخفي الوحدة عن الطلاب فقط، وتبقى دروسها وفيديوهاتها وملفاتها محفوظة، ويمكنك استعادتها من صفحة المنهج.</p>
   </section>`;
 }
 function lessonEditor(key, l) {
@@ -2192,6 +2199,13 @@ function ringsSheet() {
 
 /* ---------- إعلان المعلم وموعد الاختبار القادم (row "notice.<grade>" in the content table) ---------- */
 const noticeKey = () => `notice.${S.grade}`;
+// The unit a notice points to: saved by its id (older notices saved its place in the list as a number).
+function noticeUnit(n) {
+  const v = n && n.unit != null ? String(n.unit) : '';
+  if (!v) return -1;
+  if (/^\d+$/.test(v)) return G().units[+v] ? +v : -1;
+  return G().units.findIndex(x => x.id === v);
+}
 function getNotice() {
   const r = REMOTE[noticeKey()]; if (!r || !r.video) return null;
   try { const n = JSON.parse(r.video); return n && n.title ? n : null; } catch (e) { return null; }
@@ -2228,8 +2242,8 @@ function noticeCard() {
   if (!n) return ADMIN ? `<button class="notice-add" data-act="notice-edit">+ أضف إعلاناً أو موعد اختبار لطلاب ${esc(G().name)}</button>` : '';
   const left = daysLeft(n.date), d = parseDay(n.date);
   if (left != null && left < 0 && !ADMIN) return '';
-  const u = n.unit !== '' && n.unit != null ? G().units[+n.unit] : null;
-  const btn = u ? `<button class="nbtn pri" data-go="unit:${+n.unit}">راجع ${esc(u.title)} ${icon('chev')}</button>` : QBANK().length ? `<button class="nbtn pri" data-go="quiz">جهّزني للاختبار القصير ${icon('chev')}</button>` : '';
+  const ui = noticeUnit(n), u = ui >= 0 ? G().units[ui] : null;
+  const btn = u ? `<button class="nbtn pri" data-go="unit:${ui}">راجع ${esc(u.title)} ${icon('chev')}</button>` : QBANK().length ? `<button class="nbtn pri" data-go="quiz">جهّزني للاختبار القصير ${icon('chev')}</button>` : '';
   if (left == null || left < 0) return `<div class="notice" role="status">
     <div class="top"><span class="cd">${left == null ? '<b>📣</b>' : '<b style="font-size:15px">انتهى</b>'}</span>
       <span class="t"><small>${left == null ? 'إعلان من المعلم' : 'انتهى الموعد'}</small><b>${esc(n.title)}</b>${n.note ? `<span>${esc(n.note)}</span>` : ''}</span></div>
@@ -2290,7 +2304,7 @@ function noticeSheet() {
       <div class="field"><label for="nt-title">العنوان</label><input id="nt-title" maxlength="60" value="${esc(n.title)}" placeholder="مثال: الاختبار القصير الثاني"></div>
       <div class="field"><label for="nt-date">الموعد (اختياري)</label><input id="nt-date" type="date" value="${esc(n.date || '')}"></div>
       <div class="field"><label for="nt-time">الساعة (اختياري)</label><input id="nt-time" type="time" value="${esc(n.time || '')}"></div>
-      <div class="field"><label for="nt-unit">الوحدة المطلوبة (اختياري)</label><select id="nt-unit"><option value="">بدون</option>${G().units.map((u, i) => `<option value="${i}" ${String(n.unit) === String(i) ? 'selected' : ''}>${esc(u.title)}</option>`).join('')}</select></div>
+      <div class="field"><label for="nt-unit">الوحدة المطلوبة (اختياري)</label><select id="nt-unit"><option value="">بدون</option>${G().units.map((u, i) => `<option value="${esc(u.id)}" ${noticeUnit(n) === i ? 'selected' : ''}>${esc(u.title)}</option>`).join('')}</select></div>
       ${typeof qbBank === 'function' && qbBank() ? `<div class="field"><label>دروس الفاينال في «جهّزني للفاينال» (اختياري)</label><div class="nt-bank">${qbBank().flatMap(c => c.ls).map(l => `<label class="chk"><input type="checkbox" class="nt-bl" value="${l.id}" ${(n.bank || []).includes(l.id) ? 'checked' : ''}> (${l.id}) ${esc(l.t)}</label>`).join('')}</div><small class="hint">إن حددتها، تُبنى خطة المراجعة للطلاب من هذه الدروس فقط.</small></div>` : ''}
       <div class="field"><label for="nt-note">ملاحظة (اختياري)</label><input id="nt-note" maxlength="120" value="${esc(n.note || '')}" placeholder="مثال: من درس الشغل حتى نهاية الوحدة"></div>
       <label class="chk"><input type="checkbox" id="nt-all"> انشر نفس الموعد لجميع الصفوف</label>
@@ -2810,7 +2824,19 @@ function unitsBlock() {
         ${s.done ? `<span class="bar"><i style="width:${s.pct}%"></i></span>` : ''}
       </button>`;
     }).join('')}</div>`).join('')}
-    ${ADMIN ? `<button class="btn primary wide" data-act="unit-new" style="margin-top:14px;width:100%">${icon('plus', 'style="width:16px;height:16px"')}إضافة وحدة إلى ${esc(TERMS[S.term])}</button>` : ''}`;
+    ${ADMIN ? `<button class="btn primary wide" data-act="unit-new" style="margin-top:14px;width:100%">${icon('plus', 'style="width:16px;height:16px"')}إضافة وحدة إلى ${esc(TERMS[S.term])}</button>
+    <p class="hint" style="margin:8px 2px 0">لتعديل اسم وحدة أو حذفها: افتح الوحدة، ثم انزل إلى مربع «تعديل الوحدة».</p>${offUnitsBlock()}` : ''}`;
+}
+// Teacher mode: units deleted from the term being viewed, each with a restore button.
+function offUnitsBlock() {
+  const off = (OFF_UNITS[S.grade] || []).filter(u => u.term === S.term);
+  if (!off.length) return '';
+  return `<div class="label" style="margin-top:18px">وحدات محذوفة (لا يراها الطلاب)</div>
+    <div class="list">${off.map(u => `<div class="row">
+      <span class="n">${icon('trash', 'style="width:18px;height:18px"')}</span>
+      <span class="t"><b>${esc(u.title)}</b><small>${lessonWord(u.lessons.length)}</small></span>
+      <button class="btn" data-act="unit-restore" data-key="${u.id}" style="min-height:40px;padding:8px 14px">استعادة</button>
+    </div>`).join('')}</div>`;
 }
 // Teacher mode: form for a new unit (name + lesson titles, one per line) in the grade and term being viewed.
 function unitSheet() {
@@ -2951,8 +2977,10 @@ function vHome() {
   tu.forEach(x => { const n = x.u.unit || ''; const last = groups[groups.length - 1]; if (last && last[0] === n) last[1].push(x); else groups.push([n, [x]]); });
   let cont = '';
   if (S.last && GRADES[S.last.g] && S.last.g === S.grade) {
-    const u = GRADES[S.last.g].units[S.last.u], pi = u ? (S.last.n != null ? u.lessons.findIndex(x => x.n === S.last.n) : S.last.i) : -1, l = u && u.lessons[pi];
-    if (l) cont = `<button class="cont" data-go="lesson:${S.last.u}:${pi}">
+    // Find the unit by its id when saved (units can be deleted, which moves the later ones up one place).
+    const ui = S.last.id ? GRADES[S.last.g].units.findIndex(x => x.id === S.last.id) : S.last.u;
+    const u = GRADES[S.last.g].units[ui], pi = u ? (S.last.n != null ? u.lessons.findIndex(x => x.n === S.last.n) : S.last.i) : -1, l = u && u.lessons[pi];
+    if (l) cont = `<button class="cont" data-go="lesson:${ui}:${pi}">
       <span class="thumb" style="${tileStyle(u.theme)}">${glyph(u.glyph, u.theme)}</span>
       <span class="txt"><small>تابع من حيث توقفت · ${esc(u.title)}</small><b>${esc(l.t)}</b></span>
       <span class="go">${icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px;transform:translateX(1px)"')}</span></button>`;
@@ -3024,7 +3052,7 @@ function vUnit(u) {
       </button>`;
     }).join('')}</div>
     ${ADMIN ? lessonsEditor(unit) : ''}
-    ${ADMIN && unit.custom ? `<button class="btn danger wide" data-act="unit-del" data-key="${unit.id}" style="margin:10px 0">${icon('trash', 'style="width:16px;height:16px"')}حذف هذه الوحدة</button>` : ''}
+    ${ADMIN ? unitEditor(unit) : ''}
     ${ADMIN ? filesEditor(unit) : ''}
     <h2 class="sec">ملفات الوحدة <small>${unitFiles(unit).length ? fileWord(unitFiles(unit).length) : ''}</small></h2>
     ${fileCards(unit) || `<div class="list"><div class="row"><span class="n">${icon('notes', 'style="width:20px;height:20px"')}</span><span class="t"><b>الملفات قيد التجهيز</b><small>كتاب الطالب، والتلخيص، والقوانين، والمراجعة، والاختبارات التجريبية</small></span><span class="end"><span class="soon">قريباً</span></span></div></div>`}
@@ -4767,7 +4795,7 @@ function onboarding() {
       <section class="onb-page"><img class="onb-logo" src="icons/icon-512.png?v=4" alt=""><h1>أهلاً بك في<br><span class="mark">PHYSICS <b>TUBE</b></span></h1><p>الفيزياء للمرحلة الثانوية بطريقة واضحة وممتعة، في جيبك.</p></section>
       <section class="onb-page"><h1>كل ما تحتاجه<br>في مكان واحد</h1><div class="onb-feats">${feats.map(([ic, c, t, sm]) => `<div class="onb-feat" style="--fc:${c}"><span class="fi">${icon(ic)}</span><span><b>${t}</b><small>${sm}</small></span></div>`).join('')}</div></section>
       <section class="onb-page"><h1>اختر صفك</h1><p>نعرض لك دروس صفك ومذكراته واختباراته، وتستطيع تغييره لاحقاً.</p>
-        <div class="opts">${GRADE_ORDER.map(k => { const g = GRADES[k], n = g.units.reduce((t, u) => t + u.lessons.length, 0); return `<button class="opt" data-onb-grade="${k}"><span class="thumb" style="${tileStyle(g.theme)}">${glyph(g.units[1].glyph, g.theme)}</span><span class="t"><b>${g.name}</b><small>${ar(n)} درساً</small></span></button>`; }).join('')}</div></section>
+        <div class="opts">${GRADE_ORDER.map(k => { const g = GRADES[k], n = g.units.reduce((t, u) => t + u.lessons.length, 0); return `<button class="opt" data-onb-grade="${k}"><span class="thumb" style="${tileStyle(g.theme)}">${glyph(BUILTIN[k][1].glyph, g.theme)}</span><span class="t"><b>${g.name}</b><small>${ar(n)} درساً</small></span></button>`; }).join('')}</div></section>
     </div></div>
     <div class="onb-foot"><div class="onb-dots" aria-hidden="true"><i></i><i></i><i></i></div><button class="btn primary" data-onb="next">التالي</button></div>`;
   document.body.appendChild(el);
@@ -4804,7 +4832,7 @@ function go(spec, replace) {
   if (type === 'lesson') {
     if (!needLogin(() => go(spec, replace))) return;
     const lsn = GRADES[S.grade].units[+a] && GRADES[S.grade].units[+a].lessons[+b];
-    S.vi = 0; S.last = { g: S.grade, u: +a, i: +b, n: lsn ? lsn.n : +b }; store.set('last', S.last);
+    S.vi = 0; S.last = { g: S.grade, u: +a, i: +b, n: lsn ? lsn.n : +b, id: (GRADES[S.grade].units[+a] || {}).id }; store.set('last', S.last);
     logEvent('lesson', lid(S.grade, +a, +b));
     track('l', lid(S.grade, +a, +b));
   }
@@ -4874,7 +4902,7 @@ async function shareCopy() {
 function gradeSheet() {
   sheet(`<h2>اختر مرحلتك</h2><p>نعرض لك دروس صفك ومذكراته فقط.</p>
     <div class="opts">${GRADE_ORDER.map(k => { const g = GRADES[k], n = g.units.reduce((s, u) => s + u.lessons.length, 0); return `<button class="opt" data-grade="${k}" aria-pressed="${S.grade === k}">
-      <span class="thumb" style="${tileStyle(g.theme)}">${glyph(g.units[1].glyph, g.theme)}</span>
+      <span class="thumb" style="${tileStyle(g.theme)}">${glyph(BUILTIN[k][1].glyph, g.theme)}</span>
       <span class="t"><b>${g.name}</b><small>${ar(g.units.length)} وحدات · ${ar(n)} درساً</small></span>
       ${S.grade === k ? `<span class="tick">${icon('checkc')}</span>` : ''}</button>`; }).join('')}</div>`);
 }
@@ -5022,12 +5050,31 @@ document.addEventListener('click', e => {
     el.classList.add('busy');
     saveRows([{ key: '_units', video: JSON.stringify(all) }]).then(ok => { el.classList.remove('busy'); if (ok) { closeSheet(); toast(`تمت إضافة «${title}»`); } });
   }
+  else if (act === 'unit-rename' || act === 'unit-title-reset') {
+    const unit = UNIT_BY_ID[el.dataset.key];
+    if (!ADMIN || !db || !unit) return;
+    const inp = document.getElementById('un-title');
+    const v = act === 'unit-title-reset' ? unit.baseTitle : ((inp && inp.value) || '').trim();
+    if (!v) { if (inp) inp.value = unit.title; return toast('اكتب اسم الوحدة أولاً'); }
+    if (v === unit.title) return toast('هذا هو اسم الوحدة الحالي');
+    el.classList.add('busy');
+    saveRows([{ key: `${unit.id}.title`, video: v === unit.baseTitle ? '' : v }]).then(ok => { el.classList.remove('busy'); if (ok) toast(`تم حفظ الاسم: «${v}»`); });
+  }
   else if (act === 'unit-del') {
-    if (!ADMIN || !db) return;
-    if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); return toast('اضغط مرة أخرى لحذف الوحدة بدروسها'); }
-    const all = parseUnits((REMOTE._units || {}).video).filter(x => x.id !== el.dataset.key);
+    const unit = UNIT_BY_ID[el.dataset.key];
+    if (!ADMIN || !db || !unit) return;
+    if (!el.dataset.confirm) { el.dataset.confirm = '1'; el.classList.add('confirm'); el.lastChild.textContent = 'اضغط مرة أخرى لتأكيد حذف الوحدة'; return; }
     const keep = S.stack.slice(); S.stack = S.stack.filter(x => !(x.type === 'unit' || x.type === 'lesson'));
-    saveRows([{ key: '_units', video: all.length ? JSON.stringify(all) : '' }]).then(ok => { if (ok) { render(false); toast('تم حذف الوحدة'); } else { S.stack = keep; render(false); } });
+    saveRows([{ key: `${unit.id}.off`, video: '1' }]).then(ok => {
+      if (!ok) { S.stack = keep; render(false); return; }
+      undoBar(`تم حذف «${unit.title}»`, () => saveRows([{ key: `${unit.id}.off`, video: '' }]).then(ok2 => ok2 && toast('تمت استعادة الوحدة')));
+    });
+  }
+  else if (act === 'unit-restore') {
+    const unit = UNIT_BY_ID[el.dataset.key];
+    if (!ADMIN || !db || !unit) return;
+    el.classList.add('busy');
+    saveRows([{ key: `${unit.id}.off`, video: '' }]).then(ok => { el.classList.remove('busy'); if (ok) toast(`تمت استعادة «${unit.title}»`); });
   }
   else if (act === 'lesson-add') {
     const unit = UNIT_BY_ID[el.dataset.key], title = (document.getElementById('ls-title').value || '').trim();
