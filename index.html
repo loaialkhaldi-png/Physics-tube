@@ -1401,7 +1401,7 @@ const GRADES = {
         { t: 'أسئلة مراجعة الوحدة', extra: true, video: '', min: '' },
       ]},
       // الفصل الدراسي الثاني — مؤقت حتى يصل فهرس الجزء الثاني
-      { term: 2, title: 'الشغل والطاقة', glyph: 'bolt', theme: 5, pdf: '', lessons: [
+      { term: 2, title: 'الشغل والطاقة', glyph: 'work', theme: 5, pdf: '', lessons: [
         { t: 'الشغل', video: '', min: '' },
         { t: 'طاقة الحركة', video: '', min: '' },
         { t: 'طاقة الوضع', video: '', min: '' },
@@ -1414,7 +1414,7 @@ const GRADES = {
         { t: 'انتقال الحرارة', video: '', min: '' },
         { t: 'التمدد الحراري', video: '', min: '' },
       ]},
-      { term: 2, title: 'الضغط والموائع', glyph: 'drop', theme: 6, pdf: '', lessons: [
+      { term: 2, title: 'الضغط والموائع', glyph: 'fluid', theme: 6, pdf: '', lessons: [
         { t: 'الضغط', video: '', min: '' },
         { t: 'ضغط السوائل', video: '', min: '' },
         { t: 'قاعدة باسكال', video: '', min: '' },
@@ -1426,7 +1426,7 @@ const GRADES = {
     name: 'الحادي عشر علمي', short: 'الحادي عشر', theme: 2,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'vectors', theme: 1, pdf: '', sims: ['resultant', 'vecprod', 'components', 'vectors', 'trajectory', 'projectile'], lessons: [
+      { id: 'g11-projectile', term: 1, title: 'حركة المقذوفات', glyph: 'projectile', theme: 1, pdf: '', sims: ['resultant', 'vecprod', 'components', 'vectors', 'trajectory', 'projectile'], lessons: [
         { t: 'الكميات العددية والكميات المتجهة', sim: 'resultant', video: '', min: '' },
         { t: 'ضرب المتجهات', sim: 'vecprod', video: '', min: '' },
         { t: 'تحليل المتجهات', sim: 'vectors', video: '', min: '' },
@@ -1436,7 +1436,7 @@ const GRADES = {
         { t: 'وصف الحركة الدائرية', video: '', min: '' },
         { t: 'القوة الجاذبة المركزية', video: '', min: '' },
       ]},
-      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'box', theme: 0, pdf: '', sims: ['plumb', 'acrobat', 'com'], lessons: [
+      { id: 'g11-gravity-center', term: 1, title: 'مركز الثقل', glyph: 'cog', theme: 0, pdf: '', sims: ['plumb', 'acrobat', 'com'], lessons: [
         { t: 'مركز الثقل', sim: 'acrobat', video: '', min: '' },
         { t: 'مركز الكتلة', sim: 'com', video: '', min: '' },
         { t: 'تحديد موضع مركز الثقل (الكتلة)', sim: 'plumb', video: '', min: '' },
@@ -1447,7 +1447,7 @@ const GRADES = {
         { t: 'القياسات الحرارية', video: '', min: '' },
         { t: 'التمدد الحراري', video: '', min: '' },
       ]},
-      { id: 'g11-state', term: 2, title: 'الحرارة وتغير الحالة', glyph: 'drop', theme: 6, pdf: '', lessons: [
+      { id: 'g11-state', term: 2, title: 'الحرارة وتغير الحالة', glyph: 'phase', theme: 6, pdf: '', lessons: [
         { t: 'الطاقة وتغيرات الحالة', video: '', min: '' },
       ]},
       { id: 'g11-electricity', term: 2, title: 'الكهرباء', glyph: 'charges', theme: 2, pdf: '', lessons: [
@@ -1464,14 +1464,14 @@ const GRADES = {
     name: 'الثاني عشر علمي', short: 'الثاني عشر', theme: 7,
     units: [
       // الفصل الدراسي الأول
-      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'bolt', theme: 5, pdf: '', sims: ['work', 'spring', 'skate', 'pendulum'], lessons: [
+      { id: 'g12-energy', term: 1, title: 'الطاقة', glyph: 'energy', theme: 5, pdf: '', sims: ['work', 'spring', 'skate', 'pendulum'], lessons: [
         { t: 'الشغل', sim: 'work', video: '', min: '' },
         { t: 'الشغل والطاقة', sim: 'spring', video: '', min: '' },
         { t: 'حفظ (بقاء) الطاقة', sim: 'skate', video: '', min: '' },
         { t: 'حركة البندول', sim: 'pendulum', video: '', min: '' },
         { t: 'عدم حفظ الطاقة', sim: 'skate', video: '', min: '' },
       ]},
-      { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'orbit', theme: 2, pdf: '', sims: ['torque', 'balance'], lessons: [
+      { id: 'g12-rotation', term: 1, title: 'ميكانيكا الدوران', glyph: 'rotate', theme: 2, pdf: '', sims: ['torque', 'balance'], lessons: [
         { t: 'عزم القوة', video: '', min: '' },
         { t: 'القصور الذاتي الدوراني', video: '', min: '' },
       ]},
@@ -1481,7 +1481,7 @@ const GRADES = {
         { t: 'التصادمات', video: '', min: '' },
       ]},
       // الفصل الدراسي الثاني (من فهرس المعلم)
-      { id: 'g12-induction', term: 2, title: 'الحث الكهرومغناطيسي', glyph: 'coil', theme: 1, pdf: '', lessons: [
+      { id: 'g12-induction', term: 2, title: 'الحث الكهرومغناطيسي', glyph: 'induction', theme: 1, pdf: '', lessons: [
         { t: 'التدفق المغناطيسي', video: '', min: '' },
         { t: 'الحث الكهرومغناطيسي', video: '', min: '' },
         { t: 'المولد الكهربي', video: '', min: '' },
@@ -1491,7 +1491,7 @@ const GRADES = {
         { t: 'التيار المتردد', video: '', min: '' },
         { t: 'دوائر التيار المتردد', video: '', min: '' },
       ]},
-      { id: 'g12-electronics', term: 2, title: 'الإلكترونيات', glyph: 'battery', theme: 4, pdf: '', lessons: [
+      { id: 'g12-electronics', term: 2, title: 'الإلكترونيات', glyph: 'diode', theme: 4, pdf: '', lessons: [
         { t: 'أشباه الموصلات', video: '', min: '' },
         { t: 'الوصلة الثنائية', video: '', min: '' },
       ]},
@@ -1504,7 +1504,7 @@ const GRADES = {
 };
 const GRADE_ORDER = ['g10', 'g11', 'g12'];
 const UNIT_BY_ID = {};
-GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; u.baseTitle = u.title; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); u.baseLessons.forEach((l, k) => { l.n = k; l.baseT = l.t; }); }));
+GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; u.baseTitle = u.title; u.baseGlyph = u.glyph; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); u.baseLessons.forEach((l, k) => { l.n = k; l.baseT = l.t; }); }));
 // The built-in units of each grade, kept aside so a unit the teacher deleted can be brought back.
 const BUILTIN = {}; GRADE_ORDER.forEach(g => { BUILTIN[g] = GRADES[g].units.slice(); });
 // Units the teacher deleted (built-in or added), per grade: they stay saved and can be restored.
@@ -1515,21 +1515,21 @@ const SIMS = {
   freefall:   { title: 'السقوط الحر', sub: 'أنبوبة الريشة والعملة، والسقوط على الأرض والقمر والمريخ', glyph: 'drop', theme: 6 },
   vectors:    { title: 'حساب المحصلة بطريقة تحليل المتجهات', sub: 'محصلة عدة قوى بجمع مركباتها', glyph: 'vectors', theme: 2 },
   components: { title: 'تحليل المتجه', sub: 'المركبة الأفقية والمركبة الرأسية، ومثال زورق منتصر', glyph: 'vectors', theme: 6 },
-  projectile: { title: 'حركة المقذوفات', sub: 'أمثلة الكتاب محلولة خطوة بخطوة: إطلاق أفقي وإطلاق بزاوية', glyph: 'vectors', theme: 7 },
+  projectile: { title: 'حركة المقذوفات', sub: 'أمثلة الكتاب محلولة خطوة بخطوة: إطلاق أفقي وإطلاق بزاوية', glyph: 'projectile', theme: 7 },
   circular:   { title: 'الحركة الدائرية', sub: 'القوة الجاذبة المركزية والتسارع المركزي', glyph: 'orbit', theme: 2 },
-  com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'box', theme: 0 },
-  acrobat:    { title: 'وازن البهلوان', sub: 'أثقال معلّقة في عصا البهلوان تُنزل مركز الثقل تحت الحبل', glyph: 'ruler', theme: 3 },
-  plumb:      { title: 'تعيين مركز الثقل بالتعليق', sub: 'علّق الجسم من نقطتين وارسم الخط العمودي بالخيط الفادن: التقاطع هو مركز الثقل', glyph: 'box', theme: 4 },
-  work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'force', theme: 5 },
+  com:        { title: 'مركز الكتلة', sub: 'وزّع الكتل وشاهد نقطة الاتزان', glyph: 'cog', theme: 0 },
+  acrobat:    { title: 'وازن البهلوان', sub: 'أثقال معلّقة في عصا البهلوان تُنزل مركز الثقل تحت الحبل', glyph: 'cog', theme: 3 },
+  plumb:      { title: 'تعيين مركز الثقل بالتعليق', sub: 'علّق الجسم من نقطتين وارسم الخط العمودي بالخيط الفادن: التقاطع هو مركز الثقل', glyph: 'cog', theme: 4 },
+  work:       { title: 'الشغل', sub: 'القوة والإزاحة والزاوية بينهما', glyph: 'work', theme: 5 },
   pendulum:   { title: 'حفظ الطاقة في البندول', sub: 'طاقة الوضع والطاقة الحركية، مع الاحتكاك وبدونه', glyph: 'pendulum', theme: 0 },
-  torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'force', theme: 3 },
+  torque:     { title: 'عزم القوة', sub: 'مقدار القوة وذراعها وزاويتها', glyph: 'rotate', theme: 3 },
   vecprod:    { title: 'الضرب العددي والضرب الاتجاهي', sub: 'A·B = AB cosθ و A×B = AB sinθ وقاعدة اليد اليمنى', glyph: 'vectors', theme: 3 },
   speedvel:   { title: 'السرعة العددية والسرعة المتجهة', sub: 'المسافة والإزاحة لسيارة في رحلة', glyph: 'motion', theme: 0 },
   eqmotion:   { title: 'معادلات الحركة', sub: 'سيارة بتسارع منتظم والمعادلات الثلاث بالأرقام', glyph: 'motion', theme: 5 },
-  trajectory: { title: 'شكل مسار القذيفة', sub: 'خط رأسي، نصف قطع مكافئ، أو قطع مكافئ حسب زاوية الإطلاق', glyph: 'vectors', theme: 7 },
+  trajectory: { title: 'شكل مسار القذيفة', sub: 'خط رأسي، نصف قطع مكافئ، أو قطع مكافئ حسب زاوية الإطلاق', glyph: 'projectile', theme: 7 },
   resultant:  { title: 'محصلة متجهين', sub: 'متوازيان، متعاكسان، متعامدان، أو بينهما زاوية', glyph: 'vectors', theme: 1 },
   spring:     { title: 'الطاقة المرونية في النابض', sub: 'اسحب الكتلة وشاهد الطاقة المختزنة في النابض', glyph: 'coil', theme: 7 },
-  skate:      { title: 'حفظ الطاقة الميكانيكية', sub: 'متزلج على مسار: طاقة الوضع والحركية والحرارية', glyph: 'bolt', theme: 6 },
+  skate:      { title: 'حفظ الطاقة الميكانيكية', sub: 'متزلج على مسار: طاقة الوضع والحركية والحرارية', glyph: 'energy', theme: 6 },
   balance:    { title: 'اتزان العزوم', sub: 'ضع الكتل على اللوح وحقق الاتزان', glyph: 'ruler', theme: 5 },
   collision:  { title: 'التصادمات وحفظ الزخم', sub: 'تصادم مرن وتصادم عديم المرونة', glyph: 'collide', theme: 3 },
 };
@@ -1587,7 +1587,55 @@ const GLYPHS = {
   doc: '<path d="M26 10h32l18 18v62H26z"/><path d="M58 10v18h18M37 50h28M37 62h28M37 74h16"/>',
   flask: '<path d="M38 10h24M44 10v28L21 80a6 6 0 0 0 5 9h48a6 6 0 0 0 5-9L56 38V10"/><path d="M31 64h38"/>',
   box: '<path d="M50 10 86 29v42L50 90 14 71V29z"/><path d="M14 29l36 19 36-19M50 48v42"/>',
+  // Unit pictures drawn to match each unit's title
+  projectile: '<path d="M6 88h88"/><path d="M14 80Q50-8 86 80" stroke-dasharray="3 10"/><circle class="f" cx="50" cy="36" r="9"/><path d="M14 80 36 58M25 57h12v12"/>',
+  cog: '<path d="M50 8 90 74H10z"/><circle cx="50" cy="52" r="12"/><path class="f" d="M50 52V40a12 12 0 0 1 12 12zM50 52v12a12 12 0 0 1-12-12z"/><path d="M50 70v22M42 84l8 8 8-8"/>',
+  rotate: '<circle cx="50" cy="56" r="24"/><circle class="f" cx="50" cy="56" r="6"/><path d="M50 56h24"/><path d="M15 36A40 40 0 0 1 85 36M86 24l-1 12-11-3"/>',
+  energy: '<path d="M8 22Q50 122 92 22"/><circle class="f" cx="25" cy="24" r="9"/><path d="M42 24h44" stroke-dasharray="2 9"/><path d="M6 90h88"/>',
+  work: '<path d="M6 66h88"/><rect x="44" y="34" width="32" height="32" rx="5"/><path d="M8 50h26M26 42l8 8-8 8M44 82h40M76 75l8 7-8 7"/>',
+  fluid: '<path d="M16 14v72h68V14"/><path d="M16 36q8-6 17 0t17 0 17 0 17 0"/><path d="M58 56h16M68 50l6 6-6 6M48 74h26M68 68l6 6-6 6"/>',
+  phase: '<rect x="6" y="40" width="32" height="32" rx="6"/><path d="M14 50l8-4"/><path d="M45 56h14M53 50l6 6-6 6"/><path d="M80 26S64 46 64 60a16 16 0 0 0 32 0c0-14-16-34-16-34z"/>',
+  induction: '<rect x="6" y="40" width="36" height="22" rx="4"/><path class="f" d="M24 40H10a4 4 0 0 0-4 4v14a4 4 0 0 0 4 4h14z"/><path d="M8 24h26M27 17l7 7-7 7"/><ellipse cx="60" cy="51" rx="6" ry="22"/><ellipse cx="73" cy="51" rx="6" ry="22"/><ellipse cx="86" cy="51" rx="6" ry="22"/>',
+  diode: '<path d="M4 50h30M66 50h30"/><path class="f" d="M34 28v44l32-22z"/><path d="M66 26v48"/>',
+  review: '<rect x="20" y="18" width="60" height="68" rx="9"/><rect class="f" x="37" y="10" width="26" height="15" rx="5"/><path d="M31 44l6 6 11-12M56 45h13M31 66l6 6 11-12M56 67h13"/>',
+  book: '<path d="M50 26C38 18 22 16 8 18v62c14-2 30 0 42 8 12-8 28-10 42-8V18c-14-2-30 0-42 8zM50 26v62"/>',
 };
+// The unit's picture follows its title (also after the teacher renames a unit or adds a new one):
+// the first rule whose words appear in the title wins; otherwise the unit keeps its own picture.
+const GLYPH_RULES = [
+  ['review', ['مراجع', 'اختبار', 'امتحان', 'نماذج', 'تدريبات', 'بنك']],
+  ['projectile', ['مقذوف', 'قذيف']],
+  ['orbit', ['دائري']],
+  ['rotate', ['دوران', 'دوراني', 'عزم']],
+  ['cog', ['مركز الثقل', 'مركز الكتله']],
+  ['collide', ['كميه الحركه', 'الزخم', 'تصادم', 'الدفع']],
+  ['vectors', ['بعدين', 'متجه']],
+  ['motion', ['بعد واحد', 'السقوط']],
+  ['phase', ['تغير الحاله', 'تغيرات الحاله', 'الانصهار', 'التبخر']],
+  ['induction', ['الحث']],
+  ['wave', ['متردد', 'موج', 'الصوت']],
+  ['diode', ['الكترون', 'اشباه الموصلات', 'الوصله الثنائيه']],
+  ['nucleus', ['نووي', 'النواه', 'اشعاع']],
+  ['atom', ['الذره', 'الكم', 'كهروضوئي']],
+  ['magnet', ['مغناط']],
+  ['battery', ['التيار', 'الدوائر', 'الدائره الكهربي']],
+  ['charges', ['كهرب', 'المكثف', 'الشحن']],
+  ['thermo', ['حرار']],
+  ['fluid', ['ضغط', 'موائع', 'السوائل', 'ارخميدس', 'باسكال']],
+  ['work', ['الشغل']],
+  ['energy', ['طاق']],
+  ['prism', ['ضوء', 'الضوء', 'انكسار', 'عدس', 'مرايا', 'بصري']],
+  ['force', ['قوه', 'قوى', 'نيوتن']],
+  ['ruler', ['فيزياء', 'قياس', 'الكميات']],
+  ['motion', ['حركه']],
+];
+// Arabic text without diacritics and with one form of alef/taa/yaa, so «الحركة في بُعدين» matches «بعدين».
+const arPlain = t => String(t || '').replace(/[\u064B-\u0652\u0640]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي');
+function glyphFor(title) {
+  const t = ' ' + arPlain(title) + ' ';
+  for (const [g, words] of GLYPH_RULES) if (words.some(w => w === 'الكم' ? /[\s\u0648]الكم\s/.test(t) : t.includes(w))) return g;
+  return '';
+}
 function glyph(name, theme, cls = '') {
   const p = GLYPHS[name] || GLYPHS.atom;
   return `<svg class="glyph ${cls}" viewBox="0 0 100 100" aria-hidden="true" style="--glow:${THEMES[theme].c2}66"><g class="gb" stroke="url(#gl${theme})">${p.replace(/class="f"/g, `class="f" fill="url(#gl${theme})"`)}</g><g class="gg">${p}</g></svg>`;
@@ -1751,12 +1799,12 @@ function applyCustomUnits() {
   const all = {}; GRADE_ORDER.forEach(g => { all[g] = BUILTIN[g].slice(); });
   parseUnits((REMOTE._units || {}).video).forEach(c => {
     const lessons = (Array.isArray(c.lessons) ? c.lessons : []).map(t => String(t == null ? '' : t).trim()).filter(Boolean).map((t, k) => ({ t, baseT: t, video: '', min: '', n: k }));
-    const u = { id: c.id, custom: true, term: c.term === 2 ? 2 : 1, title: String(c.title).trim(), glyph: GLYPHS[c.glyph] ? c.glyph : 'box', theme: c.theme >= 0 && c.theme < THEMES.length ? +c.theme : 0, pdf: '', lessons };
-    u.baseTitle = u.title; u.baseLessons = lessons.slice();
+    const u = { id: c.id, custom: true, term: c.term === 2 ? 2 : 1, title: String(c.title).trim(), glyph: GLYPHS[c.glyph] && c.glyph !== 'box' ? c.glyph : 'book', theme: c.theme >= 0 && c.theme < THEMES.length ? +c.theme : 0, pdf: '', lessons };
+    u.baseTitle = u.title; u.baseGlyph = u.glyph; u.baseLessons = lessons.slice();
     all[c.g].push(u); UNIT_BY_ID[u.id] = u;
   });
   for (const g of GRADE_ORDER) {
-    all[g].forEach(u => { u.title = String((REMOTE[`${u.id}.title`] || {}).video || '').trim() || u.baseTitle; });
+    all[g].forEach(u => { u.title = String((REMOTE[`${u.id}.title`] || {}).video || '').trim() || u.baseTitle; u.glyph = glyphFor(u.title) || u.baseGlyph; });
     GRADES[g].units = all[g].filter(u => !unitOff(u.id));
     OFF_UNITS[g] = all[g].filter(u => unitOff(u.id));
   }
