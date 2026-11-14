@@ -197,6 +197,26 @@ p { margin: 0; }
 .row .t small { color: var(--muted); font-size: 13px; }
 .row .end { color: var(--muted); display: flex; align-items: center; gap: 6px; font-size: 13px; flex: none; }
 .row .end.on { color: var(--accent); }
+/* Unit lessons: main lessons in the unit's colour, sub-lessons folded under them */
+.lessons .row.main { background: linear-gradient(90deg, transparent, var(--lc16)); background-color: rgba(255, 255, 255, .035); }
+.lessons .row.main .n { background: var(--lc30); color: var(--lc1); box-shadow: inset 0 0 0 1.5px var(--lc55); }
+.lessons .row.main .n.done { background: rgba(50, 209, 122, .16); color: var(--good); box-shadow: none; }
+.lessons .row.main .t b { font-weight: 800; color: var(--lc1); }
+.lessons .row.sub { background: rgba(0, 0, 0, .22); padding-block: 11px; padding-inline-start: 34px; position: relative; }
+.lessons .row.sub::before { content: ''; position: absolute; inset-block: 0; inset-inline-start: 47px; width: 2px; background: var(--lc45); }
+.lessons .row.sub .n { min-width: 28px; height: 28px; border-radius: 10px; font-size: 13px; position: relative; z-index: 1; background: #1D2029; box-shadow: inset 0 0 0 1.5px var(--lc55); color: var(--lc1); }
+.lessons .row.sub .n.done { background: #173326; color: var(--good); }
+.lessons .row.sub .n .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lc); }
+.lessons .row.sub .t b { font-size: 15px; font-weight: 600; color: #D9DBE2; }
+.lessons .lgrp + .row, .lessons .row + .lgrp, .lessons .lgrp + .lgrp { border-top: 1px solid var(--line); }
+.lessons .subs { border-top: 1px solid var(--line); }
+.lessons .subs .row + .row { border-top-color: rgba(255, 255, 255, .04); }
+.lessons .lgrp.open .subs { animation: subsIn .22s ease; }
+@keyframes subsIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+.lessons .end.chev { color: var(--lc1); }
+.lessons .end.chev svg { transform: rotate(-90deg); transition: transform .2s; }
+.lessons .lgrp.open .end.chev svg { transform: rotate(90deg); }
+.prev-btn { margin: 0 0 10px; width: 100%; }
 .soon { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--surface-2); padding: 3px 9px; border-radius: 8px; }
 
 /* Lesson */
@@ -3088,6 +3108,59 @@ function navBar(title = '') {
   return `<div class="nav"><button class="circle" data-act="back" aria-label="رجوع">${icon('back')}</button>${title}<span style="width:42px"></span></div>`;
 }
 
+/* ---------- Lesson list of a unit: main (curriculum) lessons and their sub-lessons ----------
+   A main lesson is one of the unit's own numbered lessons. Every lesson the teacher added that comes after it
+   in the list is one of its sub-lessons. Students see a main lesson in the unit's colour; its sub-lessons stay
+   folded under it until they tap its title. The teacher sees the plain list (to drag and order the lessons),
+   with the same colours, and can switch to the students' view. */
+const OPEN_GRP = {};      // main lessons opened on this visit: "<unit id>.<lesson number>"
+let UNIT_PREVIEW = false; // teacher mode: show the unit's lessons as students see them
+const isSub = l => !!l.added;
+function lessonGroups(unit) {
+  const gs = [];
+  unit.lessons.forEach((l, i) => {
+    if (isSub(l) && gs.length && gs[gs.length - 1].main >= 0) gs[gs.length - 1].subs.push(i);
+    else gs.push({ main: isSub(l) ? -1 : i, subs: isSub(l) ? [i] : [] });
+  });
+  return gs;
+}
+const subWord = n => n === 1 ? 'درس فرعي' : n === 2 ? 'درسان فرعيان' : n <= 10 ? `${ar(n)} دروس فرعية` : `${ar(n)} درساً فرعياً`;
+function lessonRow(unit, u, i, cls, opts = {}) {
+  const l = unit.lessons[i], done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l), edit = ADMIN && !UNIT_PREVIEW;
+  const no = lessonNo(unit, i);
+  const mark = done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : no ? `<bdi dir="ltr">${no}</bdi>` : cls.includes('sub') ? '<i class="dot"></i>' : icon('checkc', 'style="width:18px;height:18px"');
+  return `<button class="row ${cls}" data-go="lesson:${u}:${i}">
+    <span class="n ${done ? 'done' : ''}">${opts.self ? icon('play', 'style="fill:currentColor;stroke:none;width:14px;height:14px"') : mark}</span>
+    <span class="t"><b>${esc(opts.self ? 'شرح الدرس' : l.t)}</b><small>${has ? (has > 1 ? videoWord(has) + (mins ? ` · ${ar(mins)} دقيقة` : '') : (mins ? `${ar(mins)} دقيقة` : 'فيديو شرح')) : 'الفيديو قيد التجهيز'}</small></span>
+    <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${edit ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
+    ${edit && unit.lessons.length > 1 ? `<span class="grip" aria-hidden="true">${icon('grip')}</span>` : ''}
+  </button>`;
+}
+function lessonList(unit, u) {
+  const t = THEMES[unit.theme] || THEMES[0], vars = `--lc:${t.c2};--lc1:${t.c1};--lc16:${t.c2}29;--lc30:${t.c2}4D;--lc45:${t.c2}73;--lc55:${t.c2}8C`;
+  const gs = lessonGroups(unit), anySubs = gs.some(g => g.main >= 0 && g.subs.length);
+  const toggle = ADMIN && anySubs ? `<button class="btn wide prev-btn" data-act="unit-preview">${UNIT_PREVIEW ? 'رجوع إلى ترتيب الدروس (وضع المعلم)' : 'معاينة الدروس كما يراها الطالب'}</button>` : '';
+  if (ADMIN && !UNIT_PREVIEW) {
+    // Teacher: one plain list, so lessons can be dragged into place under the right main lesson.
+    const subOf = new Set(gs.flatMap(g => g.main >= 0 ? g.subs : []));
+    return `${anySubs || unit.lessons.some(isSub) ? '<p class="hint" style="margin:0 0 8px">الدرس الرئيسي (المرقّم) يظهر بلون الوحدة، وكل درس أضفته تحته يصبح درساً فرعياً له: يراه الطالب بعد الضغط على عنوان الدرس الرئيسي. لنقل درس فرعي إلى درس رئيسي آخر اسحبه تحته.</p>' : ''}${toggle}
+    <div class="list lessons sortable" style="${vars}" data-key="${unit.id}" data-lessons="1">${unit.lessons.map((l, i) => lessonRow(unit, u, i, subOf.has(i) ? 'sub' : isSub(l) ? '' : 'main')).join('')}</div>`;
+  }
+  return `${toggle}<div class="list lessons" style="${vars}">${gs.map(g => {
+    if (g.main < 0) return g.subs.map(i => lessonRow(unit, u, i, '')).join('');
+    if (!g.subs.length) return lessonRow(unit, u, g.main, 'main');
+    const l = unit.lessons[g.main], key = `${unit.id}.${l.n}`, open = !!OPEN_GRP[key], all = [g.main].concat(g.subs);
+    const done = all.filter(i => S.watched[lid(S.grade, u, i)]).length, no = lessonNo(unit, g.main);
+    return `<div class="lgrp${open ? ' open' : ''}">
+      <button class="row main" data-act="lgrp" data-key="${key}" aria-expanded="${open}">
+        <span class="n ${done === all.length ? 'done' : ''}">${done === all.length ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : `<bdi dir="ltr">${no}</bdi>`}</span>
+        <span class="t"><b>${esc(l.t)}</b><small>شرح الدرس + ${subWord(g.subs.length)}${done ? ` · أنجزت ${ar(done)} من ${ar(all.length)}` : ''}</small></span>
+        <span class="end chev">${icon('chev', 'style="width:20px;height:20px"')}</span>
+      </button>
+      <div class="subs"${open ? '' : ' hidden'}>${lessonRow(unit, u, g.main, 'sub', { self: true })}${g.subs.map(i => lessonRow(unit, u, i, 'sub')).join('')}</div>
+    </div>`;
+  }).join('')}</div>`;
+}
 function vUnit(u) {
   const unit = G().units[u], s = unitStats(S.grade, u);
   const sims = (unit.sims || []).filter(k => SIMS[k]);
@@ -3100,16 +3173,8 @@ function vUnit(u) {
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
-    ${ADMIN ? `<p class="hint" style="margin:0 0 8px">${unit.lessons.length > 1 ? 'اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اسحب الدرس جانبياً إلى أن يظهر الشريط الأحمر ثم أفلته. بعد الحذف يظهر زر «تراجع». ' : ''}ولتغيير اسم أي درس: افتحه ثم اكتب الاسم الجديد في مربع «تعديل الدرس».</p>` : ''}
-    <div class="list${ADMIN ? ' sortable' : ''}"${ADMIN ? ` data-key="${unit.id}" data-lessons="1"` : ''}>${unit.lessons.map((l, i) => {
-      const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
-      return `<button class="row" data-go="lesson:${u}:${i}">
-        <span class="n ${done ? 'done' : ''}">${done ? icon('check', 'style="width:18px;height:18px;stroke-width:2.4"') : (lessonNo(unit, i) ? `<bdi dir="ltr">${lessonNo(unit, i)}</bdi>` : icon('checkc', 'style="width:18px;height:18px"'))}</span>
-        <span class="t"><b>${esc(l.t)}</b><small>${has ? (has > 1 ? videoWord(has) + (mins ? ` · ${ar(mins)} دقيقة` : '') : (mins ? `${ar(mins)} دقيقة` : 'فيديو شرح')) : 'الفيديو قيد التجهيز'}</small></span>
-        <span class="end ${has ? 'on' : ''}">${has ? icon('play', 'style="fill:currentColor;stroke:none;width:18px;height:18px"') : `<span class="soon">${ADMIN ? 'أضف فيديو' : 'قريباً'}</span>`}</span>
-        ${ADMIN && unit.lessons.length > 1 ? `<span class="grip" aria-hidden="true">${icon('grip')}</span>` : ''}
-      </button>`;
-    }).join('')}</div>
+    ${ADMIN && !UNIT_PREVIEW ? `<p class="hint" style="margin:0 0 8px">${unit.lessons.length > 1 ? 'اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اسحب الدرس جانبياً إلى أن يظهر الشريط الأحمر ثم أفلته. بعد الحذف يظهر زر «تراجع». ' : ''}ولتغيير اسم أي درس: افتحه ثم اكتب الاسم الجديد في مربع «تعديل الدرس».</p>` : ''}
+    ${lessonList(unit, u)}
     ${ADMIN ? lessonsEditor(unit) : ''}
     ${ADMIN ? unitEditor(unit) : ''}
     ${ADMIN ? filesEditor(unit) : ''}
@@ -5109,6 +5174,13 @@ document.addEventListener('click', e => {
     el.classList.add('busy');
     saveRows([{ key: '_units', video: JSON.stringify(all) }]).then(ok => { el.classList.remove('busy'); if (ok) { closeSheet(); toast(`تمت إضافة «${title}»`); } });
   }
+  else if (act === 'lgrp') {
+    const open = !OPEN_GRP[el.dataset.key]; OPEN_GRP[el.dataset.key] = open;
+    const grp = el.closest('.lgrp'), box = grp && grp.querySelector('.subs');
+    if (!grp || !box) return render(false);
+    grp.classList.toggle('open', open); el.setAttribute('aria-expanded', String(open)); box.hidden = !open;
+  }
+  else if (act === 'unit-preview') { UNIT_PREVIEW = !UNIT_PREVIEW; render(false); }
   else if (act === 'lesson-rename' || act === 'lesson-name-reset') {
     const [id, n] = String(el.dataset.key).split('.'), unit = UNIT_BY_ID[id], l = unit && unit.lessons.find(x => x.n === +n);
     if (!ADMIN || !db || !l) return;
