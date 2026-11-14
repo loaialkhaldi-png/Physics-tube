@@ -1504,7 +1504,7 @@ const GRADES = {
 };
 const GRADE_ORDER = ['g10', 'g11', 'g12'];
 const UNIT_BY_ID = {};
-GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; u.baseTitle = u.title; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); u.baseLessons.forEach((l, k) => { l.n = k; }); }));
+GRADE_ORDER.forEach(g => GRADES[g].units.forEach((u, i) => { u.id = u.id || `${g}-u${i}`; u.baseTitle = u.title; UNIT_BY_ID[u.id] = u; u.baseLessons = u.lessons.slice(); u.baseLessons.forEach((l, k) => { l.n = k; l.baseT = l.t; }); }));
 // The built-in units of each grade, kept aside so a unit the teacher deleted can be brought back.
 const BUILTIN = {}; GRADE_ORDER.forEach(g => { BUILTIN[g] = GRADES[g].units.slice(); });
 // Units the teacher deleted (built-in or added), per grade: they stay saved and can be restored.
@@ -1750,7 +1750,7 @@ function applyCustomUnits() {
   Object.keys(UNIT_BY_ID).forEach(id => { if (UNIT_BY_ID[id].custom) delete UNIT_BY_ID[id]; });
   const all = {}; GRADE_ORDER.forEach(g => { all[g] = BUILTIN[g].slice(); });
   parseUnits((REMOTE._units || {}).video).forEach(c => {
-    const lessons = (Array.isArray(c.lessons) ? c.lessons : []).map(t => String(t == null ? '' : t).trim()).filter(Boolean).map((t, k) => ({ t, video: '', min: '', n: k }));
+    const lessons = (Array.isArray(c.lessons) ? c.lessons : []).map(t => String(t == null ? '' : t).trim()).filter(Boolean).map((t, k) => ({ t, baseT: t, video: '', min: '', n: k }));
     const u = { id: c.id, custom: true, term: c.term === 2 ? 2 : 1, title: String(c.title).trim(), glyph: GLYPHS[c.glyph] ? c.glyph : 'box', theme: c.theme >= 0 && c.theme < THEMES.length ? +c.theme : 0, pdf: '', lessons };
     u.baseTitle = u.title; u.baseLessons = lessons.slice();
     all[c.g].push(u); UNIT_BY_ID[u.id] = u;
@@ -1761,18 +1761,23 @@ function applyCustomUnits() {
     OFF_UNITS[g] = all[g].filter(u => unitOff(u.id));
   }
 }
+// New names the teacher gave to the unit's original lessons: row "<unit id>.names" = {"<lesson number>": "name"}.
+function lessonNames(unit) {
+  try { const o = JSON.parse(String((REMOTE[`${unit.id}.names`] || {}).video || '{}')); return o && typeof o === 'object' && !Array.isArray(o) ? o : {}; } catch (e) { return {}; }
+}
 function applyRemote() {
   applyCustomUnits();
   for (const g of GRADE_ORDER) for (const unit of GRADES[g].units.concat(OFF_UNITS[g])) {
     const row = REMOTE[`${unit.id}.extra`], base = unit.baseLessons.length;
     let hid = []; try { const h = JSON.parse(String((REMOTE[`${unit.id}.hidden`] || {}).video || '[]')); if (Array.isArray(h)) hid = h.map(Number); } catch (e) { hid = []; }
+    const names = lessonNames(unit); unit.baseLessons.forEach(l => { l.t = String(names[l.n] || '').trim() || l.baseT; });
     const all = unit.baseLessons.filter(l => !hid.includes(l.n)).concat(parseExtra(row && row.video).map((t, k) => ({ t, added: true, extra: true, video: '', min: '', n: base + k })));
     unit.lessons = orderLessons(all, REMOTE[`${unit.id}.order`]);
   }
   for (const [key, row] of Object.entries(REMOTE)) {
     const [id, i] = key.split('.');
     const unit = UNIT_BY_ID[id]; if (!unit) continue;
-    if (i === 'extra' || i === 'order' || i === 'hidden' || i === 'title' || i === 'off') continue;
+    if (i === 'extra' || i === 'order' || i === 'hidden' || i === 'title' || i === 'off' || i === 'names') continue;
     if (i === undefined) { unit.files = parseFiles(row.pdf); unit.pdf = (unit.files[0] || {}).url || ''; continue; }
     const l = unit.lessons.find(x => x.n === +i); if (!l) continue;
     l.videos = parseVideos(row.video, row.minutes); l.pdf = row.pdf || '';
@@ -1993,6 +1998,12 @@ function lessonEditor(key, l) {
   const vs = vids(l);
   return `<section class="editor" aria-label="تعديل الدرس">
     <div class="ed-h"><b>تعديل الدرس</b><span class="tag">وضع المعلم</span></div>
+    <div class="field"><label for="ed-name">اسم الدرس</label><input id="ed-name" maxlength="80" value="${esc(l.t)}"></div>
+    ${l.baseT && l.t !== l.baseT ? `<p class="hint" style="margin:0">الاسم الأصلي: «${esc(l.baseT)}»</p>` : ''}
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn primary" data-act="lesson-rename" data-key="${key}">${icon('check', 'style="width:16px;height:16px"')}حفظ اسم الدرس</button>
+      ${l.baseT && l.t !== l.baseT ? `<button class="btn" data-act="lesson-name-reset" data-key="${key}">إرجاع الاسم الأصلي</button>` : ''}
+    </div>
     ${vs.length ? `<div class="label" style="padding:0">فيديوهات الدرس (${ar(vs.length)})</div>
     <p class="hint">اسحب أي فيديو من علامة ☰ لتغيير ترتيبه، أو غيّر رقم «الترتيب». واكتب عنواناً لكل فيديو ليسهل التمييز بينها.</p>
     <div class="ed-list sortable" data-key="${key}">${vs.map((v, j) => { const src = videoSource(v.url), yt = ytId(v.url); return `<div class="ed-vid">
@@ -3041,7 +3052,7 @@ function vUnit(u) {
       <div class="prog"><span class="track"><i style="width:${s.pct}%"></i></span><span>${ar(s.done)} من ${ar(s.total)}</span></div>
     </section>
     <h2 class="sec">الدروس <small>${lessonWord(unit.lessons.length)}</small></h2>
-    ${ADMIN && unit.lessons.length > 1 ? '<p class="hint" style="margin:0 0 8px">اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اسحب الدرس جانبياً إلى أن يظهر الشريط الأحمر ثم أفلته. بعد الحذف يظهر زر «تراجع».</p>' : ''}
+    ${ADMIN ? `<p class="hint" style="margin:0 0 8px">${unit.lessons.length > 1 ? 'اضغط على الدرس مطولاً ثم اسحبه لأعلى أو لأسفل لترتيب الدروس (أو امسك رمز الخطوط الثلاثة). وللحذف: اسحب الدرس جانبياً إلى أن يظهر الشريط الأحمر ثم أفلته. بعد الحذف يظهر زر «تراجع». ' : ''}ولتغيير اسم أي درس: افتحه ثم اكتب الاسم الجديد في مربع «تعديل الدرس».</p>` : ''}
     <div class="list${ADMIN ? ' sortable' : ''}"${ADMIN ? ` data-key="${unit.id}" data-lessons="1"` : ''}>${unit.lessons.map((l, i) => {
       const done = S.watched[lid(S.grade, u, i)], vs = vids(l), has = vs.length, mins = totalMin(l);
       return `<button class="row" data-go="lesson:${u}:${i}">
@@ -3186,8 +3197,8 @@ const ADMIN_DATA = { at: 0, loading: false, stats: null, students: [], q: '', er
 const lessonTitle = key => {
   const [id, i] = String(key).split('.'), u = UNIT_BY_ID[id], l = u && u.lessons.find(x => x.n === +i);
   if (!l) return { t: key, sub: '' };
-  const g = GRADE_ORDER.find(k => GRADES[k].units.includes(u));
-  return { t: l.t, sub: `${GRADES[g].short} · ${u.title}` };
+  const g = GRADE_ORDER.find(k => GRADES[k].units.includes(u) || (OFF_UNITS[k] || []).includes(u));
+  return { t: l.t, sub: `${g ? GRADES[g].short + ' · ' : ''}${u.title}` };
 };
 const kwDate = iso => { try { return new Date(iso).toLocaleDateString('ar-KW-u-nu-latn', { day: 'numeric', month: 'short' }); } catch (e) { return ''; } };
 const ago = iso => {
@@ -5049,6 +5060,19 @@ document.addEventListener('click', e => {
     all.push({ id: 'c' + Date.now().toString(36), g: S.grade, term: S.term, title, glyph: 'box', theme: all.length % THEMES.length, lessons });
     el.classList.add('busy');
     saveRows([{ key: '_units', video: JSON.stringify(all) }]).then(ok => { el.classList.remove('busy'); if (ok) { closeSheet(); toast(`تمت إضافة «${title}»`); } });
+  }
+  else if (act === 'lesson-rename' || act === 'lesson-name-reset') {
+    const [id, n] = String(el.dataset.key).split('.'), unit = UNIT_BY_ID[id], l = unit && unit.lessons.find(x => x.n === +n);
+    if (!ADMIN || !db || !l) return;
+    const inp = document.getElementById('ed-name');
+    const v = act === 'lesson-name-reset' ? l.baseT : ((inp && inp.value) || '').trim();
+    if (!v) { if (inp) inp.value = l.t; return toast('اكتب اسم الدرس أولاً'); }
+    if (v === l.t) return toast('هذا هو اسم الدرس الحالي');
+    let row;
+    if (l.extra) { const titles = addedTitles(unit); titles[l.n - unit.baseLessons.length] = v; row = titlesRow(unit, titles); }
+    else { const names = lessonNames(unit); if (v === l.baseT) delete names[l.n]; else names[l.n] = v; row = { key: `${unit.id}.names`, video: Object.keys(names).length ? JSON.stringify(names) : '' }; }
+    el.classList.add('busy');
+    saveRows([row]).then(ok => { el.classList.remove('busy'); if (ok) toast(`تم حفظ اسم الدرس: «${v}»`); });
   }
   else if (act === 'unit-rename' || act === 'unit-title-reset') {
     const unit = UNIT_BY_ID[el.dataset.key];
