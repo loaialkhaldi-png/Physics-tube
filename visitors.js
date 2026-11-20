@@ -54,6 +54,19 @@ function visTop(D, k, title, sub, empty) {
   const rows = (D.top || []).filter(x => x.k === k);
   return tdPanel(title, sub, rows.length ? `<div class="td-list">${rows.map((x, i) => { const l = visLabel(k, x.ref); return `<div class="td-row"><span class="td-who"><span class="av num">${i + 1}</span><span class="t"><b>${esc(l.t)}</b><small>${esc(l.sub)}</small></span></span><span class="td-n"><b>${x.n}</b><small>${x.u} زائر</small></span></div>`; }).join('')}</div>` : `<p class="td-empty">${empty}</p>`);
 }
+/* Where visitors come from: links marked ?src=… (SOURCES in index.html) and the «شارك الدرس مع صديقك» button (shared:<lesson>).
+   Both arrive as "view" rows, so admin_visitors already returns them in D.top (k = 'src' / 'shared'); no new SQL is needed. */
+function visSources(D) {
+  const rows = (D.top || []).filter(x => x.k === 'src'), shared = (D.top || []).filter(x => x.k === 'shared');
+  const name = ref => { const k = String(ref).split(':')[1] || ''; return (typeof SOURCES !== 'undefined' && SOURCES[k]) || k; };
+  const max = Math.max(1, ...rows.map(x => x.u));
+  const list = rows.length
+    ? `<div class="td-bars">${rows.map(x => `<div><span class="t"><b>${esc(name(x.ref))}</b><small>فتحوا الرابط ${x.n} مرة</small></span><span class="trk"><i style="width:${Math.max(3, Math.round(x.u / max * 100))}%"></i></span><b class="v">${x.u}</b></div>`).join('')}</div>`
+    : '<p class="td-empty">ستظهر هنا القنوات بعد أن تضع روابط الدروس الجديدة في وصف الفيديوهات: افتح أي درس، ثم اضغط «يوتيوب» تحت «نسخ رابط هذا الدرس».</p>';
+  const sh = shared.reduce((n, x) => n + x.n, 0);
+  const shLine = sh ? `<p class="td-note">🔗 ضغط الطلاب «شارك الدرس مع صديقك» <b>${sh}</b> مرة · أكثر درس مشاركة: <b>${esc(visLabel('lesson', shared[0].ref).t)}</b></p>` : '';
+  return tdPanel('📣 من أين جاء الزوار؟', 'عدد الأجهزة في آخر 30 يوماً حسب الرابط الذي فتحوه', list + shLine);
+}
 function vVisitors() {
   const D = VIS.data;
   const head = `<header class="td-hero">
@@ -86,12 +99,12 @@ function vVisitors() {
   const simP = visTop(D, 'sim', '🧪 أكثر المحاكاة استخداماً', 'آخر 30 يوماً', 'لا توجد بيانات بعد.');
   const heatP = tdPanel('🕒 متى يدخلون؟', 'آخر 30 يوماً بتوقيت الكويت', tdHeat(D.heat));
   const gr = D.grades || {}, gtot = Math.max(1, (gr.g10 || 0) + (gr.g11 || 0) + (gr.g12 || 0));
-  const gradeP = tdPanel('🏫 الزوار حسب الصف', 'آخر 7 أيام (حسب الصف المختار في التطبيق)',
+  const gradeP = tdPanel('🏫 الزوار حسب الصف', 'آخر 7 أيام (من اختار صفاً أو فتح رابط درس)',
     `<div class="td-bars">${[['g10', 'العاشر'], ['g11', 'الحادي عشر'], ['g12', 'الثاني عشر']].map(([g, t]) => `<div><span class="t"><b>${t}</b></span><span class="trk"><i style="width:${Math.round((gr[g] || 0) / gtot * 100)}%"></i></span><b class="v">${gr[g] || 0}</b></div>`).join('')}</div>`);
 
   const note = D.u30 ? '' : '<p class="td-alert info">📌 بدأ العدّ الآن. ستظهر الأرقام بعد أن يفتح الزوار التطبيق بعد هذا التحديث (قد يحتاجون لإغلاق التطبيق وفتحه مرة واحدة ليتحدّث).</p>';
   return `<div class="view push td">${navBar()}${head}${note}${visKpis(D)}
-    <div class="td-grid">${daily}${featP}${tabP}${lessP}${unitP}${pdfP}${gameP}${simP}${gradeP}${heatP}</div>
+    <div class="td-grid">${daily}${visSources(D)}${featP}${tabP}${lessP}${unitP}${pdfP}${gameP}${simP}${gradeP}${heatP}</div>
     <p class="td-note">ℹ️ «الزائر» هو جهاز واحد (جوال أو لابتوب). إن فتح الطالب التطبيق من جهازين يُحسب زائرين. حسابك أنت لا يُحسب.</p>
   </div>`;
 }

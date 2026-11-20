@@ -80,7 +80,7 @@ function lbAct(act, el) {
   if (act === 'lb-refresh') { lbLoad(true); toast('جارٍ التحديث…'); }
   else if (act === 'lb-g') { LB.g = el.dataset.g; LB.data = null; render(false); lbLoad(true); }
   else if (act === 'lb-share' && LB.data && LB.data.me) { const m = LB.data.me;
-    shareCard({ big: m.r <= 3 ? ['🥇', '🥈', '🥉'][m.r - 1] : `#${m.r}`, title: 'ترتيبي في لوحة المتصدرين', sub: `${(GRADES[LB.data.grade] || G()).name} · ${lbPts(m.pts)} هذا الأسبوع`, text: `أنا في المركز ${m.r} هذا الأسبوع في لوحة متصدري الفيزياء على Physics Tube 🏆 هل تتغلب عليّ؟ https://physics-tube.com/` }); }
+    shareCard({ big: m.r <= 3 ? ['🥇', '🥈', '🥉'][m.r - 1] : `#${m.r}`, title: 'ترتيبي في لوحة المتصدرين', sub: `${(GRADES[LB.data.grade] || G()).name} · ${lbPts(m.pts)} هذا الأسبوع`, text: `أنا في المركز ${m.r} هذا الأسبوع في لوحة متصدري الفيزياء على Physics Tube 🏆 هل تتغلب عليّ؟ https://physics-tube.com/?src=share` }); }
 }
 function lbAfterRender(top) { if (top && top.type === 'leaders' && lbCan()) lbLoad(); }
 

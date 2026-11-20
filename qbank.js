@@ -255,8 +255,8 @@ function qbAct(act, el) {
   else if (act === 'qb-explain') { s.exp = s.exp || {}; s.exp[s.i] = !s.exp[s.i]; qbPaint(); }
   else if (act === 'qb-next') qbNext();
   else if (act === 'qb-again') qbStart(s.mode, s.scope);
-  else if (act === 'qb-share') shareCard(s.mode === 'sprint' ? { big: `⚡${s.score || 0}`, title: 'تحدي الدقيقة في بنك الأسئلة', sub: `${G().name} · ${s.score || 0} إجابة صحيحة في 60 ثانية`, text: `أجبت ${s.score || 0} أسئلة صحيحة في دقيقة واحدة في بنك أسئلة الفيزياء على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/` }
-    : { big: `${s.pct}%`, title: s.title, sub: `${s.ok} من ${s.n} · بنك أسئلة ${G().name}`, text: `حصلت على ${s.pct}% في «${s.title}» من بنك أسئلة الفيزياء على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/` });
+  else if (act === 'qb-share') shareCard(s.mode === 'sprint' ? { big: `⚡${s.score || 0}`, title: 'تحدي الدقيقة في بنك الأسئلة', sub: `${G().name} · ${s.score || 0} إجابة صحيحة في 60 ثانية`, text: `أجبت ${s.score || 0} أسئلة صحيحة في دقيقة واحدة في بنك أسئلة الفيزياء على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/?src=share` }
+    : { big: `${s.pct}%`, title: s.title, sub: `${s.ok} من ${s.n} · بنك أسئلة ${G().name}`, text: `حصلت على ${s.pct}% في «${s.title}» من بنك أسئلة الفيزياء على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/?src=share` });
 }
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'qb-in') { e.preventDefault(); const b = document.querySelector('[data-act="qb-num"]'); if (b) b.click(); } });
 

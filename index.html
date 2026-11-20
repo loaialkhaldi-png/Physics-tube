@@ -152,6 +152,10 @@ p { margin: 0; }
 .unit .eyebrow { position: relative; font-size: 12px; font-weight: 600; color: rgba(255, 255, 255, .7); }
 .unit-name { padding-block: 4px 10px; font-size: 15px; color: var(--fg); }
 .units + .unit-name { padding-top: 22px; }
+.start .sec { padding-top: 4px; }
+.start .list + .unit-name { padding-top: 18px; }
+.start .start-all { width: 100%; margin-top: 14px; }
+.start + .wheel { margin-top: 26px; }
 .unit h3 { position: relative; font-size: 18px; font-weight: 700; line-height: 1.3; }
 .unit .chip { position: absolute; top: 12px; left: 12px; font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 9px; background: rgba(255, 255, 255, .92); color: var(--on-light); font-variant-numeric: tabular-nums; }
 .unit .bar { position: absolute; inset: auto 0 0; height: 3px; background: rgba(255, 255, 255, .12); }
@@ -241,6 +245,10 @@ p { margin: 0; }
 .btn.wide { grid-column: 1 / -1; }
 .btn[aria-disabled="true"] { opacity: .45; pointer-events: none; }
 .next { margin-top: 26px; }
+.btn.share-lesson { width: 100%; margin-top: 10px; color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, var(--line)); background: color-mix(in srgb, var(--accent) 10%, var(--surface)); }
+.copy-links { margin-top: 12px; padding: 14px 14px 10px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); }
+.copy-links b { display: block; font-size: 15px; } .copy-links small { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+.copy-links .chips { padding-top: 10px; }
 .label { color: var(--muted); font-size: 13px; font-weight: 600; letter-spacing: .02em; padding-block: 0 10px; }
 
 /* Lab */
@@ -890,27 +898,18 @@ html[data-nav="tab"]::view-transition-new(root) { animation: vt-fade-in .3s cubi
   padding: calc(env(safe-area-inset-top, 0px) + 14px) 0 calc(env(safe-area-inset-bottom, 0px) + 20px);
   background: radial-gradient(90% 55% at 50% 0%, rgba(47,140,255,.28), transparent 70%), radial-gradient(80% 45% at 0% 100%, rgba(168,102,255,.24), transparent 70%), var(--bg); }
 .onb.out { opacity: 0; transform: scale(1.05); transition: opacity .35s, transform .35s; pointer-events: none; }
-.onb-skip { align-self: flex-end; margin: 0 20px; padding: 8px 14px; border-radius: 999px; color: var(--muted); font-weight: 600; background: rgba(255,255,255,.06); }
-.onb-view { flex: 1; overflow: hidden; width: 100%; max-width: 520px; margin: 0 auto; touch-action: pan-y; }
-.onb-track { display: flex; height: 100%; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
-.onb-page { flex: 0 0 100%; padding: 20px 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; text-align: center; overflow-y: auto; }
+.onb-page { flex: 1; width: 100%; max-width: 520px; margin: 0 auto; padding: 20px 28px; display: flex; flex-direction: column; justify-content: center; gap: 14px; text-align: center; overflow-y: auto; }
 .onb-page > * { opacity: 0; transform: translateY(16px); transition: opacity .55s, transform .55s cubic-bezier(.2, .8, .2, 1); }
 .onb-page.on > * { opacity: 1; transform: none; }
-.onb-page.on > :nth-child(2) { transition-delay: .08s; } .onb-page.on > :nth-child(3) { transition-delay: .16s; } .onb-page.on > :nth-child(4) { transition-delay: .24s; }
-.onb-logo { width: 128px; height: 128px; border-radius: 30px; margin: 0 auto 10px; box-shadow: 0 24px 70px rgba(47,140,255,.35); }
-.onb h1 { font-size: 32px; line-height: 1.3; }
-.onb h1 .mark { display: inline-block; margin-top: 8px; font-size: 24px; direction: ltr; }
+.onb-page.on > :nth-child(2) { transition-delay: .08s; } .onb-page.on > :nth-child(3) { transition-delay: .16s; } .onb-page.on > :nth-child(4) { transition-delay: .24s; } .onb-page.on > :nth-child(5) { transition-delay: .32s; }
+.onb-logo { width: 104px; height: 104px; border-radius: 26px; margin: 0 auto 6px; box-shadow: 0 24px 70px rgba(47,140,255,.35); }
+.onb h1 { font-size: 30px; line-height: 1.3; }
+.onb h1 .mark { display: inline-block; margin-top: 8px; font-size: 22px; direction: ltr; }
 .onb p { color: var(--muted); font-size: 17px; }
-.onb-feats { display: grid; gap: 10px; text-align: right; margin-top: 6px; }
-.onb-feat { display: flex; gap: 14px; align-items: center; padding: 14px; border-radius: 18px; background: var(--surface); border: 1px solid var(--line); }
-.onb-feat .fi { width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, var(--fc) 18%, transparent); color: var(--fc); flex: none; }
-.onb-feat b { display: block; font-size: 16px; } .onb-feat small { color: var(--muted); font-size: 13px; }
+.onb p b { color: var(--fg); }
 .onb .opts { text-align: right; margin-top: 4px; }
-.onb-foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 0 24px; width: 100%; max-width: 520px; margin: 0 auto; min-height: 56px; }
-.onb-dots { display: flex; gap: 6px; }
-.onb-dots i { width: 8px; height: 8px; border-radius: 4px; background: rgba(255,255,255,.25); transition: width .3s, background .3s; }
-.onb-dots i.on { width: 24px; background: var(--accent); }
-.onb-foot .btn { min-width: 140px; margin: 0; }
+.onb .onb-note { font-size: 13px; }
+.onb .opt .end { color: var(--muted); display: flex; flex: none; }
 .onb-foot .btn[hidden] { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1767,10 +1766,22 @@ function visitId() {
   }
   return v;
 }
+// The grade is sent only once the visitor has chosen one (or arrived on a lesson link). Before that the app merely
+// shows the 10th grade by default, which used to count every visitor who left the welcome screen as a 10th grader.
+function visitGrade() {
+  if (store.get('grade', null) != null) return S.grade;
+  try { return linkGrade(lessonHashKey()); } catch (e) { return null; }
+}
+// The grade of a lesson link, from its unit id (works before the teacher's added lessons have downloaded).
+function linkGrade(key) {
+  const id = String(key || '').split('.')[0]; if (!id) return null;
+  for (const g of Object.keys(GRADES)) if (GRADES[g].units.some(u => u.id === id)) return g;
+  const m = id.match(/^(g1[012])-/); return m ? m[1] : null;
+}
 function visit(kind, ref) {
   try {
     if (!db || ADMIN || store.get('noVisit', false)) return;
-    db.rpc('track_visit', { p_vid: visitId(), p_kind: kind, p_ref: ref || null, p_grade: S.grade, p_member: !!PROFILE }).then(() => {}, () => {});
+    db.rpc('track_visit', { p_vid: visitId(), p_kind: kind, p_ref: ref || null, p_grade: visitGrade(), p_member: !!PROFILE }).then(() => {}, () => {});
   } catch (e) {}
 }
 function visitOpen() {   // one "open" per 30 minutes per device
@@ -2472,7 +2483,7 @@ function rankUp(i) {
 const firstName = () => PROFILE && PROFILE.full_name ? PROFILE.full_name.trim().split(/\s+/)[0] : '';
 function shareRank() {
   const xp = store.get('xp', 0), r = RANKS[rankOf(xp)];
-  shareCard({ big: r.e, title: `رتبتي العلمية: ${r.n}`, sub: `${xp} نقطة · ${G().name}`, text: `وصلت إلى رتبة ${r.n} في Physics Tube! هل تسبقني؟ https://physics-tube.com/` });
+  shareCard({ big: r.e, title: `رتبتي العلمية: ${r.n}`, sub: `${xp} نقطة · ${G().name}`, text: `وصلت إلى رتبة ${r.n} في Physics Tube! هل تسبقني؟ https://physics-tube.com/?src=share` });
 }
 
 /* ---------- تحدّي اليوم: one question per day per grade ---------- */
@@ -3074,6 +3085,7 @@ function vHome() {
       </span>
     </header>
     <div class="grade-row"><h1>${esc(g.name)}</h1><button class="link" data-act="grade">غيّر مرحلتك</button></div>
+    ${!S.last && !totalWatched() && !ADMIN ? startBlock() : ''}
     ${wheelHtml(g, lessons)}
     ${ADMIN ? `<button class="admin-bar" data-go="admin">${icon('chart')}<span>وضع المعلم: لوحة الإحصائيات والطلاب</span>${icon('chev')}</button>` : ''}
     ${noticeCard()}
@@ -3161,6 +3173,17 @@ function lessonList(unit, u) {
     </div>`;
   }).join('')}</div>`;
 }
+/* Home screen for a new visitor (no lesson opened yet on this device): this term's lessons come first, unit by unit,
+   exactly as on the unit page (a main lesson's sub-lessons open under it), so the lesson they came for is a tap away. */
+function startBlock() {
+  const tu = termUnits(S.grade, S.term).filter(x => x.u.lessons.length);
+  if (!tu.length) return '';
+  return `<section class="start" aria-label="ابدأ من هنا">
+    <h2 class="sec">ابدأ من هنا <small>اختر درسك · ${esc(TERMS[S.term])}</small></h2>
+    ${tu.map(({ u, i }) => `<div class="label unit-name">${esc(u.title)}</div>${lessonList(u, i)}`).join('')}
+    <button class="btn wide start-all" data-act="curr">كل الوحدات والمذكرات والفصل الآخر</button>
+  </section>`;
+}
 function vUnit(u) {
   const unit = G().units[u], s = unitStats(S.grade, u);
   const sims = (unit.sims || []).filter(k => SIMS[k]);
@@ -3216,7 +3239,9 @@ function vLesson(u, i) {
       ${(() => { const uf = unitFiles(unit), pick = l.pdf || ((uf.find(x => x.kind === 'summary') || uf[0] || {}).url); return pick ? `<a class="btn" href="${esc(pick)}" target="_blank" rel="noopener" data-gate="${key}">${icon('notes')}المذكرة</a>` : `<span class="btn" aria-disabled="true">${icon('notes')}المذكرة قريباً</span>`; })()}
       ${simK ? `<button class="btn" data-go="sim:${simK}">${icon('lab')}جرّبها</button>` : (src ? `<a class="btn" href="${esc(src.open)}" target="_blank" rel="noopener">${icon('ext')}${esc(src.name)}</a>` : `<span class="btn" aria-disabled="true">${icon('ext')}فتح الفيديو</span>`)}
     </div>
-    ${ADMIN ? `<button class="btn wide" style="margin-top:12px" data-act="copy-lesson-link" data-key="${key}">نسخ رابط الدرس لوصف الفيديو</button>` : ''}
+    <button class="btn wide share-lesson" data-act="share-lesson" data-key="${key}">${icon('share')}شارك الدرس مع صديقك</button>
+    ${ADMIN ? `<div class="copy-links"><b>نسخ رابط هذا الدرس لوضعه في:</b><small>كل رابط يحمل علامة مكانه، فتعرف من شاشة «الزوار» أي قناة تجلب الطلاب.</small>
+      <div class="chips">${Object.keys(SOURCES).filter(k => k !== 'share').map(k => `<button class="chip-f" data-act="copy-lesson-link" data-key="${key}" data-src="${k}">${SOURCES[k]}</button>`).join('')}</div></div>` : ''}
     ${ADMIN ? lessonEditor(key, l) : ''}
     ${nx ? `<div class="next"><div class="label">الدرس التالي</div><div class="list"><button class="row" data-go="lesson:${nx.u}:${nx.i}" data-replace="1">
       <span class="n">${lessonNo(G().units[nx.u], nx.i) ? `<bdi dir="ltr">${lessonNo(G().units[nx.u], nx.i)}</bdi>` : icon('checkc', 'style="width:18px;height:18px"')}</span>
@@ -4909,45 +4934,25 @@ function transition(dir, fn) {
   try { const t = document.startViewTransition(fn); [t.ready, t.finished, t.updateCallbackDone].forEach(pr => pr.catch(() => {})); } catch (e) { fn(); }
 }
 
-/* ---------- First-run welcome ---------- */
+/* ---------- First-run welcome: one screen ----------
+   The visitor's first tap is their grade, and it takes them straight to that grade's lessons ("ابدأ من هنا" on the home screen). */
 function onboarding() {
-  const feats = [['play', '#FF375F', 'شرح فيديو لكل درس', 'دروس المنهج مرتبة حسب الوحدات'], ['lab', '#32D17A', 'مختبر تفاعلي', 'جرّب القوانين بنفسك وشاهد النتيجة مباشرة'], ['exam', '#A866FF', 'جهّزني للاختبار القصير', 'نماذج الاختبار القصير مع الحلول ومراجعة أخطائك'], ['chart', '#2FB5FF', 'حلقات الإنجاز', 'تابع تقدّمك وأكمل أهدافك كل أسبوع']];
   const el = document.createElement('div');
   el.className = 'onb'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'مرحباً بك في Physics Tube');
-  el.innerHTML = `<button class="onb-skip" data-onb="skip">تخطَّ</button>
-    <div class="onb-view"><div class="onb-track">
-      <section class="onb-page"><img class="onb-logo" src="icons/icon-512.png?v=4" alt=""><h1>أهلاً بك في<br><span class="mark">PHYSICS <b>TUBE</b></span></h1><p>الفيزياء للمرحلة الثانوية بطريقة واضحة وممتعة، في جيبك.</p></section>
-      <section class="onb-page"><h1>كل ما تحتاجه<br>في مكان واحد</h1><div class="onb-feats">${feats.map(([ic, c, t, sm]) => `<div class="onb-feat" style="--fc:${c}"><span class="fi">${icon(ic)}</span><span><b>${t}</b><small>${sm}</small></span></div>`).join('')}</div></section>
-      <section class="onb-page"><h1>اختر صفك</h1><p>نعرض لك دروس صفك ومذكراته واختباراته، وتستطيع تغييره لاحقاً.</p>
-        <div class="opts">${GRADE_ORDER.map(k => { const g = GRADES[k], n = g.units.reduce((t, u) => t + u.lessons.length, 0); return `<button class="opt" data-onb-grade="${k}"><span class="thumb" style="${tileStyle(g.theme)}">${glyph(BUILTIN[k][1].glyph, g.theme)}</span><span class="t"><b>${g.name}</b><small>${ar(n)} درساً</small></span></button>`; }).join('')}</div></section>
-    </div></div>
-    <div class="onb-foot"><div class="onb-dots" aria-hidden="true"><i></i><i></i><i></i></div><button class="btn primary" data-onb="next">التالي</button></div>`;
+  el.innerHTML = `<section class="onb-page"><img class="onb-logo" src="icons/icon-512.png?v=4" alt=""><h1>أهلاً بك في<br><span class="mark">PHYSICS <b>TUBE</b></span></h1>
+      <p><b>اختر صفك</b> لتبدأ بدروسه مباشرة.</p>
+      <div class="opts">${GRADE_ORDER.map(k => { const g = GRADES[k], n = g.units.reduce((t, u) => t + u.lessons.length, 0); return `<button class="opt" data-onb-grade="${k}"><span class="thumb" style="${tileStyle(g.theme)}">${glyph(BUILTIN[k][1].glyph, g.theme)}</span><span class="t"><b>${g.name}</b><small>${ar(n)} درساً</small></span><span class="end">${icon('chev')}</span></button>`; }).join('')}</div>
+      <p class="onb-note">تستطيع تغيير الصف لاحقاً من الرئيسية.</p></section>`;
   document.body.appendChild(el);
-  const pages = el.querySelectorAll('.onb-page'), dots = el.querySelectorAll('.onb-dots i'), next = el.querySelector('[data-onb="next"]');
-  let step = 0;
-  const show = n => {
-    step = Math.max(0, Math.min(pages.length - 1, n));
-    el.querySelector('.onb-track').style.transform = `translateX(${step * 100}%)`;
-    pages.forEach((p, i) => { p.classList.toggle('on', i === step); p.inert = i !== step; });
-    dots.forEach((d, i) => d.classList.toggle('on', i === step));
-    next.hidden = step === pages.length - 1;
-  };
-  const finish = grade => {
-    if (grade) { S.grade = grade; store.set('grade', grade); store.set('gradePicked', true); }
-    store.set('onboarded', true); S.tab = 'home'; S.stack = []; render();
-    el.classList.add('out'); setTimeout(() => el.remove(), 380);
-  };
   el.addEventListener('click', e => {
-    const b = e.target.closest('[data-onb],[data-onb-grade]'); if (!b) return;
-    if (b.dataset.onbGrade) finish(b.dataset.onbGrade);
-    else if (b.dataset.onb === 'skip') finish(null);
-    else show(step + 1);
+    const b = e.target.closest('[data-onb-grade]'); if (!b) return;
+    const grade = b.dataset.onbGrade;
+    S.grade = grade; store.set('grade', grade); store.set('gradePicked', true); store.set('onboarded', true);
+    visit('view', 'pick:' + grade);
+    S.tab = 'home'; S.stack = []; render(); window.scrollTo(0, 0);
+    el.classList.add('out'); setTimeout(() => el.remove(), 380);
   });
-  // In Arabic the next page sits to the left, so a rightward swipe moves forward.
-  let x0 = null;
-  el.addEventListener('touchstart', e => { x0 = e.touches[0].clientX; }, { passive: true });
-  el.addEventListener('touchend', e => { if (x0 == null) return; const dx = e.changedTouches[0].clientX - x0; x0 = null; if (Math.abs(dx) > 50) show(step + (dx > 0 ? 1 : -1)); });
-  requestAnimationFrame(() => show(0));
+  requestAnimationFrame(() => el.querySelector('.onb-page').classList.add('on'));
 }
 
 function go(spec, replace) {
@@ -5017,11 +5022,23 @@ function shareSheet() {
     </div>`);
 }
 async function shareSend() {
-  try { await navigator.share({ title: 'Physics Tube', text: 'تطبيق Physics Tube لشرح الفيزياء للمرحلة الثانوية: فيديوهات، مختبر تفاعلي، ومذكرات', url: APP_URL }); } catch (e) {}
+  try { await navigator.share({ title: 'Physics Tube', text: 'تطبيق Physics Tube لشرح الفيزياء للمرحلة الثانوية: فيديوهات، مختبر تفاعلي، ومذكرات', url: taggedUrl('share') }); } catch (e) {}
 }
 async function shareCopy() {
-  try { await navigator.clipboard.writeText(APP_URL); toast('تم نسخ رابط التطبيق'); }
+  try { await navigator.clipboard.writeText(taggedUrl('share')); toast('تم نسخ رابط التطبيق'); }
   catch (e) { const el = document.querySelector('.share-url'); if (el) { const r = document.createRange(); r.selectNodeContents(el); const sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); } toast('حدّد الرابط وانسخه'); }
+}
+/* «شارك الدرس مع صديقك»: sends the lesson's own link, marked ?src=share, so a friend lands straight on the lesson.
+   Each share is noted (shared:<lesson>) for the teacher's «الزوار» screen. */
+async function shareLesson(key) {
+  const t = findLesson(key), l = t && GRADES[t.g].units[t.u].lessons[t.i];
+  const url = taggedUrl('share', key), text = l ? `شرح درس «${l.t}» في تطبيق Physics Tube` : 'شرح درس الفيزياء في تطبيق Physics Tube';
+  if (navigator.share) {
+    try { await navigator.share({ title: l ? l.t : 'Physics Tube', text, url }); visit('view', 'shared:' + key); return; }
+    catch (e) { if (e && e.name === 'AbortError') return; }   // closed by the student; anything else falls back to copying
+  }
+  try { await navigator.clipboard.writeText(`${text}\n${url}`); visit('view', 'shared:' + key); toast('تم نسخ رابط الدرس، أرسله لصديقك'); }
+  catch (e) { prompt('انسخ رابط الدرس وأرسله لصديقك:', url); }
 }
 function gradeSheet() {
   sheet(`<h2>اختر مرحلتك</h2><p>نعرض لك دروس صفك ومذكراته فقط.</p>
@@ -5062,9 +5079,10 @@ document.addEventListener('click', e => {
   else if (act === 'close') closeSheet();
   else if (act === 'start') { closeSheet(); S.tab = 'home'; S.stack = []; go('unit:0'); }
   else if (act === 'copy-lesson-link') {
-    const url = lessonUrl(el.dataset.key);
-    Promise.resolve(navigator.clipboard && navigator.clipboard.writeText(url)).then(() => { if (!navigator.clipboard) throw 0; toast('تم نسخ رابط الدرس'); }).catch(() => prompt('انسخ رابط الدرس:', url));
+    const src = SOURCES[el.dataset.src] ? el.dataset.src : 'yt', url = taggedUrl(src, el.dataset.key);
+    Promise.resolve(navigator.clipboard && navigator.clipboard.writeText(url)).then(() => { if (!navigator.clipboard) throw 0; toast(`تم نسخ رابط الدرس لوضعه في ${SOURCES[src]}`); }).catch(() => prompt('انسخ رابط الدرس:', url));
   }
+  else if (act === 'share-lesson') shareLesson(el.dataset.key);
   else if (act === 'watched') {
     const k = el.dataset.key; S.watched[k] = !S.watched[k]; if (!S.watched[k]) delete S.watched[k];
     store.set('watched', S.watched); render(false);
@@ -5125,7 +5143,7 @@ document.addEventListener('click', e => {
   else if (act === 'share-rank') { closeSheet(); shareRank(); }
   else if (act === 'share-result') {
     const n = Q.md.qs.length, ok = Q.ans.filter(x => x && x.ok).length, pct = Math.round(ok / n * 100);
-    shareCard({ big: Q.m === -2 ? '⚡' : `${pct}%`, title: Q.m === -2 ? (ok ? 'حللت تحدّي اليوم!' : 'شاركت في تحدّي اليوم') : Q.md.t, sub: Q.m === -2 ? `${G().name} · 🔥 ${dayWord(Math.max(dailyStreak(), 1))}` : `${ok} من ${n} إجابات صحيحة · ${G().name}`, text: `حصلت على ${pct}% في «${Q.md.t}» على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/` });
+    shareCard({ big: Q.m === -2 ? '⚡' : `${pct}%`, title: Q.m === -2 ? (ok ? 'حللت تحدّي اليوم!' : 'شاركت في تحدّي اليوم') : Q.md.t, sub: Q.m === -2 ? `${G().name} · 🔥 ${dayWord(Math.max(dailyStreak(), 1))}` : `${ok} من ${n} إجابات صحيحة · ${G().name}`, text: `حصلت على ${pct}% في «${Q.md.t}» على Physics Tube. هل تتغلب عليّ؟ https://physics-tube.com/?src=share` });
   }
   else if (act === 'card-share') { if (CARD) navigator.share({ files: [CARD.file], text: CARD.text }).catch(() => {}); }
   else if (act === 'notice-edit') noticeSheet();
@@ -5304,13 +5322,23 @@ document.addEventListener('input', e => {
   ADMIN_DATA.q = e.target.value; const box = document.getElementById('st-list'); if (box) box.innerHTML = studentRows();
 });
 
+/* Where the visitor came from: the teacher's and students' links carry ?src=… (see SOURCES). It is noted once with the visit
+   (after the "open" below) and taken out of the address, so a reload or a saved bookmark doesn't count it again. */
+const ARRIVED_FROM = (() => {
+  try {
+    const p = new URLSearchParams(location.search); if (!p.has('src')) return '';
+    const s = String(p.get('src') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 16);
+    p.delete('src'); const q = p.toString();
+    history.replaceState(null, '', location.pathname + (q ? '?' + q : '') + location.hash);
+    return s;
+  } catch (e) { return ''; }
+})();
 const start = (location.hash || '').slice(1);
 if (['home', 'lab', 'notes', 'profile'].includes(start)) S.tab = start;
 // Someone signed in last time is shown their own screen straight from the device; the server confirms the sign-in a moment later.
 const earlyUser = db ? savedUser() : null, earlyMe = store.get('me', null), knownUser = !earlyUser || (!!earlyMe && earlyMe.id === earlyUser.id);
 if (earlyUser && knownUser) { USER = earlyUser; PROFILE = earlyMe.profile || null; ADMIN = earlyMe.admin ? USER : null; }
 render();
-visitOpen();
 /* Hide the splash once the session and the lessons are ready (at least 0.35 s so it never flashes, at most 5 s).
    When the lessons are already saved on the device it does not wait for the internet: the fresh copy arrives a moment later. */
 function hideSplash() {
@@ -5319,8 +5347,10 @@ function hideSplash() {
 }
 setTimeout(hideSplash, 5000);
 if (!db || navigator.onLine === false) hideSplash();
-/* Direct lesson links: physics-tube.com/#lesson/<unit id>.<lesson index>, used in video descriptions */
-const lessonUrl = key => `${location.origin}${location.pathname}#lesson/${key}`;
+/* Direct lesson links: physics-tube.com/?src=yt#lesson/<unit id>.<lesson number>, used in video descriptions.
+   ?src= says where the link was posted, so the teacher sees which channel brings visitors (screen «الزوار»). */
+const SOURCES = { yt: 'يوتيوب', tt: 'تيك توك', ig: 'انستغرام', wa: 'واتساب', share: 'مشاركة من طالب' };
+const taggedUrl = (src, key) => `${APP_URL}?src=${src}${key ? '#lesson/' + key : ''}`;
 const lessonHashKey = () => { const m = location.hash.match(/^#lesson\/([\w-]+\.\d+)$/); return m ? m[1] : ''; };
 function findLesson(key) {
   const [id, i] = key.split('.');
@@ -5334,13 +5364,16 @@ function findLesson(key) {
 function openLessonFromHash() {
   const t = findLesson(lessonHashKey()); if (!t) return;
   const open = () => {
-    closeSheet(); S.grade = t.g; S.tab = 'home'; S.stack = []; // the student's saved grade stays as it is
+    closeSheet(); S.grade = t.g; S.tab = 'home'; S.stack = []; // the student's saved grade stays as it is…
+    if (store.get('grade', null) == null) store.set('grade', t.g); // …and a first-time visitor keeps the lesson's grade as theirs
     go(`lesson:${t.u}:${t.i}`);
     history.replaceState(null, '', location.pathname + location.search);
   };
   if (needLogin(open)) open();
 }
 window.addEventListener('hashchange', openLessonFromHash);
+visitOpen();
+if (ARRIVED_FROM) visit('view', 'src:' + ARRIVED_FROM);
 if (!db) openLessonFromHash();
 if (db) {
   const accountsReady = db.from('profiles').select('id').limit(1).then(({ error }) => { if (!error && !ACCOUNTS) { ACCOUNTS = true; store.set('accounts', true); render(false); } }, () => {});
