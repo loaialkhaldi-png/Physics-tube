@@ -146,6 +146,7 @@ p { margin: 0; }
   transition: transform .25s cubic-bezier(.3, 1.6, .5, 1);
 }
 .w-cta-p .ico { width: 19px; height: 19px; fill: currentColor; stroke: none; transform: translateX(1.5px); }
+.w-cta-p.line .ico { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 2; transform: none; }
 .w-cta-p::before, .w-cta-p::after { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--wc); opacity: 0; pointer-events: none; }
 .wcard.front .w-cta::after { animation: wcta-sweep 3.6s ease-in-out infinite 1s; }
 .wcard.front .w-cta-p::before { animation: wcta-ping 2.2s cubic-bezier(.2, .6, .4, 1) infinite; }
@@ -2991,13 +2992,13 @@ const WHEEL = { pos: 0, auto: true };
 function wheelHtml(g, lessons) {
   const labs = new Set(g.units.flatMap(u => u.sims || [])).size;
   const cards = [
-    { k: 'curr', t: g.name, tab: 'الصف', p: 'كل دروس الفيزياء لصفك في مكان واحد', foot: `${ar(lessons)} درساً في الفصلين`, cta: 'اضغط هنا لمشاهدة الدروس',
+    { k: 'curr', t: g.name, tab: 'الصف', p: 'كل دروس الفيزياء لصفك في مكان واحد', foot: `${ar(lessons)} درساً في الفصلين`, cta: 'اضغط هنا لمشاهدة الدروس', ci: 'play',
       bg: `radial-gradient(110% 80% at 30% 100%, ${THEMES[g.theme].a} 0%, transparent 70%), linear-gradient(170deg, #12051F, ${THEMES[g.theme].b})`,
       art: `<svg class="art" viewBox="0 0 200 170" aria-hidden="true">${packArt(g.theme)}</svg>`, c: THEMES[g.theme].c2 },
-    { k: 'notes', t: 'المذكرات', tab: 'المذكرات', p: 'ملخص PDF لكل وحدة، جاهز للمراجعة قبل الاختبار', foot: 'لكل الصفوف',
+    { k: 'notes', t: 'المذكرات', tab: 'المذكرات', p: 'ملخص PDF لكل وحدة، جاهز للمراجعة قبل الاختبار', foot: 'لكل الصفوف', cta: 'اضغط هنا لفتح المذكرات', ci: 'notes',
       bg: `radial-gradient(110% 80% at 30% 100%, ${THEMES[5].a} 0%, transparent 70%), linear-gradient(170deg, #160A02, ${THEMES[5].b})`,
       art: `<svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('doc', 5)}</g></svg>`, c: THEMES[5].c2 },
-    { k: 'lab', t: 'المختبر', tab: 'المختبر', p: 'جرّب القوانين بنفسك وشاهد النتيجة لحظياً', foot: 'يعمل بدون إنترنت', badge: `${ar(labs)} تجارب`,
+    { k: 'lab', t: 'المختبر', tab: 'المختبر', p: 'جرّب القوانين بنفسك وشاهد النتيجة لحظياً', foot: 'يعمل بدون إنترنت', cta: 'اضغط هنا لدخول المختبر', ci: 'lab', badge: `${ar(labs)} تجارب`,
       bg: `radial-gradient(110% 80% at 30% 100%, ${THEMES[0].a} 0%, transparent 70%), linear-gradient(170deg, #021310, ${THEMES[0].b})`,
       art: `<svg class="art" viewBox="0 0 200 170" aria-hidden="true"><g transform="translate(40 10) scale(1.5)">${glyphInner('flask', 0)}</g></svg>`, c: THEMES[0].c2 }
   ];
@@ -3005,8 +3006,8 @@ function wheelHtml(g, lessons) {
     <div class="w-disc" aria-hidden="true"><i class="w-ring r1"></i><i class="w-ring r2"></i><i class="w-ticks"></i><i class="w-glow"></i></div>
     <div class="w-stage" dir="ltr">${cards.map((c, i) => `<div class="promo wcard${c.cta ? ' has-cta' : ''}" role="button" tabindex="0" data-w="${c.k}" data-i="${i}" style="--pbg:${c.bg};--wc:${c.c}" aria-label="${esc(c.t)}${c.cta ? '، ' + c.cta : ''}">
       <h2>${esc(c.t)}</h2><p>${c.p}</p>${c.badge ? `<span class="badge">${c.badge}</span>` : ''}${c.art}${c.cta
-        // The "watch the lessons" button: opens the grade's lessons from any position of the wheel (the lesson count sits under its label).
-        ? `<span class="w-cta" data-go="${c.k}"><span class="w-cta-t"><b>${c.cta}</b><small>${c.foot}</small></span><span class="w-cta-p">${icon('play')}</span></span>`
+        // Each card's button (watch the lessons / open the notes / enter the lab) opens its section from any position of the wheel; the card's footnote sits under its label.
+        ? `<span class="w-cta" ${c.k === 'curr' ? 'data-go' : 'data-tab'}="${c.k}"><span class="w-cta-t"><b>${c.cta}</b><small>${c.foot}</small></span><span class="w-cta-p${c.ci === 'play' ? '' : ' line'}">${icon(c.ci)}</span></span>`
         : `<span class="foot">${c.foot}</span>`}</div>`).join('')}</div>
     <div class="w-nav" role="tablist" aria-label="اختر القسم">${cards.map((c, i) => `<button class="w-dot" role="tab" data-wi="${i}" aria-label="${esc(c.tab)}"><i></i><span>${esc(c.tab)}</span></button>`).join('')}</div>
   </section>`;
